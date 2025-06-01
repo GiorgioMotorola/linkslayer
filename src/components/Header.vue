@@ -1,8 +1,8 @@
 <template>
   <header>
     <div class="path"><span style="font-weight: 500; color: #0645ad;">{{ formattedStart }}</span> → {{ formattedTarget }}</div>
-    <div class="clicks">Clicks: {{ clicks }}</div>
     <div class="current-path">{{ formattedPath }}</div>
+    <div class="clicks">Clicks: {{ clicks }}</div>
   </header>
 </template>
 
@@ -38,14 +38,29 @@ const formattedPath = computed(() =>
 }
 
 .clicks {
-  font-size: 20px;
+  font-size: 16px;
+  color: #555;
+  font-weight: 500;
 }
 
 .current-path {
-  margin-top: 1rem;
-  font-style: italic;
+  margin-top: .1rem;
+  margin-bottom: 1rem;
   font-size: 16px;
   color: #555;
-  text-align: center;
+  text-align: start;
+}
+
+@media screen and (max-width: 600px) {
+  .path {
+  font-size: 17px;
+  margin-bottom: 1rem;
+}
+.clicks {
+  font-size: 13px;
+}
+.current-path {
+  font-size: 13px;
+}
 }
 </style>

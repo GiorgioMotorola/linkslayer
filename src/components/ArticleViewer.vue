@@ -35,10 +35,9 @@ onMounted(load);
 </script>
 
 <style>
-
 .article {
   border: solid 1px black;
-  padding: 2rem;
+  padding: 1.5rem;
   background-color: #ffffff;
 }
 
@@ -46,6 +45,15 @@ onMounted(load);
   font-size: 30px;
   font-weight: 400;
   border-bottom: 1px solid black;
+}
+
+@media screen and (max-width: 600px) {
+  .article {
+      padding: .5rem;
+  }
+  .title {
+    font-size: 25px;
+  }
 }
 
 </style>

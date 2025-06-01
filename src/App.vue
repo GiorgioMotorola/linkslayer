@@ -24,4 +24,14 @@ body {
   margin: auto;
   padding: 2rem;
 }
+
+@media screen and (max-width: 600px) {
+  .app-container {
+  padding: .3rem;
+}
+
+body {
+  font-size: 14px;
+}
+}
 </style>

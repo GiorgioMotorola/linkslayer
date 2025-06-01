@@ -7,7 +7,7 @@
   :path="path"
 />
 
-    <p>Time: {{ formattedTimer }}</p>
+    <div class="timer">Time: {{ formattedTimer }}</div>
 
     <VictoryModal
       v-if="isGameComplete"
@@ -75,4 +75,20 @@ onBeforeUnmount(() => {
   clearInterval(timerInterval);
 });
 </script>
+
+<style>
+.timer {
+  font-size: 16px;
+  margin-top: .1rem;
+  color: #555;
+  font-weight: 500;
+}
+
+@media screen and (max-width: 600px) {
+.timer {
+  font-size: 13px;
+  margin-top: .1rem;
+}
+}
+</style>
 

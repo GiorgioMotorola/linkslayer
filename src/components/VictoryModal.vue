@@ -2,7 +2,7 @@
   <div class="modal-overlay">
     <div class="modal-content">
       <h2>Total Clicks: {{ clicks }}</h2>
-      <p>Time: {{ timer }}</p>
+      <div class="timer">Time: {{ timer }}</div>
       <div class="results-grid">
         <div class="results-path" v-for="step in formattedPath" :key="step">
           {{ step }}
@@ -92,6 +92,10 @@ button {
   color: white;
   border-radius: 6px;
   cursor: pointer;
+}
+
+.timer {
+  font-size: 12px;
 }
 
 button:hover {
