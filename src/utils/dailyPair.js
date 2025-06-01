@@ -2,8 +2,25 @@ export function getTodayChain() {
   const today = new Date().toISOString().split('T')[0];
   const targets = {
     '2025-05-31': ['The_Boat_Race_2018', 'Melon'],
-    '2025-06-01': ['Viagra_Boys', 'I_Think_You_Should_Leave_with_Tim_Robinson', 'Mammal', 'Jurassic'],
-    '2025-06-02': ['Basketball', 'Milwaukee', 'Arcade_cabinet', 'Airplane'],
+    '2025-06-01': ['Viagra_Boys', 'I_Think_You_Should_Leave_with_Tim_Robinson', 'Mammal'],
+    '2025-06-02': ['Basketball', 'Milwaukee', 'Arcade_cabinet', ],
+    '2025-06-03': ['LOL', 'Charles_Dickens', 'Time_zone', ],
+    '2025-06-04': ['', '', '', ''],
+    '2025-06-05': ['', '', '', ''],
+    '2025-06-06': ['', '', '', ''],
+    '2025-06-07': ['', '', '', ''],
+    '2025-06-08': ['', '', '', ''],
+    '2025-06-09': ['', '', '', ''],
+    '2025-06-10': ['', '', '', ''],
+    '2025-06-11': ['', '', '', ''],
+    '2025-06-12': ['', '', '', ''],
+    '2025-06-13': ['', '', '', ''],
+    '2025-06-14': ['', '', '', ''],
+    '2025-06-15': ['', '', '', ''],
+    '2025-06-16': ['', '', '', ''],
+    '2025-06-17': ['', '', '', ''],
+    '2025-06-18': ['', '', '', ''],
+    '2025-06-19': ['', '', '', ''],
   };
   return targets[today] || ['Wikipedia', 'Sorry'];
 }
