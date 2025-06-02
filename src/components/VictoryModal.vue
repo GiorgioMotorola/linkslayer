@@ -122,4 +122,20 @@ button:hover {
     opacity: 1;
   }
 }
+
+@media screen and (max-width: 600px) {
+  .modal-overlay {
+  position: absolute;
+}
+
+.nice-dude {
+  font-size: 20px;
+  margin-bottom: 1rem;
+}
+
+.total-clicks {
+font-size: 13px;
+}
+
+}
 </style>
