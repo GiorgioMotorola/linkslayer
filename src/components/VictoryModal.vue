@@ -1,7 +1,8 @@
 <template>
   <div class="modal-overlay">
     <div class="modal-content">
-      <h2>Total Clicks: {{ clicks }}</h2>
+      <div class="nice-dude">Nice, Dude &#128512;</div>
+      <div class="total-clicks">Total Clicks: {{ clicks }}</div>
       <div class="timer">Time: {{ timer }}</div>
       <div class="results-grid">
         <div class="results-path" v-for="step in formattedPath" :key="step">
@@ -94,8 +95,17 @@ button {
   cursor: pointer;
 }
 
+.nice-dude {
+  font-size: 30px;
+  margin-bottom: 2rem;
+}
+
+.total-clicks {
+font-size: 17px;
+}
+
 .timer {
-  font-size: 12px;
+  font-size: 15px;
 }
 
 button:hover {
