@@ -27,7 +27,7 @@ const share = () => {
     props.targets.includes(step) ? '📍' : '➖'
   ).join('');
 
-  const text = `Scenic Route\n` +
+  const text = `🗺️ Scenic Route 🗺️\n` +
                `Clicks: ${props.clicks}\n` +
                `Time: ${props.timer}\n` +
                `Path: ${colorPath}\n` +
