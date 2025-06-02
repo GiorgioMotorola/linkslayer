@@ -37,8 +37,10 @@ onMounted(load);
 <style>
 .article {
   border: solid 1px black;
+  border-radius: 5px;
   padding: 1.5rem;
   background-color: #ffffff;
+  max-width: 2000px;
 }
 
 .title {
