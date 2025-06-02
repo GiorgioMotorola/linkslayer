@@ -24,10 +24,10 @@ const formattedPath = computed(() =>
 
 const share = () => {
   const colorPath = props.path.map(step =>
-    props.targets.includes(step) ? '🟩' : '🟫'
+    props.targets.includes(step) ? '🔵' : '🟤'
   ).join('');
 
-  const text = `Scenic Route: A Wiki Journey\n` +
+  const text = `Scenic Route\n` +
                `Clicks: ${props.clicks}\n` +
                `Time: ${props.timer}\n` +
                `Path: ${colorPath}\n` +
