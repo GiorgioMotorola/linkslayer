@@ -34,7 +34,6 @@ body {
   right: 0;
 }
 
-
 .how-to {
   font-size: 15px;
   text-align: center;
@@ -51,6 +50,13 @@ body {
 
 .logo {
 max-width: 50px;
+}
+
+.how-to {
+  font-size: 12px;
+  text-align: center;
+  margin-right: 2.5rem;
+  margin-left: 2.5rem;
 }
 }
 </style>
