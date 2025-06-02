@@ -1,4 +1,5 @@
 <template>
+    <div class="how-to">Start at the first article. Click through Wikipedia links to reach the second destination. Then from the second destination, reach a third and final destination. Then you're done.</div>
   <img :src="scenicLogo" class="logo" alt="Image" width="75" />
   <main class="app-container">
     <GameView />
@@ -31,6 +32,12 @@ body {
   position: absolute;
   top: 0;
   right: 0;
+}
+
+
+.how-to {
+  font-size: 15px;
+  text-align: center;
 }
 
 @media screen and (max-width: 600px) {
