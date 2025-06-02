@@ -3,7 +3,7 @@ export function getTodayChain() {
   const targets = {
     '2025-05-31': ['The_Boat_Race_2018', 'Melon'],
     '2025-06-01': ['Pac-Man', 'Cucumber', 'Mammal'],
-    '2025-06-02': ['Basketball', 'Basketball_court', ],
+    '2025-06-02': ['Basketball', 'Milwaukee', 'Arcade_cabinet', ],
     '2025-06-03': ['LOL', 'Charles_Dickens', 'Time_zone', ],
     '2025-06-04': ['', '', '', ''],
     '2025-06-05': ['', '', '', ''],
