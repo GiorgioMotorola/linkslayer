@@ -24,7 +24,7 @@ const formattedPath = computed(() =>
 
 const share = () => {
   const colorPath = props.path.map(step =>
-    props.targets.includes(step) ? '🔵' : '🟤'
+    props.targets.includes(step) ? '📍' : '➖'
   ).join('');
 
   const text = `Scenic Route\n` +
