@@ -26,7 +26,9 @@ const handleLinkClick = (event) => {
   const anchor = event.target.closest('a');
   if (anchor && anchor.href.includes('/wiki/')) {
     const title = decodeURIComponent(anchor.href.split('/wiki/')[1]);
-    emit('link-clicked', title);
+    const normalizedTitle = title.charAt(0).toUpperCase() + title.slice(1);
+    emit('link-clicked', normalizedTitle);
+
   }
 };
 
