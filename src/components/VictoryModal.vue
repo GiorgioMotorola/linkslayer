@@ -34,11 +34,9 @@ const share = () => {
                `https://scenicroute.mweatherford.rocks`;
 
   if (navigator.share) {
-    navigator.share({ text });
-  } else {
-    navigator.clipboard.writeText(text).then(() => {
+        navigator.clipboard.writeText(text).then(() => {
       alert('Result copied to clipboard!');
-    });
+  });
   }
 };
 
