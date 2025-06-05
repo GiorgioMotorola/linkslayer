@@ -6,7 +6,7 @@ export function getTodayChain() {
     '2025-06-02': ['Basketball', 'Milwaukee', 'Arcade_cabinet', ],
     '2025-06-03': ['LOL', 'Television', 'Time_zone', ],
     '2025-06-04': ['Diamond_Life', 'School', 'Wallet'],
-    '2025-06-05': ['Ground_source_heat_pump', 'Earth', 'Pizza'],
+    '2025-06-05': ['Pizza_farm', 'Earth', 'Buffalo_wing'],
     '2025-06-06': ['Chill_Guy', 'Friday', 'Team'],
     '2025-06-07': ['Tornadoes_in_Chicago', 'Temperature', 'Italy'],
     '2025-06-08': ['Battle_of_Diamond_Rock', 'Rock_and_roll', 'Bread_roll'],
