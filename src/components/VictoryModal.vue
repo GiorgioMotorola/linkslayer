@@ -23,9 +23,14 @@ const formattedPath = computed(() =>
 );
 
 const share = () => {
-  const colorPath = props.path.map(step =>
-    props.targets.includes(step) ? '📍' : '➖'
-  ).join('');
+  console.log('Path:', props.path);
+  console.log('Targets:', props.targets);
+
+  const colorPath = props.path.map(step => {
+    const isTarget = props.targets.includes(step);
+    console.log(`Step: ${step}, isTarget: ${isTarget}`);
+    return isTarget ? '📍' : '➖';
+  }).join('');
 
   const text = `🗺️ Scenic Route 🗺️\n` +
                `Clicks: ${props.clicks}\n` +
@@ -33,13 +38,14 @@ const share = () => {
                `Path: ${colorPath}\n` +
                `https://scenicroute.mweatherford.rocks`;
 
-  if (navigator.share) {
-        navigator.clipboard.writeText(text).then(() => {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
       alert('Result copied to clipboard!');
-  });
+    });
+  } else {
+    alert('Clipboard not supported in this browser.');
   }
 };
-
 </script>
 
 <style>
