@@ -13,7 +13,7 @@ export function getTodayChain() {
     '2025-06-09': ['The_X-Files', 'WWE', 'Saturn'],
     '2025-06-10': ['Christina\'s_World', 'T-shirt', 'Blood'],
     '2025-06-11': ['Strahd_von_Zarovich', 'Dust', 'Car'],
-    '2025-06-12': ['Dolly_Gray_impostor', 'University', 'Football'],
+    '2025-06-12': ['Dolly_Gray_impostor', 'Napkin', 'Football'],
     '2025-06-13': ['Response_to_sneezing', 'Universal_Studios_Florida', 'Water'],
     '2025-06-14': ['Kentucky_Bend', 'Antarctica', 'Guitar'],
     '2025-06-15': ['Kithara', 'Coat', 'Gasoline'],
