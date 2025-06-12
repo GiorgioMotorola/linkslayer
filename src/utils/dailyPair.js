@@ -14,13 +14,13 @@ export function getTodayChain() {
     '2025-06-10': ['Christina\'s_World', 'T-shirt', 'Blood'],
     '2025-06-11': ['Strahd_von_Zarovich', 'Dust', 'Car'],
     '2025-06-12': ['Dolly_Gray_impostor', 'University', 'Football'],
-    '2025-06-13': ['', '', ''],
-    '2025-06-14': ['', '', ''],
-    '2025-06-15': ['', '', ''],
-    '2025-06-16': ['', '', ''],
-    '2025-06-17': ['', '', ''],
-    '2025-06-18': ['', '', ''],
+    '2025-06-13': ['Response_to_sneezing', 'Universal_Studios_Florida', 'Water'],
+    '2025-06-14': ['Kentucky_Bend', 'Antarctica', 'Guitar'],
+    '2025-06-15': ['Kithara', 'Coat', 'Gasoline'],
+    '2025-06-16': ['Action_Park', 'Gate', 'Lottery'],
+    '2025-06-17': ['Avril_14th', 'Dog', 'Backpack'],
+    '2025-06-18': ['The_Apartment', 'Landlord', 'Ghost'],
     '2025-06-19': ['', '', ''],
   };
-  return targets[today] || ['Wikipedia', 'Sorry'];
+  return targets[today] || ['Wikipedia', 'Sorry', 'Melon'];
 }
