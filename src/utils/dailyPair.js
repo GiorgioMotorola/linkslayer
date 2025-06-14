@@ -21,7 +21,7 @@ export function getTodayChain() {
     '2025-06-17': ['Avril_14th', 'Dog', 'Backpack'],
     '2025-06-18': ['The_Apartment', 'Landlord', 'Ghost'],
     '2025-06-19': ['Nathan_for_You', 'Telephone', 'Sun'],
-    '2025-06-19': ['The_Replacements_(band)', 'Feeling', 'Stone_Age'],
+    '2025-06-19': ['The_Replacements_(band)', 'Society', 'Stone_Age'],
     '2025-06-20': ['Billy_Ocean', 'Ocean', 'Cartography'],
     '2025-06-21': ['', '', ''],
     '2025-06-22': ['', '', ''],
