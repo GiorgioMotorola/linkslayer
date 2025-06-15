@@ -16,7 +16,7 @@ export function getTodayChain() {
     '2025-06-12': ['Dolly_Gray_impostor', 'Napkin', 'Football'],
     '2025-06-13': ['Response_to_sneezing', 'Universal_Studios_Florida', 'Water'],
     '2025-06-14': ['Kentucky_Bend', 'Antarctica', 'Guitar'],
-    '2025-06-15': ['Kithara', 'Coat', 'Gasoline'],
+    '2025-06-15': ['Kithara', 'Golf', 'Gasoline'],
     '2025-06-16': ['Action_Park', 'Gate', 'Lottery'],
     '2025-06-17': ['Avril_14th', 'Dog', 'Backpack'],
     '2025-06-18': ['The_Apartment', 'Landlord', 'Ghost'],
