@@ -72,7 +72,6 @@ function selectClass(classKey) {
 
 .class-grid {
   display: grid;
-  /* grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); */
   gap: 2rem;
   margin-top: 1rem;
   text-align: left;
@@ -80,9 +79,7 @@ function selectClass(classKey) {
 
 .class-card {
   background: #e2e6e7;
-  /* padding: 1rem; */
   border-radius: 8px;
-  /* border: 1px solid #ddd; */
 }
 
 button {

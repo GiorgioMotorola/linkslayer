@@ -205,7 +205,6 @@ function handleCombatAction(playerAction) {
   let playerDamage = 0;
   let enemyTakesDamage = 0;
 
-  // Handle player special first
   if (playerAction === "special") {
     if (specialUsesLeft.value <= 0) {
       log(
@@ -303,7 +302,6 @@ function handleCombatAction(playerAction) {
     return;
   }
 
-  // Handle enemy TRIP action
   if (enemyAction === "trip") {
     log(
       `🤾 ${formattedTitle.value} trips and falls! <span class="player-name">${playerName.value}</span> gets a free hit!`
@@ -321,7 +319,6 @@ function handleCombatAction(playerAction) {
 
     if (weaponBonus.value > 0) {
       damage += weaponBonus.value;
-      // log(`<span class="player-name">${playerName.value}</span>'s weapons base damage is now +${weaponBonus.value} damage.`);
     }
 
     enemyHP.value -= damage;
@@ -340,7 +337,6 @@ function handleCombatAction(playerAction) {
     return;
   }
 
-  // Enemy attack logic
   if (enemyAction === "attack") {
     log(`${formattedTitle.value} used: ${enemyAction}`);
 
@@ -359,7 +355,6 @@ function handleCombatAction(playerAction) {
 
       if (weaponBonus.value > 0) {
         randomDamage += weaponBonus.value;
-        // log(`<span class="player-name">${playerName.value}</span>'s weapons base damage is now +${weaponBonus.value} damage.`);
       }
 
       enemyTakesDamage = randomDamage;
@@ -403,10 +398,7 @@ function handleCombatAction(playerAction) {
         );
       }
     }
-  }
-
-  // Enemy defend logic
-  else if (enemyAction === "defend") {
+  } else if (enemyAction === "defend") {
     log(
       `<span class="player-name">${playerName.value}</span> used: ${playerAction}`
     );
@@ -435,16 +427,12 @@ function handleCombatAction(playerAction) {
         return;
       }
     }
-  }
-
-  // Enemy flee logic
-  else if (enemyAction === "flee") {
+  } else if (enemyAction === "flee") {
     log(`${playerName.value} fled`);
     encounter.value = null;
     return;
   }
 
-  // Damage resolution
   playerHP.value -= playerDamage;
   enemyHP.value -= enemyTakesDamage;
 
@@ -596,8 +584,10 @@ function handleEncounterOption(option) {
       );
     }
 
-    if (option.details === 'weapon') {
-      log(`🎲 <span class="player-name">${playerName.value}</span> found a weapon upgrade! Next attack does double damage!`);
+    if (option.details === "weapon") {
+      log(
+        `🎲 <span class="player-name">${playerName.value}</span> found a weapon upgrade! Next attack does double damage!`
+      );
     }
   }
 
@@ -608,7 +598,7 @@ function handleEncounterOption(option) {
     );
   }
 
-    if (option.result === "damage-minor") {
+  if (option.result === "damage-minor") {
     playerHP.value = Math.max(playerHP.value - 1, 0);
     log(
       `🎲 <span class="player-name">${playerName.value}</span> took 1 damage!`

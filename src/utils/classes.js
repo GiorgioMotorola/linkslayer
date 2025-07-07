@@ -13,7 +13,7 @@ export const classes = {
     special: "Fireball",
     description: "30 HP. Special deals between 5 and 15 damage.",
     specialEffect: (enemyHP, playerHP) => {
-      const wizardDamage = Math.floor(Math.random() * 11) + 5; // 5–15
+      const wizardDamage = Math.floor(Math.random() * 11) + 5;
       const stunned = Math.random() < 0.2;
       return {
         enemyHP: enemyHP - wizardDamage,
@@ -27,8 +27,7 @@ export const classes = {
     name: "Rogue",
     maxHP: 35,
     special: "Sneak Attack",
-    description:
-      "35 HP. Special deals damage equal to 25% of enemys max HP.",
+    description: "35 HP. Special deals damage equal to 25% of enemys max HP.",
     specialEffect: (enemyHP, enemyMaxHP) => {
       const rogueDamage = Math.ceil(enemyMaxHP * 0.25);
       return {
@@ -51,7 +50,8 @@ export const classes = {
     name: "Sorcerer",
     maxHP: 33,
     special: "Chaos Surge",
-    description: "33 HP. Special deals 12 damage, but takes random recoil damage to the player.",
+    description:
+      "33 HP. Special deals 12 damage, but takes random recoil damage to the player.",
     specialEffect: (enemyHP, playerHP) => {
       const recoil = Math.floor(Math.random() * 4);
       return {

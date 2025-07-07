@@ -2,7 +2,6 @@
   <header>
     <transition name="encounter-fade" mode="out-in">
       <div v-if="encounter" class="encounter-dashboard">
-        <!-- Combat Encounter -->
         <div v-if="encounter.type === 'combat'">
           <div class="oh-no">Combat ⚔️</div>
           <div class="attack-line" v-html="typedLine"></div>
@@ -42,7 +41,6 @@
           <p v-if="message" class="encounter-message">{{ message }}</p>
         </div>
 
-        <!-- NPC Encounter -->
         <div class="npc" v-else-if="encounter.type === 'npc'">
           <div class="npc-name">{{ encounter.npc.name }} 💬</div>
           <div class="npc-greeting" v-html="typedGreeting"></div>
@@ -60,7 +58,6 @@
           </div>
         </div>
 
-        <!-- Lore Encounter -->
         <div class="lore" v-else-if="encounter.type === 'lore'">
           <div class="lore-name">Discovery 🔎</div>
           <div class="lore-greeting" v-html="typedGreeting"></div>
@@ -78,7 +75,6 @@
           </div>
         </div>
 
-        <!-- Unknown type fallback -->
         <div v-else>
           <p>⚠️ Unknown encounter type.</p>
           <button @click="emit('close')">Continue</button>
@@ -286,7 +282,6 @@ function copyLogToClipboard() {
     .then(() => alert("Log copied to clipboard"))
     .catch((err) => console.error("Failed to copy log:", err));
 }
-
 </script>
 
 <style scoped>

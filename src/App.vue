@@ -1,8 +1,6 @@
 <!-- App.vue -->
 
 <template>
-  <!-- <div class="how-to">Start at the first article. Click through Wikipedia links to reach the second destination. Then from the second destination, reach a third and final destination. Then you're done.</div>
-  <img :src="scenicLogo" class="logo" alt="Image" width="75" /> -->
   <main class="app-container">
     <GameView />
   </main>
