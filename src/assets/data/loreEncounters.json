@@ -1,0 +1,288 @@
+[
+  {
+    "text": "Etched into a cave wall: 'Beware the one-eyed owl who guards the dusk.",
+    "options": [
+      {
+        "text": "Poke the owl in the eye",
+        "result": "combat",
+        "responseText": "The owls eye snaps open. There is a deep and gravely growl coming from behind..."
+      },
+      {
+        "text": "Keep walking",
+        "result": "none",
+        "responseText": "The forest remains silent."
+      },
+      {
+        "text": "Kick the Owl in the eye",
+        "result": "combat",
+        "responseText": "The owls eye snaps open. There is a deep and gravely growl coming from behind..."
+      },
+      {
+        "text": "Step away slowly",
+        "result": "none",
+        "responseText": "The forest remains silent but you feel the eye glaring at you."
+      }
+    ]
+  },
+  {
+    "text": "There is what looks like a deep, dark pit about 10 feet ahead of you. As you step closer, you can hear the sound of rustling.",
+    "options": [
+      {
+        "text": "Jump in the hole. Fortune favors the bold.",
+        "result": "combat",
+        "responseText": "...and the bold favor the afterlife."
+      },
+      {
+        "text": "Step around the pit.",
+        "result": "none",
+        "responseText": "It's too risky. I better keep moving."
+      },
+      {
+        "text": "Demonstrate how dexterous you are by leaping over the pit",
+        "result": "damage-minor",
+        "responseText": "You jump the gap but land on your ankle and hurt yourself."
+      },
+      {
+        "text": "Throw a rock into the pit.",
+        "result": "combat",
+        "responseText": "You hear the snarling entensify and see a creature climb up the pit. Before you know it, the creature is in front of you, looking deep into your eyes."
+      }
+    ]
+  },
+  {
+    "text": "There is a glowing herb sprouting from a crack in the rock.",
+    "options": [
+      {
+        "text": "Pick it out of the crack and use it for a glowing herb stew",
+        "result": "item",
+        "details": "health",
+        "responseText": "YOU: This is very good and VERY minty stew."
+      },
+      {
+        "text": "Eat it",
+        "result": "item",
+        "details": "health",
+        "responseText": "The herb tastes minty and you gain +5 HP."
+      },
+      {
+        "text": "Leave it alone",
+        "result": "none",
+        "responseText": "Maybe someone else will need it more."
+      },
+      {
+        "text": "Curse at the glowing herb",
+        "result": "none",
+        "responseText": "Nothing happens. Do you feel tough?"
+      }
+    ]
+  },
+  {
+    "text": "You have reached a smooth rock overlooking the forest ahead.",
+    "options": [
+      {
+        "text": "Sit at the rock and contimplate your journey so far and plan for the journey ahead.",
+        "result": "item",
+        "details": "special",
+        "responseText": "I wish I had a beer to crack and some Steely Dan to listen to but this will do."
+      },
+      {
+        "text": "Throw a middle finger at the rock",
+        "result": "none",
+        "responseText": "YOU: What an ugly rock."
+      },
+      {
+        "text": "Appreciate the rock for what it is and move on.",
+        "result": "none",
+        "responseText": "YOU: I must continue on."
+      },
+      {
+        "text": "Pray upon the rock and thank the Gods for safety and health",
+        "result": "health",
+        "responseText": "The sky grants temporary shade from the sun and you feel comforted"
+      }
+    ]
+  },
+  {
+    "text": "There is a large clearing in the forest that leads to a small lake where the suns light dances endlessly. There is a small glowing artifact sticking out of the rocks and sand. It seems to shake harder the closer it is to a weapon... ",
+    "options": [
+      {
+        "text": "Pick it up and touch it to your weapon",
+        "result": "item",
+        "details": "none",
+        "responseText": "The shaking stops, the weapon feels sturdier. Damage base has been increased by 1."
+      },
+      {
+        "text": "Kick the rock into the lake",
+        "result": "damage-minor",
+        "responseText": "The rock, still shaking, sails into the lake and disappears under the water. Your foot took damage."
+      },
+      {
+        "text": "Eat the rock",
+        "result": "none",
+        "responseText": "Your stomach shakes and shakes but nothing substantial happens."
+      },
+      {
+        "text": "Leave it alone",
+        "result": "none",
+        "responseText": "YOU: I have no use for violent shaking rocks, to be quite honest."
+      }
+    ]
+  },
+  {
+    "text": "You find a pile of steel, an anvil and a kiln all under a lean-to. It appears to be an old Blacksmithing site that has since been abandoned. Everything under the lean-to seems to still be in working order. ",
+    "options": [
+      {
+        "text": "Use the things under the lean-to on your weapon.",
+        "result": "item",
+        "details": "weapon",
+        "responseText": "I should have been a Blacksmith instead of an adventure. Damage base has been increased by 1."
+      },
+      {
+        "text": "Continue on.",
+        "result": "none",
+        "responseText": "There are probably bugs and spiders in that mess. No thank you."
+      },
+      {
+        "text": "Start a new town, start a new life.",
+        "result": "none",
+        "responseText": "You hang up your sword, your shield, your armor. You begin chopping trees one by one, create a lean-to against the biggest, closest tree you can find. By day, you chop trees, burn debris, re-arrange rocks, build on existing structures to reenforce their strenth. At dusk, you find local game to substain on: fish, deer, squirell, wild boar. At night, you contemplate your next move. Should you start building a church to pray to your Gods? Should you start building a more sustainable home to live in? I bet down the road, a library and a general store would bring in people to your town. What should you name your town? Should you start a farm to prevent the local wildlife from dying out? You should get some sleep. Sleep would be good. You wake up on the 5th day. You decide none of this is worth it and move on in your journey."
+      },
+      {
+        "text": "Eat some of the steel.",
+        "result": "damage",
+        "responseText": "Why"
+      }
+    ]
+  },
+  {
+    "text": "You reach a vending machine with the branding 'Uncle Junior's Weapon Upgrades'. It appears it doesn't take any currency and just asks you to place your weapon on it's shelf and press 'upgrade'.",
+    "options": [
+      {
+        "text": "Place your weapon on the shelf and press 'upgrade'.",
+        "result": "combat",
+        "responseText": "Cazzata, Malanga!"
+      },
+      {
+        "text": "Move forward without upgrading your weapon.",
+        "result": "none",
+        "responseText": "Nothing is free in this life. I'll pass."
+      },
+      {
+        "text": "Check behind the vending machine for any other services it may or may not have.",
+        "result": "none",
+        "responseText": "There is nothing behind the vending machine."
+      },
+      {
+        "text": "Press upgrade without placing your weapon on the shelf.",
+        "result": "combat",
+        "responseText": "Cazzata, Malanga!"
+      }
+    ]
+  },
+  {
+    "text": "You come across a treasure chest. The lock appears to be busted.",
+    "options": [
+      {
+        "text": "Open the chest",
+        "responseText": "There appears to be only a glowing orb. +1 has been added to your special ability.",
+        "result": "special",
+        "details": "recover",
+        "amount": 1
+      },
+      {
+        "text": "Walk beyond it and continue on.",
+        "responseText": "Doubtful there is anything in there if the lock is busted.",
+        "result": "none"
+      },
+      {
+        "text": "Admire the Treasure Chest from afar",
+        "responseText": "YOU: This is a nice Treasure Chest.",
+        "result": "none"
+      },
+      {
+        "text": "Kick the Treasure Chest",
+        "responseText": "Your foot hurts now.",
+        "result": "damage-minor"
+      }
+    ]
+  },
+  {
+    "text": "You see a very large statue in a clearing. It appears to be thousands of years old. It is surrounded by ruined rock and structures that have seen better days. The statue appears to be in decent shape and has not succumb to the elements. Approaching the statue, you can see a plaque. Written on the plaque is the following: 'To our leader in laughter, Norm. What is green and has wheels?' The plague appears to ask a question.",
+    "options": [
+      {
+        "text": "Respond with 'swords?'",
+        "responseText": "Nothing happens.",
+        "result": "none"
+      },
+      {
+        "text": "Respond with 'rocks?'",
+        "responseText": "Nothing happens.",
+        "result": "none"
+      },
+      {
+        "text": "Respond with 'clouds?'",
+        "responseText": "Nothing happens.",
+        "result": "none"
+      },
+      {
+        "text": "Respond with 'grass?'",
+        "responseText": "The statue slowly moves to the south, revealing an entryway to an underground path. Above the archway that leads into the path reads another plague that says 'Grass. I lied about the wheels'. The path appears to be a shortcut through the forest.",
+        "result": "shortcut",
+        "details": "clicks",
+        "amount": 6
+      }
+    ]
+  },
+  {
+    "text": "There is a sturdy bridge ahead of you. The bridge may be short but it appears the bridge is made up of squares. Each square a different color. The first four squares are colored Red, White, Green and Blue. Each square has 'Currents murmur my name, the daylight wears my face, sorrow drapes itself in my hue, and I wait beneath your next footfall.' written on them respectively.",
+    "options": [
+      {
+        "text": "Step on the Green square",
+        "result": "damage",
+        "responseText": "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage"
+      },
+      {
+        "text": "Step on the White square",
+        "result": "damage",
+        "responseText": "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage"
+      },
+      {
+        "text": "Step on the Blue square",
+        "responseText": "The Blue square lights up, then dims. Then All the squares turn blue. You walk across the bridge safely. ",
+        "result": "shortcut"
+      },
+      {
+        "text": "Step on the Red square",
+        "result": "damage",
+        "responseText": "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage"
+      }
+    ]
+  },
+  {
+    "text": "There is a sturdy bridge ahead of you. The bridge may be short but it appears the bridge is made up of squares. These squares have arrows pointing North, South, East and West. The squares have written on them 'You’ll want warmth upon the road to me, The faithful star holds my name, The sky stretches on with my voice, And I lie just ahead, beneath your next step.'",
+    "options": [
+      {
+        "text": "Step on the North square",
+        "responseText": "The North square lights up then all 4 squares light up. Then they slowly dim and suddenly change into one large arrow pointing toward the end of the bridge allowing you to cross it safely.",
+        "result": "shortcut",
+        "details": "clicks",
+        "amount": 10
+      },
+      {
+        "text": "Step on the South square",
+        "result": "damage",
+        "responseText": "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage"
+      },
+      {
+        "text": "Step on the East square",
+        "result": "damage",
+        "responseText": "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage"
+      },
+      {
+        "text": "Step on the West square",
+        "result": "damage",
+        "responseText": "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage"
+      }
+    ]
+  }
+]

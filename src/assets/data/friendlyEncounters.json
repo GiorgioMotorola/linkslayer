@@ -1,0 +1,245 @@
+[
+  {
+    "name": "Old Man Flynn",
+    "greeting": "OLD MAN FLYNN: Did you know They Know?",
+    "options": [
+      {
+        "text": "YOU: Yes sir, I did",
+        "result": "item",
+        "details": "weapon",
+        "responseText": "OLD MAN FLYNN: I knew it! I knew someone would know! You will need a better weapon than that. Let me give it a fair polishing, my son"
+      },
+      {
+        "text": "Ignore him and walk away",
+        "result": "none",
+        "responseText": "You nod politely and keep moving. They Continue to Know"
+      },
+      {
+        "text": "YOU: What do you mean?",
+        "result": "none",
+        "responseText": "OLD MAN FLYNN: You... don't know? Then I have nothing to discuss with you."
+      },
+      {
+        "text": "YOU: From what I heard, they do NOT know, actually",
+        "result": "damage-minor",
+        "responseText": "Old Man Flynn uses his cane to bop you on the head. He then walks away. "
+      }
+    ]
+  },
+  {
+    "name": "Smith the Blacksmith",
+    "greeting": "SMITH THE BLACKSMITH: Hello.",
+    "options": [
+      {
+        "text": "YOU: Howdy",
+        "result": "item",
+        "details": "weapon",
+        "responseText": "SMITH THE BLACKSMITH: Hello. Here is a weapon upgrade."
+      },
+      {
+        "text": "YOU: Hello?",
+        "result": "none",
+        "responseText": "SMITH THE BLACKSMITH: Howdy."
+      }
+    ]
+  },
+  {
+    "name": "Old Guy Accardi",
+    "greeting": "OLD GUY ACCARDI: Have you seen my dog? His name is Artie. Honestly, he’ll eat any food. He even eats the tops of strawberries. Also, he likes two clicks at the same time.",
+    "options": [
+      {
+        "text": "YOU: Yes. I saw him a few clicks back that way. Gave him a couple of pets on the noggin, I did.",
+        "result": "item",
+        "details": "health",
+        "responseText": "OLD GUY ACCARDI: That's what's up. Thanks for telling me. As a reward, here is some chicken I grilled."
+      },
+      {
+        "text": "Ignore him and walk away",
+        "result": "none",
+        "responseText": "You nod politely and keep moving. You feel guilt because you DID in fact see Artie a few clicks ago. I hope you lose sleep."
+      }
+    ]
+  },
+  {
+    "name": "TJ the Golden",
+    "greeting": "TJ THE GOLDEN: Take a seat, will ya? I am cracking beers and listening to Steely Dan.",
+    "options": [
+      {
+        "text": "Take a seat, crack a beer and listen to Steely Dan",
+        "result": "item",
+        "details": "health",
+        "responseText": "Your mind and body are restored by a fathers kindness and you gain +5 HP."
+      },
+      {
+        "text": "YOU: No Thanks, I only like to Imagine the Dragon I am going to fight later",
+        "result": "none",
+        "responseText": "TJ THE GOLDEN: Alright. Suit yourself, padre."
+      }
+    ]
+  },
+  {
+    "name": "Fairwyn  the Tongueless",
+    "greeting": "FAIRWYN THE TOUGUELESS: oouu eeeahh ouu! eerrr eh ah eehahee!!!",
+    "options": [
+      {
+        "text": "YOU: Did you say 'Look behind you, there is an enemy?'",
+        "result": "combat",
+        "responseText": "There was, in fact an enemy behind you."
+      },
+      {
+        "text": "YOU: Out of the way, peck!",
+        "result": "damage",
+        "responseText": "You should have listened. An enemy appears, hits you with it's claws and runs away. You take damage."
+      }
+    ]
+  },
+  {
+    "name": "Evil Tom",
+    "greeting": "EVIL TOM: My name is Evil Tom. I'm a really nice guy, 😃 ",
+    "options": [
+      {
+        "text": "YOU: I don't believe you, Evil Tom.",
+        "result": "combat",
+        "responseText": "EVIL TOM: Well I never!"
+      },
+      {
+        "text": "YOU: Right On",
+        "result": "damage",
+        "responseText": "Evil Tom sneezes and vanishes in a puff of smoke, leaving only a pair of old Crocs. The crocs hurt to look at and deal 5 damage."
+      }
+    ]
+  },
+  {
+    "name": "Suttree The Old Mage",
+    "greeting": "SUTTREE THE OLD MAGE: You look tired, traveler. Care for some arcane tea?",
+    "options": [
+      {
+        "text": "Accept the tea",
+        "responseText": "You feel energy surging through your veins.",
+        "result": "special",
+        "details": "recover",
+        "amount": 1
+      },
+      {
+        "text": "Decline politely",
+        "responseText": "You nod respectfully and continue on your way.",
+        "result": "none"
+      }
+    ]
+  },
+  {
+    "name": "Daniel the Map Seller",
+    "greeting": "DANIEL THE MAP SELLER: I sell maps. Not much else.",
+    "options": [
+      {
+        "text": "Purchase a map from Daniel.",
+        "responseText": "It appears the map contains a shortcut through the upcoming brush. Your click count is reduced by 3.",
+        "result": "shortcut",
+        "details": "clicks",
+        "amount": 3
+      },
+      {
+        "text": "Decline buying a map.",
+        "responseText": "YOU: The only guidance I need is from the sun and the stars.",
+        "result": "none"
+      }
+    ]
+  },
+  {
+    "name": "The Lost Bartender",
+    "greeting": "THE LOST BARTENDER: THE Howdy, sir. How has your journey been? Never mind, forget I asked. Asking a man a question is the biggest true form of weakness and I have been known to be a strong guy. Here, have a rip of this swill, won't you? I also have knives and guns and bullets you can drink if you want to.",
+    "options": [
+      {
+        "text": "Take a rip of the swill",
+        "result": "item",
+        "details": "health",
+        "responseText": "Goes down smooth. Rips ya up on the inside in a good way."
+      },
+      {
+        "text": "Drink the guns, knives and bullets.",
+        "result": "damage",
+        "responseText": "THE LOST BARTENDER: Honestly, what did you expect? Thats on you."
+      },
+      {
+        "text": "Politely decline.",
+        "result": "none",
+        "responseText": "THE LOST BARTENDER: Not even one knife? Okay then, pal."
+      }
+    ]
+  },
+  {
+    "name": "Ron Von Zarovich",
+    "greeting": "RON VON ZAROVICH: Bobby Lasagna is not to be trusted. I would sooner trust Strahd Von Zarovich over Bobby L. She lives in a hut and she killed my friend who turned into a T-Rex once.",
+    "options": [
+      {
+        "text": "YOU: I am sorry for your loss.",
+        "result": "item",
+        "details": "health",
+        "responseText": "RON VON ZAROVICH: Wow... Is this loss?"
+      },
+      {
+        "text": "YOU: I could kill her for you.",
+        "details": "weapon",
+        "responseText": "RON VON ZAROVICH: You could try. Here is some help. You'll end up vampire food, I fear. Good Luck"
+      },
+      {
+        "text": "YOU: You shouldn't talk about your relations that way.",
+        "result": "none",
+        "responseText": "RON VON ZAROVICH: You don't understand."
+      }
+    ]
+  },
+  {
+    "name": "Miss Riddlesworth",
+    "greeting": "MISS RIDDLESWORTH: You see me once in a minute, twice in a moment, but never in a thousand years. What am I?",
+    "options": [
+      {
+        "text": "YOU: A blink",
+        "result": "none",
+        "responseText": "MISS RIDDLESWORTH: Wrong!"
+      },
+      {
+        "text": "YOU: The letter M",
+        "result": "item",
+        "details": "health",
+        "responseText": "MISS RIDDLESWORTH: H- How did you guess?"
+      },
+      {
+        "text": "YOU: A memory",
+        "result": "none",
+        "responseText": "MISS RIDDLESWORTH: Not a chance!"
+      },
+      {
+        "text": "YOU: The moon",
+        "result": "none",
+        "responseText": "MISS RIDDLESWORTH: You could not be more incorrect."
+      }
+    ]
+  },
+  {
+    "name": "Mr Riddlesworth",
+    "greeting": "MR RIDDLESWORTH: I build up castles, I tear down mountains. I make some men blind, I help others to see. What am I?",
+    "options": [
+      {
+        "text": "YOU: Time",
+        "result": "none",
+        "responseText": "MR RIDDLESWORTH: Incorrect!"
+      },
+      {
+        "text": "YOU: Fire",
+        "result": "none",
+        "responseText": "MR RIDDLESWORTH: Well, that's not the answer."
+      },
+      {
+        "text": "YOU: Sand",
+        "details": "weapon",
+        "responseText": "MR RIDDLESWORTH: You got it!"
+      },
+      {
+        "text": "YOU: Gold",
+        "result": "none",
+        "responseText": "MR RIDDLESWORTH: Wrong!"
+      }
+    ]
+  }
+]

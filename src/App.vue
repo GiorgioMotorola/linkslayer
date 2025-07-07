@@ -1,22 +1,21 @@
+<!-- App.vue -->
+
 <template>
-    <div class="how-to">Start at the first article. Click through Wikipedia links to reach the second destination. Then from the second destination, reach a third and final destination. Then you're done.</div>
-  <img :src="scenicLogo" class="logo" alt="Image" width="75" />
+  <!-- <div class="how-to">Start at the first article. Click through Wikipedia links to reach the second destination. Then from the second destination, reach a third and final destination. Then you're done.</div>
+  <img :src="scenicLogo" class="logo" alt="Image" width="75" /> -->
   <main class="app-container">
     <GameView />
   </main>
 </template>
 
 <script setup>
-import GameView from './views/GameView.vue';
-import scenicLogo from '@/assets/scenic-logo.png';
-
-
+import GameView from "./views/GameView.vue";
+import scenicLogo from "@/assets/scenic-logo.png";
 </script>
 
-<style>
+<style scoped>
 body {
   margin: 0;
-  font-family: "Lexend", sans-serif;
   background: #f8f9fa;
   color: #222;
   font-weight: 300;
@@ -25,7 +24,7 @@ body {
 .app-container {
   max-width: 2000px;
   margin: auto;
-  padding: 2rem;
+  padding: 0.5rem;
 }
 
 .logo {
@@ -41,22 +40,22 @@ body {
 
 @media screen and (max-width: 600px) {
   .app-container {
-  padding: .3rem;
-}
+    padding: 0.3rem;
+  }
 
-body {
-  font-size: 14px;
-}
+  body {
+    font-size: 14px;
+  }
 
-.logo {
-max-width: 50px;
-}
+  .logo {
+    max-width: 50px;
+  }
 
-.how-to {
-  font-size: 12px;
-  text-align: center;
-  margin-right: 2.5rem;
-  margin-left: 2.5rem;
-}
+  .how-to {
+    font-size: 12px;
+    text-align: center;
+    margin-right: 2.5rem;
+    margin-left: 2.5rem;
+  }
 }
 </style>

@@ -1,3 +1,5 @@
+<!-- VictoryModal.vue -->
+
 <template>
   <div class="modal-overlay">
     <div class="modal-content">
@@ -15,40 +17,43 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed } from "vue";
 
-const props = defineProps(['clicks', 'path', 'timer', 'targets']);
+const props = defineProps(["clicks", "path", "timer", "targets"]);
 const formattedPath = computed(() =>
-  props.path.map(step => step.replaceAll('_', ' '))
+  props.path.map((step) => step.replaceAll("_", " "))
 );
 
 const share = () => {
-  console.log('Path:', props.path);
-  console.log('Targets:', props.targets);
+  console.log("Path:", props.path);
+  console.log("Targets:", props.targets);
 
-  const colorPath = props.path.map(step => {
-    const isTarget = props.targets.includes(step);
-    console.log(`Step: ${step}, isTarget: ${isTarget}`);
-    return isTarget ? '📍' : '➖';
-  }).join('');
+  const colorPath = props.path
+    .map((step) => {
+      const isTarget = props.targets.includes(step);
+      console.log(`Step: ${step}, isTarget: ${isTarget}`);
+      return isTarget ? "📍" : "➖";
+    })
+    .join("");
 
-  const text = `🗺️ Scenic Route 🗺️\n` +
-               `Clicks: ${props.clicks}\n` +
-               `Time: ${props.timer}\n` +
-               `Path: ${colorPath}\n` +
-               `https://scenicroute.mweatherford.rocks`;
+  const text =
+    `🗺️ Scenic Route 🗺️\n` +
+    `Clicks: ${props.clicks}\n` +
+    `Time: ${props.timer}\n` +
+    `Path: ${colorPath}\n` +
+    `https://scenicroute.mweatherford.rocks`;
 
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
-      alert('Result copied to clipboard!');
+      alert("Result copied to clipboard!");
     });
   } else {
-    alert('Clipboard not supported in this browser.');
+    alert("Clipboard not supported in this browser.");
   }
 };
 </script>
 
-<style>
+<style scoped>
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -91,12 +96,13 @@ const share = () => {
 button {
   margin: 1rem 0;
   padding: 0.6rem 1.2rem;
-  font-size: 16px;
+  font-size: 14px;
   border: none;
-  background: #4caf50;
+  background: #4a8096;
   color: white;
   border-radius: 6px;
   cursor: pointer;
+  margin-right: 0.5rem;
 }
 
 .nice-dude {
@@ -105,7 +111,7 @@ button {
 }
 
 .total-clicks {
-font-size: 17px;
+  font-size: 17px;
 }
 
 .timer {
@@ -129,17 +135,16 @@ button:hover {
 
 @media screen and (max-width: 600px) {
   .modal-overlay {
-  position: absolute;
-}
+    position: absolute;
+  }
 
-.nice-dude {
-  font-size: 20px;
-  margin-bottom: 1rem;
-}
+  .nice-dude {
+    font-size: 20px;
+    margin-bottom: 1rem;
+  }
 
-.total-clicks {
-font-size: 13px;
-}
-
+  .total-clicks {
+    font-size: 13px;
+  }
 }
 </style>
