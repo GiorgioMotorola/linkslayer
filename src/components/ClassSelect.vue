@@ -2,6 +2,13 @@
 <template>
   <div class="modal">
     <div class="class-select">
+<div class="journey-prompt">
+  {{ journeyOne }} <span style="color: darkblue; font-weight: 400;">{{ formattedStart }}</span>.
+  {{ journeyTwo }} <span style="color: darkred; font-weight: 400;">{{ formattedTarget }}</span>.
+  {{ journeyThree }}
+</div>
+
+
       <h2>Who Are You?</h2>
       <input v-model="name" placeholder="Enter your name" class="name-input" />
       <h2>Select Your Class</h2>
@@ -16,11 +23,23 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { classes } from "@/utils/classes";
+import prompts from "@/assets/data/prompts.json";
+import { fetchWikipediaArticle } from "@/utils/wikipediaApi";
 
 const name = ref("");
 const emit = defineEmits(["select"]);
+
+const journeyOne = ref("");
+const journeyTwo = ref("");
+const journeyThree = ref("");
+
+const props = defineProps({
+  articleTitle: String,
+  start: String,
+  targets: String,
+});
 
 function selectClass(classKey) {
   if (!name.value.trim()) {
@@ -30,6 +49,31 @@ function selectClass(classKey) {
 
   emit("select", { classKey, name: name.value.trim() });
 }
+
+function loadRandomPrompt() {
+  const randomIndex = Math.floor(Math.random() * prompts.length);
+  const prompt = prompts[randomIndex];
+  journeyOne.value = prompt["journey-one"];
+  journeyTwo.value = prompt["journey-two"];
+  journeyThree.value = prompt["journey-three"];
+}
+
+const formattedTitle = computed(() => props.articleTitle.replaceAll("_", " "));
+
+const formattedStart = computed(
+  () => props.start?.toString().replaceAll("_", " ") ?? ""
+);
+
+const formattedTarget = computed(
+  () => props.targets?.toString().replaceAll("_", " ") ?? ""
+);
+const load = async () => {
+  articleHtml.value = await fetchWikipediaArticle(props.articleTitle);
+};
+
+onMounted(() => {
+  loadRandomPrompt();
+});
 </script>
 
 <style scoped>
@@ -96,6 +140,12 @@ button {
 button:hover {
   color: rgb(28, 128, 158);
   cursor: pointer;
+}
+
+.journey-prompt p {
+  margin: 0.25rem 0;
+  font-style: italic;
+  color: #555;
 }
 
 @keyframes pop-in {

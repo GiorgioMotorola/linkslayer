@@ -1,5 +1,6 @@
 [
   {
+    "id": "lore_001",
     "text": "Etched into a cave wall: 'Beware the one-eyed owl who guards the dusk.",
     "options": [
       {
@@ -25,6 +26,7 @@
     ]
   },
   {
+    "id": "lore_002",
     "text": "There is what looks like a deep, dark pit about 10 feet ahead of you. As you step closer, you can hear the sound of rustling.",
     "options": [
       {
@@ -50,6 +52,7 @@
     ]
   },
   {
+    "id": "lore_003",
     "text": "There is a glowing herb sprouting from a crack in the rock.",
     "options": [
       {
@@ -77,6 +80,7 @@
     ]
   },
   {
+    "id": "lore_004",
     "text": "You have reached a smooth rock overlooking the forest ahead.",
     "options": [
       {
@@ -103,6 +107,7 @@
     ]
   },
   {
+    "id": "lore_005",
     "text": "There is a large clearing in the forest that leads to a small lake where the suns light dances endlessly. There is a small glowing artifact sticking out of the rocks and sand. It seems to shake harder the closer it is to a weapon... ",
     "options": [
       {
@@ -129,6 +134,7 @@
     ]
   },
   {
+    "id": "lore_006",
     "text": "You find a pile of steel, an anvil and a kiln all under a lean-to. It appears to be an old Blacksmithing site that has since been abandoned. Everything under the lean-to seems to still be in working order. ",
     "options": [
       {
@@ -155,6 +161,7 @@
     ]
   },
   {
+    "id": "lore_007",
     "text": "You reach a vending machine with the branding 'Uncle Junior's Weapon Upgrades'. It appears it doesn't take any currency and just asks you to place your weapon on it's shelf and press 'upgrade'.",
     "options": [
       {
@@ -180,6 +187,7 @@
     ]
   },
   {
+    "id": "lore_008",
     "text": "You come across a treasure chest. The lock appears to be busted.",
     "options": [
       {
@@ -207,6 +215,7 @@
     ]
   },
   {
+    "id": "lore_009",
     "text": "You see a very large statue in a clearing. It appears to be thousands of years old. It is surrounded by ruined rock and structures that have seen better days. The statue appears to be in decent shape and has not succumb to the elements. Approaching the statue, you can see a plaque. Written on the plaque is the following: 'To our leader in laughter, Norm. What is green and has wheels?' The plague appears to ask a question.",
     "options": [
       {
@@ -234,6 +243,7 @@
     ]
   },
   {
+    "id": "lore_010",
     "text": "There is a sturdy bridge ahead of you. The bridge may be short but it appears the bridge is made up of squares. Each square a different color. The first four squares are colored Red, White, Green and Blue. Each square has 'Currents murmur my name, the daylight wears my face, sorrow drapes itself in my hue, and I wait beneath your next footfall.' written on them respectively.",
     "options": [
       {
@@ -259,6 +269,7 @@
     ]
   },
   {
+    "id": "lore_011",
     "text": "There is a sturdy bridge ahead of you. The bridge may be short but it appears the bridge is made up of squares. These squares have arrows pointing North, South, East and West. The squares have written on them 'You’ll want warmth upon the road to me, The faithful star holds my name, The sky stretches on with my voice, And I lie just ahead, beneath your next step.'",
     "options": [
       {

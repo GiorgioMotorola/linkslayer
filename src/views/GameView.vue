@@ -1,5 +1,13 @@
 <template>
-  <ClassSelect v-if="!playerClass" @select="handleClassSelection" />
+  <ClassSelect
+    v-if="!playerClass"
+    @select="handleClassSelection"
+    :articleTitle="current"
+    :start="chain[0]"
+    :targets="chain[chain.length - 1]"
+    :formattedStart="formattedStart"
+    :formattedTitle="formattedTitle"
+  />
   <div>
     <Header
       :start="chain[currentTargetIndex]"
@@ -78,6 +86,8 @@ const weaponBonus = ref(0);
 const enemyTripped = ref(false);
 const enemyStatusEffects = ref([]);
 const enemyIsStunned = ref(false);
+const seenLoreEncounters = ref([]);
+const seenNPCEncounters = ref([]);
 
 const inEncounter = computed(() => {
   const e = encounter.value;
@@ -145,14 +155,19 @@ function handleClick(title) {
       let fullEncounter = null;
 
       if (roll.type === "npc") {
-        const npc =
-          friendlyEncounters[
-            Math.floor(Math.random() * friendlyEncounters.length)
-          ];
-        if (!npc) {
-          console.warn("No NPC available for encounter");
+        const availableNPCs = friendlyEncounters.filter(
+          (npc) => !seenNPCEncounters.value.includes(npc.id)
+        );
+
+        if (availableNPCs.length === 0) {
+          console.warn("All NPCs seen");
           return;
         }
+
+        const npc =
+          availableNPCs[Math.floor(Math.random() * availableNPCs.length)];
+        seenNPCEncounters.value.push(npc.id);
+
         fullEncounter = { type: "npc", npc };
         encounterMessage.value = npc.greeting;
         log(`${npc.greeting}`);

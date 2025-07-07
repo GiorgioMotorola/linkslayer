@@ -1,5 +1,6 @@
 [
   {
+    "id": "npc_001",
     "name": "Old Man Flynn",
     "greeting": "OLD MAN FLYNN: Did you know They Know?",
     "options": [
@@ -27,6 +28,7 @@
     ]
   },
   {
+    "id": "npc_002",
     "name": "Smith the Blacksmith",
     "greeting": "SMITH THE BLACKSMITH: Hello.",
     "options": [
@@ -44,6 +46,7 @@
     ]
   },
   {
+    "id": "npc_003",
     "name": "Old Guy Accardi",
     "greeting": "OLD GUY ACCARDI: Have you seen my dog? His name is Artie. Honestly, he’ll eat any food. He even eats the tops of strawberries. Also, he likes two clicks at the same time.",
     "options": [
@@ -61,6 +64,7 @@
     ]
   },
   {
+    "id": "npc_004",
     "name": "TJ the Golden",
     "greeting": "TJ THE GOLDEN: Take a seat, will ya? I am cracking beers and listening to Steely Dan.",
     "options": [
@@ -78,6 +82,7 @@
     ]
   },
   {
+    "id": "npc_005",
     "name": "Fairwyn  the Tongueless",
     "greeting": "FAIRWYN THE TOUGUELESS: oouu eeeahh ouu! eerrr eh ah eehahee!!!",
     "options": [
@@ -94,6 +99,7 @@
     ]
   },
   {
+    "id": "npc_006",
     "name": "Evil Tom",
     "greeting": "EVIL TOM: My name is Evil Tom. I'm a really nice guy, 😃 ",
     "options": [
@@ -110,6 +116,7 @@
     ]
   },
   {
+    "id": "npc_007",
     "name": "Suttree The Old Mage",
     "greeting": "SUTTREE THE OLD MAGE: You look tired, traveler. Care for some arcane tea?",
     "options": [
@@ -128,6 +135,7 @@
     ]
   },
   {
+    "id": "npc_008",
     "name": "Daniel the Map Seller",
     "greeting": "DANIEL THE MAP SELLER: I sell maps. Not much else.",
     "options": [
@@ -146,6 +154,7 @@
     ]
   },
   {
+    "id": "npc_009",
     "name": "The Lost Bartender",
     "greeting": "THE LOST BARTENDER: THE Howdy, sir. How has your journey been? Never mind, forget I asked. Asking a man a question is the biggest true form of weakness and I have been known to be a strong guy. Here, have a rip of this swill, won't you? I also have knives and guns and bullets you can drink if you want to.",
     "options": [
@@ -168,6 +177,7 @@
     ]
   },
   {
+    "id": "npc_010",
     "name": "Ron Von Zarovich",
     "greeting": "RON VON ZAROVICH: Bobby Lasagna is not to be trusted. I would sooner trust Strahd Von Zarovich over Bobby L. She lives in a hut and she killed my friend who turned into a T-Rex once.",
     "options": [
@@ -190,6 +200,7 @@
     ]
   },
   {
+    "id": "npc_011",
     "name": "Miss Riddlesworth",
     "greeting": "MISS RIDDLESWORTH: You see me once in a minute, twice in a moment, but never in a thousand years. What am I?",
     "options": [
@@ -217,6 +228,7 @@
     ]
   },
   {
+    "id": "npc_012",
     "name": "Mr Riddlesworth",
     "greeting": "MR RIDDLESWORTH: I build up castles, I tear down mountains. I make some men blind, I help others to see. What am I?",
     "options": [

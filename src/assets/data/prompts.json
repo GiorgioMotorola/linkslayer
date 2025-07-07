@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "journey-one": "Your adventure begins in a tavern. The tavern is called ",
+    "journey-two": "The barkeep is talking about a distant land where a dragon lives. The land is called ",
+    "journey-three": "The dragon hoards gold and treasures beyond your wildest dreams..."
+  },
+    {
+    "id": 2,
+    "journey-one": "You awake in a jail in the city of ",
+    "journey-two": "The warden decides you have spent enough time in the jail and releases you, under one condition: you travel to the city of ",
+    "journey-three": "His sister lives there and he would like you to deliver a letter to her. He advises you not to read the letter."
+  }
+]
