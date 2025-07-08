@@ -52,7 +52,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
+import {
+  ref,
+  computed,
+  onMounted,
+  onBeforeUnmount,
+  watch,
+  nextTick,
+} from "vue";
 import { getTodayChain } from "@/utils/dailyPair";
 import ArticleViewer from "@/components/ArticleViewer.vue";
 import Header from "@/components/Header.vue";
@@ -88,6 +95,15 @@ const enemyStatusEffects = ref([]);
 const enemyIsStunned = ref(false);
 const seenLoreEncounters = ref([]);
 const seenNPCEncounters = ref([]);
+const BOSS_TYPES = ["Dragon", "Lich", "Vampire"];
+const bossDefeated = ref(false);
+const bossSpawned = ref(false);
+const bossName = computed(() => {
+  const suffix = selectedBossType.value;
+  return `${formattedTitle.value} ${suffix}`;
+});
+const BOSS_HP = 50;
+const selectedBossType = ref("");
 
 const inEncounter = computed(() => {
   const e = encounter.value;
@@ -128,9 +144,9 @@ const formattedTimer = computed(() => {
   )}`;
 });
 
-const isGameComplete = computed(
-  () => current.value === chain[chain.length - 1]
-);
+const isGameComplete = computed(() => {
+  return current.value === chain[chain.length - 1] && bossDefeated.value;
+});
 
 function handleClick(title) {
   console.log(
@@ -142,11 +158,10 @@ function handleClick(title) {
   if (inEncounter.value) return;
   log(`📍 ARTICLE: ${title}`);
 
+  const isFinalArticle = title === chain[chain.length - 1];
   current.value = title;
   clickCount.value++;
   path.value.push(title);
-
-  const isFinalArticle = title === chain[chain.length - 1];
 
   if (!isFinalArticle && clickCount.value % 2 === 0) {
     const chance = Math.random();
@@ -204,7 +219,29 @@ function handleClick(title) {
   }
 
   if (isFinalArticle) {
-    clearInterval(timerInterval);
+    if (!bossSpawned.value && !bossDefeated.value) {
+      // Choose random boss type
+      selectedBossType.value =
+        BOSS_TYPES[Math.floor(Math.random() * BOSS_TYPES.length)];
+
+      // Spawn boss
+      encounter.value = {
+        type: "combat",
+        enemy: bossName.value,
+      };
+      enemyHP.value = BOSS_HP;
+      encounterMessage.value = `💀 A terrifying ${bossName.value} rises to defend ${formattedTitle}. Time to roll some true damage.`;
+
+      nextEnemyAttack.value = Math.floor(Math.random() * 10) + 12;
+      enemyNextAction.value = "attack";
+
+      bossSpawned.value = true;
+      return; // Prevent immediate win
+    }
+
+    if (bossDefeated.value) {
+      clearInterval(timerInterval);
+    }
   }
 
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -219,6 +256,25 @@ function handleCombatAction(playerAction) {
 
   let playerDamage = 0;
   let enemyTakesDamage = 0;
+
+  // Always calculate player attack damage if player chose attack
+  if (playerAction === "attack") {
+    let randomDamage = Math.floor(Math.random() * 5) + 2;
+
+    if (playerClass.value.name === "Fighter") randomDamage += 1;
+    if (playerClass.value.name === "Rogue" && Math.random() < 0.25) {
+      randomDamage += 3;
+      log(
+        `<span class="player-name">${playerName.value}</span> lands a critical strike`
+      );
+    }
+
+    if (weaponBonus.value > 0) {
+      randomDamage += weaponBonus.value;
+    }
+
+    enemyTakesDamage = randomDamage;
+  }
 
   if (playerAction === "special") {
     if (specialUsesLeft.value <= 0) {
@@ -308,10 +364,18 @@ function handleCombatAction(playerAction) {
       log(
         `💀 <span class="player-name">${playerName.value}</span> has defeated ${formattedTitle.value}`
       );
+      if (encounter.value?.enemy === bossName.value) {
+        markBossDefeated();
+      }
+
       encounter.value = null;
       handleLootDrop();
       return;
     }
+
+    nextTick(() => {
+      current.value = current.value + "";
+    });
 
     gotoEnemyTurn();
     return;
@@ -343,8 +407,12 @@ function handleCombatAction(playerAction) {
 
     if (enemyHP.value <= 0) {
       log(`${playerName.value} defeated ${formattedTitle.value}`);
-      handleLootDrop();
+      if (encounter.value?.enemy === bossName.value) {
+        markBossDefeated();
+      }
+
       encounter.value = null;
+      handleLootDrop();
       return;
     }
 
@@ -355,29 +423,7 @@ function handleCombatAction(playerAction) {
   if (enemyAction === "attack") {
     log(`${formattedTitle.value} used: ${enemyAction}`);
 
-    if (playerAction === "attack") {
-      playerDamage = enemyDamage;
-
-      let randomDamage = Math.floor(Math.random() * 5) + 2;
-
-      if (playerClass.value.name === "Fighter") randomDamage += 1;
-      if (playerClass.value.name === "Rogue" && Math.random() < 0.25) {
-        randomDamage += 3;
-        log(
-          `<span class="player-name">${playerName.value}</span> lands a critical strike`
-        );
-      }
-
-      if (weaponBonus.value > 0) {
-        randomDamage += weaponBonus.value;
-      }
-
-      enemyTakesDamage = randomDamage;
-
-      log(
-        `🗡️ <span class="player-name">${playerName.value}</span> and ${formattedTitle.value} clash. <span class="player-name">${playerName.value}</span> takes ${playerDamage} damage. ${formattedTitle.value} takes ${enemyTakesDamage} damage.`
-      );
-    }
+    playerDamage = enemyDamage;
 
     const bleedChance = 0.1;
     const stunChance = 0.1;
@@ -399,6 +445,13 @@ function handleCombatAction(playerAction) {
         `🛡️ <span class="player-name">${playerName.value}</span> blocks. ${formattedTitle.value} hits for ${playerDamage}`
       );
     } else if (playerAction === "flee") {
+      if (encounter.value?.enemy === bossName.value) {
+        log(
+          `❌ You cannot flee from ${bossName.value}. This battle must be fought to the death!`
+        );
+        return;
+      }
+
       const success = Math.random() > 0.4;
       if (success) {
         log(
@@ -446,6 +499,12 @@ function handleCombatAction(playerAction) {
     log(`${playerName.value} fled`);
     encounter.value = null;
     return;
+  }
+
+  if (playerAction === "attack" && enemyTakesDamage > 0) {
+    log(
+      `🗡️ <span class="player-name">${playerName.value}</span> hits ${formattedTitle.value} for ${enemyTakesDamage} damage.`
+    );
   }
 
   playerHP.value -= playerDamage;
@@ -505,8 +564,16 @@ function gotoEnemyTurn() {
   } else {
     const action = decideEnemyAction();
     enemyNextAction.value = action;
-    nextEnemyAttack.value =
-      action === "attack" ? Math.floor(Math.random() * 3) + 1 : null;
+
+    if (action === "attack") {
+      // Check if it's a boss and assign stronger attack
+      const isBoss = encounter.value?.enemy === bossName.value;
+      nextEnemyAttack.value = isBoss
+        ? Math.floor(Math.random() * 6) + 3
+        : Math.floor(Math.random() * 3) + 1; 
+    } else {
+      nextEnemyAttack.value = null;
+    }
   }
   logEnemyAction();
 }
@@ -522,7 +589,13 @@ function log(message) {
 }
 
 function decideEnemyAction() {
-  if (enemyHP.value <= 5 && Math.random() < 0.02) return "flee";
+  if (
+    encounter.value?.enemy !== bossName.value &&
+    enemyHP.value <= 5 &&
+    Math.random() < 0.02
+  ) {
+    return "flee";
+  }
   if (Math.random() < 0.2) return "defend";
   return "attack";
 }
@@ -549,8 +622,11 @@ function logEnemyAction() {
 }
 
 function handleCloseEncounter() {
-  console.log("[handleCloseEncounter] clearing encounter");
   encounter.value = null;
+
+  if (bossDefeated.value) {
+    current.value = chain[chain.length - 1];
+  }
 
   const lastTitle = path.value[path.value.length - 1];
   if (lastTitle === chain[currentTargetIndex.value + 1]) {
@@ -667,7 +743,7 @@ function handleLootDrop() {
         playerClass.value.maxHP
       );
       log(
-        `🍎 <span class="player-name">${playerName.value}</span> loots +${amount} HP!`
+        F`🍎 <span class="player-name">${playerName.value}</span> loots +${amount} HP!`
       );
       break;
     }
@@ -688,6 +764,12 @@ function handleLootDrop() {
       break;
     }
   }
+}
+
+function markBossDefeated() {
+  bossDefeated.value = true;
+  current.value = chain[chain.length - 1];
+  clearInterval(timerInterval);
 }
 
 onMounted(() => {
