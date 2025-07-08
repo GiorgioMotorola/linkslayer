@@ -100,7 +100,7 @@ const bossDefeated = ref(false);
 const bossSpawned = ref(false);
 const bossName = computed(() => {
   const suffix = selectedBossType.value;
-  return `${formattedTitle.value} ${suffix}`;
+  return `${suffix}`;
 });
 const BOSS_HP = 50;
 const selectedBossType = ref("");
