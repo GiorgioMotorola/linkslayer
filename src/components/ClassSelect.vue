@@ -3,8 +3,8 @@
   <div class="modal">
     <div class="class-select">
 <div class="journey-prompt">
-  {{ journeyOne }} <span style="color: darkblue; font-weight: 400;">{{ formattedStart }}</span>.
-  {{ journeyTwo }} <span style="color: darkred; font-weight: 400;">{{ formattedTarget }}</span>.
+  {{ journeyOne }} <span style="color: darkblue; font-weight: 400;">{{ formattedStart }}</span>
+  {{ journeyTwo }} <span style="color: darkred; font-weight: 400;">{{ formattedTarget }}</span>
   {{ journeyThree }}
 </div>
 
@@ -89,8 +89,9 @@ onMounted(() => {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+    padding-top: 7vh; 
   z-index: 1000;
 }
 

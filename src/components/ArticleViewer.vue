@@ -36,7 +36,18 @@ const formattedTarget = computed(
 );
 
 const load = async () => {
-  articleHtml.value = await fetchWikipediaArticle(props.articleTitle);
+if (!props.articleTitle || props.articleTitle.trim() === "") {
+  console.warn("ArticleViewer tried to fetch an empty title.");
+  return;
+}
+
+
+  try {
+    articleHtml.value = await fetchWikipediaArticle(props.articleTitle);
+  } catch (err) {
+    console.error("🛑 Error loading article:", err);
+    articleHtml.value = `<p style="color:red;">Error loading article: ${props.articleTitle}</p>`;
+  }
 };
 
 const handleLinkClick = (event) => {

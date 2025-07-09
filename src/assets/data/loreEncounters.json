@@ -295,5 +295,31 @@
         "responseText": "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage"
       }
     ]
+  },
+    {
+    "id": "lore_012",
+    "text": "There is a crate in front of you that appears to have a series of wires that loop around the outside and feed into the inside. A note sits beside the crate that says 'CAUTION: do NOT cut the Red wire!'.",
+    "options": [
+      {
+        "text": "Cut the Red Wire",
+        "responseText": "The crate explodes and throws you back 50 feet. Following directions appears to be your weak suit.",
+        "result": "damage-major"
+      },
+      {
+        "text": "Cut the Green Wire",
+        "result": "health",
+        "responseText": "The crate whirrs a low tone and then immediately opens up, all 4 sides collapsing the ground. A bushel of peanuts is revealed. "
+      },
+      {
+        "text": "Cut All of the Wires",
+        "result": "damage-major",
+        "responseText": "You cut the Blue Wire and nothing happens. You cut the Green Wire and the crate starts emitting a loud whirring sound. You panic and cut the Red Wire and the crate explodes and throws you back 50 feet. Impatience isn't a virtue."
+      },
+      {
+        "text": "Cut the Blue Wire",
+        "result": "none",
+        "responseText": "Nothing Happens."
+      }
+    ]
   }
 ]

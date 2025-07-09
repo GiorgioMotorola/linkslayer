@@ -42,6 +42,13 @@
       :targets="chain"
     />
 
+    <DefeatModal
+      v-if="defeated"
+      :clicks="clickCount"
+      :path="path"
+      :timer="formattedTimer"
+    />
+
     <ArticleViewer
       :articleTitle="current"
       :start="chain[0]"
@@ -71,10 +78,19 @@ import { generateEnemy } from "@/utils/encounterGenerator";
 import friendlyEncounters from "@/assets/data/friendlyEncounters.json";
 import loreEncounters from "@/assets/data/loreEncounters.json";
 import { STATUS_EFFECTS } from "@/utils/statusEffects";
+import DefeatModal from "@/components/DefeatModal.vue";
 
 const chain = getTodayChain();
-const currentTargetIndex = ref(0);
 const current = ref(chain[0]);
+
+const formattedStart = computed(() => chain[0]?.replaceAll("_", " ") ?? "");
+const formattedTitle = computed(
+  () => current.value?.replaceAll("_", " ") ?? ""
+);
+
+const isGameOver = computed(() => playerHP.value <= 0);
+const defeated = ref(false);
+const currentTargetIndex = ref(0);
 const clickCount = ref(0);
 const path = ref([current.value]);
 const encounter = ref(null);
@@ -131,6 +147,16 @@ const inEncounter = computed(() => {
 watch(encounter, (newVal) => {
   console.log("[watch:encounter] changed to:", JSON.stringify(newVal, null, 2));
 });
+
+watch(playerHP, (newVal) => {
+  if (newVal <= 0 && !defeated.value) {
+    log(`💀 <span class="player-name">${playerName.value}</span> was defeated!`);
+    defeated.value = true;
+    clearInterval(timerInterval);
+    encounter.value = null;
+  }
+});
+
 
 const timer = ref(0);
 let timerInterval;
@@ -247,9 +273,6 @@ function handleClick(title) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-const formattedTitle = computed(
-  () => current.value?.replaceAll("_", " ") ?? ""
-);
 function handleCombatAction(playerAction) {
   const enemyAction = enemyNextAction.value;
   const enemyDamage = nextEnemyAttack.value ?? 1;
@@ -515,6 +538,8 @@ function handleCombatAction(playerAction) {
       `💀 <span class="player-name">${playerName.value}</span> was defeated!`
     );
     encounter.value = null;
+    clearInterval(timerInterval);
+    defeated.value = true;
     return;
   }
 
@@ -570,7 +595,7 @@ function gotoEnemyTurn() {
       const isBoss = encounter.value?.enemy === bossName.value;
       nextEnemyAttack.value = isBoss
         ? Math.floor(Math.random() * 6) + 3
-        : Math.floor(Math.random() * 3) + 1; 
+        : Math.floor(Math.random() * 3) + 1;
     } else {
       nextEnemyAttack.value = null;
     }
@@ -693,6 +718,13 @@ function handleEncounterOption(option) {
     playerHP.value = Math.max(playerHP.value - 1, 0);
     log(
       `🎲 <span class="player-name">${playerName.value}</span> took 1 damage!`
+    );
+  }
+
+    if (option.result === "damage-major") {
+    playerHP.value = Math.max(playerHP.value - 50, 0);
+    log(
+      `🎲 <span class="player-name">${playerName.value}</span> took 50 damage!`
     );
   }
 

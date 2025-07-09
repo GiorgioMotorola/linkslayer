@@ -2,13 +2,25 @@
   {
     "id": 1,
     "journey-one": "Your adventure begins in a tavern. The tavern is called ",
-    "journey-two": "The barkeep is talking about a distant land where a dragon lives. The land is called ",
-    "journey-three": "The dragon hoards gold and treasures beyond your wildest dreams..."
+    "journey-two": ". The barkeep is talking about a distant land where a dragon lives. The land is called ",
+    "journey-three": ". The dragon hoards gold and treasures beyond your wildest dreams..."
   },
     {
     "id": 2,
     "journey-one": "You awake in a jail in the city of ",
-    "journey-two": "The warden decides you have spent enough time in the jail and releases you, under one condition: you travel to the city of ",
-    "journey-three": "His sister lives there and he would like you to deliver a letter to her. He advises you not to read the letter."
+    "journey-two": ". The warden decides you have spent enough time in the jail and releases you, under one condition: you travel to the city of ",
+    "journey-three": ". His sister lives there and he would like you to deliver a letter to her. He advises you not to read the letter."
+  },
+      {
+    "id": 3,
+    "journey-one": "You stand on the S.S. ",
+    "journey-two": ". Holding a map leading to",
+    "journey-three": ", you prepare to start your journey back home. You have heard these lands have changed a lot. You have heard of the new dangers that present themselves."
+  },
+        {
+    "id": 4,
+    "journey-one": "You are an independent game hunter who lives in the small village called ",
+    "journey-two": ". You have been contracted to hunt down the monster that is terrorizing the city of ",
+    "journey-three": ". This will be your largest game yet and you would be lying to yourself if you aren't concerned of the dangers ahead but the price for killing the monster is too high not to take the offer."
   }
 ]
