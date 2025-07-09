@@ -52,7 +52,7 @@ export function getTodayChain() {
     "2025-07-07": ["Response_to_sneezing", "Universal_Studios_Florida"],
     "2025-07-08": ["T-shirt", "Shirt"],
     "2025-07-09": ["T-shirt", "Shirt"],
-    "2025-07-10": ["", "", ""],
+    "2025-07-10": ["Kentucky_Bend", "Antarctica",],
     "2025-07-11": ["", "", ""],
     "2025-07-12": ["", "", ""],
     "2025-07-13": ["", "", ""],

@@ -42,6 +42,16 @@
         "text": "YOU: Hello?",
         "result": "none",
         "responseText": "SMITH THE BLACKSMITH: Howdy."
+      },
+      {
+        "text": "YOU: Hello.",
+        "result": "none",
+        "responseText": "SMITH THE BLACKSMITH: Howdy."
+      },
+      {
+        "text": "YOU: Hi.",
+        "result": "none",
+        "responseText": "SMITH THE BLACKSMITH: Howdy."
       }
     ]
   },
@@ -60,6 +70,17 @@
         "text": "Ignore him and walk away",
         "result": "none",
         "responseText": "You nod politely and keep moving. You feel guilt because you DID in fact see Artie a few clicks ago. I hope you lose sleep."
+      },
+      {
+        "text": "More like Fartie heh.",
+        "result": "combat",
+        "responseText": "Old Guy Accardi's smile turns to a deep and anrgy scowl. He says 'You're going to eat those words', makes a ton of noise to attract unwanted attention and then throws a smoke bomb at his feet. He is now gone and in his place, is something ready to kill you."
+      },
+      {
+        "text": "I have not seen him but if I do, i'll run back here and let you know.",
+        "result": "item",
+        "details": "health",
+        "responseText": "OLD GUY ACCARDI: That's what's up. Thanks for telling me. As a reward, here is some chicken I grilled."
       }
     ]
   },
@@ -78,12 +99,23 @@
         "text": "YOU: No Thanks, I only like to Imagine the Dragon I am going to fight later",
         "result": "none",
         "responseText": "TJ THE GOLDEN: Alright. Suit yourself, padre."
+      },
+      {
+        "text": "YOU: No Thanks, I have no time to learn the work the Saxophone.",
+        "result": "none",
+        "responseText": "TJ THE GOLDEN: They got a name for the winners in the world. I hope you have a name for when you lose."
+      },
+      {
+        "text": "YOU: Hell yeah I'd have a beer.",
+        "result": "item",
+        "details": "health",
+        "responseText": "Your mind and body are restored by a fathers kindness and you gain +5 HP."
       }
     ]
   },
   {
     "id": "npc_005",
-    "name": "Fairwyn  the Tongueless",
+    "name": "Fairwyn the Tongueless",
     "greeting": "FAIRWYN THE TOUGUELESS: oouu eeeahh ouu! eerrr eh ah eehahee!!!",
     "options": [
       {
@@ -95,6 +127,17 @@
         "text": "YOU: Out of the way, peck!",
         "result": "damage",
         "responseText": "You should have listened. An enemy appears, hits you with it's claws and runs away. You take damage."
+      },
+      {
+        "text": "YOU: What",
+        "result": "damage",
+        "responseText": "You should have listened. An enemy appears, hits you with it's claws and runs away. You take damage."
+      },
+      {
+        "text": "YOU: I believe you with all of my soul even if I didn't understand what you said.",
+        "result": "item",
+        "details": "health",
+        "responseText": "You must have rested well last night because you knew what he meant before his tongueless mouth started flapping. You take your weapon and dig it into the enemies skull, immediately dropping it back into the hell it came from. and you gain +5 HP."
       }
     ]
   },
@@ -112,6 +155,17 @@
         "text": "YOU: Right On",
         "result": "damage",
         "responseText": "Evil Tom sneezes and vanishes in a puff of smoke, leaving only a pair of old Crocs. The crocs hurt to look at and deal 5 damage."
+      },
+      {
+        "text": "YOU: For sure.",
+        "result": "damage",
+        "responseText": "Evil Tom coughs so hard he accidentally punches you in the fase and you take 5 damage."
+      },
+      {
+        "text": "YOU: You should change your name to Nice Tom then.",
+        "result": "item",
+        "details": "health",
+        "responseText": "EVIL TOM: Thank you. There is a lack of kindness in this world and its nice to meet someone who is counter to the culture. Here is some fresh bread."
       }
     ]
   },
@@ -131,6 +185,16 @@
         "text": "Decline politely",
         "responseText": "You nod respectfully and continue on your way.",
         "result": "none"
+      },
+      {
+        "text": "Decline rudely",
+        "responseText": "You nod disrespecfully and continue on your way.",
+        "result": "none"
+      },
+      {
+        "text": "Out of distrust of the world you live in, punch the Old Mage in the face. ",
+        "result": "damage-minor",
+        "responseText": "The Mage doesn't seem to move or appear affected to your attack. However, your fist now aches. You move on awkwardly losing -1 damage."
       }
     ]
   },
@@ -251,6 +315,59 @@
         "text": "YOU: Gold",
         "result": "none",
         "responseText": "MR RIDDLESWORTH: Wrong!"
+      }
+    ]
+  },
+  {
+    "id": "npc_012",
+    "name": "The Scroll Dealer",
+    "greeting": "THE SCROLL DEALER: If you're tired of looking at the same rocks and trees, then I may have a scroll for you...",
+    "options": [
+      { "text": "Lonesome Doug", "routeTitle": "The_X-Files" },
+      {
+        "text": "No! Country For Old Men!",
+        "routeTitle": "Response_to_sneezing"
+      },
+      {
+        "text": "The Da Vinki Code",
+        "routeTitle": "List_of_tautological_place_names"
+      },
+      { "text": "Gullible's Travels", "routeTitle": "Rabbit_Hash,_Kentucky" },
+      {
+        "text": "YOU: No, thank you.",
+        "result": "none",
+        "responseText": "THE SCROLL DEALER: Be careful out there..."
+      }
+    ]
+  },
+  {
+    "id": "npc_013",
+    "name": "Lord Bruenor Battlehammer",
+    "greeting": "Lord BRUENOR BATTLEHAMMER: Good sir, I am Lord Bruenor Battlehammer, Lord of these lands and heir of King Bort Battlehammer. I confess I am lost. I understand being lost and a Lord of this land seems like something a crazy begger would say but I impore you I am telling the truth! You seem like you know these lands better than most. Please, tell me which direction would be Castle Battlehammer?",
+    "options": [
+      {
+        "text": "YOU: My Lord, go past those bushes over there and through the clearing. You will be able to see your castle in the distance.",
+        "result": "item",
+        "details": "health",
+        "responseText": "Lord BRUENOR BATTLEHAMMER: Thank you my dear friend. Come visit me any time and we will dine on the flesh of wheat fields!"
+      },
+      {
+        "text": "YOU: This path will lead you there safely. You will just have to head the other direction, My Lord.",
+        "responseText": "Lord BRUENOR BATTLEHAMMER: Thank you my dear friend. Come visit me any time and I will show you how to harness the power of your highest ability!",
+        "result": "special",
+        "details": "recover",
+        "amount": 1
+      },
+      {
+        "text": "YOU: These things happen, My Lord. However, I seem to be just as lost as you are, sadly.",
+        "result": "item",
+        "details": "weapon",
+        "responseText": "Lord BRUENOR BATTLEHAMMER: Thank you my dear friend. Come visit me any time and we will improve that sword of yours!"
+      },
+      {
+        "text": "You distrust the raving madman. Why would a Lord of the lands be lost? You decide to attack the lunatic with your weapon.",
+        "routeTitle": "Prison",
+        "responseText": "It seems he was telling the truth. Off to jail you go, I suppose."
       }
     ]
   }

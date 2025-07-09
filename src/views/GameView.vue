@@ -761,6 +761,22 @@ function handleEncounterOption(option) {
     );
   }
 
+if (option.routeTitle) {
+  log(`📚 You choose: ${option.text}`);
+  current.value = option.routeTitle;
+  path.value.push(option.routeTitle);
+  clickCount.value++;
+
+  encounter.value = null;
+
+  if (option.routeTitle === chain[currentTargetIndex.value + 1]) {
+    currentTargetIndex.value++;
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  return;
+}
+
   encounter.value = null;
 }
 
