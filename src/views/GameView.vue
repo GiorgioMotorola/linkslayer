@@ -189,56 +189,64 @@ function handleClick(title) {
   clickCount.value++;
   path.value.push(title);
 
-  if (!isFinalArticle && clickCount.value % 2 === 0) {
-    const chance = Math.random();
-    if (chance < 0.5) {
-      const roll = rollEncounter();
-      let fullEncounter = null;
+if (!isFinalArticle && clickCount.value % 2 === 0) {
+  const chance = Math.random();
+  if (chance < 0.5) {
+    const roll = rollEncounter();
+    let fullEncounter = null;
 
-      if (roll.type === "npc") {
-        const availableNPCs = friendlyEncounters.filter(
-          (npc) => !seenNPCEncounters.value.includes(npc.id)
-        );
+    if (roll.type === "npc") {
+      const availableNPCs = friendlyEncounters.filter(
+        (npc) => !seenNPCEncounters.value.includes(npc.id)
+      );
 
-        if (availableNPCs.length === 0) {
-          console.warn("All NPCs seen");
-          return;
-        }
-
-        const npc =
-          availableNPCs[Math.floor(Math.random() * availableNPCs.length)];
-        seenNPCEncounters.value.push(npc.id);
-
-        fullEncounter = { type: "npc", npc };
-        encounterMessage.value = npc.greeting;
-        log(`${npc.greeting}`);
-      } else if (roll.type === "lore") {
-        const lore =
-          loreEncounters[Math.floor(Math.random() * loreEncounters.length)];
-        if (!lore) {
-          console.warn("No lore available for encounter");
-          return;
-        }
-        fullEncounter = { type: "lore", lore };
-        encounterMessage.value = lore.text;
-        log(`${lore.text}`);
-      } else if (roll.type === "combat") {
-        const enemy = generateEnemy();
-        if (!enemy) return;
-        enemyHP.value = DEFAULT_ENEMY_HP;
-        fullEncounter = { type: "combat", enemy };
-        encounterMessage.value = `You've been ambushed by a ${enemy}!`;
-
-        nextEnemyAttack.value = Math.floor(Math.random() * 3) + 1;
-        enemyNextAction.value = "attack";
-      }
-
-      if (fullEncounter) {
-        encounter.value = fullEncounter;
+      if (availableNPCs.length === 0) {
+        console.warn("All NPCs seen");
         return;
       }
+
+      const npc =
+        availableNPCs[Math.floor(Math.random() * availableNPCs.length)];
+      seenNPCEncounters.value.push(npc.id);
+
+      fullEncounter = { type: "npc", npc };
+      encounterMessage.value = npc.greeting;
+      log(`${npc.greeting}`);
+    } else if (roll.type === "lore") {
+      const availableLore = loreEncounters.filter(
+        (lore) => !seenLoreEncounters.value.includes(lore.id)
+      );
+
+      if (availableLore.length === 0) {
+        console.warn("All lore seen");
+        return;
+      }
+
+      const lore =
+        availableLore[Math.floor(Math.random() * availableLore.length)];
+      seenLoreEncounters.value.push(lore.id);
+
+      fullEncounter = { type: "lore", lore };
+      encounterMessage.value = lore.text;
+      log(`${lore.text}`);
+    } else if (roll.type === "combat") {
+      const enemy = generateEnemy();
+      if (!enemy) return;
+      enemyHP.value = DEFAULT_ENEMY_HP;
+      fullEncounter = { type: "combat", enemy };
+      encounterMessage.value = `You've been ambushed by a ${enemy}!`;
+
+      nextEnemyAttack.value = Math.floor(Math.random() * 3) + 1;
+      enemyNextAction.value = "attack";
+    }
+
+    if (fullEncounter) {
+      encounter.value = fullEncounter;
+      return;
     }
   }
+}
+
 
   if (title === chain[currentTargetIndex.value + 1]) {
     currentTargetIndex.value++;
@@ -775,7 +783,7 @@ function handleLootDrop() {
         playerClass.value.maxHP
       );
       log(
-        F`🍎 <span class="player-name">${playerName.value}</span> loots +${amount} HP!`
+        `🍎 <span class="player-name">${playerName.value}</span> loots +${amount} HP!`
       );
       break;
     }
