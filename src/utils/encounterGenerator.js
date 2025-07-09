@@ -6,7 +6,7 @@ import npcData from "@/assets/data/friendlyEncounters.json";
 export function rollEncounter() {
   const roll = Math.floor(Math.random() * 20) + 1;
 
-  if (roll <= 1) {
+  if (roll <= 8) {
     // Lore encounter
     const lore = loreData[Math.floor(Math.random() * loreData.length)];
     return {
@@ -15,7 +15,7 @@ export function rollEncounter() {
     };
   }
 
-  if (roll <= 19) {
+  if (roll <= 15) {
     // Friendly NPC encounter
     const npc = npcData[Math.floor(Math.random() * npcData.length)];
     return {
