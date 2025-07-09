@@ -111,7 +111,7 @@ const enemyStatusEffects = ref([]);
 const enemyIsStunned = ref(false);
 const seenLoreEncounters = ref([]);
 const seenNPCEncounters = ref([]);
-const BOSS_TYPES = ["Dragon", "Lich", "Vampire"];
+const BOSS_TYPES = ["Dragon", "Lich", "Vampire", "Giant", "Kraken", "Elder Brain", "Barbed Devil", "Flameskull", "Illithid", "Werewolf", "Banshee"];
 const bossDefeated = ref(false);
 const bossSpawned = ref(false);
 const bossName = computed(() => {

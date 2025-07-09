@@ -32,7 +32,7 @@ export function rollEncounter() {
 }
 
 function generateEnemy() {
-  const enemies = ["Goblin", "Wraith", "Skeleton", "Beast", "Dragon", "Fiend"];
+  const enemies = ["Goblin", "Wraith", "Skeleton", "Fiend", "Elemental", "Ooze", "Undead", "Evil Plant", "Mummy", "Zombie", "Revenant", "Humanoid", "Construct", "Fey"];
   return enemies[Math.floor(Math.random() * enemies.length)];
 }
 
