@@ -38,7 +38,7 @@
             Player HP: {{ playerHP }} &nbsp;&#10074;&nbsp; Enemy HP:
             {{ enemyHP }}
           </div>
-          <p v-if="message" class="encounter-message">{{ message }}</p>
+          <!-- <div v-if="message" class="encounter-message" v-html="message" /> -->
         </div>
 
         <div class="npc" v-else-if="encounter.type === 'npc'">
@@ -184,11 +184,21 @@ watch(
   (newEncounter) => {
     if (!newEncounter) return;
     let fullText = "";
-
     if (newEncounter.type === "combat") {
-      fullText = `🗡️ You've been attacked by <strong>${
-        formattedTitle.value
-      }</strong> ${newEncounter.enemy ?? ""}. What do you do?`;
+      if (newEncounter.enemy?.isBoss) {
+        fullText = `💀 <strong>BOSS ENCOUNTER:</strong> ${
+          newEncounter.enemy.name
+        }!<br><br>${
+          newEncounter.enemy.message || "Prepare for the fight of your life."
+        }`;
+      } else if (newEncounter.enemy?.message) {
+        fullText = newEncounter.enemy.message;
+      } else {
+        fullText = `🗡️ You've been attacked by <strong>${
+          formattedTitle.value
+        }</strong> ${newEncounter.enemy.name ?? ""}. What do you do?`;
+      }
+
       typedLine.value = "";
       emit("log-line", fullText);
     } else if (newEncounter.type === "npc") {
@@ -298,6 +308,7 @@ header {
   padding: 1rem;
   border: 2px solid #000000;
   border-radius: 4px;
+  
 }
 
 .encounter-dashboard {

@@ -23,7 +23,7 @@
       :enemyHP="enemyHP"
       :nextEnemyAttack="nextEnemyAttack"
       :enemyNextAction="enemyNextAction"
-      :message="''"
+      :message="encounterMessage"
       @action="handleCombatAction"
       @option-chosen="handleEncounterOption"
       @close="handleCloseEncounter"
@@ -53,6 +53,7 @@
       :articleTitle="current"
       :start="chain[0]"
       :targets="chain[chain.length - 1]"
+      :inEncounter="inEncounter"
       @link-clicked="handleClick"
     />
   </div>
@@ -79,6 +80,7 @@ import friendlyEncounters from "@/assets/data/friendlyEncounters.json";
 import loreEncounters from "@/assets/data/loreEncounters.json";
 import { STATUS_EFFECTS } from "@/utils/statusEffects";
 import DefeatModal from "@/components/DefeatModal.vue";
+import { getRandomBoss, isBoss } from "@/utils/bossGenerator";
 
 const chain = getTodayChain();
 const current = ref(chain[0]);
@@ -111,27 +113,11 @@ const enemyStatusEffects = ref([]);
 const enemyIsStunned = ref(false);
 const seenLoreEncounters = ref([]);
 const seenNPCEncounters = ref([]);
-const BOSS_TYPES = [
-  "Dragon",
-  "Lich",
-  "Vampire",
-  "Giant",
-  "Kraken",
-  "Elder Brain",
-  "Barbed Devil",
-  "Flameskull",
-  "Illithid",
-  "Werewolf",
-  "Banshee",
-];
-const bossDefeated = ref(false);
-const bossSpawned = ref(false);
-const bossName = computed(() => {
-  const suffix = selectedBossType.value;
-  return `${suffix}`;
-});
+const currentEnemy = ref(null);
 const BOSS_HP = 50;
 const selectedBossType = ref("");
+const bossSpawned = ref(false);
+const bossDefeated = ref(false);
 
 const inEncounter = computed(() => {
   const e = encounter.value;
@@ -223,7 +209,7 @@ function handleClick(title) {
         seenNPCEncounters.value.push(npc.id);
 
         fullEncounter = { type: "npc", npc };
-        encounterMessage.value = npc.greeting;
+        // encounterMessage.value = npc.greeting;
         log(`${npc.greeting}`);
       } else if (roll.type === "lore") {
         const availableLore = loreEncounters.filter(
@@ -240,20 +226,24 @@ function handleClick(title) {
         seenLoreEncounters.value.push(lore.id);
 
         fullEncounter = { type: "lore", lore };
-        encounterMessage.value = lore.text;
+        // encounterMessage.value = lore.text;
         log(`${lore.text}`);
       } else if (roll.type === "combat") {
         const enemy = generateEnemy();
+        enemyHP.value = enemy.currentHP;
+        currentEnemy.value = enemy;
         if (!enemy) return;
-        enemyHP.value = DEFAULT_ENEMY_HP;
         fullEncounter = { type: "combat", enemy };
-        encounterMessage.value = `You've been ambushed by a ${enemy}!`;
+        // encounterMessage.value = `You've been ambushed by a ${enemy}!`;
 
         nextTick(() => {
           logEnemyAction();
         });
 
-        nextEnemyAttack.value = Math.floor(Math.random() * 3) + 1;
+        nextEnemyAttack.value =
+          Math.floor(Math.random() * (enemy.maxDamage - enemy.minDamage + 1)) +
+          enemy.minDamage;
+
         enemyNextAction.value = "attack";
       }
 
@@ -273,17 +263,15 @@ function handleClick(title) {
 
   if (isFinalArticle) {
     if (!bossSpawned.value && !bossDefeated.value) {
-      // Choose random boss type
-      selectedBossType.value =
-        BOSS_TYPES[Math.floor(Math.random() * BOSS_TYPES.length)];
+      const boss = getRandomBoss();
+      selectedBossType.value = boss.type;
 
-      // Spawn boss
       encounter.value = {
         type: "combat",
-        enemy: bossName.value,
+        enemy: boss,
       };
-      enemyHP.value = BOSS_HP;
-      encounterMessage.value = `💀 A terrifying ${bossName.value} rises to defend ${formattedTitle}. Time to roll some true damage.`;
+      enemyHP.value = boss.hp;
+      encounterMessage.value = `💀 A terrifying ${boss.name} rises to defend ${formattedTitle.value}. Time to roll some true damage.`;
 
       nextEnemyAttack.value = Math.floor(Math.random() * 10) + 12;
       enemyNextAction.value = "attack";
@@ -335,7 +323,11 @@ function handleCombatAction(playerAction) {
     }
 
     specialUsesLeft.value--;
-    if (enemyHP.value > 0 && enemyAction === "attack") {
+    if (
+      enemyHP.value > 0 &&
+      enemyAction === "attack" &&
+      playerClass.value.name !== "Rogue"
+    ) {
       playerDamage = enemyDamage;
       playerHP.value -= playerDamage;
 
@@ -408,9 +400,9 @@ function handleCombatAction(playerAction) {
       enemyHP.value = newEnemyHP;
 
       log(
-        `🗡️ <span class="player-name">${playerName.value}</span> executes Backstab. It hits for ${rogueDamage} to ${formattedTitle.value}.`
+        `🗡️ <span class="player-name">${playerName.value}</span> executes Backstab, evading the incoming strike. It hits for ${rogueDamage} to ${formattedTitle.value}.`
       );
-      encounterMessage.value = `🗡️ <span class="player-name">${playerName.value}</span> executes Backstab. It hits for ${rogueDamage} to ${formattedTitle.value}.`;
+      encounterMessage.value = `🗡️ <span class="player-name">${playerName.value}</span> executes Backstab, evading the incoming strike. It hits for ${rogueDamage} to ${formattedTitle.value}.`;
     } else if (playerClass.value.specialEffect) {
       const effect = playerClass.value.specialEffect(
         enemyHP.value,
@@ -429,15 +421,18 @@ function handleCombatAction(playerAction) {
     }
 
     if (enemyHP.value <= 0) {
-      log(
-        `💀 <span class="player-name">${playerName.value}</span> has defeated ${formattedTitle.value}`
-      );
-      if (encounter.value?.enemy === bossName.value) {
-        markBossDefeated();
-      }
+      log(`${playerName.value} defeated ${formattedTitle.value}`);
+
+      // Save enemy name before nullifying encounter
+      const defeatedEnemyName = encounter.value?.enemy;
 
       encounter.value = null;
       handleLootDrop();
+
+      if (isBoss(defeatedEnemyName)) {
+        markBossDefeated();
+      }
+
       return;
     }
 
@@ -475,12 +470,17 @@ function handleCombatAction(playerAction) {
 
     if (enemyHP.value <= 0) {
       log(`${playerName.value} defeated ${formattedTitle.value}`);
-      if (encounter.value?.enemy === bossName.value) {
-        markBossDefeated();
-      }
+
+      // Save enemy name before nullifying encounter
+      const defeatedEnemyName = encounter.value?.enemy;
 
       encounter.value = null;
       handleLootDrop();
+
+      if (isBoss(defeatedEnemyName)) {
+        markBossDefeated();
+      }
+
       return;
     }
 
@@ -513,9 +513,9 @@ function handleCombatAction(playerAction) {
         `🛡️ <span class="player-name">${playerName.value}</span> blocks. ${formattedTitle.value} hits for ${playerDamage}`
       );
     } else if (playerAction === "flee") {
-      if (encounter.value?.enemy === bossName.value) {
+      if (isBoss(encounter.value?.enemy)) {
         log(
-          `❌ You cannot flee from ${bossName.value}. This battle must be fought to the death!`
+          `❌ You cannot flee from ${encounter.value?.enemy?.name}. This battle must be fought to the death!`
         );
         return;
       }
@@ -637,8 +637,8 @@ function gotoEnemyTurn() {
 
     if (action === "attack") {
       // Check if it's a boss and assign stronger attack
-      const isBoss = encounter.value?.enemy === bossName.value;
-      nextEnemyAttack.value = isBoss
+      const isEnemyBoss = isBoss(encounter.value?.enemy);
+      nextEnemyAttack.value = isEnemyBoss
         ? Math.floor(Math.random() * 6) + 3
         : Math.floor(Math.random() * 3) + 1;
     } else {
@@ -660,7 +660,7 @@ function log(message) {
 
 function decideEnemyAction() {
   if (
-    encounter.value?.enemy !== bossName.value &&
+    !isBoss(encounter.value?.enemy) &&
     enemyHP.value <= 5 &&
     Math.random() < 0.02
   ) {

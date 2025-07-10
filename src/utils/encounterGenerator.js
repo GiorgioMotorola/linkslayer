@@ -2,6 +2,7 @@
 
 import loreData from "@/assets/data/loreEncounters.json";
 import npcData from "@/assets/data/friendlyEncounters.json";
+import { ENEMY_TYPES } from "@/utils/enemies";
 
 export function rollEncounter() {
   const roll = Math.floor(Math.random() * 20) + 1;
@@ -31,9 +32,17 @@ export function rollEncounter() {
   };
 }
 
-function generateEnemy() {
-  const enemies = ["Goblin", "Wraith", "Skeleton", "Fiend", "Elemental", "Ooze", "Undead", "Evil Plant", "Mummy", "Zombie", "Revenant", "Humanoid", "Construct", "Fey"];
-  return enemies[Math.floor(Math.random() * enemies.length)];
+export function generateEnemy() {
+  const enemyData =
+    ENEMY_TYPES[Math.floor(Math.random() * ENEMY_TYPES.length)];
+
+  const hp =
+    Math.floor(Math.random() * (enemyData.maxHP - enemyData.minHP + 1)) +
+    enemyData.minHP;
+
+  return {
+    ...enemyData,
+    currentHP: hp,
+  };
 }
 
-export { generateEnemy };

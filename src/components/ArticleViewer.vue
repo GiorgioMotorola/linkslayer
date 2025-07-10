@@ -1,11 +1,13 @@
 <!-- ArticleViewer.vue -->
 
 <template>
+  <div v-if="inEncounter" class="overlay"></div>
   <div class="path">
     <span style="font-weight: 500; color: #0645ad">{{ formattedStart }}</span> →
     {{ formattedTarget }}
   </div>
   <div class="article">
+    <div v-if="inEncounter" class="overlay"></div>
     <div class="title">{{ formattedTitle }}</div>
     <div v-html="articleHtml" @click.prevent="handleLinkClick"></div>
   </div>
@@ -19,6 +21,7 @@ const props = defineProps({
   articleTitle: String,
   start: String,
   targets: String,
+  inEncounter: Boolean,
 });
 
 const emit = defineEmits(["link-clicked"]);
@@ -36,11 +39,10 @@ const formattedTarget = computed(
 );
 
 const load = async () => {
-if (!props.articleTitle || props.articleTitle.trim() === "") {
-  console.warn("ArticleViewer tried to fetch an empty title.");
-  return;
-}
-
+  if (!props.articleTitle || props.articleTitle.trim() === "") {
+    console.warn("ArticleViewer tried to fetch an empty title.");
+    return;
+  }
 
   try {
     articleHtml.value = await fetchWikipediaArticle(props.articleTitle);
@@ -51,6 +53,9 @@ if (!props.articleTitle || props.articleTitle.trim() === "") {
 };
 
 const handleLinkClick = (event) => {
+  if (props.inEncounter) {
+    return;
+  }
   const anchor = event.target.closest("a");
   if (anchor && anchor.href.includes("/wiki/")) {
     const title = decodeURIComponent(anchor.href.split("/wiki/")[1]);
@@ -70,12 +75,27 @@ onMounted(load);
   font-weight: 400;
 }
 .article {
+  position: relative;
   border: solid 1px black;
   border-radius: 5px;
   padding: 1.5rem;
   background-color: #ffffff;
   max-width: 2000px;
   margin-bottom: 20rem;
+  z-index: 10;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0);
+  background: rgba(0, 0, 0, 0); /* can stay transparent */
+  pointer-events: all; /* <-- add this */
+  cursor: not-allowed;
 }
 
 .title {
