@@ -111,7 +111,19 @@ const enemyStatusEffects = ref([]);
 const enemyIsStunned = ref(false);
 const seenLoreEncounters = ref([]);
 const seenNPCEncounters = ref([]);
-const BOSS_TYPES = ["Dragon", "Lich", "Vampire", "Giant", "Kraken", "Elder Brain", "Barbed Devil", "Flameskull", "Illithid", "Werewolf", "Banshee"];
+const BOSS_TYPES = [
+  "Dragon",
+  "Lich",
+  "Vampire",
+  "Giant",
+  "Kraken",
+  "Elder Brain",
+  "Barbed Devil",
+  "Flameskull",
+  "Illithid",
+  "Werewolf",
+  "Banshee",
+];
 const bossDefeated = ref(false);
 const bossSpawned = ref(false);
 const bossName = computed(() => {
@@ -150,13 +162,14 @@ watch(encounter, (newVal) => {
 
 watch(playerHP, (newVal) => {
   if (newVal <= 0 && !defeated.value) {
-    log(`💀 <span class="player-name">${playerName.value}</span> was defeated!`);
+    log(
+      `💀 <span class="player-name">${playerName.value}</span> was defeated!`
+    );
     defeated.value = true;
     clearInterval(timerInterval);
     encounter.value = null;
   }
 });
-
 
 const timer = ref(0);
 let timerInterval;
@@ -189,64 +202,70 @@ function handleClick(title) {
   clickCount.value++;
   path.value.push(title);
 
-if (!isFinalArticle && clickCount.value % 2 === 0) {
-  const chance = Math.random();
-  if (chance < 0.5) {
-    const roll = rollEncounter();
-    let fullEncounter = null;
+  if (!isFinalArticle && clickCount.value % 2 === 0) {
+    const chance = Math.random();
+    if (chance < 0.5) {
+      const roll = rollEncounter();
+      let fullEncounter = null;
 
-    if (roll.type === "npc") {
-      const availableNPCs = friendlyEncounters.filter(
-        (npc) => !seenNPCEncounters.value.includes(npc.id)
-      );
+      if (roll.type === "npc") {
+        const availableNPCs = friendlyEncounters.filter(
+          (npc) => !seenNPCEncounters.value.includes(npc.id)
+        );
 
-      if (availableNPCs.length === 0) {
-        console.warn("All NPCs seen");
-        return;
+        if (availableNPCs.length === 0) {
+          console.warn("All NPCs seen");
+          return;
+        }
+
+        const npc =
+          availableNPCs[Math.floor(Math.random() * availableNPCs.length)];
+        seenNPCEncounters.value.push(npc.id);
+
+        fullEncounter = { type: "npc", npc };
+        encounterMessage.value = npc.greeting;
+        log(`${npc.greeting}`);
+      } else if (roll.type === "lore") {
+        const availableLore = loreEncounters.filter(
+          (lore) => !seenLoreEncounters.value.includes(lore.id)
+        );
+
+        if (availableLore.length === 0) {
+          console.warn("All lore seen");
+          return;
+        }
+
+        const lore =
+          availableLore[Math.floor(Math.random() * availableLore.length)];
+        seenLoreEncounters.value.push(lore.id);
+
+        fullEncounter = { type: "lore", lore };
+        encounterMessage.value = lore.text;
+        log(`${lore.text}`);
+      } else if (roll.type === "combat") {
+        const enemy = generateEnemy();
+        if (!enemy) return;
+        enemyHP.value = DEFAULT_ENEMY_HP;
+        fullEncounter = { type: "combat", enemy };
+        encounterMessage.value = `You've been ambushed by a ${enemy}!`;
+
+        nextTick(() => {
+          logEnemyAction();
+        });
+
+        nextEnemyAttack.value = Math.floor(Math.random() * 3) + 1;
+        enemyNextAction.value = "attack";
       }
 
-      const npc =
-        availableNPCs[Math.floor(Math.random() * availableNPCs.length)];
-      seenNPCEncounters.value.push(npc.id);
-
-      fullEncounter = { type: "npc", npc };
-      encounterMessage.value = npc.greeting;
-      log(`${npc.greeting}`);
-    } else if (roll.type === "lore") {
-      const availableLore = loreEncounters.filter(
-        (lore) => !seenLoreEncounters.value.includes(lore.id)
-      );
-
-      if (availableLore.length === 0) {
-        console.warn("All lore seen");
+      if (fullEncounter) {
+        encounter.value = fullEncounter;
+        if (fullEncounter.type === "combat") {
+          logEnemyAction();
+        }
         return;
       }
-
-      const lore =
-        availableLore[Math.floor(Math.random() * availableLore.length)];
-      seenLoreEncounters.value.push(lore.id);
-
-      fullEncounter = { type: "lore", lore };
-      encounterMessage.value = lore.text;
-      log(`${lore.text}`);
-    } else if (roll.type === "combat") {
-      const enemy = generateEnemy();
-      if (!enemy) return;
-      enemyHP.value = DEFAULT_ENEMY_HP;
-      fullEncounter = { type: "combat", enemy };
-      encounterMessage.value = `You've been ambushed by a ${enemy}!`;
-
-      nextEnemyAttack.value = Math.floor(Math.random() * 3) + 1;
-      enemyNextAction.value = "attack";
-    }
-
-    if (fullEncounter) {
-      encounter.value = fullEncounter;
-      return;
     }
   }
-}
-
 
   if (title === chain[currentTargetIndex.value + 1]) {
     currentTargetIndex.value++;
@@ -316,6 +335,24 @@ function handleCombatAction(playerAction) {
     }
 
     specialUsesLeft.value--;
+    if (enemyHP.value > 0 && enemyAction === "attack") {
+      playerDamage = enemyDamage;
+      playerHP.value -= playerDamage;
+
+      log(
+        `💥 ${formattedTitle.value} strikes back during your special! You take ${playerDamage} damage.`
+      );
+
+      if (playerHP.value <= 0) {
+        log(
+          `💀 <span class="player-name">${playerName.value}</span> was defeated!`
+        );
+        encounter.value = null;
+        clearInterval(timerInterval);
+        defeated.value = true;
+        return;
+      }
+    }
     const cls = playerClass.value.name;
 
     if (cls === "Fighter") {
@@ -729,7 +766,7 @@ function handleEncounterOption(option) {
     );
   }
 
-    if (option.result === "damage-major") {
+  if (option.result === "damage-major") {
     playerHP.value = Math.max(playerHP.value - 50, 0);
     log(
       `🎲 <span class="player-name">${playerName.value}</span> took 50 damage!`
@@ -761,21 +798,21 @@ function handleEncounterOption(option) {
     );
   }
 
-if (option.routeTitle) {
-  log(`📚 You choose: ${option.text}`);
-  current.value = option.routeTitle;
-  path.value.push(option.routeTitle);
-  clickCount.value++;
+  if (option.routeTitle) {
+    log(`📚 You choose: ${option.text}`);
+    current.value = option.routeTitle;
+    path.value.push(option.routeTitle);
+    clickCount.value++;
 
-  encounter.value = null;
+    encounter.value = null;
 
-  if (option.routeTitle === chain[currentTargetIndex.value + 1]) {
-    currentTargetIndex.value++;
+    if (option.routeTitle === chain[currentTargetIndex.value + 1]) {
+      currentTargetIndex.value++;
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
   }
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-  return;
-}
 
   encounter.value = null;
 }
