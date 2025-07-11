@@ -59,12 +59,11 @@ function reloadPage() {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.7);
   display: flex;
-  align-items: flex-start; /* align to top instead of center */
+  align-items: flex-start;
   justify-content: center;
-  padding-top: 0vh; /* add some space from top, vh means viewport height */
+  padding-top: 0vh;
   z-index: 1000;
 }
-
 
 .modal-content {
   background: #1a1a1a;

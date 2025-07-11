@@ -38,7 +38,6 @@
             Player HP: {{ playerHP }} &nbsp;&#10074;&nbsp; Enemy HP:
             {{ enemyHP }}
           </div>
-          <!-- <div v-if="message" class="encounter-message" v-html="message" /> -->
         </div>
 
         <div class="npc" v-else-if="encounter.type === 'npc'">
@@ -125,6 +124,8 @@
       {{ `Clicks: ` + clicks }}
       &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
       {{ `Base dmg: +${weaponBonus > 0 ? weaponBonus : 0}` }}
+      &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
+      {{ `Long Rests Left: ${2 - longRestsUsedCount}` }}
     </div>
   </header>
 </template>
@@ -149,6 +150,8 @@ const props = defineProps({
   message: String,
   playerName: String,
   weaponBonus: Number,
+  shortRestsUsed: Number,
+  longRestsUsed: Number,
 });
 
 const emit = defineEmits([
@@ -168,7 +171,6 @@ let typeInterval = null;
 
 const expanded = ref(false);
 const visibleLogCount = ref(Math.min(props.gameLog?.length ?? 0, 5));
-const newLinesRevealed = ref(0);
 const newLineIds = ref([]);
 
 const displayedLog = computed(() => {
@@ -178,6 +180,8 @@ const displayedLog = computed(() => {
 const visibleLog = computed(() => {
   return displayedLog.value.slice(-visibleLogCount.value);
 });
+
+const longRestsUsedCount = computed(() => props.longRestsUsed ?? 0);
 
 watch(
   () => props.encounter,
@@ -266,18 +270,6 @@ function handleAction(action) {
   }, 300);
 }
 
-const formattedStart = computed(
-  () => props.start?.toString().replaceAll("_", " ") ?? ""
-);
-
-const formattedTarget = computed(
-  () => props.targets?.toString().replaceAll("_", " ") ?? ""
-);
-
-const formattedPath = computed(() =>
-  (props.path || []).map((step) => step.replaceAll("_", " ")).join(" → ")
-);
-
 const formattedTitle = computed(() =>
   (props.path?.[props.path.length - 1] ?? "").replaceAll("_", " ")
 );
@@ -308,7 +300,6 @@ header {
   padding: 1rem;
   border: 2px solid #000000;
   border-radius: 4px;
-  
 }
 
 .encounter-dashboard {

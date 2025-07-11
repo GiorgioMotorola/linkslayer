@@ -2,12 +2,17 @@
 <template>
   <div class="modal">
     <div class="class-select">
-<div class="journey-prompt">
-  {{ journeyOne }} <span style="color: darkblue; font-weight: 400;">{{ formattedStart }}</span>
-  {{ journeyTwo }} <span style="color: darkred; font-weight: 400;">{{ formattedTarget }}</span>
-  {{ journeyThree }}
-</div>
-
+      <div class="journey-prompt">
+        {{ journeyOne }}
+        <span style="color: darkblue; font-weight: 400">{{
+          formattedStart
+        }}</span>
+        {{ journeyTwo }}
+        <span style="color: darkred; font-weight: 400">{{
+          formattedTarget
+        }}</span>
+        {{ journeyThree }}
+      </div>
 
       <h2>Who Are You?</h2>
       <input v-model="name" placeholder="Enter your name" class="name-input" />
@@ -26,7 +31,6 @@
 import { ref, onMounted, computed } from "vue";
 import { classes } from "@/utils/classes";
 import prompts from "@/assets/data/prompts.json";
-import { fetchWikipediaArticle } from "@/utils/wikipediaApi";
 
 const name = ref("");
 const emit = defineEmits(["select"]);
@@ -58,8 +62,6 @@ function loadRandomPrompt() {
   journeyThree.value = prompt["journey-three"];
 }
 
-const formattedTitle = computed(() => props.articleTitle.replaceAll("_", " "));
-
 const formattedStart = computed(
   () => props.start?.toString().replaceAll("_", " ") ?? ""
 );
@@ -67,9 +69,6 @@ const formattedStart = computed(
 const formattedTarget = computed(
   () => props.targets?.toString().replaceAll("_", " ") ?? ""
 );
-const load = async () => {
-  articleHtml.value = await fetchWikipediaArticle(props.articleTitle);
-};
 
 onMounted(() => {
   loadRandomPrompt();
@@ -91,7 +90,7 @@ onMounted(() => {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-    padding-top: 7vh; 
+  padding-top: 7vh;
   z-index: 1000;
 }
 

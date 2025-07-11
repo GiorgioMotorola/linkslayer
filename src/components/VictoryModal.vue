@@ -62,9 +62,9 @@ const share = () => {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.7);
   display: flex;
-  align-items: flex-start; 
+  align-items: flex-start;
   justify-content: center;
-  padding-top: 0vh; 
+  padding-top: 0vh;
   z-index: 1000;
 }
 

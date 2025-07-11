@@ -27,7 +27,8 @@ export const classes = {
     name: "Rogue",
     maxHP: 35,
     special: "Sneak Attack",
-    description: "35 HP. Special deals 6 damage and evades the incoming enemy strike.",
+    description:
+      "35 HP. Special deals 6 damage and evades the incoming enemy strike.",
     specialEffect: (enemyHP) => {
       const rogueDamage = 6;
       return {

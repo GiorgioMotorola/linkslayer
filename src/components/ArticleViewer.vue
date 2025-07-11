@@ -9,7 +9,11 @@
   <div class="article">
     <div v-if="inEncounter" class="overlay"></div>
     <div class="title">{{ formattedTitle }}</div>
-    <div v-html="articleHtml" @click.prevent="handleLinkClick"></div>
+    <div
+      v-html="articleHtml"
+      @click.prevent="handleLinkClick"
+      :style="{ pointerEvents: inEncounter ? 'none' : 'auto' }"
+    ></div>
   </div>
 </template>
 
@@ -53,9 +57,6 @@ const load = async () => {
 };
 
 const handleLinkClick = (event) => {
-  if (props.inEncounter) {
-    return;
-  }
   const anchor = event.target.closest("a");
   if (anchor && anchor.href.includes("/wiki/")) {
     const title = decodeURIComponent(anchor.href.split("/wiki/")[1]);
@@ -93,8 +94,8 @@ onMounted(load);
   height: 100%;
   z-index: 20;
   background: rgba(0, 0, 0, 0);
-  background: rgba(0, 0, 0, 0); /* can stay transparent */
-  pointer-events: all; /* <-- add this */
+  background: rgba(0, 0, 0, 0);
+  pointer-events: all;
   cursor: not-allowed;
 }
 

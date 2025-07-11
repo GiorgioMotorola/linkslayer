@@ -4,7 +4,9 @@ export async function fetchWikipediaArticle(title) {
     return "<p style='color:red;'>Invalid article title.</p>";
   }
 
-  const url = `https://en.wikipedia.org/api/rest_v1/page/html/${encodeURIComponent(title)}`;
+  const url = `https://en.wikipedia.org/api/rest_v1/page/html/${encodeURIComponent(
+    title
+  )}`;
   const res = await fetch(url);
 
   if (!res.ok) {

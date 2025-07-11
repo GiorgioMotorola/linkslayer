@@ -21,13 +21,12 @@ export function getRandomBoss() {
     name: `💀 ${type}`,
     hp: BOSS_HP,
     isBoss: true,
-    message: `A towering ${type} blocks your path to ultimate knowledge. Time to roll some true damage.`
+    message: `A towering ${type} blocks your path to ultimate knowledge. Time to roll some true damage.`,
   };
 }
 
-
 export function isBoss(enemyOrName) {
-  const name = typeof enemyOrName === "string" ? enemyOrName : enemyOrName?.name ?? "";
+  const name =
+    typeof enemyOrName === "string" ? enemyOrName : enemyOrName?.name ?? "";
   return BOSS_TYPES.some((type) => name.includes(type));
 }
-
