@@ -1,8 +1,12 @@
-// src/utils/combat.js
-
 export function handleCombatAction({ player, enemy, state, utils }) {
-  const { playerHP, playerClass, specialUsesLeft, weaponBonus, playerName } =
-    player;
+  const {
+    playerHP,
+    playerClass,
+    specialUsesLeft,
+    weaponBonus,
+    playerName,
+    action: playerAction,
+  } = player;
 
   const {
     enemyHP,
@@ -22,14 +26,28 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     gotoEnemyTurn,
   } = utils;
 
-  const enemyAction = enemyNextAction.value;
-  const enemyDamage = nextEnemyAttack.value ?? 1;
-  console.log(player.playerHP);
+  let currentEnemyDamage = nextEnemyAttack.value;
+  if (typeof currentEnemyDamage !== "number" || isNaN(currentEnemyDamage)) {
+    console.warn(
+      "nextEnemyAttack.value is not a number, defaulting to 1.",
+      nextEnemyAttack.value
+    );
+    currentEnemyDamage = 1;
+  }
 
-  let playerDamage = 0;
-  let enemyTakesDamage = 0;
+  let damageToPlayer = 0;
+  let damageToEnemy = 0;
+  let skipEnemyCurrentTurn = false;
 
-  if (player.action === "attack") {
+  console.log("DEBUG: Player Action:", playerAction);
+  console.log(
+    "DEBUG: Enemy Next Action (for this turn):",
+    enemyNextAction.value
+  );
+  console.log("DEBUG: Initial playerHP:", playerHP.value);
+  console.log("DEBUG: Initial enemyHP:", enemyHP.value);
+
+  if (playerAction === "attack") {
     let randomDamage = Math.floor(Math.random() * 5) + 2;
     if (playerClass.value.name === "Fighter") randomDamage += 1;
     if (playerClass.value.name === "Rogue" && Math.random() < 0.25) {
@@ -41,10 +59,11 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     if (weaponBonus.value > 0) {
       randomDamage += weaponBonus.value;
     }
-    enemyTakesDamage = randomDamage;
-  }
-
-  if (player.action === "special") {
+    damageToEnemy = randomDamage;
+    log(
+      `🗡️ <span class="player-name">${playerName.value}</span> hits ${formattedTitle} for ${damageToEnemy} damage.`
+    );
+  } else if (playerAction === "special") {
     if (specialUsesLeft.value <= 0) {
       log(
         `❌ <span class="player-name">${playerName.value}</span> is out of Special Moves.`
@@ -52,16 +71,17 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       return;
     }
     specialUsesLeft.value--;
-    let skipEnemyTurn = false;
 
     const cls = playerClass.value.name;
+    log(
+      `❗ <span class="player-name">${playerName.value}</span> uses ${playerClass.value.special}!`
+    );
 
     if (cls === "Fighter") {
-      enemyTakesDamage = 8;
+      damageToEnemy = 8;
       log(
-        `⚔️ <span class="player-name">${playerName.value}</span> unleashes Power Strike! 8 damage dealt to ${formattedTitle}`
+        `⚔️ <span class="player-name">${playerName.value}</span> unleashes Power Strike!`
       );
-      enemyHP.value -= enemyTakesDamage;
     } else if (cls === "Wizard") {
       const effect = playerClass.value.specialEffect(
         enemyHP.value,
@@ -76,9 +96,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       enemyHP.value = newEnemyHP;
       playerHP.value = newPlayerHP;
       log(
-        `🔥 <span class="player-name">${
-          playerName.value
-        }</span> casts Fireball. ${wizardDamage} damage.${
+        `🔥 ${wizardDamage} damage dealt.${
           stunned ? " The enemy is stunned!" : ""
         }`
       );
@@ -86,6 +104,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
         enemyIsStunned.value = true;
         enemyNextAction.value = null;
       }
+      skipEnemyCurrentTurn = true;
     } else if (cls === "Rogue") {
       const effect = playerClass.value.specialEffect(
         enemyHP.value,
@@ -96,120 +115,28 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       log(
         `🗡️ <span class="player-name">${playerName.value}</span> executes Backstab for ${rogueDamage} damage.`
       );
-      skipEnemyTurn = true;
-    } else if (playerClass.value.specialEffect) {
-      const effect = playerClass.value.specialEffect(
-        enemyHP.value,
-        playerHP.value,
-        playerClass.value.maxHP
-      );
-      if (typeof effect === "object" && effect !== null) {
-        enemyHP.value = effect.enemyHP;
-        playerHP.value = effect.playerHP;
-      }
-      log(
-        `❗ <span class="player-name">${playerName.value}</span> uses ${playerClass.value.special}!`
-      );
-    }
-
-    if (enemyHP.value <= 0) {
-      log(`${playerName.value} defeated ${formattedTitle}`);
-      const defeatedEnemyName = encounter.value?.enemy;
-      encounter.value = null;
-      handleLootDrop();
-      if (isBoss(defeatedEnemyName)) markBossDefeated();
-      return;
-    }
-
-    if (skipEnemyTurn) {
-      gotoEnemyTurn();
-      return;
-    }
-
-    if (enemyAction === "trip") {
-      log(`🤾 ${formattedTitle} trips! You get a free hit!`);
-      let damage = Math.floor(Math.random() * 5) + 4;
-      if (playerClass.value.name === "Fighter") damage += 1;
-      if (playerClass.value.name === "Rogue" && Math.random() < 0.25) {
-        damage += 3;
-        log(
-          `<span class="player-name">${playerName.value}</span> lands a critical strike on the downed enemy!`
+      skipEnemyCurrentTurn = true;
+    } else {
+      if (playerClass.value.specialEffect) {
+        const effect = playerClass.value.specialEffect(
+          enemyHP.value,
+          playerHP.value,
+          playerClass.value.maxHP
         );
-      }
-      if (weaponBonus.value > 0) damage += weaponBonus.value;
-      enemyHP.value -= damage;
-      log(
-        `🗡️ <span class="player-name">${playerName.value}</span> strikes for ${damage} damage.`
-      );
-      if (enemyHP.value <= 0) {
-        log(`${playerName.value} defeated ${formattedTitle}`);
-        const defeatedEnemyName = encounter.value?.enemy;
-        encounter.value = null;
-        handleLootDrop();
-        if (isBoss(defeatedEnemyName)) markBossDefeated();
-        return;
+        if (typeof effect === "object" && effect !== null) {
+          enemyHP.value = effect.enemyHP;
+          playerHP.value = effect.playerHP;
+        }
       }
     }
-
-    if (enemyAction === "attack") {
-      let playerDamage = enemyDamage;
-      playerHP.value -= playerDamage;
-      log(
-        `💥 ${formattedTitle} attacks ${playerName.value} for ${playerDamage} damage!`
-      );
-
-      if (playerHP.value <= 0) {
-        log(
-          `💀 <span class="player-name">${playerName.value}</span> was defeated!`
-        );
-        encounter.value = null;
-        clearTimer();
-        setDefeated();
-        return;
-      }
-    }
-
-    gotoEnemyTurn();
-    return;
-  }
-
-  if (enemyAction === "trip") {
-    log(`🤾 ${formattedTitle} trips! You get a free hit!`);
-    let damage = Math.floor(Math.random() * 5) + 4;
-    if (playerClass.value.name === "Fighter") damage += 1;
-    if (playerClass.value.name === "Rogue" && Math.random() < 0.25) {
-      damage += 3;
-      log(
-        `<span class="player-name">${playerName.value}</span> lands a critical strike on the downed enemy!`
-      );
-    }
-    if (weaponBonus.value > 0) damage += weaponBonus.value;
-    enemyHP.value -= damage;
+  } else if (playerAction === "defend") {
     log(
-      `🗡️ <span class="player-name">${playerName.value}</span> strikes for ${damage} damage.`
+      `🛡️ <span class="player-name">${playerName.value}</span> braces for impact.`
     );
-    if (enemyHP.value <= 0) {
-      log(`${playerName.value} defeated ${formattedTitle}`);
-      const defeatedEnemyName = encounter.value?.enemy;
-      encounter.value = null;
-      handleLootDrop();
-      if (isBoss(defeatedEnemyName)) markBossDefeated();
-      return;
-    }
-    gotoEnemyTurn();
-    return;
-  }
-
-  if (enemyAction === "attack") {
-    playerDamage = enemyDamage;
-    if (player.action === "defend") {
-      playerDamage = Math.max(1, Math.floor((Math.random() * 4 + 1) / 2));
-    }
-    if (player.action === "flee") {
-      if (isBoss(encounter.value?.enemy)) {
-        log(`❌ You cannot flee from ${encounter.value?.enemy?.name}.`);
-        return;
-      }
+  } else if (playerAction === "flee") {
+    if (isBoss(encounter.value?.enemy)) {
+      log(`❌ You cannot flee from ${encounter.value?.enemy?.name}.`);
+    } else {
       if (Math.random() > 0.4) {
         log(
           `🏃 <span class="player-name">${playerName.value}</span> fled successfully.`
@@ -218,20 +145,75 @@ export function handleCombatAction({ player, enemy, state, utils }) {
         return;
       } else {
         log(
-          `❌ <span class="player-name">${playerName.value}</span> failed to flee and took ${playerDamage} damage!`
+          `❌ <span class="player-name">${playerName.value}</span> failed to flee!`
         );
       }
     }
   }
 
-  if (player.action === "attack" && enemyTakesDamage > 0) {
+  if (damageToEnemy > 0) {
+    enemyHP.value -= damageToEnemy;
+  }
+
+  if (enemyHP.value <= 0) {
     log(
-      `🗡️ <span class="player-name">${playerName.value}</span> hits ${formattedTitle} for ${enemyTakesDamage} damage.`
+      `💀 <span class="player-name">${playerName.value}</span> defeated ${formattedTitle.value}`
+    );
+    const defeatedEnemyData = encounter.value?.enemy;
+    encounter.value = null;
+    handleLootDrop();
+    if (isBoss(defeatedEnemyData)) {
+      markBossDefeated();
+    }
+    return;
+  }
+  if (!skipEnemyCurrentTurn) {
+    if (enemyIsStunned.value) {
+      log(`💤 ${formattedTitle.value} is stunned and skips their turn.`);
+      enemyIsStunned.value = false;
+    } else {
+      if (enemyNextAction.value === "attack") {
+        damageToPlayer = currentEnemyDamage;
+        if (playerAction === "defend") {
+          damageToPlayer = Math.max(1, Math.floor(damageToPlayer / 2));
+          log(
+            `🛡️ <span class="player-name">${playerName.value}</span> defended, taking ${damageToPlayer} damage.`
+          );
+        } else {
+          log(
+            `💥 ${formattedTitle.value} attacks! <span class="player-name">${playerName.value}</span> takes ${damageToPlayer} damage.`
+          );
+        }
+      } else if (enemyNextAction.value === "trip") {
+        log(`🤾 ${formattedTitle.value} trips! You get a free hit!`);
+        damageToPlayer = 0;
+      } else if (enemyNextAction.value === "flee") {
+        log(`🏃 ${formattedTitle.value} flees!`);
+        encounter.value = null;
+        return;
+      } else if (enemyNextAction.value === "defend") {
+        log(`🛡️ ${formattedTitle.value} is holding up their shield.`);
+        damageToPlayer = 0;
+      }
+    }
+  } else {
+    console.log(
+      "DEBUG: Enemy current turn skipped due to player's special action."
     );
   }
 
-  playerHP.value -= playerDamage;
-  enemyHP.value -= enemyTakesDamage;
+  if (typeof damageToPlayer === "number" && !isNaN(damageToPlayer)) {
+    playerHP.value = Math.max(playerHP.value - damageToPlayer, 0);
+  } else {
+    console.error(
+      "ERROR: damageToPlayer is not a valid number:",
+      damageToPlayer
+    );
+    playerHP.value = Math.max(playerHP.value - 0, 0);
+  }
+
+  console.log("DEBUG: playerHP after this turn:", playerHP.value);
+  console.log("DEBUG: enemyHP after this turn:", enemyHP.value);
 
   if (playerHP.value <= 0) {
     log(
@@ -243,13 +225,5 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     return;
   }
 
-  if (enemyHP.value <= 0) {
-    log(`${playerName.value} defeated ${formattedTitle}`);
-    const defeatedEnemyName = encounter.value?.enemy;
-    encounter.value = null;
-    handleLootDrop();
-    if (isBoss(defeatedEnemyName)) markBossDefeated();
-    return;
-  }
   gotoEnemyTurn();
 }

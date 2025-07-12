@@ -1,10 +1,17 @@
-<!-- ArticleViewer.vue -->
-
 <template>
   <div v-if="inEncounter" class="overlay"></div>
-  <div class="path">
-    <span style="font-weight: 500; color: #0645ad">{{ formattedStart }}</span> →
-    {{ formattedTarget }}
+  <div class="path-display">
+    <span :style="{ color: currentTargetIndexProp === 0 ? '#0645ad' : '#555' }">
+      {{ formattedStart }}
+    </span>
+    <span> → </span>
+    <span :style="{ color: currentTargetIndexProp === 1 ? '#0645ad' : '#555' }">
+      {{ formattedSecondTarget }}
+    </span>
+    <span> → </span>
+    <span :style="{ color: currentTargetIndexProp === 2 ? '#0645ad' : '#555' }">
+      {{ formattedFinalTarget }}
+    </span>
   </div>
   <div class="article">
     <div v-if="inEncounter" class="overlay"></div>
@@ -25,7 +32,11 @@ const props = defineProps({
   articleTitle: String,
   start: String,
   targets: String,
+
+  fullChain: Array,
+  currentTargetIndex: Number,
   inEncounter: Boolean,
+  path: Array,
 });
 
 const emit = defineEmits(["link-clicked"]);
@@ -35,12 +46,16 @@ const articleHtml = ref("");
 const formattedTitle = computed(() => props.articleTitle.replaceAll("_", " "));
 
 const formattedStart = computed(
-  () => props.start?.toString().replaceAll("_", " ") ?? ""
+  () => props.fullChain[0]?.replaceAll("_", " ") ?? ""
+);
+const formattedSecondTarget = computed(
+  () => props.fullChain[1]?.replaceAll("_", " ") ?? ""
+);
+const formattedFinalTarget = computed(
+  () => props.fullChain[2]?.replaceAll("_", " ") ?? ""
 );
 
-const formattedTarget = computed(
-  () => props.targets?.toString().replaceAll("_", " ") ?? ""
-);
+const currentTargetIndexProp = computed(() => props.currentTargetIndex);
 
 const load = async () => {
   if (!props.articleTitle || props.articleTitle.trim() === "") {
@@ -109,6 +124,13 @@ onMounted(load);
   font-size: 15px;
   text-align: center;
   margin-bottom: 0.5rem;
+}
+
+.path-display {
+  font-size: 15px;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: #555;
 }
 
 @media screen and (max-width: 600px) {

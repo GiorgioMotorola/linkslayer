@@ -4,7 +4,7 @@
     @select="handleClassSelection"
     :articleTitle="current"
     :start="chain[0]"
-    :targets="chain[chain.length - 1]"
+    :targets="chain[currentTargetIndex + 1]"
     :formattedStart="formattedStart"
     :formattedTitle="formattedTitle"
   />
@@ -53,9 +53,12 @@
     <ArticleViewer
       :articleTitle="current"
       :start="chain[0]"
-      :targets="chain[chain.length - 1]"
+      :targets="chain[currentTargetIndex + 1]"
       :inEncounter="inEncounter"
       @link-clicked="handleClick"
+      :path="path"
+      :fullChain="chain"            
+      :currentTargetIndex="currentTargetIndex"   
     />
 
     <RestModal
@@ -76,7 +79,7 @@ import {
   watch,
   nextTick,
 } from "vue";
-import { getTodayChain } from "@/utils/dailyPair";
+import { getRandomChain } from "@/utils/randomPair";
 import ArticleViewer from "@/components/ArticleViewer.vue";
 import Header from "@/components/Header.vue";
 import VictoryModal from "@/components/VictoryModal.vue";
@@ -86,13 +89,12 @@ import { classes } from "@/utils/classes";
 import { generateEnemy } from "@/utils/encounterGenerator";
 import friendlyEncounters from "@/assets/data/friendlyEncounters.json";
 import loreEncounters from "@/assets/data/loreEncounters.json";
-import { STATUS_EFFECTS } from "@/utils/statusEffects";
 import DefeatModal from "@/components/DefeatModal.vue";
 import { getRandomBoss, isBoss } from "@/utils/bossGenerator";
 import RestModal from "@/components/RestModal.vue";
 import { handleCombatAction } from "@/utils/combat";
 
-const chain = getTodayChain();
+const chain = getRandomChain();
 const current = ref(chain[0]);
 
 const formattedStart = computed(() => chain[0]?.replaceAll("_", " ") ?? "");
@@ -128,6 +130,7 @@ const shortRestsUsed = ref(0);
 const showRestModal = ref(false);
 const longRestsUsed = ref(0);
 const longRestsUsedCount = computed(() => longRestsUsed.value);
+const hasReachedFinalArticle = ref(false);
 
 const inEncounter = computed(() => {
   const e = encounter.value;
@@ -188,118 +191,145 @@ const formattedTimer = computed(() => {
 });
 
 const isGameComplete = computed(() => {
-  return current.value === chain[chain.length - 1] && bossDefeated.value;
+  return current.value === chain[2] && bossDefeated.value;
 });
 
 function handleClick(title) {
+  console.log("--- handleClick START ---");
+  console.log("Clicked title:", title);
+  console.log("chain[0]:", chain[0]);
+  console.log("chain[1]:", chain[1]);
+  console.log("chain[2]:", chain[2]);
   console.log(
-    "[handleClick] inEncounter:",
-    inEncounter.value,
-    "clicked title:",
-    title
+    "currentTargetIndex before click logic:",
+    currentTargetIndex.value
   );
-  if (inEncounter.value) return;
+  console.log("bossSpawned.value before:", bossSpawned.value);
+  console.log("bossDefeated.value before:", bossDefeated.value);
+
+  if (inEncounter.value) {
+    console.log("In encounter, returning early.");
+    return;
+  }
+
   log(`📍 ARTICLE: ${title}`);
 
-  const isFinalArticle = title === chain[chain.length - 1];
+  const finalTarget = chain[2];
+  const secondTarget = chain[1];
+
   current.value = title;
   clickCount.value++;
   path.value.push(title);
 
-  if (!isFinalArticle && clickCount.value % 2 === 0) {
-    const chance = Math.random();
-    if (chance < 0.5) {
-      const roll = rollEncounter();
-      let fullEncounter = null;
-
-      if (roll.type === "npc") {
-        const availableNPCs = friendlyEncounters.filter(
-          (npc) => !seenNPCEncounters.value.includes(npc.id)
-        );
-
-        if (availableNPCs.length === 0) {
-          console.warn("All NPCs seen");
-          return;
-        }
-
-        const npc =
-          availableNPCs[Math.floor(Math.random() * availableNPCs.length)];
-        seenNPCEncounters.value.push(npc.id);
-
-        fullEncounter = { type: "npc", npc };
-        log(`${npc.greeting}`);
-      } else if (roll.type === "lore") {
-        const availableLore = loreEncounters.filter(
-          (lore) => !seenLoreEncounters.value.includes(lore.id)
-        );
-
-        if (availableLore.length === 0) {
-          console.warn("All lore seen");
-          return;
-        }
-
-        const lore =
-          availableLore[Math.floor(Math.random() * availableLore.length)];
-        seenLoreEncounters.value.push(lore.id);
-
-        fullEncounter = { type: "lore", lore };
-        log(`${lore.text}`);
-      } else if (roll.type === "combat") {
-        const enemy = generateEnemy();
-        enemyHP.value = enemy.currentHP;
-        currentEnemy.value = enemy;
-        if (!enemy) return;
-        fullEncounter = { type: "combat", enemy };
-
-        nextTick(() => {
-          logEnemyAction();
-        });
-
-        nextEnemyAttack.value =
-          Math.floor(Math.random() * (enemy.maxDamage - enemy.minDamage + 1)) +
-          enemy.minDamage;
-
-        enemyNextAction.value = "attack";
-      }
-
-      if (fullEncounter) {
-        encounter.value = fullEncounter;
-        if (fullEncounter.type === "combat") {
-          logEnemyAction();
-        }
-        return;
-      }
-    }
-  }
-
   if (title === chain[currentTargetIndex.value + 1]) {
     currentTargetIndex.value++;
+    console.log(
+      "Successfully advanced to next target. currentTargetIndex now:",
+      currentTargetIndex.value
+    );
+  } else {
+    console.log(
+      "Clicked an article not on the direct sequential path. currentTargetIndex not incremented."
+    );
   }
+  if (
+    title === finalTarget &&
+    currentTargetIndex.value === 2 &&
+    !bossSpawned.value &&
+    !bossDefeated.value
+  ) {
+    console.log(
+      "CONDITION MET FOR BOSS SPAWN: Clicked Final Target AND currentTargetIndex is 2."
+    );
+    const boss = getRandomBoss();
+    selectedBossType.value = boss.type;
 
-  if (isFinalArticle) {
-    if (!bossSpawned.value && !bossDefeated.value) {
-      const boss = getRandomBoss();
-      selectedBossType.value = boss.type;
+    encounter.value = {
+      type: "combat",
+      enemy: boss,
+    };
+    enemyHP.value = boss.hp;
+    encounterMessage.value = `💀 A terrifying ${boss.name} rises to defend ${formattedTitle.value}. Time to roll some true damage.`;
 
-      encounter.value = {
-        type: "combat",
-        enemy: boss,
-      };
-      enemyHP.value = boss.hp;
-      encounterMessage.value = `💀 A terrifying ${boss.name} rises to defend ${formattedTitle.value}. Time to roll some true damage.`;
+    nextEnemyAttack.value =
+      Math.floor(Math.random() * (boss.maxDamage - boss.minDamage + 1)) +
+      boss.minDamage;
+    enemyNextAction.value = "attack";
 
-      nextEnemyAttack.value = Math.floor(Math.random() * 10) + 12;
+    bossSpawned.value = true;
+    console.log(
+      "BOSS SPAWNED. Returning early from handleClick to start combat."
+    );
+    return;
+  }
+  if (title !== finalTarget && Math.random() < 0.4) {
+    console.log("Rolling for regular encounter...");
+    const roll = rollEncounter();
+    let fullEncounter = null;
+
+    if (roll.type === "npc") {
+      const availableNPCs = friendlyEncounters.filter(
+        (npc) => !seenNPCEncounters.value.includes(npc.id)
+      );
+      if (availableNPCs.length === 0) {
+        console.warn("All NPCs seen, skipping NPC encounter.");
+        return;
+      }
+      const npc =
+        availableNPCs[Math.floor(Math.random() * availableNPCs.length)];
+      seenNPCEncounters.value.push(npc.id);
+      fullEncounter = { type: "npc", npc };
+      log(`${npc.greeting}`);
+    } else if (roll.type === "lore") {
+      const availableLore = loreEncounters.filter(
+        (lore) => !seenLoreEncounters.value.includes(lore.id)
+      );
+      if (availableLore.length === 0) {
+        console.warn("All lore seen, skipping lore encounter.");
+        return;
+      }
+      const lore =
+        availableLore[Math.floor(Math.random() * availableLore.length)];
+      seenLoreEncounters.value.push(lore.id);
+      fullEncounter = { type: "lore", lore };
+      log(`${lore.text}`);
+    } else if (roll.type === "combat") {
+      const enemy = generateEnemy();
+      enemyHP.value = enemy.currentHP;
+      currentEnemy.value = enemy;
+      if (!enemy) {
+        console.warn("Could not generate enemy, skipping combat encounter.");
+        return;
+      }
+      fullEncounter = { type: "combat", enemy };
+      nextTick(() => {
+        logEnemyAction();
+      });
+      nextEnemyAttack.value =
+        Math.floor(Math.random() * (enemy.maxDamage - enemy.minDamage + 1)) +
+        enemy.minDamage;
       enemyNextAction.value = "attack";
+    }
 
-      bossSpawned.value = true;
+    if (fullEncounter) {
+      encounter.value = fullEncounter;
+      if (fullEncounter.type === "combat") {
+        logEnemyAction();
+      }
+      console.log(
+        "Regular encounter triggered. Returning early from handleClick to start encounter."
+      );
       return;
     }
-
-    if (bossDefeated.value) {
-      clearInterval(timerInterval);
-    }
+  }
+  if (title === finalTarget && bossDefeated.value) {
+    console.log(
+      "Game complete condition met (Article C reached and boss defeated). Clearing timer."
+    );
+    clearInterval(timerInterval);
   }
 
+  console.log("--- handleClick END ---");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
