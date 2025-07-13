@@ -7,7 +7,7 @@
     :playerClass="playerClass"
     :specialUsesLeft="specialUsesLeft"
     :playerHP="playerHP"
-    :maxHP="playerClass?.maxHP ?? 50"
+    :maxHP="playerClass?.maxHP ?? 0"
     :gameLog="gameLog"
     :encounter="encounter"
     :enemyHP="enemyHP"
@@ -133,7 +133,7 @@ const combatEncountersFought = ref(0);
 const totalSpecialsUsed = ref(0);
 const path = ref([current.value]);
 const encounter = ref(null);
-const playerHP = ref(50);
+const playerHP = ref(0);
 const enemyHP = ref(25);
 const nextEnemyAttack = ref(null);
 const enemyNextAction = ref("attack");
@@ -156,7 +156,6 @@ const bossDefeated = ref(false);
 const shortRestsUsed = ref(0);
 const showRestModal = ref(false);
 const longRestsUsed = ref(0);
-const longRestsUsedCount = computed(() => longRestsUsed.value);
 const hasReachedFinalArticle = ref(false);
 const bossOverlay = ref(false);
 
@@ -259,6 +258,15 @@ function handleClick(title) {
     console.log(
       "Clicked an article not on the direct sequential path. currentTargetIndex not incremented."
     );
+  }
+
+  if (clickCount.value > 0 && clickCount.value % 1 === 0) {
+    console.log(
+      "Showing rest modal due to click count, preventing other encounters."
+    );
+    showRestModal.value = true;
+    // Crucially, return here so no other encounter logic runs on this click
+    return;
   }
   if (
     title === finalTarget &&
@@ -454,18 +462,15 @@ function gotoEnemyTurn() {
     enemyNextAction.value = action;
 
     if (action === "attack") {
-      // Get the current enemy from the encounter object
       const currentEnemyData = encounter.value?.enemy;
 
       if (currentEnemyData) {
-        // Use the minDamage and maxDamage from the *current* enemy object
         nextEnemyAttack.value =
           Math.floor(
             Math.random() *
               (currentEnemyData.maxDamage - currentEnemyData.minDamage + 1)
           ) + currentEnemyData.minDamage;
       } else {
-        // Fallback if enemy data isn't available (shouldn't happen in combat)
         console.warn(
           "Enemy data not found for attack. Defaulting to 1-3 damage."
         );
@@ -545,18 +550,23 @@ function handleClassSelection({ classKey, name }) {
   if (playerClass.value.startingWeaponBonus) {
     weaponBonus.value += playerClass.value.startingWeaponBonus;
     log(
-      `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingWeaponBonus} starting weapon damage!`
+      `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingWeaponBonus} starting Weapon Damage.`
     );
   }
   if (playerClass.value.startingSpecialUses) {
     specialUsesLeft.value += playerClass.value.startingSpecialUses;
     log(
-      `🎁 <span class="player-name">${playerName.value}</span> starts with +${playerClass.value.startingSpecialUses} special moves!`
+      `🎁 <span class="player-name">${playerName.value}</span> starts with +${playerClass.value.startingSpecialUses} Special.`
+    );
+  }
+  if (playerClass.value.startingShieldBonus) {
+    shieldBonus.value += playerClass.value.startingShieldBonus;
+    log(
+      `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingShieldBonus} starting Sheild Bonus.`
     );
   }
   log(`Player name: ${playerName.value}`);
   log(`Class selected: ${playerClass.value.name}`);
-  // initialClickCount.value = clickCount.value;
 }
 
 function handleEncounterOption(option) {
@@ -754,7 +764,7 @@ function resetGame() {
   totalSpecialsUsed.value = 0;
   path.value = [current.value];
   encounter.value = null;
-  playerHP.value = 50;
+  playerHP.value = 0;
   enemyHP.value = DEFAULT_ENEMY_HP;
   nextEnemyAttack.value = null;
   enemyNextAction.value = "attack";

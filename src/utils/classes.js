@@ -2,18 +2,34 @@
 export const classes = {
   Fighter: {
     name: "Fighter",
-    maxHP: 40,
+    maxHP: 45,
     special: "Power Strike",
-    description: "40 HP. Special deals 6 damage.",
+    description: "45 HP. Special deals 6 damage. Starts with +1 Weapon Damage.",
     specialEffect: (enemyHP) => enemyHP - 6,
     startingWeaponBonus: 1,
     startingSpecialUses: 0,
+    startingShieldBonus: 0,
+  },
+  Paladin: {
+    name: "Paladin",
+    maxHP: 40,
+    special: "Smite",
+    description:
+      "40 HP. Special deals 5 damage and gives +2 HP. Starts with +1 Shield Bonus",
+    specialEffect: (enemyHP, playerHP, maxHP) => ({
+      enemyHP: enemyHP - 5,
+      playerHP: playerHP + 2,
+    }),
+    startingWeaponBonus: 0,
+    startingSpecialUses: 0,
+    startingShieldBonus: 1,
   },
   Wizard: {
     name: "Wizard",
-    maxHP: 30,
+    maxHP: 35,
     special: "Fireball",
-    description: "30 HP. Special deals between 5 and 15 damage.",
+    description:
+      "35 HP. Special deals between 5 and 15 damage with a 20% chance to stun the enemy. Starts with 6 Specials.",
     specialEffect: (enemyHP, playerHP) => {
       const wizardDamage = Math.floor(Math.random() * 11) + 5;
       const stunned = Math.random() < 0.2;
@@ -26,6 +42,7 @@ export const classes = {
     },
     startingWeaponBonus: 0,
     startingSpecialUses: 1,
+    startingShieldBonus: 0,
   },
   Rogue: {
     name: "Rogue",
@@ -42,27 +59,29 @@ export const classes = {
     },
     startingWeaponBonus: 0,
     startingSpecialUses: 0,
+    startingShieldBonus: 0,
   },
-  Paladin: {
-    name: "Paladin",
+  Cleric: {
+    name: "Cleric",
     maxHP: 45,
     special: "Divine Blessing",
-    description: "45 HP. Special heals 3 HP and deals 5 damage.",
+    description: "45 HP. Special heals 6 HP and deals 5 damage.",
     specialEffect: (enemyHP, playerHP, maxHP) => ({
-      enemyHP: enemyHP - 5,
-      playerHP: playerHP + 3,
+      enemyHP: enemyHP - 6,
+      playerHP: playerHP + 5,
     }),
     startingWeaponBonus: 0,
     startingSpecialUses: 0,
+    startingShieldBonus: 0,
   },
   Sorcerer: {
     name: "Sorcerer",
-    maxHP: 33,
+    maxHP: 35,
     special: "Chaos Surge",
     description:
-      "33 HP. Special deals 12 damage, but takes random recoil damage to the player.",
+      "35 HP. Special deals 12 damage, but takes random recoil damage to the player.",
     specialEffect: (enemyHP, playerHP) => {
-      const recoil = Math.floor(Math.random() * 4);
+      const recoil = Math.floor(Math.random() * 6) + 1;
       return {
         enemyHP: enemyHP - 12,
         playerHP: playerHP - recoil,
@@ -70,5 +89,6 @@ export const classes = {
     },
     startingWeaponBonus: 0,
     startingSpecialUses: 0,
+    startingShieldBonus: 0,
   },
 };

@@ -82,6 +82,15 @@
     </transition>
 
     <div class="player-stats">
+      <div class="clicks-top">
+        <div class="player-stats-item">
+          {{ props.playerName || "Unnamed" }} ({{
+            playerClass?.name || `none`
+          }})
+        </div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="player-stats-item">HP: {{ playerHP }}</div>
+      </div>
       <div class="game-log">
         <div class="log"></div>
         <div
@@ -115,12 +124,6 @@
       </div>
     </div>
     <div class="clicks">
-      <div class="player-stats-item">
-        {{ props.playerName || "Unnamed" }} ({{ playerClass?.name || `none` }})
-      </div>
-      &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="player-stats-item">HP: {{ playerHP }}</div>
-      &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
       <div class="player-stats-item">Specials Left: {{ specialUsesLeft }}</div>
       &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
       <div class="player-stats-item">Weapon: +{{ weaponBonus }}</div>
@@ -315,7 +318,7 @@ header {
   right: 0;
   background-color: rgb(228, 224, 224);
   z-index: 100;
-  padding: 1rem;
+  padding: 0.5rem;
   border-top: 1.5px solid #000000;
   transition: background-color 1.5s ease-in-out, filter 1.5s ease-in-out;
   color: rgb(35, 36, 35);
@@ -329,7 +332,8 @@ header {
   color: rgb(200, 200, 200);
 }
 
-.darkened-header .clicks {
+.darkened-header .clicks,
+.clicks-top {
   color: rgb(150, 180, 255);
 }
 
@@ -392,16 +396,28 @@ header {
   padding: 0.5rem;
 }
 
-.clicks {
+.clicks-top {
   font-family: "IBM Plex Sans", sans-serif;
   font-optical-sizing: auto;
-  font-size: 20px;
+  font-size: 22px;
   color: rgb(35, 36, 35);
   font-weight: 400;
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
+}
+
+.clicks {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 16px;
+  color: rgb(35, 36, 35);
+  font-weight: 400;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 0.5rem;
 }
 
 .current-path {
