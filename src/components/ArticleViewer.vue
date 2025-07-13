@@ -1,6 +1,8 @@
 <template>
-  <div v-if="errorMessage"
-       :class="['error-message', { 'fade-out': isFadingOut }]">
+  <div
+    v-if="errorMessage"
+    :class="['error-message', { 'fade-out': isFadingOut }]"
+  >
     {{ errorMessage }}
   </div>
   <div v-if="inEncounter" class="overlay"></div>
@@ -68,28 +70,27 @@ const formattedFinalTarget = computed(
 
 const currentTargetIndexProp = computed(() => props.currentTargetIndex);
 
-
 function parseWikipediaUrl(url) {
   try {
     const urlObj = new URL(url);
-    const hostnameParts = urlObj.hostname.split('.');
+    const hostnameParts = urlObj.hostname.split(".");
     const langCode = hostnameParts[0];
 
-    const pathParts = urlObj.pathname.split('/');
+    const pathParts = urlObj.pathname.split("/");
     const title = decodeURIComponent(pathParts[pathParts.length - 1]);
 
-    if (urlObj.hostname.endsWith('wikipedia.org') && pathParts[1] === 'wiki') {
+    if (urlObj.hostname.endsWith("wikipedia.org") && pathParts[1] === "wiki") {
       return { langCode, title };
     }
-  } catch (e) {
-    // console.warn("Failed to parse URL for Wikipedia:", url, e); // Uncomment for debugging
-  }
+  } catch (e) {}
   return null;
 }
 
-
-const showAndClearError = (message, displayDuration = 3000, fadeDuration = 500) => {
-  // Clear any existing timeouts
+const showAndClearError = (
+  message,
+  displayDuration = 3000,
+  fadeDuration = 500
+) => {
   if (clearErrorTimeout.value) {
     clearTimeout(clearErrorTimeout.value);
     clearErrorTimeout.value = null;
@@ -99,48 +100,48 @@ const showAndClearError = (message, displayDuration = 3000, fadeDuration = 500) 
     hideElementTimeout.value = null;
   }
 
-  isFadingOut.value = false; // Ensure it's not fading when a new message appears
+  isFadingOut.value = false;
   errorMessage.value = message;
 
-  if (message) { // Only set timeouts if there's a message to display
+  if (message) {
     clearErrorTimeout.value = setTimeout(() => {
-      isFadingOut.value = true; // Start the fade-out transition
+      isFadingOut.value = true;
       hideElementTimeout.value = setTimeout(() => {
-        errorMessage.value = ""; // Remove from DOM after fade completes
+        errorMessage.value = "";
         isFadingOut.value = false;
         hideElementTimeout.value = null;
-      }, fadeDuration); // This duration should match your CSS transition
+      }, fadeDuration);
     }, displayDuration);
   }
 };
 
-
-// CORRECTED LOAD FUNCTION
 const load = async () => {
-  // Use showAndClearError to immediately clear, but without showing a message
   showAndClearError("");
 
   if (!props.articleTitle || props.articleTitle.trim() === "") {
     console.warn("ArticleViewer tried to fetch an empty title.");
-    showAndClearError("Invalid article title provided.", 4000); // Show for 4 seconds
-    // You might want to clear existing article content here if title is invalid on load
-    articleHtml.value = '';
+    showAndClearError("Invalid article title provided.", 4000);
+
+    articleHtml.value = "";
     return;
   }
 
   const articleContent = await fetchWikipediaArticle(props.articleTitle);
 
   if (articleContent === null) {
-    console.error(`🛑 Failed to load article: ${props.articleTitle}. Keeping previous content.`);
-    showAndClearError(`Failed to load "${props.articleTitle}". Please try another link.`, 4000);
-    // DO NOT update articleHtml.value here, to keep the current content
+    console.error(
+      `🛑 Failed to load article: ${props.articleTitle}. Keeping previous content.`
+    );
+    showAndClearError(
+      `Failed to load "${props.articleTitle}". Please try another link.`,
+      4000
+    );
+
     return;
   }
 
   articleHtml.value = articleContent;
 };
-// END OF CORRECTED LOAD FUNCTION
-
 
 const handleLinkClick = (event) => {
   if (props.inEncounter) {
@@ -155,16 +156,20 @@ const handleLinkClick = (event) => {
     if (parsedLink) {
       const { langCode, title } = parsedLink;
 
-      if (langCode === 'en') {
-
-        console.log(`Clicked English link: en.wikipedia.org/wiki/${title}. Emitting link-clicked.`);
-        showAndClearError(""); // Immediately clear any active error message
+      if (langCode === "en") {
+        console.log(
+          `Clicked English link: en.wikipedia.org/wiki/${title}. Emitting link-clicked.`
+        );
+        showAndClearError("");
         emit("link-clicked", title);
       } else {
-
-        console.log(`Clicked foreign link: ${langCode}.wikipedia.org/wiki/${title}. This game only supports English Wikipedia.`);
-        showAndClearError(`Sorry, "${title}" is not an English Wikipedia article and will not load properly. Try another article.`, 3500);
-
+        console.log(
+          `Clicked foreign link: ${langCode}.wikipedia.org/wiki/${title}. This game only supports English Wikipedia.`
+        );
+        showAndClearError(
+          `Sorry, "${title}" is not an English Wikipedia article and will not load properly. Try another article.`,
+          3500
+        );
       }
     }
   }
@@ -237,8 +242,8 @@ onMounted(load);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   font-size: 1.1em;
   text-align: center;
-  opacity: 1; 
-  transition: opacity 0.5s ease-out; 
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
 }
 
 .error-message.fade-out {
