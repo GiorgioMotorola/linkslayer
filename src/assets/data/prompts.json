@@ -1,26 +1,122 @@
 [
   {
     "id": 1,
-    "journey-one": "Your adventure begins in a tavern. The tavern is called ",
-    "journey-two": ". The barkeep is talking about a distant land where a dragon lives. The land is called ",
-    "journey-three": ". The dragon hoards gold and treasures beyond your wildest dreams..."
+    "journey-one": "Your adventure begins in The",
+    "article-slot-one": 0,
+    "journey-two": "Tavern. The barkeep gives you an old tattered map. The map leads to ",
+    "article-slot-two": 1,
+    "journey-three": " which you have heard of before but have never visited. Rumour is, there is a dragon that hoards gold and treasures beyond your wildest dreams. It sounds dangerous but you have heard that a long missing relic called ",
+    "article-slot-three": 2,
+    "journey-four": "could be hidden there which would make you rich and famous if you find it. So, what is your name, traveler?"
   },
-    {
+  {
     "id": 2,
-    "journey-one": "You awake in a jail in the city of ",
-    "journey-two": ". The warden decides you have spent enough time in the jail and releases you, under one condition: you travel to the city of ",
-    "journey-three": ". His sister lives there and he would like you to deliver a letter to her. He advises you not to read the letter."
+    "journey-one": "You awake in a jail in ",
+    "article-slot-one": 0,
+    "journey-two": "City. The warden decides you have spent enough time in the jail and releases you, under one condition: you travel to ",
+    "article-slot-two": 2,
+    "journey-three": "Coast. His sister lives there and he would like you to deliver a letter to her. The letter is in a small village called ",
+    "article-slot-three": 1,
+    "journey-four": " so you will need to stop there first. So, what is your name, traveler?"
   },
-      {
+  {
     "id": 3,
     "journey-one": "You stand on the S.S. ",
-    "journey-two": ". Holding a map leading to",
-    "journey-three": ", you prepare to start your journey back home. You have heard these lands have changed a lot. You have heard of the new dangers that present themselves."
+    "article-slot-one": 0,
+    "journey-two": " holding a map leading through the ",
+    "article-slot-two": 1,
+    "journey-three": " valley as you prepare to start your journey back home. You have heard the valley has changed a lot. You have heard of the new dangers that present themselves. Your ultimate goal is to your home called ",
+    "article-slot-three": 2,
+    "journey-four": " and live the rest of your life in peace. So, what is your name, traveler?"
   },
-        {
+  {
     "id": 4,
     "journey-one": "You are an independent game hunter who lives in the small village called ",
-    "journey-two": ". You have been contracted to hunt down the monster that is terrorizing the city of ",
-    "journey-three": ". This will be your largest game yet and you would be lying to yourself if you aren't concerned of the dangers ahead but the price for killing the monster is too high not to take the offer."
+    "article-slot-one": 0,
+    "journey-two": "to hunt your biggest game yet. The Monster named ",
+    "article-slot-two": 2,
+    "journey-three": " lives near the ",
+    "article-slot-three": 1,
+    "journey-four": " Mountains. You have a long and dangerous jounrey ahead of you. So, what is your name, traveler? "
+  },
+  {
+    "id": 5,
+    "journey-one": "A wizened old mage named ",
+    "article-slot-one": 0,
+    "journey-two": "approaches you. He speaks of an ancient artifact, said to be hidden within the ",
+    "article-slot-two": 2,
+    "journey-three": "Ruins. To unlock its power, you'll first need a key, guarded by a beast in the ",
+    "article-slot-three": 1,
+    "journey-four": " Caves. The fate of the realm rests on your success. So, what is your name, traveler?"
+  },
+  {
+    "id": 6,
+    "journey-one": "You've signed up for an expedition leaving from the ",
+    "article-slot-one": 0,
+    "journey-two": " docks. Your mission: to chart unknown territories and discover the legendary ",
+    "article-slot-two": 2,
+    "journey-three": " 'Whispering Falls'. However, a rival cartographer has sabotaged your maps, forcing a detour through the perilous ",
+    "article-slot-three": 1,
+    "journey-four": " Swamps. So, what is your name, traveler?"
+  },
+  {
+    "id": 7,
+    "journey-one": "As a messenger for the Queen, your urgent task is to deliver vital scrolls from the royal library in ",
+    "article-slot-one": 0,
+    "journey-two": " to the Duke's stronghold at ",
+    "article-slot-two": 2,
+    "journey-three": " Castle. Along the way, you must make a crucial stop at the hidden outpost of ",
+    "article-slot-three": 1,
+    "journey-four": " to gather supplies. So, what is your name, traveler?"
+  },
+  {
+    "id": 8,
+    "journey-one": "You've been exiled from your homeland, beginning your journey in the desolate ",
+    "article-slot-one": 0,
+    "journey-two": "Plains. Your quest for redemption leads you to seek out a legendary hermit named ",
+    "article-slot-two": 1,
+    "journey-three": " and acquire a compass that points directly toward your homeland. Your homeland, called ",
+    "article-slot-three": 2,
+    "journey-four": " City, is hidden beyond the normal means of travel. So, what is your name, traveler?"
+  },
+  {
+    "id": 9,
+    "journey-one": "A strange message arrives at your humble home in ",
+    "article-slot-one": 0,
+    "journey-two": ", speaking of a rare celestial event visible only from the highest peak of ",
+    "article-slot-two": 2,
+    "journey-three": " Moutain. To witness this, you'll need to travel to the secluded monastery called ",
+    "article-slot-three": 1,
+    "journey-four": " and aquire the ancient navigational charts. So, what is your name, traveler?"
+  },
+  {
+    "id": 10,
+    "journey-one": "A cryptic message, delivered by an unknown agent in the bustling city of ",
+    "article-slot-one": 0,
+    "journey-two": ", speaks of a prophecy that hinges on finding the legendary ",
+    "article-slot-two": 2,
+    "journey-three": " Articaft. To understand its true power, you must first consult with the reclusive scholar, ",
+    "article-slot-three": 1,
+    "journey-four": ", who has beem rumoured to have taken a vow of silence. So, what is your name, traveler?"
+  },
+  {
+    "id": 11,
+    "journey-one": "You awaken with no memory, your only clue a strange symbol etched into your hand. You are in the forgotten ",
+    "article-slot-one": 0,
+    "journey-two": " Archives. A whispered rumor leads you to seek out the enigmatic ",
+    "article-slot-two": 1,
+    "journey-three": ", said to hold the key to your past. Your quest will assuredly lead to a confrontation with a powerful entity known only as the ",
+    "article-slot-three": 2,
+    "journey-four": ", whose lair will hopefully contain the truth about who you are. So, what is your name, traveler?"
+  },
+  {
+    "id": 13,
+    "journey-one": "As a fledgling adventurer, your first contract takes you to the remote ",
+    "article-slot-one": 0,
+    "journey-two": " Outpost. You are tasked with recovering the stolen ",
+    "article-slot-two": 2,
+    "journey-three": " Relic from the notorious bandit leader, ",
+    "article-slot-three": 1,
+    "journey-four": ", who is believed to be planning on destroying the Relic. So, what is your name, traveler?"
   }
 ]

@@ -4,11 +4,15 @@
     <span :style="{ color: currentTargetIndexProp === 0 ? '#0645ad' : '#555' }">
       {{ formattedStart }}
     </span>
-    <span> → </span>
+    <span>
+      &nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;
+    </span>
     <span :style="{ color: currentTargetIndexProp === 1 ? '#0645ad' : '#555' }">
       {{ formattedSecondTarget }}
     </span>
-    <span> → </span>
+    <span>
+      &nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;
+    </span>
     <span :style="{ color: currentTargetIndexProp === 2 ? '#0645ad' : '#555' }">
       {{ formattedFinalTarget }}
     </span>
@@ -32,7 +36,6 @@ const props = defineProps({
   articleTitle: String,
   start: String,
   targets: String,
-
   fullChain: Array,
   currentTargetIndex: Number,
   inEncounter: Boolean,
@@ -121,13 +124,13 @@ onMounted(load);
 }
 
 .path {
-  font-size: 15px;
+  font-size: 20px;
   text-align: center;
   margin-bottom: 0.5rem;
 }
 
 .path-display {
-  font-size: 15px;
+  font-size: 20px;
   text-align: center;
   margin-bottom: 0.5rem;
   color: #555;

@@ -113,7 +113,7 @@
       {
         "text": "Pick it up and touch it to your weapon",
         "result": "item",
-        "details": "none",
+        "details": "weapon",
         "responseText": "The shaking stops, the weapon feels sturdier. Damage base has been increased by 1."
       },
       {

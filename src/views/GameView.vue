@@ -1,73 +1,96 @@
 <template>
-  <ClassSelect
-    v-if="!playerClass"
-    @select="handleClassSelection"
-    :articleTitle="current"
-    :start="chain[0]"
+  <Header
+    :start="chain[currentTargetIndex]"
     :targets="chain[currentTargetIndex + 1]"
-    :formattedStart="formattedStart"
-    :formattedTitle="formattedTitle"
+    :clicks="clickCount"
+    :path="path"
+    :playerClass="playerClass"
+    :specialUsesLeft="specialUsesLeft"
+    :playerHP="playerHP"
+    :maxHP="playerClass?.maxHP ?? 50"
+    :gameLog="gameLog"
+    :encounter="encounter"
+    :enemyHP="enemyHP"
+    :nextEnemyAttack="nextEnemyAttack"
+    :enemyNextAction="enemyNextAction"
+    :message="encounterMessage"
+    @action="handleCombatActionWrapper"
+    @option-chosen="handleEncounterOption"
+    @close="handleCloseEncounter"
+    :playerName="playerName"
+    @log-line="log"
+    :shieldBonus="shieldBonus"
+    :weaponBonus="weaponBonus"
+    :longRestsUsed="longRestsUsed"
+    :isDarkened="bossOverlay"
+    :shortRestsUsed="shortRestsUsed"
   />
-  <div>
-    <Header
-      :start="chain[currentTargetIndex]"
-      :targets="chain[currentTargetIndex + 1]"
-      :clicks="clickCount"
-      :path="path"
-      :playerClass="playerClass"
-      :specialUsesLeft="specialUsesLeft"
-      :playerHP="playerHP"
-      :maxHP="playerClass?.maxHP ?? 50"
-      :gameLog="gameLog"
-      :encounter="encounter"
-      :enemyHP="enemyHP"
-      :nextEnemyAttack="nextEnemyAttack"
-      :enemyNextAction="enemyNextAction"
-      :message="encounterMessage"
-      @action="handleCombatActionWrapper"
-      @option-chosen="handleEncounterOption"
-      @close="handleCloseEncounter"
-      :playerName="playerName"
-      @log-line="log"
-      :weaponBonus="weaponBonus"
-      :longRestsUsed="longRestsUsedCount"
-    />
 
-    <div class="timer">{{ formattedTimer }}</div>
-
-    <VictoryModal
-      v-if="isGameComplete"
-      :clicks="clickCount"
-      :path="path"
-      :timer="formattedTimer"
-      :targets="chain"
-    />
-
-    <DefeatModal
-      v-if="defeated"
-      :clicks="clickCount"
-      :path="path"
-      :timer="formattedTimer"
-    />
-
-    <ArticleViewer
+  <div class="main-content-wrapper">
+    <ClassSelect
+      v-if="!playerClass"
+      @select="handleClassSelection"
       :articleTitle="current"
       :start="chain[0]"
       :targets="chain[currentTargetIndex + 1]"
-      :inEncounter="inEncounter"
-      @link-clicked="handleClick"
-      :path="path"
-      :fullChain="chain"            
-      :currentTargetIndex="currentTargetIndex"   
+      :formattedStart="formattedStart"
+      :formattedTitle="formattedTitle"
+      :fullChain="chain"
     />
+    <div>
+      <VictoryModal
+        v-if="isGameComplete"
+        :clicks="clickCount"
+        :path="path"
+        :timer="formattedTimer"
+        :targets="chain"
+        :shortcutsUsed="shortcutsUsedCount"
+        :combatEncountersFought="combatEncountersFought"
+        :playerHP="playerHP"
+        :weaponBonus="weaponBonus"
+        :specialsUsed="totalSpecialsUsed"
+        :longRestsUsed="longRestsUsed"
+        :shortRestsUsed="shortRestsUsed"
+        @close="resetGame"
+      />
 
-    <RestModal
-      v-show="showRestModal"
-      :shortRestsUsed="shortRestsUsed"
-      @rest="handleRest"
-      :longRestsUsed="longRestsUsed"
-    />
+      <DefeatModal
+        v-if="defeated"
+        :clicks="clickCount"
+        :path="path"
+        :timer="formattedTimer"
+        :targets="chain"
+        :shortcutsUsed="shortcutsUsedCount"
+        :combatEncountersFought="combatEncountersFought"
+        :playerHP="playerHP"
+        :weaponBonus="weaponBonus"
+        :specialsUsed="totalSpecialsUsed"
+        :longRestsUsed="longRestsUsed"
+        :shortRestsUsed="shortRestsUsed"
+        @close="resetGame"
+      />
+
+      <ArticleViewer
+        :articleTitle="current"
+        :start="chain[0]"
+        :targets="chain[currentTargetIndex + 1]"
+        :inEncounter="inEncounter"
+        @link-clicked="handleClick"
+        :path="path"
+        :fullChain="chain"
+        :currentTargetIndex="currentTargetIndex"
+      />
+
+      <RestModal
+        v-show="showRestModal"
+        :shortRestsUsed="shortRestsUsed"
+        @rest="handleRest"
+        :longRestsUsed="longRestsUsed"
+      />
+    </div>
   </div>
+
+  <div class="dim-overlay" :class="{ 'active-overlay': bossOverlay }"></div>
 </template>
 
 <script setup>
@@ -105,6 +128,9 @@ const formattedTitle = computed(
 const defeated = ref(false);
 const currentTargetIndex = ref(0);
 const clickCount = ref(0);
+const shortcutsUsedCount = ref(0);
+const combatEncountersFought = ref(0);
+const totalSpecialsUsed = ref(0);
 const path = ref([current.value]);
 const encounter = ref(null);
 const playerHP = ref(50);
@@ -118,6 +144,7 @@ const encounterMessage = ref("");
 const playerName = ref("");
 const DEFAULT_ENEMY_HP = 25;
 const weaponBonus = ref(0);
+const shieldBonus = ref(0);
 const enemyStatusEffects = ref([]);
 const enemyIsStunned = ref(false);
 const seenLoreEncounters = ref([]);
@@ -131,6 +158,7 @@ const showRestModal = ref(false);
 const longRestsUsed = ref(0);
 const longRestsUsedCount = computed(() => longRestsUsed.value);
 const hasReachedFinalArticle = ref(false);
+const bossOverlay = ref(false);
 
 const inEncounter = computed(() => {
   const e = encounter.value;
@@ -241,6 +269,7 @@ function handleClick(title) {
     console.log(
       "CONDITION MET FOR BOSS SPAWN: Clicked Final Target AND currentTargetIndex is 2."
     );
+    bossOverlay.value = true;
     const boss = getRandomBoss();
     selectedBossType.value = boss.type;
 
@@ -257,6 +286,8 @@ function handleClick(title) {
     enemyNextAction.value = "attack";
 
     bossSpawned.value = true;
+    combatEncountersFought.value++;
+
     console.log(
       "BOSS SPAWNED. Returning early from handleClick to start combat."
     );
@@ -302,6 +333,7 @@ function handleClick(title) {
         return;
       }
       fullEncounter = { type: "combat", enemy };
+      combatEncountersFought.value++;
       nextTick(() => {
         logEnemyAction();
       });
@@ -336,8 +368,9 @@ function handleClick(title) {
 function handleRest(choice) {
   console.log("Rest choice:", choice);
 
-  if (choice === "short") {
+  if (choice === "short" && shortRestsUsed.value < 4) {
     playerHP.value += 5;
+    shortRestsUsed.value++;
   } else if (choice === "long" && longRestsUsed.value < 2) {
     playerHP.value += 10;
     longRestsUsed.value++;
@@ -355,6 +388,7 @@ function handleCombatActionWrapper(playerAction) {
       playerClass,
       specialUsesLeft,
       weaponBonus,
+      shieldBonus,
       playerName,
       action: playerAction,
     },
@@ -420,10 +454,23 @@ function gotoEnemyTurn() {
     enemyNextAction.value = action;
 
     if (action === "attack") {
-      const isEnemyBoss = isBoss(encounter.value?.enemy);
-      nextEnemyAttack.value = isEnemyBoss
-        ? Math.floor(Math.random() * 6) + 3
-        : Math.floor(Math.random() * 3) + 1;
+      // Get the current enemy from the encounter object
+      const currentEnemyData = encounter.value?.enemy;
+
+      if (currentEnemyData) {
+        // Use the minDamage and maxDamage from the *current* enemy object
+        nextEnemyAttack.value =
+          Math.floor(
+            Math.random() *
+              (currentEnemyData.maxDamage - currentEnemyData.minDamage + 1)
+          ) + currentEnemyData.minDamage;
+      } else {
+        // Fallback if enemy data isn't available (shouldn't happen in combat)
+        console.warn(
+          "Enemy data not found for attack. Defaulting to 1-3 damage."
+        );
+        nextEnemyAttack.value = Math.floor(Math.random() * 3) + 1;
+      }
     } else {
       nextEnemyAttack.value = null;
     }
@@ -495,8 +542,21 @@ function handleClassSelection({ classKey, name }) {
   playerClass.value = classes[classKey];
   playerHP.value = playerClass.value.maxHP;
   playerName.value = name;
+  if (playerClass.value.startingWeaponBonus) {
+    weaponBonus.value += playerClass.value.startingWeaponBonus;
+    log(
+      `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingWeaponBonus} starting weapon damage!`
+    );
+  }
+  if (playerClass.value.startingSpecialUses) {
+    specialUsesLeft.value += playerClass.value.startingSpecialUses;
+    log(
+      `🎁 <span class="player-name">${playerName.value}</span> starts with +${playerClass.value.startingSpecialUses} special moves!`
+    );
+  }
   log(`Player name: ${playerName.value}`);
   log(`Class selected: ${playerClass.value.name}`);
+  // initialClickCount.value = clickCount.value;
 }
 
 function handleEncounterOption(option) {
@@ -514,9 +574,21 @@ function handleEncounterOption(option) {
       type: "combat",
       enemy: generateEnemy(),
     };
-    enemyHP.value = 25;
     nextEnemyAttack.value = Math.floor(Math.random() * 3) + 1;
     enemyNextAction.value = "attack";
+    const enemy = generateEnemy();
+    if (!enemy) {
+      console.warn("Could not generate enemy from option, skipping combat.");
+      encounter.value = null;
+      return;
+    }
+    encounter.value = { type: "combat", enemy: enemy };
+    enemyHP.value = enemy.currentHP;
+    nextEnemyAttack.value =
+      Math.floor(Math.random() * (enemy.maxDamage - enemy.minDamage + 1)) +
+      enemy.minDamage;
+    combatEncountersFought.value++;
+    log(`⚔️ An enemy (${enemy.name}) attacks as a result of your choice!`);
     return;
   }
 
@@ -576,8 +648,16 @@ function handleEncounterOption(option) {
   if (option.result === "shortcut" && option.details === "clicks") {
     const amount = option.amount || 1;
     clickCount.value = Math.max(0, clickCount.value - amount);
+    shortcutsUsedCount.value++;
     log(
       `🎲 <span class="player-name">${playerName.value}</span> discovered a shortcut! Click count reduced by ${amount}.`
+    );
+  }
+
+  if (option.details === "shield") {
+    shieldBonus.value += 1;
+    log(
+      `🛡️ <span class="player-name">${playerName.value}</span> reinforced their shield! Defense +1 (Base Defense Total: +${shieldBonus.value})`
     );
   }
 
@@ -587,6 +667,7 @@ function handleEncounterOption(option) {
     path.value.push(option.routeTitle);
     clickCount.value++;
 
+    bossOverlay.value = false;
     encounter.value = null;
 
     if (option.routeTitle === chain[currentTargetIndex.value + 1]) {
@@ -598,6 +679,7 @@ function handleEncounterOption(option) {
   }
 
   encounter.value = null;
+  bossOverlay.value = false;
 }
 
 function handleLootDrop() {
@@ -607,7 +689,7 @@ function handleLootDrop() {
     return;
   }
 
-  const lootOptions = ["health", "weapon", "special"];
+  const lootOptions = ["health", "weapon", "special", "shield"];
   const selectedLoot =
     lootOptions[Math.floor(Math.random() * lootOptions.length)];
 
@@ -639,6 +721,15 @@ function handleLootDrop() {
       );
       break;
     }
+
+    case "shield":
+      {
+        shieldBonus += 1;
+        log(
+          `🛡️<span class="player-name">${playerName.value}</span> loots a reinforced shield! Defense +1 (Base Defense Total: +${shieldBonus.value})`
+        );
+      }
+      break;
   }
 }
 
@@ -646,6 +737,53 @@ function markBossDefeated() {
   bossDefeated.value = true;
   current.value = chain[chain.length - 1];
   clearInterval(timerInterval);
+  bossOverlay.value = false;
+}
+
+function resetGame() {
+  clearInterval(timerInterval);
+  const newChain = getRandomChain();
+  chain.splice(0, chain.length, ...newChain);
+  current.value = chain[0];
+  weaponBonus.value = 0;
+  shieldBonus.value = 0;
+  currentTargetIndex.value = 0;
+  clickCount.value = 0;
+  shortcutsUsedCount.value = 0;
+  combatEncountersFought.value = 0;
+  totalSpecialsUsed.value = 0;
+  path.value = [current.value];
+  encounter.value = null;
+  playerHP.value = 50;
+  enemyHP.value = DEFAULT_ENEMY_HP;
+  nextEnemyAttack.value = null;
+  enemyNextAction.value = "attack";
+  specialUsesLeft.value = 5;
+  playerClass.value = null;
+  gameLog.value = [];
+  encounterMessage.value = "";
+  playerName.value = "";
+  weaponBonus.value = 0;
+  enemyStatusEffects.value = [];
+  enemyIsStunned.value = false;
+  seenLoreEncounters.value = [];
+  seenNPCEncounters.value = [];
+  currentEnemy.value = null;
+  selectedBossType.value = "";
+  bossSpawned.value = false;
+  bossDefeated.value = false;
+  shortRestsUsed.value = 0;
+  showRestModal.value = false;
+  longRestsUsed.value = 0;
+  hasReachedFinalArticle.value = false;
+  bossOverlay.value = false;
+  defeated.value = false;
+  timer.value = 0;
+  timerInterval = setInterval(() => {
+    timer.value++;
+  }, 1000);
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 onMounted(() => {
@@ -669,6 +807,23 @@ onBeforeUnmount(() => {
 .player-name {
   color: rgb(160, 178, 226);
   text-transform: uppercase;
+}
+
+.dim-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0);
+  pointer-events: none;
+  transition: background-color 1.5s ease-in-out;
+  z-index: 99;
+}
+
+.dim-overlay.active-overlay {
+  background-color: rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
 }
 
 @media screen and (max-width: 600px) {

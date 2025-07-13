@@ -7,7 +7,7 @@ import { ENEMY_TYPES } from "@/utils/enemies";
 export function rollEncounter() {
   const roll = Math.floor(Math.random() * 20) + 1;
 
-  if (roll <= 8) {
+  if (roll <= 7) {
     // Lore encounter
     const lore = loreData[Math.floor(Math.random() * loreData.length)];
     return {
@@ -33,8 +33,7 @@ export function rollEncounter() {
 }
 
 export function generateEnemy() {
-  const enemyData =
-    ENEMY_TYPES[Math.floor(Math.random() * ENEMY_TYPES.length)];
+  const enemyData = ENEMY_TYPES[Math.floor(Math.random() * ENEMY_TYPES.length)];
 
   const hp =
     Math.floor(Math.random() * (enemyData.maxHP - enemyData.minHP + 1)) +
@@ -45,4 +44,3 @@ export function generateEnemy() {
     currentHP: hp,
   };
 }
-

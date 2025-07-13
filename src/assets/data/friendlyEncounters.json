@@ -234,6 +234,11 @@
         "responseText": "THE LOST BARTENDER: Honestly, what did you expect? Thats on you."
       },
       {
+        "text": "Take the guns, knives and bullets and duct tape them to your shield.",
+        "details": "shield",
+        "responseText": "THE LOST BARTENDER: Very intersting."
+      },
+      {
         "text": "Politely decline.",
         "result": "none",
         "responseText": "THE LOST BARTENDER: Not even one knife? Okay then, pal."

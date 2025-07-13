@@ -6,6 +6,8 @@ export const classes = {
     special: "Power Strike",
     description: "40 HP. Special deals 6 damage.",
     specialEffect: (enemyHP) => enemyHP - 6,
+    startingWeaponBonus: 1,
+    startingSpecialUses: 0,
   },
   Wizard: {
     name: "Wizard",
@@ -22,6 +24,8 @@ export const classes = {
         stunned,
       };
     },
+    startingWeaponBonus: 0,
+    startingSpecialUses: 1,
   },
   Rogue: {
     name: "Rogue",
@@ -36,6 +40,8 @@ export const classes = {
         rogueDamage,
       };
     },
+    startingWeaponBonus: 0,
+    startingSpecialUses: 0,
   },
   Paladin: {
     name: "Paladin",
@@ -46,6 +52,8 @@ export const classes = {
       enemyHP: enemyHP - 5,
       playerHP: playerHP + 3,
     }),
+    startingWeaponBonus: 0,
+    startingSpecialUses: 0,
   },
   Sorcerer: {
     name: "Sorcerer",
@@ -60,5 +68,7 @@ export const classes = {
         playerHP: playerHP - recoil,
       };
     },
+    startingWeaponBonus: 0,
+    startingSpecialUses: 0,
   },
 };

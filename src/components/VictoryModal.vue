@@ -1,17 +1,52 @@
-<!-- VictoryModal.vue -->
-
 <template>
   <div class="modal-overlay">
     <div class="modal-content">
-      <div class="nice-dude">Nice, Dude &#128512;</div>
-      <div class="total-clicks">Total Clicks: {{ clicks }}</div>
-      <div class="timer">Time: {{ timer }}</div>
-      <div class="results-grid">
-        <div class="results-path" v-for="step in formattedPath" :key="step">
-          {{ step }}
+      <div class="nice-dude">Victory &#127881;</div>
+      <div class="summary-details">
+        <div class="detail-item">
+          <span class="label">Total Clicks:</span>
+          <span class="value">{{ clicks }}</span>
+        </div>
+        <div class="detail-item" v-if="shortcutsUsed > 0">
+          <span class="label">Shortcuts Used:</span>
+          <span class="value">{{ shortcutsUsed }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Time:</span>
+          <span class="value">{{ timer }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Combat Encounters:</span>
+          <span class="value">{{ combatEncountersFought }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">HP Remaining:</span>
+          <span class="value">{{ playerHP }}</span>
+        </div>
+        <div class="detail-item" v-if="weaponBonus > 0">
+          <span class="label">Weapon Bonus:</span>
+          <span class="value">+{{ weaponBonus }}</span>
+        </div>
+        <div class="detail-item" v-if="shieldBonus > 0">
+          <span class="label">Shield Bonus:</span>
+          <span class="value">+{{ shieldBonus }}</span>
+        </div>
+        <div class="detail-item" v-if="totalSpecialsUsed > 0">
+          <span class="label">Specials Used:</span>
+          <span class="value">{{ totalSpecialsUsed }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Long Rests Used:</span>
+          <span class="value">{{ longRestsUsed }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Short Rests Used:</span>
+          <span class="value">{{ shortRestsUsed }}</span>
         </div>
       </div>
-      <button @click="share">Share</button>
+
+      <button @click="share">Share Results</button>
+      <button @click="$emit('close')">Play Again</button>
     </div>
   </div>
 </template>
@@ -19,34 +54,55 @@
 <script setup>
 import { computed } from "vue";
 
-const props = defineProps(["clicks", "path", "timer", "targets"]);
+const props = defineProps([
+  "clicks",
+  "path",
+  "timer",
+  "targets",
+  "shortcutsUsed",
+  "combatEncountersFought",
+  "playerHP",
+  "weaponBonus",
+  "totalSpecialsUsed",
+  "longRestsUsed",
+  "shortRestsUsed",
+  "shieldBonus",
+]);
+
+const emit = defineEmits(["close"]);
+
 const formattedPath = computed(() =>
   props.path.map((step) => step.replaceAll("_", " "))
 );
 
 const share = () => {
-  console.log("Path:", props.path);
-  console.log("Targets:", props.targets);
-
-  const colorPath = props.path
-    .map((step) => {
-      const isTarget = props.targets.includes(step);
-      console.log(`Step: ${step}, isTarget: ${isTarget}`);
-      return isTarget ? "📍" : "➖";
-    })
-    .join("");
-
-  const text =
-    `🗺️ Scenic Route 🗺️\n` +
+  const summaryText =
+    `🗺️ Victory 🗺️\n` +
     `Clicks: ${props.clicks}\n` +
+    (props.shortcutsUsed > 0
+      ? `Shortcuts Used: ${props.shortcutsUsed}\n`
+      : "") +
     `Time: ${props.timer}\n` +
-    `Path: ${colorPath}\n` +
-    `https://scenicroute.mweatherford.rocks`;
+    `Combat Fought: ${props.combatEncountersFought}\n` +
+    `HP Remaining: ${props.playerHP}\n` +
+    (props.weaponBonus > 0 ? `Weapon Bonus: +${props.weaponBonus}\n` : "") +
+    +(props.shieldBonus > 0 ? `Shield Bonus: +${props.shieldBonus}\n` : "") +
+    (props.totalSpecialsUsed > 0
+      ? `Specials Used: ${props.totalSpecialsUsed}\n`
+      : "") +
+    `Rests (L/S): ${props.longRestsUsed}/${props.shortRestsUsed}\n` +
+    `https://example.com`;
 
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => {
-      alert("Result copied to clipboard!");
-    });
+    navigator.clipboard
+      .writeText(summaryText)
+      .then(() => {
+        alert("Results copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy text: ", err);
+        alert("Failed to copy results. Please try again.");
+      });
   } else {
     alert("Clipboard not supported in this browser.");
   }
@@ -134,18 +190,99 @@ button:hover {
   }
 }
 
-@media screen and (max-width: 600px) {
-  .modal-overlay {
-    position: absolute;
-  }
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
 
+.nice-dude {
+  font-size: 30px;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  color: #28a745;
+}
+
+.summary-details {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+  padding: 0 1rem;
+  font-size: 16px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+  border-bottom: 1px dashed #eee;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.label {
+  font-weight: 600;
+  color: #333;
+}
+
+.value {
+  color: #007bff;
+  font-weight: 500;
+}
+
+button {
+  margin-top: 1.5rem;
+  padding: 0.7rem 1.5rem;
+  font-size: 16px;
+  min-width: 120px;
+  transition: background 0.3s ease;
+}
+
+button:last-of-type {
+  margin-left: 1rem;
+}
+
+button.share-button {
+  background: #007bff;
+}
+
+button.share-button:hover {
+  background: #0056b3;
+}
+
+button.play-again-button {
+  background: #28a745;
+}
+
+button.play-again-button:hover {
+  background: #218838;
+}
+
+@media screen and (max-width: 600px) {
+  .modal-content {
+    padding: 1.5rem;
+    gap: 0.6rem;
+  }
   .nice-dude {
-    font-size: 20px;
+    font-size: 24px;
     margin-bottom: 1rem;
   }
-
-  .total-clicks {
-    font-size: 13px;
+  .summary-details {
+    font-size: 14px;
+    padding: 0 0.5rem;
+  }
+  button {
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    min-width: 100px;
+  }
+  button:last-of-type {
+    margin-left: 0.5rem;
   }
 }
 </style>

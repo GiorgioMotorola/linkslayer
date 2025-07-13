@@ -1,5 +1,5 @@
 <template>
-  <header>
+  <header :class="{ 'darkened-header': isDarkened }">
     <transition name="encounter-fade" mode="out-in">
       <div v-if="encounter" class="encounter-dashboard">
         <div v-if="encounter.type === 'combat'">
@@ -115,17 +115,27 @@
       </div>
     </div>
     <div class="clicks">
-      {{ props.playerName || "Unnamed" }} ({{ playerClass?.name || `none` }})
+      <div class="player-stats-item">
+        {{ props.playerName || "Unnamed" }} ({{ playerClass?.name || `none` }})
+      </div>
       &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
-      {{ `HP: ` + playerHP }}
+      <div class="player-stats-item">HP: {{ playerHP }}</div>
       &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
-      {{ `Specials Left: ` + specialUsesLeft }}
+      <div class="player-stats-item">Specials Left: {{ specialUsesLeft }}</div>
       &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
-      {{ `Clicks: ` + clicks }}
+      <div class="player-stats-item">Weapon: +{{ weaponBonus }}</div>
       &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
-      {{ `Base dmg: +${weaponBonus > 0 ? weaponBonus : 0}` }}
+      <div class="player-stats-item">Shield: +{{ shieldBonus }}</div>
       &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
-      {{ `Long Rests Left: ${2 - longRestsUsedCount}` }}
+      <div class="player-stats-item">Clicks: {{ clicks }}</div>
+      &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
+      <div class="player-stats-item">
+        Short Rests Left: {{ 4 - shortRestsUsedCount }}
+      </div>
+      &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
+      <div class="player-stats-item">
+        Long Rests Left: {{ 2 - longRestsUsedCount }}
+      </div>
     </div>
   </header>
 </template>
@@ -152,6 +162,11 @@ const props = defineProps({
   weaponBonus: Number,
   shortRestsUsed: Number,
   longRestsUsed: Number,
+  shieldBonus: Number,
+  isDarkened: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits([
@@ -182,6 +197,8 @@ const visibleLog = computed(() => {
 });
 
 const longRestsUsedCount = computed(() => props.longRestsUsed ?? 0);
+
+const shortRestsUsedCount = computed(() => props.shortRestsUsed ?? 0);
 
 watch(
   () => props.encounter,
@@ -288,7 +305,8 @@ function copyLogToClipboard() {
 
 <style scoped>
 * {
-  font-family: "IBM Plex Mono", monospace;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-optical-sizing: auto;
 }
 header {
   position: fixed;
@@ -298,8 +316,75 @@ header {
   background-color: rgb(228, 224, 224);
   z-index: 100;
   padding: 1rem;
-  border: 2px solid #000000;
-  border-radius: 4px;
+  border-top: 1.5px solid #000000;
+  transition: background-color 1.5s ease-in-out, filter 1.5s ease-in-out;
+  color: rgb(35, 36, 35);
+  transition: background-color 1.5s ease-in-out, filter 1.5s ease-in-out,
+    color 1.5s ease-in-out;
+}
+
+.darkened-header {
+  background-color: rgb(100, 95, 95);
+  filter: brightness(0.7);
+  color: rgb(200, 200, 200);
+}
+
+.darkened-header .clicks {
+  color: rgb(150, 180, 255);
+}
+
+.darkened-header .game-log {
+  background-color: #2a2828;
+  border-color: #555;
+}
+
+.darkened-header .game-log .log-entry {
+  color: rgb(180, 180, 180);
+}
+
+.darkened-header .game-log .latest-log {
+  background-color: #3a71b865;
+  color: rgb(255, 255, 255);
+}
+
+.darkened-header .log-btns button {
+  color: rgb(200, 200, 200);
+}
+
+.darkened-header .log-btns button:hover {
+  color: rgb(150, 180, 255);
+}
+
+.darkened-header .enemy {
+  color: rgb(167, 186, 194);
+}
+
+.darkened-header .oh-no,
+.darkened-header .npc-name,
+.darkened-header .lore-name {
+  color: rgb(253, 35, 35);
+  text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000,
+    2px 2px 0 #000, -2px 0px 0 #000, 2px 0px 0 #000, 0px -2px 0 #000,
+    0px 2px 0 #000;
+}
+
+.darkened-header .npc-greeting,
+.darkened-header .lore-greeting,
+.darkened-header .attack-line {
+  color: rgb(220, 220, 220);
+}
+
+.darkened-header button {
+  color: rgb(253, 35, 35);
+  background-color: transparent;
+  text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000,
+    2px 2px 0 #000, -2px 0px 0 #000, 2px 0px 0 #000, 0px -2px 0 #000,
+    0px 2px 0 #000;
+  font-size: 20px;
+}
+
+.darkened-header button:hover {
+  color: rgb(100, 200, 120);
 }
 
 .encounter-dashboard {
@@ -308,10 +393,11 @@ header {
 }
 
 .clicks {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-optical-sizing: auto;
   font-size: 20px;
   color: rgb(35, 36, 35);
-  font-weight: 500;
+  font-weight: 400;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -353,7 +439,7 @@ header {
   font-size: 14px;
   margin-top: 0.3rem;
   color: rgb(229, 231, 229);
-  font-weight: 700;
+  font-weight: 400;
   gap: 1rem;
 }
 
@@ -398,14 +484,14 @@ button {
   flex-direction: column;
   border: none;
   background-color: rgb(228, 224, 224);
-  font-size: 15px;
+  font-size: 17px;
   margin-bottom: 0.3rem;
   color: #303030;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 button:hover {
-  color: rgb(41, 119, 67);
+  color: rgb(28, 128, 158);
   cursor: pointer;
 }
 
@@ -423,14 +509,22 @@ button:hover {
   font-size: 50px;
   animation: combat-drop 0.35s ease-in forwards;
   color: rgb(7, 7, 7);
+  border-bottom: 1px solid rgb(155, 152, 152);
+  padding-bottom: 10px;
+  margin-left: 100px;
+  margin-right: 100px;
 }
 
 .npc-name {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   font-size: 30px;
   animation: npc-drop 0.5s ease-out forwards;
   color: rgb(7, 7, 7);
+  border-bottom: 1px solid rgb(155, 152, 152);
+  padding-bottom: 10px;
+  margin-left: 100px;
+  margin-right: 100px;
 }
 
 .lore-name {
@@ -439,12 +533,17 @@ button:hover {
   font-size: 30px;
   animation: lore-drop 0.8s ease-out forwards;
   color: rgb(7, 7, 7);
+  border-bottom: 1px solid black;
+  padding-bottom: 10px;
+  margin-left: 100px;
+  margin-right: 100px;
 }
 
 .npc-greeting,
 .lore-greeting {
-  font-size: 18px;
+  font-size: 22px;
   margin-bottom: 1rem;
+  color: #000;
 }
 
 .npc button {
@@ -452,10 +551,10 @@ button:hover {
   flex-direction: column;
   border: none;
   background-color: rgb(228, 224, 224);
-  font-size: 14px;
+  font-size: 17px;
   margin-bottom: 0.3rem;
   color: #303030;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .lore button {
@@ -463,24 +562,29 @@ button:hover {
   flex-direction: column;
   border: none;
   background-color: rgb(228, 224, 224);
-  font-size: 14px;
+  font-size: 17px;
   margin-bottom: 0.3rem;
   color: #303030;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .npc button:hover {
-  color: rgb(41, 119, 67);
+  color: rgb(28, 128, 158);
   cursor: pointer;
 }
 
 .lore button:hover {
-  color: rgb(41, 119, 67);
+  color: rgb(28, 128, 158);
   cursor: pointer;
 }
 
 .attack-line {
   text-align: start;
+  font-size: 22px;
+  margin-bottom: 1rem;
+  color: #000;
+  padding-bottom: 0.5rem;
+  padding-top: 1rem;
 }
 
 .encounter-fade-enter-active,

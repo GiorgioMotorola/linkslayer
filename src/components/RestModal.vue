@@ -3,7 +3,9 @@
     <div class="rest-modal">
       <h2>What a beautiful spot to rest for the day</h2>
       <p>Take a rest?</p>
-      <button @click="$emit('rest', 'short')">Short Rest (+5 HP)</button>
+      <button @click="$emit('rest', 'short')" :disabled="shortRestsUsed >= 4">
+        Short Rest (+5 HP)
+      </button>
       <button @click="$emit('rest', 'long')" :disabled="longRestsUsed >= 2">
         Long Rest (+10 HP)
       </button>

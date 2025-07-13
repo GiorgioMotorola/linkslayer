@@ -4,6 +4,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     playerClass,
     specialUsesLeft,
     weaponBonus,
+    shieldBonus,
     playerName,
     action: playerAction,
   } = player;
@@ -174,8 +175,9 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     } else {
       if (enemyNextAction.value === "attack") {
         damageToPlayer = currentEnemyDamage;
+        damageToPlayer = Math.max(0, damageToPlayer - shieldBonus.value);
         if (playerAction === "defend") {
-          damageToPlayer = Math.max(1, Math.floor(damageToPlayer / 2));
+          damageToPlayer = Math.max(0, Math.floor(damageToPlayer * 0.5));
           log(
             `🛡️ <span class="player-name">${playerName.value}</span> defended, taking ${damageToPlayer} damage.`
           );
