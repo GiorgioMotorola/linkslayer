@@ -5,12 +5,12 @@
         The sky emits a gloam only owned by a finishing sunset. What do you do?
       </div>
       <button @click="$emit('rest', 'short')" :disabled="shortRestsUsed >= 4">
-        > Short Rest (+5 HP)
+        > You find a good leaning tree, eat an apple and take a load off for a bit before continuing on (gain +5 HP)
       </button>
       <button @click="$emit('rest', 'long')" :disabled="longRestsUsed >= 2">
-        > Long Rest (+10 HP)
+        > You build a fire, set up your tent and watch the chicken leg drip into the fire before a proper rest. (gain +10 HP)
       </button>
-      <button @click="$emit('rest', 'continue')">> Continue On (0 HP)</button>
+      <button @click="$emit('rest', 'continue')">> There is far too much ground to cover. I must continue on. (0 HP)</button>
     </div>
   </div>
 </template>
@@ -41,48 +41,55 @@ defineEmits(["rest"]);
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(10, 10, 10, 0);
   z-index: 999;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: auto;
-  animation: fade-in-overlay 1s ease-out forwards;
-  background-color: rgba(41, 47, 66, 0.904);
+  animation: fade-in-overlay 1.25s ease-out forwards;
+background-image: linear-gradient(to bottom,
+  rgba(5, 25, 56, 0.904),    
+  rgba(74, 92, 144, 0.918),   
+  rgba(224, 197, 124, 0.685)  
+);
 }
 .rest-modal {
-  background-color: rgb(228, 224, 224);
+  background-color: rgb(197, 193, 193);
   padding: 2rem;
   border-radius: 12px;
-  text-align: center;
-  max-width: 800px;
+  text-align: start;
+  max-width: 650px;
   width: 90%;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(37, 37, 37, 0.671);
   animation: pop-in 0.3s ease;
   z-index: 1000;
 }
 
 .rest-desc {
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0rem;
   font-size: 18px;
   animation: npc-drop 0.5s ease-out forwards;
   color: rgb(7, 7, 7);
   border-bottom: 1px solid rgb(155, 152, 152);
-  padding-bottom: 10px;
-  margin-left: 100px;
-  margin-right: 100px;
+  padding-bottom: 15px;
+  margin-left: 0px;
+  margin-right: 0px;
+  background-color: rgb(197, 193, 193);
 }
 
 button {
   display: flex;
   flex-direction: column;
+  justify-content: start;
+  text-align: start;
   border: none;
-  background-color: rgb(228, 224, 224);
+  background-color: rgb(197, 193, 193);
   font-size: 17px;
-  margin-bottom: 0.3rem;
+  margin-bottom: .5rem;
   color: #303030;
   font-weight: 400;
+  margin-top: .5rem;
 }
 
 button:hover {

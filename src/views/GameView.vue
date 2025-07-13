@@ -260,7 +260,7 @@ function handleClick(title) {
     );
   }
 
-  if (clickCount.value > 0 && clickCount.value % 1 === 0) {
+  if (clickCount.value > 0 && clickCount.value % 11 === 0) {
     console.log(
       "Showing rest modal due to click count, preventing other encounters."
     );

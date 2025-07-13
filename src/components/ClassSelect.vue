@@ -220,7 +220,7 @@ watch(
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 7vh;
+  padding-top: 4.5vh;
   z-index: 1000;
 }
 
