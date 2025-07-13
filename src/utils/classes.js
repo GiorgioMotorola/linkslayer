@@ -4,7 +4,7 @@ export const classes = {
     name: "Fighter",
     maxHP: 45,
     special: "Power Strike",
-    description: "45 HP. Special deals 6 damage. Starts with +1 Weapon Damage.",
+    description: "45 HP. Class Ability(Power Strike) deals 6 damage. Starts with +1 Weapon Damage.",
     specialEffect: (enemyHP) => enemyHP - 6,
     startingWeaponBonus: 1,
     startingSpecialUses: 0,
@@ -15,10 +15,10 @@ export const classes = {
     maxHP: 40,
     special: "Smite",
     description:
-      "40 HP. Special deals 5 damage and gives +2 HP. Starts with +1 Shield Bonus",
+      "40 HP. Class Ability(Smite) deals 5 damage and gives +2 HP. Starts with +1 Shield Bonus",
     specialEffect: (enemyHP, playerHP, maxHP) => ({
       enemyHP: enemyHP - 5,
-      playerHP: playerHP + 2,
+      playerHP: playerHP + 1,
     }),
     startingWeaponBonus: 0,
     startingSpecialUses: 0,
@@ -29,7 +29,7 @@ export const classes = {
     maxHP: 35,
     special: "Fireball",
     description:
-      "35 HP. Special deals between 5 and 15 damage with a 20% chance to stun the enemy. Starts with 6 Specials.",
+      "35 HP. Class Ability(Fireball) deals between 5 and 15 damage with a 20% chance to stun the enemy. Starts with 6 Class Ability charges.",
     specialEffect: (enemyHP, playerHP) => {
       const wizardDamage = Math.floor(Math.random() * 11) + 5;
       const stunned = Math.random() < 0.2;
@@ -49,7 +49,7 @@ export const classes = {
     maxHP: 35,
     special: "Sneak Attack",
     description:
-      "35 HP. Special deals 6 damage and evades the incoming enemy strike.",
+      "35 HP. Class Ability(Sneak Attack) deals 6 damage and evades the incoming enemy strike.",
     specialEffect: (enemyHP) => {
       const rogueDamage = 6;
       return {
@@ -65,9 +65,9 @@ export const classes = {
     name: "Cleric",
     maxHP: 45,
     special: "Divine Blessing",
-    description: "45 HP. Special heals 6 HP and deals 5 damage.",
+    description: "45 HP. Class Ability(Divine Blessing) heals 5 HP and deals 6 damage.",
     specialEffect: (enemyHP, playerHP, maxHP) => ({
-      enemyHP: enemyHP - 6,
+      enemyHP: enemyHP - 5,
       playerHP: playerHP + 5,
     }),
     startingWeaponBonus: 0,
@@ -79,7 +79,7 @@ export const classes = {
     maxHP: 35,
     special: "Chaos Surge",
     description:
-      "35 HP. Special deals 12 damage, but takes random recoil damage to the player.",
+      "35 HP. Class Ability(Chaos Surge) deals 12 damage, but takes random recoil damage to the player.",
     specialEffect: (enemyHP, playerHP) => {
       const recoil = Math.floor(Math.random() * 6) + 1;
       return {

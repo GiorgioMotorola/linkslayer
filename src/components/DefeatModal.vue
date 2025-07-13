@@ -1,52 +1,54 @@
 <template>
-  <div class="modal-overlay">
-    <div class="modal-content">
-      <div class="nice-dude">You Died &#127881;</div>
+  <div class="game-modal-overlay">
+    <div class="game-modal-content">
+      <div class="modal-title">You Died ☠️</div>
       <div class="summary-details">
         <div class="detail-item">
-          <span class="label">Total Clicks:</span>
+          <span class="label">Total Clicks:&nbsp;</span>
           <span class="value">{{ clicks }}</span>
         </div>
         <div class="detail-item" v-if="shortcutsUsed > 0">
-          <span class="label">Shortcuts Used:</span>
+          <span class="label">Shortcuts Used:&nbsp;</span>
           <span class="value">{{ shortcutsUsed }}</span>
         </div>
         <div class="detail-item">
-          <span class="label">Time:</span>
+          <span class="label">Time:&nbsp;</span>
           <span class="value">{{ timer }}</span>
         </div>
         <div class="detail-item">
-          <span class="label">Combat Encounters:</span>
+          <span class="label">Combat Encounters:&nbsp;</span>
           <span class="value">{{ combatEncountersFought }}</span>
         </div>
         <div class="detail-item">
-          <span class="label">HP Remaining:</span>
+          <span class="label">HP Remaining:&nbsp;</span>
           <span class="value">{{ playerHP }}</span>
         </div>
         <div class="detail-item" v-if="weaponBonus > 0">
-          <span class="label">Weapon Bonus:</span>
+          <span class="label">Weapon Bonus:&nbsp;</span>
           <span class="value">+{{ weaponBonus }}</span>
         </div>
         <div class="detail-item" v-if="shieldBonus > 0">
-          <span class="label">Shield Bonus:</span>
+          <span class="label">Shield Bonus:&nbsp;</span>
           <span class="value">+{{ shieldBonus }}</span>
         </div>
         <div class="detail-item" v-if="totalSpecialsUsed > 0">
-          <span class="label">Specials Used:</span>
+          <span class="label">Specials Used:&nbsp;</span>
           <span class="value">{{ totalSpecialsUsed }}</span>
         </div>
         <div class="detail-item">
-          <span class="label">Long Rests Used:</span>
+          <span class="label">Long Rests Used:&nbsp;</span>
           <span class="value">{{ longRestsUsed }}</span>
         </div>
         <div class="detail-item">
-          <span class="label">Short Rests Used:</span>
+          <span class="label">Short Rests Used:&nbsp;</span>
           <span class="value">{{ shortRestsUsed }}</span>
         </div>
       </div>
 
-      <button @click="share">Share Results</button>
-      <button @click="$emit('close')">Play Again</button>
+      <div class="modal-buttons">
+        <button @click="share">> Share Results</button>
+        <button @click="$emit('close')">> Play Again</button>
+      </div>
     </div>
   </div>
 </template>
@@ -77,7 +79,7 @@ const formattedPath = computed(() =>
 
 const share = () => {
   const summaryText =
-    `🗺️ Death 🗺️\n` +
+    `☠️ Death ☠️\n` +
     `Clicks: ${props.clicks}\n` +
     (props.shortcutsUsed > 0
       ? `Shortcuts Used: ${props.shortcutsUsed}\n`
@@ -86,11 +88,11 @@ const share = () => {
     `Combat Fought: ${props.combatEncountersFought}\n` +
     `HP Remaining: ${props.playerHP}\n` +
     (props.weaponBonus > 0 ? `Weapon Bonus: +${props.weaponBonus}\n` : "") +
-    +(props.shieldBonus > 0 ? `Shield Bonus: +${props.shieldBonus}\n` : "") +
+    (props.shieldBonus > 0 ? `Shield Bonus: +${props.shieldBonus}\n` : "") +
     (props.totalSpecialsUsed > 0
       ? `Specials Used: ${props.totalSpecialsUsed}\n`
       : "") +
-    `Rests (L/S): ${props.longRestsUsed}/${props.shortRestsUsed}\n` +
+    `Rests Used(L/S): ${props.longRestsUsed}/${props.shortRestsUsed}\n` +
     `https://example.com`;
 
   if (navigator.clipboard) {
@@ -110,98 +112,59 @@ const share = () => {
 </script>
 
 <style scoped>
-.modal-overlay {
+* {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-optical-sizing: auto;
+}
+
+@keyframes fade-in-overlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.game-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 999;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding-top: 0vh;
-  z-index: 1000;
+  pointer-events: auto;
+  animation: fade-in-overlay 1.25s ease-out forwards;
 }
 
-.modal-content {
-  background: white;
+.game-modal-content {
+  background-color: rgb(32, 32, 32);
   padding: 2rem;
   border-radius: 12px;
-  text-align: center;
-  max-width: 500px;
+  text-align: start;
+  max-width: 300px;
   width: 90%;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(37, 37, 37, 0.671);
   animation: pop-in 0.3s ease;
-}
-
-.results-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-.results-path {
-  font-size: 12px;
-  background: #f0f0f0;
-  padding: 0.4rem;
-  border-radius: 4px;
-  text-align: center;
-}
-
-button {
-  margin: 1rem 0;
-  padding: 0.6rem 1.2rem;
-  font-size: 14px;
-  border: none;
-  background: #4a8096;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-right: 0.5rem;
-}
-
-.nice-dude {
-  font-size: 30px;
-  margin-bottom: 2rem;
-}
-
-.total-clicks {
-  font-size: 17px;
-}
-
-.timer {
-  font-size: 15px;
-}
-
-button:hover {
-  background: #45a047;
-}
-
-@keyframes pop-in {
-  from {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.modal-content {
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.8rem;
+  gap: 1rem;
 }
 
-.nice-dude {
-  font-size: 30px;
-  margin-bottom: 1.5rem;
-  font-weight: bold;
-  color: #28a745;
+.modal-title {
+  text-align: center;
+  margin-bottom: 0rem;
+  font-size: 28px;
+  animation: npc-drop 0.5s ease-out forwards;
+  color: #c02020;
+  border-bottom: 1px solid rgb(155, 152, 152);
+  padding-bottom: 15px;
+  width: 100%;
+  background-color: rgb(32, 32, 32);
 }
 
 .summary-details {
@@ -216,9 +179,9 @@ button:hover {
 
 .detail-item {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   padding: 0.3rem 0;
-  border-bottom: 1px dashed #eee;
+  color: #303030;
 }
 
 .detail-item:last-child {
@@ -227,48 +190,77 @@ button:hover {
 
 .label {
   font-weight: 600;
-  color: #333;
+  color: #c7c6c6;
 }
 
 .value {
-  color: #007bff;
+  color: #8d8d8d;
   font-weight: 500;
 }
 
-button {
-  margin-top: 1.5rem;
-  padding: 0.7rem 1.5rem;
-  font-size: 16px;
-  min-width: 120px;
-  transition: background 0.3s ease;
+.modal-buttons {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: flex-start;
+  margin-top: 1rem;
 }
 
-button:last-of-type {
-  margin-left: 1rem;
+.modal-buttons button {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  text-align: start;
+  border: none;
+  background-color: rgb(32, 32, 32);
+  font-size: 17px;
+  margin-bottom: 0.5rem;
+  color: #c7c6c6;
+  font-weight: 400;
+  margin-top: 0.5rem;
+  width: auto;
+  padding: 0;
 }
 
-button.share-button {
-  background: #007bff;
+.modal-buttons button:hover {
+  color: rgb(28, 128, 158);
+  cursor: pointer;
 }
 
-button.share-button:hover {
-  background: #0056b3;
+@keyframes pop-in {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-button.play-again-button {
-  background: #28a745;
-}
-
-button.play-again-button:hover {
-  background: #218838;
+@keyframes npc-drop {
+  0% {
+    opacity: 0;
+    transform: translateX(-150px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(10px);
+  }
+  80% {
+    transform: translateX(-5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 @media screen and (max-width: 600px) {
-  .modal-content {
+  .game-modal-content {
     padding: 1.5rem;
     gap: 0.6rem;
   }
-  .nice-dude {
+  .modal-title {
     font-size: 24px;
     margin-bottom: 1rem;
   }
@@ -276,13 +268,9 @@ button.play-again-button:hover {
     font-size: 14px;
     padding: 0 0.5rem;
   }
-  button {
-    padding: 0.5rem 1rem;
+  .modal-buttons button {
+    padding: 0;
     font-size: 14px;
-    min-width: 100px;
-  }
-  button:last-of-type {
-    margin-left: 0.5rem;
   }
 }
 </style>

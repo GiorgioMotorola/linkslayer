@@ -189,7 +189,7 @@ watch(encounter, (newVal) => {
 watch(playerHP, (newVal) => {
   if (newVal <= 0 && !defeated.value) {
     log(
-      `💀 <span class="player-name">${playerName.value}</span> was defeated!`
+      `💀 <span class="player-name">${playerName.value}</span> was defeated.`
     );
     defeated.value = true;
     clearInterval(timerInterval);
@@ -260,23 +260,17 @@ function handleClick(title) {
     );
   }
 
-  if (clickCount.value > 0 && clickCount.value % 11 === 0) {
-    console.log(
-      "Showing rest modal due to click count, preventing other encounters."
-    );
-    showRestModal.value = true;
-    // Crucially, return here so no other encounter logic runs on this click
-    return;
-  }
-  if (
+    if (
     title === finalTarget &&
     currentTargetIndex.value === 2 &&
     !bossSpawned.value &&
     !bossDefeated.value
   ) {
     console.log(
-      "CONDITION MET FOR BOSS SPAWN: Clicked Final Target AND currentTargetIndex is 2."
+      "CONDITION MET FOR BOSS SPAWN: Clicked Final Target AND currentTargetIndex is 2. Preventing Rest Modal."
     );
+    // Explicitly hide the rest modal if it was about to show
+    showRestModal.value = false;
     bossOverlay.value = true;
     const boss = getRandomBoss();
     selectedBossType.value = boss.type;
@@ -299,6 +293,14 @@ function handleClick(title) {
     console.log(
       "BOSS SPAWNED. Returning early from handleClick to start combat."
     );
+    return;
+  }
+
+  if (clickCount.value > 0 && clickCount.value % 11 === 0) {
+    console.log(
+      "Showing rest modal due to click count, preventing other encounters."
+    );
+    showRestModal.value = true;
     return;
   }
   if (title !== finalTarget && Math.random() < 0.4) {
@@ -509,7 +511,7 @@ function logEnemyAction() {
   let message = "";
   switch (enemyNextAction.value) {
     case "attack":
-      message = `🗡️ Enemy is attacking for ${nextEnemyAttack.value} damage.`;
+      message = `🗡️ Enemy is now attacking for ${nextEnemyAttack.value} damage.`;
       break;
     case "defend":
       message = "🛡️ Enemy is holding up their shield.";
@@ -556,7 +558,7 @@ function handleClassSelection({ classKey, name }) {
   if (playerClass.value.startingSpecialUses) {
     specialUsesLeft.value += playerClass.value.startingSpecialUses;
     log(
-      `🎁 <span class="player-name">${playerName.value}</span> starts with +${playerClass.value.startingSpecialUses} Special.`
+      `🎁 <span class="player-name">${playerName.value}</span> starts with +${playerClass.value.startingSpecialUses} Class Ability charges.`
     );
   }
   if (playerClass.value.startingShieldBonus) {
@@ -598,7 +600,7 @@ function handleEncounterOption(option) {
       Math.floor(Math.random() * (enemy.maxDamage - enemy.minDamage + 1)) +
       enemy.minDamage;
     combatEncountersFought.value++;
-    log(`⚔️ An enemy (${enemy.name}) attacks as a result of your choice!`);
+    log(`⚔️ Your choice has resulted in combat.`);
     return;
   }
 
@@ -612,7 +614,7 @@ function handleEncounterOption(option) {
 
     if (option.details === "weapon") {
       log(
-        `🎲 <span class="player-name">${playerName.value}</span> found a weapon upgrade! Next attack does double damage!`
+        `🎲 <span class="player-name">${playerName.value}</span> found a weapon upgrade. Next attack does double damage.`
       );
     }
   }
@@ -620,21 +622,21 @@ function handleEncounterOption(option) {
   if (option.result === "damage") {
     playerHP.value = Math.max(playerHP.value - 5, 0);
     log(
-      `🎲 <span class="player-name">${playerName.value}</span> took 5 damage!`
+      `🎲 <span class="player-name">${playerName.value}</span> took 5 damage.`
     );
   }
 
   if (option.result === "damage-minor") {
     playerHP.value = Math.max(playerHP.value - 1, 0);
     log(
-      `🎲 <span class="player-name">${playerName.value}</span> took 1 damage!`
+      `🎲 <span class="player-name">${playerName.value}</span> took 1 damage.`
     );
   }
 
   if (option.result === "damage-major") {
     playerHP.value = Math.max(playerHP.value - 50, 0);
     log(
-      `🎲 <span class="player-name">${playerName.value}</span> took 50 damage!`
+      `🎲 <span class="player-name">${playerName.value}</span> took 50 damage.`
     );
   }
 
@@ -694,7 +696,7 @@ function handleEncounterOption(option) {
 
 function handleLootDrop() {
   const lootChance = Math.random();
-  if (lootChance > 0.5) {
+  if (lootChance > 0.6) {
     log(`❌ Enemy has no loot to drop.`);
     return;
   }
@@ -711,7 +713,7 @@ function handleLootDrop() {
         playerClass.value.maxHP
       );
       log(
-        `🍎 <span class="player-name">${playerName.value}</span> loots +${amount} HP!`
+        `🍎 <span class="player-name">${playerName.value}</span> loots +${amount} HP.`
       );
       break;
     }
@@ -719,7 +721,7 @@ function handleLootDrop() {
     case "weapon": {
       weaponBonus.value += 1;
       log(
-        `🗡️ <span class="player-name">${playerName.value}</span> loots a sharper weapon! Weapon damage +1 (Base Damage Total: +${weaponBonus.value})`
+        `🗡️ <span class="player-name">${playerName.value}</span> loots a sharper weapon. Weapon damage +1 (Base Damage Total: +${weaponBonus.value})`
       );
       break;
     }
@@ -727,16 +729,16 @@ function handleLootDrop() {
     case "special": {
       specialUsesLeft.value += 1;
       log(
-        `🎁 <span class="player-name">${playerName.value}</span> regains a special move! (Total: ${specialUsesLeft.value})`
+        `🎁 <span class="player-name">${playerName.value}</span> regains a Class Ability charge. (Total: ${specialUsesLeft.value})`
       );
       break;
     }
 
     case "shield":
       {
-        shieldBonus += 1;
+        shieldBonus.value += 1;
         log(
-          `🛡️<span class="player-name">${playerName.value}</span> loots a reinforced shield! Defense +1 (Base Defense Total: +${shieldBonus.value})`
+          `🛡️<span class="player-name">${playerName.value}</span> loots a reinforced shield. Defense +1 (Base Defense Total: +${shieldBonus.value})`
         );
       }
       break;

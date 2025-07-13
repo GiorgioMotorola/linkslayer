@@ -85,8 +85,8 @@
     "options": [
       {
         "text": "Sit at the rock and contimplate your journey so far and plan for the journey ahead.",
-        "result": "item",
-        "details": "special",
+        "result": "special",
+        "details": "recover",
         "responseText": "I wish I had a beer to crack and some Steely Dan to listen to but this will do."
       },
       {
@@ -101,7 +101,8 @@
       },
       {
         "text": "Pray upon the rock and thank the Gods for safety and health",
-        "result": "health",
+        "result": "item",
+        "details": "health",
         "responseText": "The sky grants temporary shade from the sun and you feel comforted"
       }
     ]
@@ -192,7 +193,7 @@
     "options": [
       {
         "text": "Open the chest",
-        "responseText": "There appears to be only a glowing orb. +1 has been added to your special ability.",
+        "responseText": "There appears to be only a glowing orb. +1 has been added to your Class Feature charges.",
         "result": "special",
         "details": "recover",
         "amount": 1
@@ -307,7 +308,8 @@
       },
       {
         "text": "Cut the Green Wire",
-        "result": "health",
+        "result": "item",
+        "details": "health",
         "responseText": "The crate whirrs a low tone and then immediately opens up, all 4 sides collapsing the ground. A bushel of peanuts is revealed. "
       },
       {

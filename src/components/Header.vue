@@ -31,12 +31,12 @@
               :class="{ 'btn-anim-special': activeAction === 'special' }"
               @click="handleAction('special')"
             >
-              > Special
+              > {{ playerSpecialAbilityName }}
             </button>
           </div>
           <div class="enemy">
-            Player HP: {{ playerHP }} &nbsp;&#10074;&nbsp; Enemy HP:
-            {{ enemyHP }}
+            {{props.playerName}} (HP: {{ playerHP }})&nbsp; vs. &nbsp;{{ props.encounter.enemy.name }} (HP: 
+            {{ enemyHP }})
           </div>
         </div>
 
@@ -84,12 +84,12 @@
     <div class="player-stats">
       <div class="clicks-top">
         <div class="player-stats-item">
-          {{ props.playerName || "Unnamed" }} ({{
+          {{ props.playerName || "Unnamed" }} <span style="font-weight: 600; color: #02204d;">({{
             playerClass?.name || `none`
-          }})
+          }})</span>
         </div>
-        &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
-        <div class="player-stats-item">HP: {{ playerHP }}</div>
+        &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
+        <div class="player-stats-item">HP: <span style="font-weight: 600; color: #02204d;">{{ playerHP }}</span></div>
       </div>
       <div class="game-log">
         <div class="log"></div>
@@ -124,20 +124,22 @@
       </div>
     </div>
     <div class="clicks">
-      <div class="player-stats-item">Specials Left: {{ specialUsesLeft }}</div>
-      &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="player-stats-item">Weapon: +{{ weaponBonus }}</div>
-      &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="player-stats-item">Shield: +{{ shieldBonus }}</div>
-      &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="player-stats-item">Clicks: {{ clicks }}</div>
-      &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
       <div class="player-stats-item">
-        Short Rests Left: {{ 4 - shortRestsUsedCount }}
+        <span style="font-weight: 600;">{{ playerSpecialAbilityName }} Charges Left:</span> {{ specialUsesLeft }}
       </div>
-      &nbsp;&nbsp;&nbsp;&nbsp;&#10074;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
+      <div class="player-stats-item"> <span style="font-weight: 600;">Weapon: </span> +{{ weaponBonus }}</div>
+      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
+      <div class="player-stats-item"><span style="font-weight: 600;">Shield:</span> +{{ shieldBonus }}</div>
+      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
+      <div class="player-stats-item"><span style="font-weight: 600;">Clicks:</span> {{ clicks }}</div>
+      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
       <div class="player-stats-item">
-        Long Rests Left: {{ 2 - longRestsUsedCount }}
+        <span style="font-weight: 600;">Short Rests Left:</span> {{ 4 - shortRestsUsedCount }}
+      </div>
+      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
+      <div class="player-stats-item">
+        <span style="font-weight: 600;">Long Rests Left:</span> {{ 2 - longRestsUsedCount }}
       </div>
     </div>
   </header>
@@ -202,6 +204,10 @@ const visibleLog = computed(() => {
 const longRestsUsedCount = computed(() => props.longRestsUsed ?? 0);
 
 const shortRestsUsedCount = computed(() => props.shortRestsUsed ?? 0);
+
+const playerSpecialAbilityName = computed(() => {
+  return props.playerClass?.special || "Special";
+});
 
 watch(
   () => props.encounter,
@@ -296,7 +302,7 @@ const formattedTitle = computed(() =>
 
 function copyLogToClipboard() {
   const rawLog = props.gameLog
-    .map((entry) => entry.replace(/<[^>]*>/g, ""))
+    .map((entry) => entry.text.replace(/<[^>]*>/g, ""))
     .join("\n");
 
   navigator.clipboard
@@ -316,7 +322,7 @@ header {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgb(228, 224, 224);
+  background: #e2e6e7;
   z-index: 100;
   padding: 0.5rem;
   border-top: 1.5px solid #000000;
@@ -400,8 +406,8 @@ header {
   font-family: "IBM Plex Sans", sans-serif;
   font-optical-sizing: auto;
   font-size: 22px;
-  color: rgb(35, 36, 35);
-  font-weight: 400;
+  color: rgb(29, 29, 29);
+  font-weight: 600;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -499,7 +505,7 @@ button {
   display: flex;
   flex-direction: column;
   border: none;
-  background-color: rgb(228, 224, 224);
+  background: #e2e6e7;
   font-size: 17px;
   margin-bottom: 0.3rem;
   color: #303030;
@@ -512,8 +518,8 @@ button:hover {
 }
 
 .enemy {
-  color: #376475;
-  font-weight: 500;
+  color: #02204d;
+  font-weight: 600;
   font-size: 20px;
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -566,7 +572,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   border: none;
-  background-color: rgb(228, 224, 224);
+  background: #e2e6e7;
   font-size: 17px;
   margin-bottom: 0.3rem;
   color: #303030;
@@ -577,7 +583,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   border: none;
-  background-color: rgb(228, 224, 224);
+  background: #e2e6e7;
   font-size: 17px;
   margin-bottom: 0.3rem;
   color: #303030;

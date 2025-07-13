@@ -2,19 +2,19 @@
   <div class="modal">
     <div class="class-select">
       <div class="journey-prompt">
-        {{ journeyOne }}
-        <span style="color: darkblue; font-weight: 500">{{
+        "{{ journeyOne }}
+        <span style="color: #00008b; font-weight: 400">{{
           promptedArticleOne
         }}</span>
         {{ journeyTwo }}
-        <span style="color: darkred; font-weight: 500">{{
+        <span style="color: #00008b; font-weight: 400">{{
           promptedArticleTwo
         }}</span>
         {{ journeyThree }}
-        <span style="color: darkgreen; font-weight: 500">{{
+        <span style="color: #00008b; font-weight: 400">{{
           promptedArticleThree
         }}</span>
-        {{ journeyFour }}
+        {{ journeyFour }}"
       </div>
 
       <div class="who-are-you-div"></div>
@@ -282,12 +282,12 @@ button:hover {
 }
 
 .journey-prompt {
-  font-style: italic;
   color: #1b1b1b;
   text-align: start;
   text-indent: 5rem;
   font-weight: 400;
   font-size: 18px;
+  font-family: "MedievalSharp", cursive;
 }
 
 @keyframes pop-in {
