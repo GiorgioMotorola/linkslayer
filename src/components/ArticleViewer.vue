@@ -23,7 +23,7 @@
       {{ formattedFinalTarget }}
     </span>
   </div>
-  <div class="article">
+  <div class="article" :class="{ 'blurred-content': isBlurred }">
     <div v-if="inEncounter" class="overlay"></div>
     <div class="title">{{ formattedTitle }}</div>
     <div
@@ -46,6 +46,7 @@ const props = defineProps({
   currentTargetIndex: Number,
   inEncounter: Boolean,
   path: Array,
+  isBlurred: Boolean,
 });
 
 const emit = defineEmits(["link-clicked"]);
@@ -272,6 +273,10 @@ onMounted(load);
 
 .error-message.fade-out {
   opacity: 0;
+}
+
+.blurred-content {
+  filter: blur(5px);
 }
 
 @media screen and (max-width: 600px) {

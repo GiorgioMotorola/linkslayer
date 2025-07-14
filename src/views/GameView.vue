@@ -52,6 +52,7 @@
         :longRestsUsed="longRestsUsed"
         :shortRestsUsed="shortRestsUsed"
         @close="resetGame"
+        :gameLog="gameLog"
       />
 
       <DefeatModal
@@ -68,6 +69,7 @@
         :longRestsUsed="longRestsUsed"
         :shortRestsUsed="shortRestsUsed"
         @close="resetGame"
+        :gameLog="gameLog"
       />
 
       <ArticleViewer
@@ -79,6 +81,7 @@
         :path="path"
         :fullChain="chain"
         :currentTargetIndex="currentTargetIndex"
+        :isBlurred="blurClicksLeft > 0"
       />
 
       <RestModal
@@ -158,6 +161,7 @@ const showRestModal = ref(false);
 const longRestsUsed = ref(0);
 const hasReachedFinalArticle = ref(false);
 const bossOverlay = ref(false);
+const blurClicksLeft = ref(0);
 
 const inEncounter = computed(() => {
   const e = encounter.value;
@@ -187,7 +191,7 @@ watch(encounter, (newVal) => {
 });
 
 watch(playerHP, (newVal) => {
-  if (newVal <= 0 && !defeated.value) {
+  if (playerClass.value && newVal <= 0 && !defeated.value) {
     log(
       `💀 <span class="player-name">${playerName.value}</span> was defeated.`
     );
@@ -202,6 +206,12 @@ watch(clickCount, (newClicks) => {
   if (newClicks > 0 && newClicks % 11 === 0) {
     console.log("Showing rest modal");
     showRestModal.value = true;
+  }
+  if (blurClicksLeft.value > 0) {
+    blurClicksLeft.value--;
+    log(
+      `🍺 You are still drunk. ${blurClicksLeft.value} clicks left til you sober up.`
+    );
   }
 });
 
@@ -260,7 +270,7 @@ function handleClick(title) {
     );
   }
 
-    if (
+  if (
     title === finalTarget &&
     currentTargetIndex.value === 2 &&
     !bossSpawned.value &&
@@ -269,7 +279,6 @@ function handleClick(title) {
     console.log(
       "CONDITION MET FOR BOSS SPAWN: Clicked Final Target AND currentTargetIndex is 2. Preventing Rest Modal."
     );
-    // Explicitly hide the rest modal if it was about to show
     showRestModal.value = false;
     bossOverlay.value = true;
     const boss = getRandomBoss();
@@ -617,6 +626,34 @@ function handleEncounterOption(option) {
         `🎲 <span class="player-name">${playerName.value}</span> found a weapon upgrade. Next attack does double damage.`
       );
     }
+    if (option.details === "beer") {
+      const duration = option.amount || 4;
+      blurClicksLeft.value += duration;
+      log(
+        `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision becomes blurry for ${duration} clicks.`
+      );
+    }
+  }
+
+  if (option.result === "route" && option.details === "compass") {
+    if (currentTargetIndex.value < 1) {
+      current.value = chain[1];
+      path.value.push(chain[1]);
+      clickCount.value++;
+      log(
+        `🧭 The compass guides you directly to ${chain[1].replaceAll(
+          "_",
+          " "
+        )}!`
+      );
+      currentTargetIndex.value = Math.max(currentTargetIndex.value, 1);
+    } else {
+      log(`🧭 The compass points to a familiar place. It offers no new path.`);
+    }
+    encounter.value = null;
+    bossOverlay.value = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
   }
 
   if (option.result === "damage") {
@@ -664,6 +701,30 @@ function handleEncounterOption(option) {
     log(
       `🎲 <span class="player-name">${playerName.value}</span> discovered a shortcut! Click count reduced by ${amount}.`
     );
+  }
+
+  if (option.result === "route" && option.details === "compass") {
+    if (currentTargetIndex.value < 1) {
+      current.value = chain[1];
+      path.value.push(chain[1]);
+      clickCount.value++;
+      log(
+        `🧭 The compass glows, guiding you directly to ${chain[1].replaceAll(
+          "_",
+          " "
+        )}!`
+      );
+      currentTargetIndex.value = Math.max(currentTargetIndex.value, 1);
+      log(`✨ You feel a step closer to your goal.`);
+    } else {
+      log(
+        `🧭 The compass seems to point to a place you've already been, or are already near. It offers no new path.`
+      );
+    }
+    encounter.value = null;
+    bossOverlay.value = false;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
   }
 
   if (option.details === "shield") {
@@ -772,6 +833,7 @@ function resetGame() {
   enemyNextAction.value = "attack";
   specialUsesLeft.value = 5;
   playerClass.value = null;
+  playerHP.value = -1;
   gameLog.value = [];
   encounterMessage.value = "";
   playerName.value = "";
@@ -790,6 +852,7 @@ function resetGame() {
   hasReachedFinalArticle.value = false;
   bossOverlay.value = false;
   defeated.value = false;
+  blurClicksLeft.value = 0;
   timer.value = 0;
   timerInterval = setInterval(() => {
     timer.value++;

@@ -375,5 +375,36 @@
         "responseText": "It seems he was telling the truth. Off to jail you go, I suppose."
       }
     ]
+  },
+  {
+    "id": "npc_014",
+    "name": "The Lighthouse Tavern",
+    "greeting": "Just ahead, you spot a one story building with what looks like a tall structure built to the left. The structure resembles a lighthouse. There is a handmade sign attached to the structure that says 'The Lighthouse Tavern'. You infer the tall structure is where this place got it's name. Walking into the bar, there are a few patrons: a farmhand, a dwarf and mysterious man sitting in the shadows. The barkeep smiles at you. The bartender appears to be selling Beer and Boiled Peanuts. As you approach the bar, the mysterious man appears to also have something for sale...",
+    "options": [
+      {
+        "text": "Buy a beer from The Barkeep",
+        "responseText": "You drink the beer and start to feel lighter, happier and very, very wavy.",
+        "result": "item",
+        "details": "beer",
+        "amount": 3
+      },
+      {
+        "text": "Buy some boiled peanuts from The Barkeep",
+        "responseText": "You eat the peanuts. They are pretty good!",
+        "result": "item",
+        "details": "health"
+      },
+      {
+        "text": "Buy the mysterious item from The Mysterious Man",
+        "responseText": "The item looks like a normal compass except its glowing slightly. You walk outside with the compass and without warning, you are transported to another area.",
+        "result": "route",
+        "details": "compass"
+      },
+      {
+        "text": "Leave",
+        "responseText": "THE BARKEEP: Be careful of the Goblins on this road, traveler.",
+        "result": "none"
+      }
+    ]
   }
 ]

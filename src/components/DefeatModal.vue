@@ -7,7 +7,7 @@
           <span class="label">Total Clicks:&nbsp;</span>
           <span class="value">{{ clicks }}</span>
         </div>
-        <div class="detail-item" v-if="shortcutsUsed > 0">
+        <div class="detail-item">
           <span class="label">Shortcuts Used:&nbsp;</span>
           <span class="value">{{ shortcutsUsed }}</span>
         </div>
@@ -47,14 +47,19 @@
 
       <div class="modal-buttons">
         <button @click="share">> Share Results</button>
+        <button @click="copyLogToClipboard" class="log-copy">> Copy Log</button>
         <button @click="$emit('close')">> Play Again</button>
       </div>
+    </div>
+    <div id="defeat-notification-banner" class="notification-banner">
+      <span id="defeat-notification-message"></span>
+      <button class="close-button" @click="hideNotification">×</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, nextTick } from "vue";
 
 const props = defineProps([
   "clicks",
@@ -69,6 +74,7 @@ const props = defineProps([
   "longRestsUsed",
   "shortRestsUsed",
   "shieldBonus",
+  "gameLog",
 ]);
 
 const emit = defineEmits(["close"]);
@@ -99,16 +105,71 @@ const share = () => {
     navigator.clipboard
       .writeText(summaryText)
       .then(() => {
-        alert("Results copied to clipboard!");
+        showAlertAsBanner("Results copied to clipboard!", "success");
       })
       .catch((err) => {
         console.error("Failed to copy text: ", err);
-        alert("Failed to copy results. Please try again.");
+        showAlertAsBanner("Failed to copy results. Please try again.");
       });
   } else {
-    alert("Clipboard not supported in this browser.");
+    showAlertAsBanner("Clipboard not supported in this browser.");
   }
 };
+function copyLogToClipboard() {
+  const rawLog = props.gameLog
+    .map((entry) => entry.text.replace(/<[^>]*>/g, ""))
+    .join("\n");
+
+  navigator.clipboard
+    .writeText(rawLog)
+    .then(() => showAlertAsBanner("Game log copied to clipboard!", "success"))
+    .catch((err) => {
+      console.error("Failed to copy log:", err);
+      showAlertAsBanner("Failed to copy log. Please try again.", "error");
+    });
+}
+
+let notificationTimeoutId = null;
+
+async function showAlertAsBanner(message, type = "info", duration = 3000) {
+  await nextTick();
+
+  const banner = document.getElementById("defeat-notification-banner");
+  const messageSpan = document.getElementById("defeat-notification-message");
+
+  if (!banner || !messageSpan) {
+    console.error(
+      "Defeat Modal: Notification banner elements not found in the DOM."
+    );
+    showAlertAsBanner(message);
+    return;
+  }
+
+  banner.className = "notification-banner";
+  banner.classList.add(type);
+
+  messageSpan.textContent = message;
+  banner.classList.add("show");
+
+  if (notificationTimeoutId) {
+    clearTimeout(notificationTimeoutId);
+  }
+
+  notificationTimeoutId = setTimeout(() => {
+    hideNotification();
+  }, duration);
+}
+
+function hideNotification() {
+  const banner = document.getElementById("defeat-notification-banner");
+  if (banner) {
+    banner.classList.remove("show");
+    if (notificationTimeoutId) {
+      clearTimeout(notificationTimeoutId);
+      notificationTimeoutId = null;
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -225,6 +286,43 @@ const share = () => {
 .modal-buttons button:hover {
   color: rgb(28, 128, 158);
   cursor: pointer;
+}
+
+.notification-banner {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #dc3545;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out, top 0.5s ease-in-out;
+  min-width: 250px;
+  max-width: 90%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notification-banner.show {
+  display: flex;
+  opacity: 1;
+  top: 20px;
+}
+
+.notification-banner .close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  margin-left: 15px;
 }
 
 @keyframes pop-in {

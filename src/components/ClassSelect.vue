@@ -16,7 +16,10 @@
         }}</span>
         {{ journeyFour }}"
       </div>
-
+      <div id="notification-banner" class="notification-banner">
+        <span id="notification-message"></span>
+        <button class="close-button" @click="hideNotification">×</button>
+      </div>
       <div class="who-are-you-div"></div>
       <input v-model="name" placeholder="Enter your name" class="name-input" />
       <div class="select-class">Select Your Class</div>
@@ -31,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, nextTick } from "vue";
 import { classes } from "@/utils/classes";
 import prompts from "@/assets/data/prompts.json";
 
@@ -62,9 +65,47 @@ console.log(
   props.fullChain
 );
 
+let notificationTimeoutId = null;
+
+async function showAlertAsBanner(message, duration = 3000) {
+  await nextTick();
+
+  const banner = document.getElementById("notification-banner");
+  const messageSpan = document.getElementById("notification-message");
+
+  if (!banner || !messageSpan) {
+    console.error("Notification banner elements not found in the DOM.");
+    alert(message);
+    return;
+  }
+  banner.className = "notification-banner";
+
+  messageSpan.textContent = message;
+  banner.classList.add("show");
+
+  if (notificationTimeoutId) {
+    clearTimeout(notificationTimeoutId);
+  }
+
+  notificationTimeoutId = setTimeout(() => {
+    hideNotification();
+  }, duration);
+}
+
+function hideNotification() {
+  const banner = document.getElementById("notification-banner");
+  if (banner) {
+    banner.classList.remove("show");
+    if (notificationTimeoutId) {
+      clearTimeout(notificationTimeoutId);
+      notificationTimeoutId = null;
+    }
+  }
+}
+
 function selectClass(classKey) {
   if (!name.value.trim()) {
-    alert("Please enter your name.");
+    showAlertAsBanner("Please enter your name before selecting a class.");
     return;
   }
   emit("select", { classKey, name: name.value.trim() });
@@ -288,6 +329,43 @@ button:hover {
   font-weight: 400;
   font-size: 18px;
   font-family: "MedievalSharp", cursive;
+}
+
+.notification-banner {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #dc3545;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out, top 0.5s ease-in-out;
+  min-width: 250px;
+  max-width: 90%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notification-banner.show {
+  display: flex;
+  opacity: 1;
+  top: 20px;
+}
+
+.notification-banner .close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  margin-left: 15px;
 }
 
 @keyframes pop-in {
