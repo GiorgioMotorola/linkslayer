@@ -246,7 +246,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
         encounter.value = null;
         return;
       } else if (enemyNextAction.value === "defend") {
-        log(`🛡️ ${formattedTitle} is holding up their shield.`);
+        log(`🛡️ ${formattedTitle} is defending your next attack.`);
         damageToPlayer = 0;
       }
     }

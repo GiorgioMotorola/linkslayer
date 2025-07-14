@@ -152,7 +152,7 @@
       {
         "text": "Start a new town, start a new life.",
         "result": "none",
-        "responseText": "You hang up your sword, your shield, your armor. You begin chopping trees one by one, create a lean-to against the biggest, closest tree you can find. By day, you chop trees, burn debris, re-arrange rocks, build on existing structures to reenforce their strenth. At dusk, you find local game to substain on: fish, deer, squirell, wild boar. At night, you contemplate your next move. Should you start building a church to pray to your Gods? Should you start building a more sustainable home to live in? I bet down the road, a library and a general store would bring in people to your town. What should you name your town? Should you start a farm to prevent the local wildlife from dying out? You should get some sleep. Sleep would be good. You wake up on the 5th day. You decide none of this is worth it and move on in your journey."
+        "responseText": "You hang up your weapons, your boots and your armor. You begin chopping trees one by one, create a lean-to against the biggest, closest tree you can find. By day, you chop trees, burn debris, re-arrange rocks, build on existing structures to reenforce their strenth. At dusk, you find local game to substain on: fish, deer, squirell, wild boar. At night, you contemplate your next move. Should you start building a church to pray to your Gods? Should you start building a more sustainable home to live in? I bet down the road, a library and a general store would bring in people to your town. What should you name your town? Should you start a farm to prevent the local wildlife from dying out? You should get some sleep. Sleep would be good. You wake up on the 5th day. You decide none of this is worth it and move on in your journey."
       },
       {
         "text": "Eat some of the steel.",
@@ -193,7 +193,7 @@
     "options": [
       {
         "text": "Open the chest",
-        "responseText": "There appears to be only a glowing orb. +1 has been added to your Class Feature charges.",
+        "responseText": "There appears to be a book called 'Dr. Brian's Brain Busters: How to Get Smarter and Improve Your Skills'. You read the book and do, in fact, get Smarter. Your skillset seems as if it was incremented by 1.",
         "result": "special",
         "details": "recover",
         "amount": 1

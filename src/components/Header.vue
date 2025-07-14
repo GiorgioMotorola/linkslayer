@@ -130,7 +130,7 @@
       &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
       <div class="player-stats-item"> <span style="font-weight: 600;">Weapon: </span> +{{ weaponBonus }}</div>
       &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="player-stats-item"><span style="font-weight: 600;">Shield:</span> +{{ shieldBonus }}</div>
+      <div class="player-stats-item"><span style="font-weight: 600;">Defense:</span> +{{ shieldBonus }}</div>
       &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
       <div class="player-stats-item"><span style="font-weight: 600;">Clicks:</span> {{ clicks }}</div>
       &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;

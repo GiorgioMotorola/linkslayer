@@ -15,7 +15,7 @@ export const classes = {
     maxHP: 40,
     special: "Smite",
     description:
-      "40 HP. Class Ability(Smite) deals 5 damage and gives +2 HP. Starts with +1 Shield Bonus",
+      "40 HP. Class Ability(Smite) deals 5 damage and gives +2 HP. Starts with +1 Defense Bonus",
     specialEffect: (enemyHP, playerHP, maxHP) => ({
       enemyHP: enemyHP - 5,
       playerHP: playerHP + 1,
@@ -49,7 +49,7 @@ export const classes = {
     maxHP: 35,
     special: "Sneak Attack",
     description:
-      "35 HP. Class Ability(Sneak Attack) deals 6 damage and evades the incoming enemy strike.",
+      "35 HP. Class Ability(Sneak Attack) deals 6 damage and evades the incoming enemy strike. Starts with 6 Class Ability charges.",
     specialEffect: (enemyHP) => {
       const rogueDamage = 6;
       return {
@@ -58,7 +58,7 @@ export const classes = {
       };
     },
     startingWeaponBonus: 0,
-    startingSpecialUses: 0,
+    startingSpecialUses: 1,
     startingShieldBonus: 0,
   },
   Cleric: {

@@ -28,7 +28,7 @@
           <span class="value">+{{ weaponBonus }}</span>
         </div>
         <div class="detail-item" v-if="shieldBonus > 0">
-          <span class="label">Shield Bonus:&nbsp;</span>
+          <span class="label">Defense Bonus:&nbsp;</span>
           <span class="value">+{{ shieldBonus }}</span>
         </div>
         <div class="detail-item" v-if="totalSpecialsUsed > 0">
@@ -94,7 +94,7 @@ const share = () => {
     `Combat Fought: ${props.combatEncountersFought}\n` +
     `HP Remaining: ${props.playerHP}\n` +
     (props.weaponBonus > 0 ? `Weapon Bonus: +${props.weaponBonus}\n` : "") +
-    (props.shieldBonus > 0 ? `Shield Bonus: +${props.shieldBonus}\n` : "") +
+    (props.shieldBonus > 0 ? `Defense Bonus: +${props.shieldBonus}\n` : "") +
     (props.totalSpecialsUsed > 0
       ? `Specials Used: ${props.totalSpecialsUsed}\n`
       : "") +

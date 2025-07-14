@@ -1,6 +1,7 @@
 <template>
   <div class="modal">
     <div class="class-select">
+      <div class="game-title">LINKSLAYER IN THE INFINITE LIBRARY</div>
       <div class="journey-prompt">
         "{{ journeyOne }}
         <span style="color: #00008b; font-weight: 400">{{
@@ -251,6 +252,20 @@ watch(
   font-optical-sizing: auto;
 }
 
+.game-title {
+  font-family: "Metal Mania", system-ui;
+  font-size: 40px;
+  font-weight: 400;
+  margin-bottom: .5rem;
+  letter-spacing: 2px;
+  text-decoration-line: underline;
+  text-decoration-color: rgb(99, 79, 79);
+  color: #990000;
+    text-shadow: -2px -2px 0 #000000, 2px -2px 0 #000000, -2px 2px 0 #000000,
+    2px 2px 0 #000000, -2px 0px 0 #000000, 2px 0px 0 #000000, 0px -2px 0 #000000,
+    0px 2px 0 #000000;
+}
+
 .modal {
   position: fixed;
   top: 0;
@@ -261,13 +276,13 @@ watch(
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 4.5vh;
+  padding-top: 0vh;
   z-index: 1000;
 }
 
 .class-select {
   background: #e2e6e7;
-  padding: 2rem;
+  padding: 1rem;
   border-radius: 3px;
   text-align: center;
   max-width: 650px;

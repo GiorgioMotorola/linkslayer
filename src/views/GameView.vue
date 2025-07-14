@@ -523,7 +523,7 @@ function logEnemyAction() {
       message = `🗡️ Enemy is now attacking for ${nextEnemyAttack.value} damage.`;
       break;
     case "defend":
-      message = "🛡️ Enemy is holding up their shield.";
+      message = "🛡️ Enemy is defending your next attack.";
       break;
     case "flee":
       message = "🏃 Enemy is about to flee.";
@@ -573,7 +573,7 @@ function handleClassSelection({ classKey, name }) {
   if (playerClass.value.startingShieldBonus) {
     shieldBonus.value += playerClass.value.startingShieldBonus;
     log(
-      `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingShieldBonus} starting Sheild Bonus.`
+      `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingShieldBonus} starting Defense Bonus.`
     );
   }
   log(`Player name: ${playerName.value}`);
@@ -730,7 +730,7 @@ function handleEncounterOption(option) {
   if (option.details === "shield") {
     shieldBonus.value += 1;
     log(
-      `🛡️ <span class="player-name">${playerName.value}</span> reinforced their shield! Defense +1 (Base Defense Total: +${shieldBonus.value})`
+      `🛡️ <span class="player-name">${playerName.value}</span> has increased their Defense by +1 (Base Defense Total: +${shieldBonus.value})`
     );
   }
 
@@ -799,7 +799,7 @@ function handleLootDrop() {
       {
         shieldBonus.value += 1;
         log(
-          `🛡️<span class="player-name">${playerName.value}</span> loots a reinforced shield. Defense +1 (Base Defense Total: +${shieldBonus.value})`
+          `🛡️<span class="player-name">${playerName.value}</span> loots stronger Chainmail. Defense +1 (Base Defense Total: +${shieldBonus.value})`
         );
       }
       break;

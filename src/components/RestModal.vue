@@ -2,7 +2,7 @@
   <div class="rest-overlay">
     <div class="rest-modal">
       <div class="rest-desc">
-        The sky emits a gloam only owned by a finishing sunset. What do you do?
+        The sky emits a gloam only owned by a finishing sunset. What do you do? 🌙
       </div>
       <button @click="$emit('rest', 'short')" :disabled="shortRestsUsed >= 4">
         > You find a good leaning tree, eat an apple and take a load off for a bit before continuing on (gain +5 HP)
