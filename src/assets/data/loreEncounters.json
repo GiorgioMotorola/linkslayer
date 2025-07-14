@@ -193,10 +193,10 @@
     "options": [
       {
         "text": "Open the chest",
-        "responseText": "There appears to be a book called 'Dr. Brian's Brain Busters: How to Get Smarter and Improve Your Skills'. You read the book and do, in fact, get Smarter. Your skillset seems as if it was incremented by 1.",
-        "result": "special",
-        "details": "recover",
-        "amount": 1
+        "responseText": "There appears to be gold in that there chest.",
+        "result": "item",
+        "details": "gold",
+        "amount": 50
       },
       {
         "text": "Walk beyond it and continue on.",
@@ -309,8 +309,9 @@
       {
         "text": "Cut the Green Wire",
         "result": "item",
-        "details": "health",
-        "responseText": "The crate whirrs a low tone and then immediately opens up, all 4 sides collapsing the ground. A bushel of peanuts is revealed. "
+        "details": "gold",
+        "amount": 45,
+        "responseText": "The crate whirrs a low tone and then immediately opens up, all 4 sides collapsing the ground. A pile of gold is revealed."
       },
       {
         "text": "Cut All of the Wires",
@@ -341,13 +342,54 @@
       },
       {
         "text": "Walk Around the right side of the swamp",
-        "result": "none",
-        "responseText": "You make it safely to the other side of the putrid swamp."
+        "result": "item",
+        "details": "gold",
+        "amount": 30,
+        "responseText": "You make it safely to the other side of the putrid swamp. While walking, you find a bag with 30 Gold pieces in it."
       },
       {
         "text": "Take off all of your clothes, wrap them in your travel blanket, tie the blanket to your ankle and swim like a graceful dolphin through the swamp.",
         "result": "damage-major",
         "responseText": "That was painful."
+      }
+    ]
+  },
+  {
+    "id": "lore_013",
+    "text": "After following a set of train tracks for 2 miles, you come across a Train Station heading to far away lands.",
+    "options": [
+      { "text": "Blackstaff Tower", "routeTitle": "College_Fjord" },
+      {
+        "text": "The Forgotten Bard Tree",
+        "routeTitle": "The_Bund"
+      },
+      {
+        "text": "Duran's Cliff",
+        "routeTitle": "Rio_de_Janeiro"
+      },
+      { "text": "Oceanside Caverns", "routeTitle": "Great_Barrier_Reef" },
+      {
+        "text": "YOU: No, thank you.",
+        "result": "none",
+        "responseText": "THE SCROLL DEALER: Be careful out there..."
+      }
+    ]
+  },
+  {
+    "id": "lore_014",
+    "text": "You find a dusty old chest hidden beneath a gnarled tree root. It looks untouched for centuries.",
+    "options": [
+      {
+        "text": "Open the chest carefully.",
+        "responseText": "The chest creaks open, revealing a small pouch of gold.",
+        "result": "item",
+        "details": "gold",
+        "amount": 15
+      },
+      {
+        "text": "Leave the chest, it might be cursed.",
+        "responseText": "You decide against disturbing the ancient relic and move on.",
+        "result": "none"
       }
     ]
   }

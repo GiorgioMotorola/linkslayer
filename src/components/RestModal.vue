@@ -2,15 +2,20 @@
   <div class="rest-overlay">
     <div class="rest-modal">
       <div class="rest-desc">
-        The sky emits a gloam only owned by a finishing sunset. What do you do? 🌙
+        The sky emits a gloam only owned by a finishing sunset. What do you do?
+        🌙
       </div>
       <button @click="$emit('rest', 'short')" :disabled="shortRestsUsed >= 4">
-        > You find a good leaning tree, eat an apple and take a load off for a bit before continuing on (gain +5 HP)
+        > You find a good leaning tree, eat an apple and take a load off for a
+        bit before continuing on (gain +5 HP)
       </button>
       <button @click="$emit('rest', 'long')" :disabled="longRestsUsed >= 2">
-        > You build a fire, set up your tent and watch the chicken leg drip into the fire before a proper rest. (gain +10 HP)
+        > You build a fire, set up your tent and watch the chicken leg drip into
+        the fire before a proper rest. (gain +10 HP)
       </button>
-      <button @click="$emit('rest', 'continue')">> There is far too much ground to cover. I must continue on. (0 HP)</button>
+      <button @click="$emit('rest', 'continue')">
+        > There is far too much ground to cover. I must continue on. (0 HP)
+      </button>
     </div>
   </div>
 </template>
@@ -47,11 +52,12 @@ defineEmits(["rest"]);
   justify-content: center;
   pointer-events: auto;
   animation: fade-in-overlay 1.25s ease-out forwards;
-background-image: linear-gradient(to bottom,
-  rgba(5, 25, 56, 0.904),    
-  rgba(74, 92, 144, 0.918),   
-  rgba(224, 197, 124, 0.685)  
-);
+  background-image: linear-gradient(
+    to bottom,
+    rgba(8, 12, 17, 0.9),
+    rgba(17, 27, 37, 0.9),
+    rgba(13, 19, 26, 0.6)
+  );
 }
 .rest-modal {
   background-color: rgb(197, 193, 193);
@@ -86,10 +92,10 @@ button {
   border: none;
   background-color: rgb(197, 193, 193);
   font-size: 17px;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
   color: #303030;
   font-weight: 400;
-  margin-top: .5rem;
+  margin-top: 0.5rem;
 }
 
 button:hover {

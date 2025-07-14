@@ -24,6 +24,7 @@
     :longRestsUsed="longRestsUsed"
     :isDarkened="bossOverlay"
     :shortRestsUsed="shortRestsUsed"
+    :playerGold="playerGold"
   />
 
   <div class="main-content-wrapper">
@@ -90,6 +91,13 @@
         @rest="handleRest"
         :longRestsUsed="longRestsUsed"
       />
+
+      <ShopModal
+        v-show="showShopModal"
+        :playerGold="playerGold"
+        @buy="handleShopPurchase"
+        @close="showShopModal = false"
+      />
     </div>
   </div>
 
@@ -119,6 +127,7 @@ import DefeatModal from "@/components/DefeatModal.vue";
 import { getRandomBoss, isBoss } from "@/utils/bossGenerator";
 import RestModal from "@/components/RestModal.vue";
 import { handleCombatAction } from "@/utils/combat";
+import ShopModal from "@/components/ShopModal.vue";
 
 const chain = getRandomChain();
 const current = ref(chain[0]);
@@ -162,6 +171,8 @@ const longRestsUsed = ref(0);
 const hasReachedFinalArticle = ref(false);
 const bossOverlay = ref(false);
 const blurClicksLeft = ref(0);
+const playerGold = ref(0);
+const showShopModal = ref(false);
 
 const inEncounter = computed(() => {
   const e = encounter.value;
@@ -206,6 +217,10 @@ watch(clickCount, (newClicks) => {
   if (newClicks > 0 && newClicks % 11 === 0) {
     console.log("Showing rest modal");
     showRestModal.value = true;
+  }
+  if (newClicks > 0 && newClicks % 15 === 0 && !showRestModal.value) {
+    console.log("Showing shop modal");
+    showShopModal.value = true;
   }
   if (blurClicksLeft.value > 0) {
     blurClicksLeft.value--;
@@ -633,6 +648,13 @@ function handleEncounterOption(option) {
         `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision becomes blurry for ${duration} clicks.`
       );
     }
+    if (option.details === "gold") {
+      const amount = option.amount || 5;
+      playerGold.value += amount;
+      log(
+        `💰 <span class="player-name">${playerName.value}</span> found ${amount} Gold Pieces!`
+      );
+    }
   }
 
   if (option.result === "route" && option.details === "compass") {
@@ -776,7 +798,7 @@ function handleLootDrop() {
     return;
   }
 
-  const lootOptions = ["health", "weapon", "special", "shield"];
+  const lootOptions = ["health", "weapon", "special", "shield", "gold"];
   const selectedLoot =
     lootOptions[Math.floor(Math.random() * lootOptions.length)];
 
@@ -809,15 +831,73 @@ function handleLootDrop() {
       break;
     }
 
-    case "shield":
-      {
-        shieldBonus.value += 2;
-        log(
-          `🛡️<span class="player-name">${playerName.value}</span> loots stronger Chainmail. Defense +2 (Base Defense Total: +${shieldBonus.value})`
-        );
-      }
+    case "shield": {
+      shieldBonus.value += 2;
+      log(
+        `🛡️<span class="player-name">${playerName.value}</span> loots stronger Chainmail. Defense +2 (Base Defense Total: +${shieldBonus.value})`
+      );
       break;
+    }
+    case "gold": {
+      const amount = Math.floor(Math.random() * 5) + 3;
+      playerGold.value += amount;
+      log(
+        `💰 <span class="player-name">${playerName.value}</span> loots ${amount} Gold Pieces!`
+      );
+      break;
+    }
   }
+}
+
+function handleShopPurchase(item) {
+  console.log("Attempting to buy:", item);
+  let purchased = false;
+  if (playerGold.value >= item.cost) {
+    playerGold.value -= item.cost;
+    purchased = true;
+    log(
+      `💸 <span class="player-name">${playerName.value}</span> purchased ${item.name} for ${item.cost} Gold.`
+    );
+
+    switch (item.effect) {
+      case "health":
+        playerHP.value = Math.min(
+          playerHP.value + item.amount,
+          playerClass.value.maxHP
+        );
+        log(`➕ ${playerName.value} gained ${item.amount} HP.`);
+        break;
+      case "weapon":
+        weaponBonus.value += item.amount;
+        log(`🗡️ ${playerName.value} gained +${item.amount} Weapon Bonus.`);
+        break;
+      case "shield":
+        shieldBonus.value += item.amount;
+        log(`🛡️ ${playerName.value} gained +${item.amount} Shield Bonus.`);
+        break;
+      case "special":
+        specialUsesLeft.value += item.amount;
+        log(`✨ ${playerName.value} gained +${item.amount} Special Uses.`);
+        break;
+      case "longRest":
+        longRestsUsed.value = Math.max(0, longRestsUsed.value - item.amount);
+        log(`🛌 ${playerName.value} refreshed ${item.amount} Long Rest(s).`);
+        break;
+      case "shortRest":
+        shortRestsUsed.value = Math.max(0, shortRestsUsed.value - item.amount);
+        log(`🧘 ${playerName.value} refreshed ${item.amount} Short Rest(s).`);
+        break;
+      case "blurCure":
+        blurClicksLeft.value = 0;
+        log(`🧼 ${playerName.value} sobered up and vision is clear!`);
+        break;
+    }
+  } else {
+    log(
+      `❌ Not enough Gold for ${item.name}! (Cost: ${item.cost}, You have: ${playerGold.value})`
+    );
+  }
+  showShopModal.value = false;
 }
 
 function markBossDefeated() {
@@ -868,6 +948,8 @@ function resetGame() {
   defeated.value = false;
   blurClicksLeft.value = 0;
   timer.value = 0;
+  playerGold.value = 0;
+  showShopModal.value = false;
   timerInterval = setInterval(() => {
     timer.value++;
   }, 1000);

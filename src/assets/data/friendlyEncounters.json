@@ -61,7 +61,7 @@
     "greeting": "OLD GUY ACCARDI: Have you seen my dog? His name is Artie. Honestly, he’ll eat any food. He even eats the tops of strawberries. Also, he likes two clicks at the same time.",
     "options": [
       {
-        "text": "YOU: Yes. I saw him a few clicks back that way. Gave him a couple of pets on the noggin, I did.",
+        "text": "I have not seen him but if I do, i'll run back here and let you know.",
         "result": "item",
         "details": "health",
         "responseText": "OLD GUY ACCARDI: That's what's up. Thanks for telling me. As a reward, here is some chicken I grilled."
@@ -77,10 +77,11 @@
         "responseText": "Old Guy Accardi's smile turns to a deep and anrgy scowl. He says 'You're going to eat those words', makes a ton of noise to attract unwanted attention and then throws a smoke bomb at his feet. He is now gone and in his place, is something ready to kill you."
       },
       {
-        "text": "I have not seen him but if I do, i'll run back here and let you know.",
+        "text": "YOU: Yes. I saw him a few clicks back that way. Gave him a couple of pets on the noggin, I did.",
         "result": "item",
-        "details": "health",
-        "responseText": "OLD GUY ACCARDI: That's what's up. Thanks for telling me. As a reward, here is some chicken I grilled."
+        "details": "gold",
+        "amount": 15,
+        "responseText": "OLD GUY ACCARDI: That's what's up. Thank you for looking out. Here is a finders fee. "
       }
     ]
   },
@@ -265,6 +266,13 @@
         "text": "YOU: You shouldn't talk about your relations that way.",
         "result": "none",
         "responseText": "RON VON ZAROVICH: You don't understand."
+      },
+      {
+        "text": "YOU: Well, if you think you are going to die, then maybe I can have your gold.",
+        "result": "item",
+        "details": "gold",
+        "amount": 15,
+        "responseText": "RON VON ZAROVICH: Sure. What does it matter. These are the end times."
       }
     ]
   },

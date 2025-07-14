@@ -35,8 +35,10 @@
             </button>
           </div>
           <div class="enemy">
-            {{props.playerName}} (HP: {{ playerHP }})&nbsp; vs. &nbsp;{{ props.encounter.enemy.name }} (HP: 
-            {{ enemyHP }})
+            {{ props.playerName }} (HP: {{ playerHP }})&nbsp; vs. &nbsp;{{
+              props.encounter.enemy.name
+            }}
+            (HP: {{ enemyHP }})
           </div>
         </div>
 
@@ -84,12 +86,16 @@
     <div class="player-stats">
       <div class="clicks-top">
         <div class="player-stats-item">
-          {{ props.playerName || "Unnamed" }} <span style="font-weight: 600; color: #02204d;">({{
-            playerClass?.name || `none`
-          }})</span>
+          {{ props.playerName || "Unnamed" }}
+          <span style="font-weight: 600; color: #02204d"
+            >({{ playerClass?.name || `none` }})</span
+          >
         </div>
         &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
-        <div class="player-stats-item">HP: <span style="font-weight: 600; color: #02204d;">{{ playerHP }}</span></div>
+        <div class="player-stats-item">
+          HP:
+          <span style="font-weight: 600; color: #02204d">{{ playerHP }}</span>
+        </div>
       </div>
       <div class="game-log">
         <div class="log"></div>
@@ -125,21 +131,36 @@
     </div>
     <div class="clicks">
       <div class="player-stats-item">
-        <span style="font-weight: 600;">{{ playerSpecialAbilityName }} Charges Left:</span> {{ specialUsesLeft }}
-      </div>
-      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="player-stats-item"> <span style="font-weight: 600;">Weapon: </span> +{{ weaponBonus }}</div>
-      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="player-stats-item"><span style="font-weight: 600;">Defense:</span> +{{ shieldBonus }}</div>
-      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="player-stats-item"><span style="font-weight: 600;">Clicks:</span> {{ clicks }}</div>
-      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="player-stats-item">
-        <span style="font-weight: 600;">Short Rests Left:</span> {{ 4 - shortRestsUsedCount }}
+        <span style="font-weight: 600"
+          >{{ playerSpecialAbilityName }} Charges Left:</span
+        >
+        {{ specialUsesLeft }}
       </div>
       &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
       <div class="player-stats-item">
-        <span style="font-weight: 600;">Long Rests Left:</span> {{ 2 - longRestsUsedCount }}
+        <span style="font-weight: 600">Weapon: </span> +{{ weaponBonus }}
+      </div>
+      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
+      <div class="player-stats-item">
+        <span style="font-weight: 600">Defense:</span> +{{ shieldBonus }}
+      </div>
+      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
+      <div class="player-stats-item">
+        <span style="font-weight: 600">Clicks:</span> {{ clicks }}
+      </div>
+      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
+      <div class="player-stats-item">
+        <span style="font-weight: 600">Short Rests Left:</span>
+        {{ 4 - shortRestsUsedCount }}
+      </div>
+      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
+      <div class="player-stats-item">
+        <span style="font-weight: 600">Long Rests Left:</span>
+        {{ 2 - longRestsUsedCount }}
+      </div>
+      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
+      <div class="player-stats">
+         <span style="font-weight: 600">Gold: </span>{{ playerGold }}
       </div>
     </div>
   </header>
@@ -168,6 +189,7 @@ const props = defineProps({
   shortRestsUsed: Number,
   longRestsUsed: Number,
   shieldBonus: Number,
+  playerGold: Number,
   isDarkened: {
     type: Boolean,
     default: false,
