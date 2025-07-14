@@ -694,6 +694,19 @@ function handleEncounterOption(option) {
     );
   }
 
+  if (option.result === "shortcut-damage") {
+    const damageTaken = 10;
+    const clicksReduced = 10;
+
+    playerHP.value = Math.max(playerHP.value - damageTaken, 0);
+    clickCount.value = Math.max(0, clickCount.value - clicksReduced);
+    shortcutsUsedCount.value++;
+
+    log(
+      `🎲 <span class="player-name">${playerName.value}</span> took ${damageTaken} damage for taking the shortcut, but saved ${clicksReduced} clicks.`
+    );
+  }
+
   if (option.result === "shortcut" && option.details === "clicks") {
     const amount = option.amount || 1;
     clickCount.value = Math.max(0, clickCount.value - amount);
@@ -757,7 +770,8 @@ function handleEncounterOption(option) {
 
 function handleLootDrop() {
   const lootChance = Math.random();
-  if (lootChance > 0.6) {
+  if (lootChance > 0.7) {
+    console.log(lootChance);
     log(`❌ Enemy has no loot to drop.`);
     return;
   }
@@ -768,7 +782,7 @@ function handleLootDrop() {
 
   switch (selectedLoot) {
     case "health": {
-      const amount = 5;
+      const amount = 10;
       playerHP.value = Math.min(
         playerHP.value + amount,
         playerClass.value.maxHP
@@ -780,26 +794,26 @@ function handleLootDrop() {
     }
 
     case "weapon": {
-      weaponBonus.value += 1;
+      weaponBonus.value += 2;
       log(
-        `🗡️ <span class="player-name">${playerName.value}</span> loots a sharper weapon. Weapon damage +1 (Base Damage Total: +${weaponBonus.value})`
+        `🗡️ <span class="player-name">${playerName.value}</span> loots a sharper weapon. Weapon damage +2 (Base Damage Total: +${weaponBonus.value})`
       );
       break;
     }
 
     case "special": {
-      specialUsesLeft.value += 1;
+      specialUsesLeft.value += 2;
       log(
-        `🎁 <span class="player-name">${playerName.value}</span> regains a Class Ability charge. (Total: ${specialUsesLeft.value})`
+        `🎁 <span class="player-name">${playerName.value}</span> regains +2 Class Ability charges. (Total: ${specialUsesLeft.value})`
       );
       break;
     }
 
     case "shield":
       {
-        shieldBonus.value += 1;
+        shieldBonus.value += 2;
         log(
-          `🛡️<span class="player-name">${playerName.value}</span> loots stronger Chainmail. Defense +1 (Base Defense Total: +${shieldBonus.value})`
+          `🛡️<span class="player-name">${playerName.value}</span> loots stronger Chainmail. Defense +2 (Base Defense Total: +${shieldBonus.value})`
         );
       }
       break;

@@ -297,7 +297,7 @@
       }
     ]
   },
-    {
+  {
     "id": "lore_012",
     "text": "There is a crate in front of you that appears to have a series of wires that loop around the outside and feed into the inside. A note sits beside the crate that says 'CAUTION: do NOT cut the Red wire!'.",
     "options": [
@@ -321,6 +321,33 @@
         "text": "Cut the Blue Wire",
         "result": "none",
         "responseText": "Nothing Happens."
+      }
+    ]
+  },
+  {
+    "id": "lore_013",
+    "text": "You come across a bubbling swamp. The steam from the swamp is apparent and the smell is sulfuric and strong. There does appear to be a way around but if you cut through the swamp, you might get hurt. However, you will save some time.",
+    "options": [
+      {
+        "text": "Walk carefully to the other side through the swamp.",
+        "responseText": "You make it across saving time but also taking some damage as well.",
+        "result": "shortcut-damage",
+        "details": "recover"
+      },
+      {
+        "text": "Walk Around the left side of the swamp",
+        "result": "combat",
+        "responseText": "There was an enemy waiting to ambush you on the left side."
+      },
+      {
+        "text": "Walk Around the right side of the swamp",
+        "result": "none",
+        "responseText": "You make it safely to the other side of the putrid swamp."
+      },
+      {
+        "text": "Take off all of your clothes, wrap them in your travel blanket, tie the blanket to your ankle and swim like a graceful dolphin through the swamp.",
+        "result": "damage-major",
+        "responseText": "That was painful."
       }
     ]
   }

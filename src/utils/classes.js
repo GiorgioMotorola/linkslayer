@@ -2,7 +2,7 @@
 export const classes = {
   Fighter: {
     name: "Fighter",
-    maxHP: 45,
+    maxHP: 65,
     special: "Power Strike",
     description: "45 HP. Class Ability(Power Strike) deals 6 damage. Starts with +1 Weapon Damage.",
     specialEffect: (enemyHP) => enemyHP - 6,
@@ -12,7 +12,7 @@ export const classes = {
   },
   Paladin: {
     name: "Paladin",
-    maxHP: 40,
+    maxHP: 60,
     special: "Smite",
     description:
       "40 HP. Class Ability(Smite) deals 5 damage and gives +2 HP. Starts with +1 Defense Bonus",
@@ -26,7 +26,7 @@ export const classes = {
   },
   Wizard: {
     name: "Wizard",
-    maxHP: 35,
+    maxHP: 50,
     special: "Fireball",
     description:
       "35 HP. Class Ability(Fireball) deals between 5 and 15 damage with a 20% chance to stun the enemy. Starts with 6 Class Ability charges.",
@@ -46,7 +46,7 @@ export const classes = {
   },
   Rogue: {
     name: "Rogue",
-    maxHP: 35,
+    maxHP: 55,
     special: "Sneak Attack",
     description:
       "35 HP. Class Ability(Sneak Attack) deals 6 damage and evades the incoming enemy strike. Starts with 6 Class Ability charges.",
@@ -63,7 +63,7 @@ export const classes = {
   },
   Cleric: {
     name: "Cleric",
-    maxHP: 45,
+    maxHP: 60,
     special: "Divine Blessing",
     description: "45 HP. Class Ability(Divine Blessing) heals 5 HP and deals 6 damage.",
     specialEffect: (enemyHP, playerHP, maxHP) => ({

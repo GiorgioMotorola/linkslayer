@@ -252,6 +252,15 @@ onMounted(load);
   text-align: center;
   margin-bottom: 0.5rem;
   color: #555;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  padding: 10px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-bottom: solid 1px black;
+  z-index: 100;
 }
 
 .error-message {
