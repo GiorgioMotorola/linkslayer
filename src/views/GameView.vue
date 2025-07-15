@@ -426,9 +426,11 @@ function handleRest(choice) {
 
   if (choice === "short" && shortRestsUsed.value < 4) {
     playerHP.value += 5;
+    log(`${playerName.value} feels rested and has gained +5HP.`);
     shortRestsUsed.value++;
   } else if (choice === "long" && longRestsUsed.value < 2) {
     playerHP.value += 10;
+    log(`${playerName.value} feels rested and has gained +10HP.`);
     longRestsUsed.value++;
   } else if (choice === "continue") {
     playerHP.value = Math.max((playerHP.value += 0), 0);
@@ -655,6 +657,13 @@ function handleEncounterOption(option) {
       playerHP.value = Math.min(playerHP.value + 5, 200);
       log(
         `🎲 <span class="player-name">${playerName.value}</span> has gained +5 HP.`
+      );
+
+    }
+    if (option.details === "health-major") {
+      playerHP.value = Math.min(playerHP.value + 15, 200);
+      log(
+        `🎲 <span class="player-name">${playerName.value}</span> has gained +15 HP.`
       );
     }
 
@@ -903,11 +912,11 @@ function handleShopPurchase(item) {
         break;
       case "shield":
         shieldBonus.value += item.amount;
-        log(`🛡️ ${playerName.value} gained +${item.amount} Shield Bonus.`);
+        log(`🛡️ ${playerName.value} gained +${item.amount} Defense Bonus.`);
         break;
       case "special":
         specialUsesLeft.value += item.amount;
-        log(`✨ ${playerName.value} gained +${item.amount} Special Uses.`);
+        log(`✨ ${playerName.value} gained +${item.amount} Ability charges.`);
         break;
       case "longRest":
         longRestsUsed.value = Math.max(0, longRestsUsed.value - item.amount);

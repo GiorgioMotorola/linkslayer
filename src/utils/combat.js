@@ -246,7 +246,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       if (enemyNextAction.value === "attack") {
         damageToPlayer = currentEnemyDamage;
 
-        damageToPlayer = Math.max(0, damageToPlayer - shieldBonus.value);
+         damageToPlayer = Math.max(0, damageToPlayer - Math.floor(shieldBonus.value / 2));
 
         if (playerDefendedThisTurn) {
           damageToPlayer = Math.max(0, Math.floor(damageToPlayer * 0.7));

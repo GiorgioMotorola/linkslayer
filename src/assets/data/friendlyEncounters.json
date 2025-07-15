@@ -202,19 +202,30 @@
   {
     "id": "npc_008",
     "name": "Daniel the Map Seller",
-    "greeting": "DANIEL THE MAP SELLER: I sell maps. Not much else.",
+    "greeting": "DANIEL THE MAP GIVER: I give maps. Not much else.",
     "options": [
       {
-        "text": "Purchase a map from Daniel.",
+        "text": "Take a map from Daniel.",
         "responseText": "It appears the map contains a shortcut through the upcoming brush. Your click count is reduced by 3.",
         "result": "shortcut",
         "details": "clicks",
         "amount": 3
       },
       {
-        "text": "Decline buying a map.",
+        "text": "Decline taking a map.",
         "responseText": "YOU: The only guidance I need is from the sun and the stars.",
         "result": "none"
+      },
+      {
+        "text": "What about food?.",
+        "responseText": "DANIEL THE MAP SELLER: Just maps.",
+        "result": "none"
+      },
+      {
+        "text": "What about Compasses?",
+        "responseText": "DANIEL THE MAP SELLER: Oh yeah I have those, too. Here you go.",
+        "result": "route",
+        "details": "compass"
       }
     ]
   },

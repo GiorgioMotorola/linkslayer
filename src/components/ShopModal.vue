@@ -13,7 +13,7 @@
           > Buy Whetstone (+1 Weapon Damage) - 20 Gold
         </button>
         <button @click="buyItem('shield')" :disabled="playerGold < 20">
-          > Buy Sturdy Buckler (+1 Shield Bonus) - 20 Gold
+          > Buy Sturdy Buckler (+1 Defense Bonus) - 20 Gold
         </button>
         <button @click="buyItem('special')" :disabled="playerGold < 15">
           > Buy Tome of Knowledge (+1 Class Ability Charge) - 15 Gold

@@ -387,9 +387,147 @@
         "amount": 15
       },
       {
+        "text": "Open the chest in a fit of rage.",
+        "responseText": "The chest violently opens, revealing a small pouch of gold.",
+        "result": "item",
+        "details": "gold",
+        "amount": 15
+      },
+      {
         "text": "Leave the chest, it might be cursed.",
-        "responseText": "You decide against disturbing the ancient relic and move on.",
+        "responseText": "You decide against opening the chest and move on.",
         "result": "none"
+      },
+      {
+        "text": "Punch the chest",
+        "result": "damage",
+        "responseText": "You decide to punch the chest for some reason."
+      }
+    ]
+  },
+  {
+    "id": "lore_015",
+    "text": "You find a wooden box sitting in the mud. Inside the box, you find 6 masks. Outside of each masking dawning a letter on the forehead, you notice the masks are otherwise featureless. Each mask has a different letter: F, P, W, R, C and S.",
+    "options": [
+      {
+        "text": "Put on the F mask.",
+        "result": "item",
+        "details": "weapon",
+        "responseText": "You feel power flowing through your veins."
+      },
+      {
+        "text": "Put on the P mask.",
+        "details": "shield",
+        "responseText": "You feel safer and ready for any attack."
+      },
+      {
+        "text": "Put on the W mask.",
+        "responseText": "You feel more confident that you will win this fight.",
+        "result": "special",
+        "details": "recover",
+        "amount": 1
+      },
+      {
+        "text": "Put on the R mask.",
+        "responseText": "You feel richer than ever.",
+        "result": "item",
+        "details": "gold",
+        "amount": 20
+      },
+      {
+        "text": "Put on the C mask.",
+        "result": "item",
+        "details": "health-major",
+        "responseText": "You feel healthier than ever."
+      },
+      {
+        "text": "Put on the S mask.",
+        "result": "item",
+        "details": "health-major",
+        "responseText": "You feel healthier than ever."
+      }
+    ]
+  },
+  {
+    "id": "lore_015",
+    "text": "You come across a tarven that seems to be bustling with life. As you walk in, you see several patrons drinking and yelling in excitment. The appear to be surrounded by something called Tymora’s Spinner. You ask one patron what is going on and they say 'I have lost 10 times in a row on this stupid game. Here, have my last gold piece. See if you're luck is better than mine.' You accept the gold piece. After watching a couple of rounds, it appears you can spend 1 gold piece to bet on a range of numbers and if the ball lands in that range, you win.",
+    "options": [
+      {
+        "text": "Bet the gold piece on range 1-10",
+        "responseText": "You lost.",
+        "result": "item",
+        "details": "gold",
+        "amount": 0
+      },
+      {
+        "text": "Bet the gold piece on range 11-20",
+        "responseText": "You lost.",
+        "result": "item",
+        "details": "gold",
+        "amount": 0
+      },
+      {
+        "text": "Bet the gold piece on range 21-30",
+        "responseText": "You lost.",
+        "result": "item",
+        "details": "gold",
+        "amount": 0
+      },
+      {
+        "text": "Bet the gold piece on range 31-40",
+        "responseText": "You lost.",
+        "result": "item",
+        "details": "gold",
+        "amount": 0
+      },
+      {
+        "text": "Bet the gold piece on range 41-50",
+        "responseText": "You lost.",
+        "result": "item",
+        "details": "gold",
+        "amount": 0
+      },
+      {
+        "text": "Bet the gold piece on range 51-60",
+        "responseText": "You win!",
+        "result": "item",
+        "details": "gold",
+        "amount": 50
+      },
+      {
+        "text": "Bet the gold piece on range 61-70",
+        "responseText": "You lost.",
+        "result": "item",
+        "details": "gold",
+        "amount": 0
+      },
+      {
+        "text": "Bet the gold piece on range 71-80",
+        "responseText": "You lost.",
+        "result": "item",
+        "details": "gold",
+        "amount": 0
+      },
+      {
+        "text": "Bet the gold piece on range 81-90",
+        "responseText": "You lost.",
+        "result": "item",
+        "details": "gold",
+        "amount": 0
+      },
+      {
+        "text": "Bet the gold piece on range 91-100",
+        "responseText": "You lost.",
+        "result": "item",
+        "details": "gold",
+        "amount": 0
+      },
+      {
+        "text": "Dont bet. Keep the gold piece and leave the tavern.",
+        "responseText": "YOU: I can't leave my life up to chance.",
+        "result": "item",
+        "details": "gold",
+        "amount": 1
       }
     ]
   }
