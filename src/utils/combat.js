@@ -39,6 +39,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
   let damageToPlayer = 0;
   let damageToEnemy = 0;
   let skipEnemyCurrentTurn = false;
+  let playerDefendedThisTurn = false;
 
   console.log("DEBUG: Player Action:", playerAction);
   console.log(
@@ -75,6 +76,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
 
     const cls = playerClass.value.name;
     const specialName = playerClass.value.special;
+
     let baseSpecialDamage = 0;
 
     if (cls === "Fighter") {
@@ -90,38 +92,33 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       );
       baseSpecialDamage = effect.wizardDamage;
       damageToEnemy = baseSpecialDamage;
-
-      const {
-        enemyHP: newEnemyHPFromEffect,
-        playerHP: newPlayerHP,
-        wizardDamage,
-        stunned,
-      } = effect;
-      playerHP.value = newPlayerHP;
+      playerHP.value = effect.playerHP;
 
       log(
         `🔥 <span class="player-name">${
           playerName.value
-        }</span> casts **${specialName}**, dealing ${wizardDamage} damage.${
-          stunned ? ` The enemy is stunned.` : ""
+        }</span> casts **${specialName}**, dealing ${baseSpecialDamage} damage.${
+          effect.stunned ? ` The enemy is stunned.` : ""
         }`
       );
-      if (stunned) {
+      if (effect.stunned) {
         enemyIsStunned.value = true;
         enemyNextAction.value = null;
+        skipEnemyCurrentTurn = true;
       }
-      skipEnemyCurrentTurn = true;
     } else if (cls === "Rogue") {
       const effect = playerClass.value.specialEffect(
         enemyHP.value,
         DEFAULT_ENEMY_HP
       );
-      const { enemyHP: newEnemyHP, rogueDamage } = effect;
-      enemyHP.value = newEnemyHP;
-      log(
-        `🗡️ <span class="player-name">${playerName.value}</span> disappears and executes **${specialName}** for ${rogueDamage} damage.`
-      );
+      baseSpecialDamage = effect.rogueDamage;
+      damageToEnemy = baseSpecialDamage;
+      damageToPlayer = 0;
       skipEnemyCurrentTurn = true;
+
+      log(
+        `🗡️ <span class="player-name">${playerName.value}</span> disappears and executes **${specialName}** for ${baseSpecialDamage} damage.`
+      );
     } else if (cls === "Paladin") {
       baseSpecialDamage = 5;
       damageToEnemy = baseSpecialDamage;
@@ -134,7 +131,9 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       log(
         `✨ <span class="player-name">${
           playerName.value
-        }</span> calls upon **${specialName}**, dealing ${baseSpecialDamage} damage and restoring ${2} HP.`
+        }</span> calls upon **${specialName}**, dealing ${baseSpecialDamage} damage and restoring ${
+          playerHP.value - player.playerHP.value + damageToPlayer
+        } HP.`
       );
     } else if (cls === "Cleric") {
       baseSpecialDamage = 6;
@@ -145,6 +144,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
         playerClass.value.maxHP
       );
       playerHP.value = effect.playerHP;
+
       log(
         `🙏 <span class="player-name">${playerName.value}</span> invokes **${specialName}**, healing 5 HP and dealing ${baseSpecialDamage} damage.`
       );
@@ -155,7 +155,9 @@ export function handleCombatAction({ player, enemy, state, utils }) {
         enemyHP.value,
         playerHP.value
       );
+
       playerHP.value = effect.playerHP;
+
       log(
         `💥 <span class="player-name">${playerName.value}</span> unleashes **${specialName}**, dealing ${baseSpecialDamage} damage but taking recoil.`
       );
@@ -170,7 +172,19 @@ export function handleCombatAction({ player, enemy, state, utils }) {
           playerClass.value.maxHP
         );
         if (typeof effect === "object" && effect !== null) {
-          playerHP.value = effect.playerHP;
+          if (effect.playerHP !== undefined) {
+            playerHP.value = effect.playerHP;
+          }
+          if (effect.enemyDamage !== undefined) {
+            damageToEnemy = effect.enemyDamage;
+          }
+          if (effect.stunned) {
+            enemyIsStunned.value = true;
+            enemyNextAction.value = null;
+          }
+          if (effect.skipEnemyTurn) {
+            skipEnemyCurrentTurn = true;
+          }
         }
       }
     }
@@ -178,6 +192,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     log(
       `🛡️ <span class="player-name">${playerName.value}</span> braces for impact.`
     );
+    playerDefendedThisTurn = true;
   } else if (playerAction === "flee") {
     if (isBoss(encounter.value?.enemy)) {
       log(`You cannot flee from ${encounter.value?.enemy?.name}.`);
@@ -198,6 +213,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
 
   if (damageToEnemy > 0) {
     let finalDamageToEnemy = damageToEnemy;
+
     if (
       enemyNextAction.value === "defend" &&
       !(playerAction === "special" && playerClass.value.name === "Rogue")
@@ -220,15 +236,19 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     }
     return;
   }
+
   if (!skipEnemyCurrentTurn) {
     if (enemyIsStunned.value) {
       log(`💤 ${formattedTitle} is stunned and skips their turn.`);
       enemyIsStunned.value = false;
+      damageToPlayer = 0;
     } else {
       if (enemyNextAction.value === "attack") {
         damageToPlayer = currentEnemyDamage;
+
         damageToPlayer = Math.max(0, damageToPlayer - shieldBonus.value);
-        if (playerAction === "defend") {
+
+        if (playerDefendedThisTurn) {
           damageToPlayer = Math.max(0, Math.floor(damageToPlayer * 0.7));
           log(
             `🛡️ <span class="player-name">${playerName.value}</span> defended, taking ${damageToPlayer} damage.`
@@ -251,6 +271,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       }
     }
   } else {
+    damageToPlayer = 0;
     console.log(
       "DEBUG: Enemy current turn skipped due to player's Class Ability action."
     );
@@ -260,7 +281,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     playerHP.value = Math.max(playerHP.value - damageToPlayer, 0);
   } else {
     console.error(
-      "ERROR: damageToPlayer is not a valid number:",
+      "ERROR: damageToPlayer is not a valid number, defaulting to 0 damage.",
       damageToPlayer
     );
     playerHP.value = Math.max(playerHP.value - 0, 0);

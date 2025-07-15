@@ -93,8 +93,8 @@
       {
         "text": "Take a seat, crack a beer and listen to Steely Dan",
         "result": "item",
-        "details": "health",
-        "responseText": "Your mind and body are restored by a fathers kindness and you gain +5 HP."
+        "details": "beer-health",
+        "responseText": "Your mind and body are restored by a fathers kindness and you gain +5 HP and your vision is blurry from the delicous beer."
       },
       {
         "text": "YOU: No Thanks, I only like to Imagine the Dragon I am going to fight later",
@@ -109,8 +109,8 @@
       {
         "text": "YOU: Hell yeah I'd have a beer.",
         "result": "item",
-        "details": "health",
-        "responseText": "Your mind and body are restored by a fathers kindness and you gain +5 HP."
+        "details": "beer-health",
+        "responseText": "Your mind and body are restored by a fathers kindness and you gain +5 HP and your vision is blurry from the delicous beer."
       }
     ]
   },

@@ -4,15 +4,15 @@
       <div class="game-title">LINKSLAYER IN THE INFINITE LIBRARY</div>
       <div class="journey-prompt">
         "{{ journeyOne }}
-        <span style="color: #00008b; font-weight: 400">{{
+        <span style="color: #0645ad; font-weight: 400">{{
           promptedArticleOne
         }}</span>
         {{ journeyTwo }}
-        <span style="color: #00008b; font-weight: 400">{{
+        <span style="color: #0645ad; font-weight: 400">{{
           promptedArticleTwo
         }}</span>
         {{ journeyThree }}
-        <span style="color: #00008b; font-weight: 400">{{
+        <span style="color: #0645ad; font-weight: 400">{{
           promptedArticleThree
         }}</span>
         {{ journeyFour }}"
@@ -23,13 +23,15 @@
       </div>
       <div class="who-are-you-div"></div>
       <input v-model="name" placeholder="Enter your name" class="name-input" />
-      <div class="select-class">Select Your Class</div>
+      <!-- <div class="select-class">Select Your Class</div> -->
       <div class="class-grid">
         <div v-for="(c, key) in classes" :key="key" class="class-card">
           <button @click="selectClass(key)">> Select {{ c.name }}</button>
           <div class="desc">{{ c.description }}</div>
         </div>
       </div>
+        <button class="tips-button" @click="openModal">Game Tips</button>
+  <TipsModal v-if="isModalOpen" @close="closeModal" />
     </div>
   </div>
 </template>
@@ -38,12 +40,13 @@
 import { ref, watch, nextTick } from "vue";
 import { classes } from "@/utils/classes";
 import prompts from "@/assets/data/prompts.json";
+import TipsModal from './TipsModal.vue';
 
 console.log("ClassSelect.vue: Component setup started.");
 console.log("Prompts data loaded directly:", prompts);
 
 const name = ref("");
-const emit = defineEmits(["select"]);
+const emit = defineEmits(["select", "show-tips"]);
 
 const journeyOne = ref("");
 const journeyTwo = ref("");
@@ -65,6 +68,17 @@ console.log(
   "ClassSelect.vue: Initial props received (might be empty):",
   props.fullChain
 );
+
+const isModalOpen = ref(false); 
+
+const openModal = () => { 
+  isModalOpen.value = true;
+  emit('show-tips'); 
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+};
 
 let notificationTimeoutId = null;
 
@@ -296,11 +310,11 @@ watch(
   margin-top: 1rem;
 }
 
-.select-class {
+/* .select-class {
   margin-top: 2rem;
-  font-size: 30px;
+  font-size: 25px;
   text-decoration-line: underline;
-}
+} */
 
 .name-input {
   padding: 5px;
@@ -381,6 +395,22 @@ button:hover {
   font-size: 20px;
   cursor: pointer;
   margin-left: 15px;
+}
+
+.tips-button {
+  margin-top: 1.5rem; 
+  background-color: transparent;
+  color: rgb(8, 8, 8);
+  font-size: 17px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none; 
+  font-weight: 700;
+}
+
+.tips-button:hover {
+  color: rgb(28, 128, 158);
+  cursor: pointer;
 }
 
 @keyframes pop-in {

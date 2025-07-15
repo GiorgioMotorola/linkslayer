@@ -25,6 +25,7 @@
     :isDarkened="bossOverlay"
     :shortRestsUsed="shortRestsUsed"
     :playerGold="playerGold"
+    @show-tips="showTipsModal = true"
   />
 
   <div class="main-content-wrapper">
@@ -37,6 +38,7 @@
       :formattedStart="formattedStart"
       :formattedTitle="formattedTitle"
       :fullChain="chain"
+      @show-tips="showTipsModal = true"
     />
     <div>
       <VictoryModal
@@ -98,6 +100,8 @@
         @buy="handleShopPurchase"
         @close="showShopModal = false"
       />
+
+      <!-- <TipsModal v-if="showTipsModal" @close="showTipsModal = false" /> -->
     </div>
   </div>
 
@@ -128,6 +132,7 @@ import { getRandomBoss, isBoss } from "@/utils/bossGenerator";
 import RestModal from "@/components/RestModal.vue";
 import { handleCombatAction } from "@/utils/combat";
 import ShopModal from "@/components/ShopModal.vue";
+// import TipsModal from '@/components/TipsModal.vue';
 
 const chain = getRandomChain();
 const current = ref(chain[0]);
@@ -173,6 +178,7 @@ const bossOverlay = ref(false);
 const blurClicksLeft = ref(0);
 const playerGold = ref(0);
 const showShopModal = ref(false);
+const showTipsModal = ref(false);
 
 const inEncounter = computed(() => {
   const e = encounter.value;
@@ -259,8 +265,13 @@ function handleClick(title) {
   console.log("bossSpawned.value before:", bossSpawned.value);
   console.log("bossDefeated.value before:", bossDefeated.value);
 
-  if (inEncounter.value) {
-    console.log("In encounter, returning early.");
+  if (
+    inEncounter.value ||
+    showRestModal.value ||
+    showShopModal.value ||
+    showTipsModal.value
+  ) {
+    console.log("Modal is open or in encounter, returning early.");
     return;
   }
 
@@ -325,6 +336,17 @@ function handleClick(title) {
       "Showing rest modal due to click count, preventing other encounters."
     );
     showRestModal.value = true;
+    return;
+  }
+  if (
+    clickCount.value > 0 &&
+    clickCount.value % 15 === 0 &&
+    !showRestModal.value
+  ) {
+    console.log(
+      "Showing shop modal due to click count, preventing other encounters."
+    );
+    showShopModal.value = true;
     return;
   }
   if (title !== finalTarget && Math.random() < 0.4) {
@@ -648,6 +670,14 @@ function handleEncounterOption(option) {
         `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision becomes blurry for ${duration} clicks.`
       );
     }
+    if (option.details === "beer-health") {
+      const duration = option.amount || 4;
+      blurClicksLeft.value += duration;
+      playerHP.value = Math.min(playerHP.value + 5, 200);
+      log(
+        `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision becomes blurry for ${duration} clicks but you gain +5HP.`
+      );
+    }
     if (option.details === "gold") {
       const amount = option.amount || 5;
       playerGold.value += amount;
@@ -897,7 +927,6 @@ function handleShopPurchase(item) {
       `❌ Not enough Gold for ${item.name}! (Cost: ${item.cost}, You have: ${playerGold.value})`
     );
   }
-  showShopModal.value = false;
 }
 
 function markBossDefeated() {

@@ -2,31 +2,40 @@
   <div class="shop-overlay">
     <div class="shop-modal">
       <div class="shop-desc">
-        A mysterious merchant appears, ready to trade! You have {{ playerGold }} Gold Pieces.
+        A mysterious merchant appears, ready to trade! You have
+        {{ playerGold }} Gold Pieces.
       </div>
       <div class="shop-items">
-        <button @click="buyItem('health')" :disabled="playerGold < 10">
-          > Buy Potion of Healing (+15 HP) - 10 Gold
+        <button @click="buyItem('health')" :disabled="playerGold < 15">
+          > Buy Potion of Healing (+15 HP) - 15 Gold
         </button>
-        <button @click="buyItem('weapon')" :disabled="playerGold < 15">
-          > Buy Whetstone (+1 Weapon Damage) - 15 Gold
+        <button @click="buyItem('weapon')" :disabled="playerGold < 20">
+          > Buy Whetstone (+1 Weapon Damage) - 20 Gold
         </button>
-        <button @click="buyItem('shield')" :disabled="playerGold < 15">
-          > Buy Sturdy Buckler (+1 Shield Bonus) - 15 Gold
+        <button @click="buyItem('shield')" :disabled="playerGold < 20">
+          > Buy Sturdy Buckler (+1 Shield Bonus) - 20 Gold
         </button>
-        <button @click="buyItem('special')" :disabled="playerGold < 20">
-          > Buy Tome of Knowledge (+1 Class Ability Charge) - 20 Gold
+        <button @click="buyItem('special')" :disabled="playerGold < 15">
+          > Buy Tome of Knowledge (+1 Class Ability Charge) - 15 Gold
         </button>
       </div>
-      <button @click="$emit('close')">
-        > No thanks, I'll save my gold.
-      </button>
+      <button @click="$emit('close')">> Done Shopping</button>
+
+      <transition name="toast-fade">
+        <div
+          v-if="toastMessage"
+          class="toast-notification"
+          :class="{ 'toast-error': isToastError }"
+        >
+          {{ toastMessage }}
+        </div>
+      </transition>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from "vue";
 
 const props = defineProps({
   playerGold: Number,
@@ -35,21 +44,51 @@ const props = defineProps({
 const emit = defineEmits(["buy", "close"]);
 
 const shopItems = {
-  health: { name: 'Potion of Healing', cost: 10, effect: 'health', amount: 15 },
-  weapon: { name: 'Whetstone', cost: 15, effect: 'weapon', amount: 1 },
-  shield: { name: 'Sturdy Buckler', cost: 15, effect: 'shield', amount: 1 },
-  special: { name: 'Tome of Knowledge', cost: 20, effect: 'special', amount: 1 },
+  health: { name: "Potion of Healing", cost: 15, effect: "health", amount: 15 },
+  weapon: { name: "Whetstone", cost: 20, effect: "weapon", amount: 1 },
+  shield: { name: "Sturdy Buckler", cost: 20, effect: "shield", amount: 1 },
+  special: {
+    name: "Tome of Knowledge",
+    cost: 15,
+    effect: "special",
+    amount: 1,
+  },
 };
+
+const toastMessage = ref(null);
+const isToastError = ref(false);
+let toastTimeout = null;
 
 const buyItem = (itemType) => {
   const item = shopItems[itemType];
-  if (item) {
-    emit("buy", item);
-  } else {
+  if (!item) {
     console.error("Attempted to buy an unknown item type:", itemType);
+    showToast("Error: Unknown item!", true);
+    return;
+  }
+
+  if (props.playerGold >= item.cost) {
+    emit("buy", item);
+    showToast(`Purchased ${item.name}!`);
+  } else {
+    showToast(`Not enough gold for ${item.name}!`, true);
   }
 };
 
+function showToast(message, isError = false) {
+  if (toastTimeout) {
+    clearTimeout(toastTimeout);
+  }
+
+  toastMessage.value = message;
+  isToastError.value = isError;
+
+  toastTimeout = setTimeout(() => {
+    toastMessage.value = null;
+    isToastError.value = false;
+    toastTimeout = null;
+  }, 3000);
+}
 </script>
 
 <style scoped>
@@ -78,11 +117,12 @@ const buyItem = (itemType) => {
   align-items: center;
   justify-content: center;
   pointer-events: auto;
-  animation: fade-in-overlay .75s ease-out forwards;
-  background-image: linear-gradient(to bottom,
-    rgba(8, 12, 17, 0.9),
-    rgba(17, 27, 37, 0.9),
-    rgba(13, 19, 26, 0.6)
+  animation: fade-in-overlay 1.25s ease-out forwards;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(10, 50, 100, 0.9),
+    rgba(50, 100, 150, 0.9),
+    rgba(150, 200, 250, 0.6)
   );
 }
 .shop-modal {
@@ -97,7 +137,8 @@ const buyItem = (itemType) => {
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  gap: 1rem; 
+  gap: 1rem;
+  position: relative;
 }
 
 .shop-desc {
@@ -113,7 +154,7 @@ const buyItem = (itemType) => {
 .shop-items {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem; 
+  gap: 0.5rem;
 }
 
 button {
@@ -126,7 +167,7 @@ button {
   font-size: 17px;
   color: #303030;
   font-weight: 400;
-  padding: 0.5rem 0; 
+  padding: 0.5rem 0;
 }
 
 button:hover {
@@ -155,5 +196,38 @@ button:disabled:hover {
     transform: scale(1);
     opacity: 1;
   }
+}
+
+.toast-notification {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-size: 0.95em;
+  font-weight: bold;
+  z-index: 1001;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.toast-notification.toast-error {
+  background-color: rgba(189, 58, 58, 0.9);
+}
+
+.toast-fade-enter-active,
+.toast-fade-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.toast-fade-enter-from,
+.toast-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-10px);
 }
 </style>

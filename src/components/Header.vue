@@ -121,11 +121,13 @@
           <button
             v-if="props.gameLog.length > 5"
             @click="expanded = !expanded"
-            class="log-toggle"
+            class="tips-button"
           >
             {{ expanded ? "Show Less" : "Show More" }}
           </button>
-          <button @click="copyLogToClipboard" class="log-copy">Copy Log</button>
+          <button class="tips-button" @click="copyLogToClipboard" >Copy Log</button>
+          <button class="tips-button" @click="openModal">Game Tips</button>
+          <TipsModal v-if="isModalOpen" @close="closeModal" />
         </div>
       </div>
     </div>
@@ -160,7 +162,7 @@
       </div>
       &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
       <div class="player-stats">
-         <span style="font-weight: 600">Gold: </span>{{ playerGold }}
+        <span style="font-weight: 600">Gold: </span>{{ playerGold }}
       </div>
     </div>
   </header>
@@ -168,6 +170,7 @@
 
 <script setup>
 import { ref, computed, watch, nextTick } from "vue";
+import TipsModal from "./TipsModal.vue";
 
 const props = defineProps({
   start: String,
@@ -204,6 +207,7 @@ const emit = defineEmits([
   "close",
   "option-chosen",
   "log-line",
+  "show-tips",
 ]);
 
 const activeAction = ref("");
@@ -222,6 +226,17 @@ const displayedLog = computed(() => {
 const visibleLog = computed(() => {
   return displayedLog.value.slice(-visibleLogCount.value);
 });
+
+const isModalOpen = ref(false);
+
+const openModal = () => {
+  isModalOpen.value = true;
+  emit("show-tips");
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+};
 
 const longRestsUsedCount = computed(() => props.longRestsUsed ?? 0);
 
@@ -508,6 +523,20 @@ header {
   animation: fadeInUp 0.3s forwards;
 }
 
+.tips-button {
+  margin-top: 1.5rem;
+  background-color: transparent;
+  color: beige;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none;
+}
+
+.tips-button:hover {
+  color: rgb(28, 128, 158);
+  cursor: pointer;
+}
 @keyframes fadeInUp {
   from {
     opacity: 0;
