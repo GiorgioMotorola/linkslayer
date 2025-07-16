@@ -122,6 +122,7 @@ import VictoryModal from "@/components/VictoryModal.vue";
 import ClassSelect from "@/components/ClassSelect.vue";
 import { classes } from "@/utils/classes";
 import DefeatModal from "@/components/DefeatModal.vue";
+import { getRandomBoss, isBoss } from "@/utils/bossGenerator";
 import RestModal from "@/components/RestModal.vue";
 import { handleCombatAction } from "@/utils/combat";
 import ShopModal from "@/components/ShopModal.vue";
