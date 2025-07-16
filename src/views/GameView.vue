@@ -15,7 +15,7 @@
     :enemyNextAction="enemyNextAction"
     :message="encounterMessage"
     @action="handleCombatActionWrapper"
-    @option-chosen="handleEncounterOption"
+    @option-chosen="callHandleEncounterOption"
     @close="handleCloseEncounter"
     :playerName="playerName"
     @log-line="log"
@@ -80,7 +80,7 @@
         :start="chain[0]"
         :targets="chain[currentTargetIndex + 1]"
         :inEncounter="inEncounter"
-        @link-clicked="handleClick"
+        @link-clicked="callHandleClick"
         :path="path"
         :fullChain="chain"
         :currentTargetIndex="currentTargetIndex"
@@ -90,8 +90,8 @@
       <RestModal
         v-show="showRestModal"
         :shortRestsUsed="shortRestsUsed"
-        @rest="handleRest"
         :longRestsUsed="longRestsUsed"
+        @rest="callHandleRest"
       />
 
       <ShopModal
@@ -132,6 +132,9 @@ import { getRandomBoss, isBoss } from "@/utils/bossGenerator";
 import RestModal from "@/components/RestModal.vue";
 import { handleCombatAction } from "@/utils/combat";
 import ShopModal from "@/components/ShopModal.vue";
+import { handleRest } from "@/utils/restHandler";
+import { handleClick as externalHandleClick } from "@/utils/clickHandler.js";
+import { handleEncounterOption as externalHandleEncounterOption } from "@/utils/encounterHandler";
 // import TipsModal from '@/components/TipsModal.vue';
 
 const chain = getRandomChain();
@@ -179,6 +182,8 @@ const blurClicksLeft = ref(0);
 const playerGold = ref(0);
 const showShopModal = ref(false);
 const showTipsModal = ref(false);
+const poisonedClicksLeft = ref(0);
+const poisonDamagePerClick = ref(0);
 
 const inEncounter = computed(() => {
   const e = encounter.value;
@@ -234,6 +239,22 @@ watch(clickCount, (newClicks) => {
       `🍺 You are still drunk. ${blurClicksLeft.value} clicks left til you sober up.`
     );
   }
+  // NEW: Handle poison damage per click
+  if (poisonedClicksLeft.value > 0) {
+    playerHP.value = Math.max(0, playerHP.value - poisonDamagePerClick.value);
+    poisonedClicksLeft.value--;
+    log(
+      `🤢 You are poisoned! You lose ${poisonDamagePerClick.value} HP. ${poisonedClicksLeft.value} clicks left until the poison wears off.`
+    );
+    if (playerHP.value <= 0) {
+      log(
+        `💀 <span class="player-name">${playerName.value}</span> was defeated by poison.`
+      );
+      defeated.value = true;
+      clearInterval(timerInterval);
+      encounter.value = null;
+    }
+  }
 });
 
 const timer = ref(0);
@@ -252,193 +273,69 @@ const isGameComplete = computed(() => {
   return current.value === chain[2] && bossDefeated.value;
 });
 
-function handleClick(title) {
-  console.log("--- handleClick START ---");
-  console.log("Clicked title:", title);
-  console.log("chain[0]:", chain[0]);
-  console.log("chain[1]:", chain[1]);
-  console.log("chain[2]:", chain[2]);
-  console.log(
-    "currentTargetIndex before click logic:",
-    currentTargetIndex.value
-  );
-  console.log("bossSpawned.value before:", bossSpawned.value);
-  console.log("bossDefeated.value before:", bossDefeated.value);
-
-  if (
-    inEncounter.value ||
-    showRestModal.value ||
-    showShopModal.value ||
-    showTipsModal.value
-  ) {
-    console.log("Modal is open or in encounter, returning early.");
-    return;
-  }
-
-  log(`📍 ARTICLE: ${title}`);
-
-  const finalTarget = chain[2];
-  const secondTarget = chain[1];
-
-  current.value = title;
-  clickCount.value++;
-  path.value.push(title);
-
-  if (title === chain[currentTargetIndex.value + 1]) {
-    currentTargetIndex.value++;
-    console.log(
-      "Successfully advanced to next target. currentTargetIndex now:",
-      currentTargetIndex.value
-    );
-  } else {
-    console.log(
-      "Clicked an article not on the direct sequential path. currentTargetIndex not incremented."
-    );
-  }
-
-  if (
-    title === finalTarget &&
-    currentTargetIndex.value === 2 &&
-    !bossSpawned.value &&
-    !bossDefeated.value
-  ) {
-    console.log(
-      "CONDITION MET FOR BOSS SPAWN: Clicked Final Target AND currentTargetIndex is 2. Preventing Rest Modal."
-    );
-    showRestModal.value = false;
-    bossOverlay.value = true;
-    const boss = getRandomBoss();
-    selectedBossType.value = boss.type;
-
-    encounter.value = {
-      type: "combat",
-      enemy: boss,
-    };
-    enemyHP.value = boss.hp;
-    encounterMessage.value = `💀 A terrifying ${boss.name} rises to defend ${formattedTitle.value}. Time to roll some true damage.`;
-
-    nextEnemyAttack.value =
-      Math.floor(Math.random() * (boss.maxDamage - boss.minDamage + 1)) +
-      boss.minDamage;
-    enemyNextAction.value = "attack";
-
-    bossSpawned.value = true;
-    combatEncountersFought.value++;
-
-    console.log(
-      "BOSS SPAWNED. Returning early from handleClick to start combat."
-    );
-    return;
-  }
-
-  if (clickCount.value > 0 && clickCount.value % 11 === 0) {
-    console.log(
-      "Showing rest modal due to click count, preventing other encounters."
-    );
-    showRestModal.value = true;
-    return;
-  }
-  if (
-    clickCount.value > 0 &&
-    clickCount.value % 15 === 0 &&
-    !showRestModal.value
-  ) {
-    console.log(
-      "Showing shop modal due to click count, preventing other encounters."
-    );
-    showShopModal.value = true;
-    return;
-  }
-  if (title !== finalTarget && Math.random() < 0.4) {
-    console.log("Rolling for regular encounter...");
-    const roll = rollEncounter();
-    let fullEncounter = null;
-
-    if (roll.type === "npc") {
-      const availableNPCs = friendlyEncounters.filter(
-        (npc) => !seenNPCEncounters.value.includes(npc.id)
-      );
-      if (availableNPCs.length === 0) {
-        console.warn("All NPCs seen, skipping NPC encounter.");
-        return;
-      }
-      const npc =
-        availableNPCs[Math.floor(Math.random() * availableNPCs.length)];
-      seenNPCEncounters.value.push(npc.id);
-      fullEncounter = { type: "npc", npc };
-      log(`${npc.greeting}`);
-    } else if (roll.type === "lore") {
-      const availableLore = loreEncounters.filter(
-        (lore) => !seenLoreEncounters.value.includes(lore.id)
-      );
-      if (availableLore.length === 0) {
-        console.warn("All lore seen, skipping lore encounter.");
-        return;
-      }
-      const lore =
-        availableLore[Math.floor(Math.random() * availableLore.length)];
-      seenLoreEncounters.value.push(lore.id);
-      fullEncounter = { type: "lore", lore };
-      log(`${lore.text}`);
-    } else if (roll.type === "combat") {
-      const enemy = generateEnemy();
-      enemyHP.value = enemy.currentHP;
-      currentEnemy.value = enemy;
-      if (!enemy) {
-        console.warn("Could not generate enemy, skipping combat encounter.");
-        return;
-      }
-      fullEncounter = { type: "combat", enemy };
-      combatEncountersFought.value++;
-      nextTick(() => {
-        logEnemyAction();
-      });
-      nextEnemyAttack.value =
-        Math.floor(Math.random() * (enemy.maxDamage - enemy.minDamage + 1)) +
-        enemy.minDamage;
-      enemyNextAction.value = "attack";
-    }
-
-    if (fullEncounter) {
-      encounter.value = fullEncounter;
-      if (fullEncounter.type === "combat") {
-        logEnemyAction();
-      }
-      console.log(
-        "Regular encounter triggered. Returning early from handleClick to start encounter."
-      );
-      return;
-    }
-  }
-  if (title === finalTarget && bossDefeated.value) {
-    console.log(
-      "Game complete condition met (Article C reached and boss defeated). Clearing timer."
-    );
-    clearInterval(timerInterval);
-  }
-
-  console.log("--- handleClick END ---");
-  window.scrollTo({ top: 0, behavior: "smooth" });
+async function callHandleClick(title) {
+  await externalHandleClick({
+    title,
+    playerState: {
+      clickCount,
+      path,
+      currentTargetIndex,
+      combatEncountersFought,
+    },
+    gameData: {
+      chain,
+      current,
+      bossSpawned,
+      bossDefeated,
+      selectedBossType,
+      formattedTitle,
+      seenLoreEncounters,
+      seenNPCEncounters,
+      timerInterval, // Pass the actual interval ID
+    },
+    modalState: {
+      inEncounter,
+      showRestModal,
+      showShopModal,
+      showTipsModal,
+      bossOverlay,
+    },
+    enemyState: {
+      encounter,
+      enemyHP,
+      encounterMessage,
+      nextEnemyAttack,
+      enemyNextAction,
+      currentEnemy,
+    },
+    utilityFunctions: {
+      log, // Pass the log function
+      logEnemyAction, // Pass the logEnemyAction function
+      clearInterval: (intervalId) => clearInterval(intervalId), // Pass clearInterval as a function
+    },
+  });
 }
 
-function handleRest(choice) {
-  console.log("Rest choice:", choice);
-
-  if (choice === "short" && shortRestsUsed.value < 4) {
-    playerHP.value += 5;
-    log(`${playerName.value} feels rested and has gained +5HP.`);
-    shortRestsUsed.value++;
-  } else if (choice === "long" && longRestsUsed.value < 2) {
-    playerHP.value += 10;
-    log(`${playerName.value} feels rested and has gained +10HP.`);
-    longRestsUsed.value++;
-  } else if (choice === "continue") {
-    playerHP.value = Math.max((playerHP.value += 0), 0);
-  }
-
-  showRestModal.value = false;
+function callHandleRest(choice) {
+  // NEW: Create a wrapper function to pass the necessary refs and utilities
+  handleRest({
+    player: {
+      playerHP,
+      playerClass, // Pass playerClass for maxHP and maxSpecialUses
+      specialUsesLeft,
+      playerName,
+    },
+    state: {
+      restChoice: choice, // Pass the chosen option
+      shortRestsUsed,
+      longRestsUsed,
+    },
+    utils: {
+      log,
+      showRestModal, // Pass the showRestModal ref directly
+    },
+  });
 }
-
 function handleCombatActionWrapper(playerAction) {
   handleCombatAction({
     player: {
@@ -619,214 +516,44 @@ function handleClassSelection({ classKey, name }) {
   log(`Class selected: ${playerClass.value.name}`);
 }
 
-function handleEncounterOption(option) {
-  console.log("[handleEncounterOption] option:", option);
-  window.scrollTo({ top: 0, behavior: "smooth" });
-
-  if (option.responseText) {
-    log(`You select: ${option.text}`);
-    log(option.responseText);
-    encounterMessage.value = option.responseText;
-  }
-
-  if (option.result === "combat") {
-    encounter.value = {
-      type: "combat",
-      enemy: generateEnemy(),
-    };
-    nextEnemyAttack.value = Math.floor(Math.random() * 3) + 1;
-    enemyNextAction.value = "attack";
-    const enemy = generateEnemy();
-    if (!enemy) {
-      console.warn("Could not generate enemy from option, skipping combat.");
-      encounter.value = null;
-      return;
-    }
-    encounter.value = { type: "combat", enemy: enemy };
-    enemyHP.value = enemy.currentHP;
-    nextEnemyAttack.value =
-      Math.floor(Math.random() * (enemy.maxDamage - enemy.minDamage + 1)) +
-      enemy.minDamage;
-    combatEncountersFought.value++;
-    log(`⚔️ Your choice has resulted in combat.`);
-    return;
-  }
-
-  if (option.result === "item") {
-    if (option.details === "health") {
-      playerHP.value = Math.min(playerHP.value + 5, 200);
-      log(
-        `🎲 <span class="player-name">${playerName.value}</span> has gained +5 HP.`
-      );
-
-    }
-    if (option.details === "health-major") {
-      playerHP.value = Math.min(playerHP.value + 15, 200);
-      log(
-        `🎲 <span class="player-name">${playerName.value}</span> has gained +15 HP.`
-      );
-    }
-
-    if (option.details === "weapon") {
-      log(
-        `🎲 <span class="player-name">${playerName.value}</span> found a weapon upgrade. Next attack does double damage.`
-      );
-    }
-    if (option.details === "beer") {
-      const duration = option.amount || 4;
-      blurClicksLeft.value += duration;
-      log(
-        `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision becomes blurry for ${duration} clicks.`
-      );
-    }
-    if (option.details === "beer-health") {
-      const duration = option.amount || 4;
-      blurClicksLeft.value += duration;
-      playerHP.value = Math.min(playerHP.value + 5, 200);
-      log(
-        `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision becomes blurry for ${duration} clicks but you gain +5HP.`
-      );
-    }
-    if (option.details === "gold") {
-      const amount = option.amount || 5;
-      playerGold.value += amount;
-      log(
-        `💰 <span class="player-name">${playerName.value}</span> found ${amount} Gold Pieces!`
-      );
-    }
-  }
-
-  if (option.result === "route" && option.details === "compass") {
-    if (currentTargetIndex.value < 1) {
-      current.value = chain[1];
-      path.value.push(chain[1]);
-      clickCount.value++;
-      log(
-        `🧭 The compass guides you directly to ${chain[1].replaceAll(
-          "_",
-          " "
-        )}!`
-      );
-      currentTargetIndex.value = Math.max(currentTargetIndex.value, 1);
-    } else {
-      log(`🧭 The compass points to a familiar place. It offers no new path.`);
-    }
-    encounter.value = null;
-    bossOverlay.value = false;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    return;
-  }
-
-  if (option.result === "damage") {
-    playerHP.value = Math.max(playerHP.value - 5, 0);
-    log(
-      `🎲 <span class="player-name">${playerName.value}</span> took 5 damage.`
-    );
-  }
-
-  if (option.result === "damage-minor") {
-    playerHP.value = Math.max(playerHP.value - 1, 0);
-    log(
-      `🎲 <span class="player-name">${playerName.value}</span> took 1 damage.`
-    );
-  }
-
-  if (option.result === "damage-major") {
-    playerHP.value = Math.max(playerHP.value - 50, 0);
-    log(
-      `🎲 <span class="player-name">${playerName.value}</span> took 50 damage.`
-    );
-  }
-
-  if (option.details === "weapon") {
-    weaponBonus.value += 1;
-    log(
-      `🎲 <span class="player-name">${playerName.value}</span> received a weapon upgrade! Weapon damage +1 (Base Damage Total: +${weaponBonus.value})`
-    );
-  }
-
-  if (option.result === "special" && option.details === "recover") {
-    const amount = option.amount || 1;
-    specialUsesLeft.value += amount;
-    log(
-      `🎲 <span class="player-name">${
-        playerName.value
-      }</span> regained ${amount} special move${amount > 1 ? "s" : ""}!`
-    );
-  }
-
-  if (option.result === "shortcut-damage") {
-    const damageTaken = 10;
-    const clicksReduced = 10;
-
-    playerHP.value = Math.max(playerHP.value - damageTaken, 0);
-    clickCount.value = Math.max(0, clickCount.value - clicksReduced);
-    shortcutsUsedCount.value++;
-
-    log(
-      `🎲 <span class="player-name">${playerName.value}</span> took ${damageTaken} damage for taking the shortcut, but saved ${clicksReduced} clicks.`
-    );
-  }
-
-  if (option.result === "shortcut" && option.details === "clicks") {
-    const amount = option.amount || 1;
-    clickCount.value = Math.max(0, clickCount.value - amount);
-    shortcutsUsedCount.value++;
-    log(
-      `🎲 <span class="player-name">${playerName.value}</span> discovered a shortcut! Click count reduced by ${amount}.`
-    );
-  }
-
-  if (option.result === "route" && option.details === "compass") {
-    if (currentTargetIndex.value < 1) {
-      current.value = chain[1];
-      path.value.push(chain[1]);
-      clickCount.value++;
-      log(
-        `🧭 The compass glows, guiding you directly to ${chain[1].replaceAll(
-          "_",
-          " "
-        )}!`
-      );
-      currentTargetIndex.value = Math.max(currentTargetIndex.value, 1);
-      log(`✨ You feel a step closer to your goal.`);
-    } else {
-      log(
-        `🧭 The compass seems to point to a place you've already been, or are already near. It offers no new path.`
-      );
-    }
-    encounter.value = null;
-    bossOverlay.value = false;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    return;
-  }
-
-  if (option.details === "shield") {
-    shieldBonus.value += 1;
-    log(
-      `🛡️ <span class="player-name">${playerName.value}</span> has increased their Defense by +1 (Base Defense Total: +${shieldBonus.value})`
-    );
-  }
-
-  if (option.routeTitle) {
-    log(`📚 You choose: ${option.text}`);
-    current.value = option.routeTitle;
-    path.value.push(option.routeTitle);
-    clickCount.value++;
-
-    bossOverlay.value = false;
-    encounter.value = null;
-
-    if (option.routeTitle === chain[currentTargetIndex.value + 1]) {
-      currentTargetIndex.value++;
-    }
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    return;
-  }
-
-  encounter.value = null;
-  bossOverlay.value = false;
+function callHandleEncounterOption(option) {
+  externalHandleEncounterOption({
+    option,
+    playerState: {
+      playerHP,
+      playerName,
+      playerClass,
+      combatEncountersFought,
+      specialUsesLeft,
+      weaponBonus,
+      shieldBonus,
+      blurClicksLeft,
+      poisonedClicksLeft,
+      poisonDamagePerClick,
+      playerGold,
+      currentTargetIndex,
+      path,
+      clickCount,
+      shortcutsUsedCount,
+    },
+    gameData: {
+      chain,
+      current,
+    },
+    enemyState: {
+      encounter,
+      enemyHP,
+      encounterMessage,
+      nextEnemyAttack,
+      enemyNextAction,
+    },
+    modalState: {
+      bossOverlay,
+    },
+    utilityFunctions: {
+      log,
+    },
+  });
 }
 
 function handleLootDrop() {
@@ -951,6 +678,8 @@ function resetGame() {
   chain.splice(0, chain.length, ...newChain);
   current.value = chain[0];
   weaponBonus.value = 0;
+  poisonedClicksLeft.value = 0;
+  poisonDamagePerClick.value = 0;
   shieldBonus.value = 0;
   currentTargetIndex.value = 0;
   clickCount.value = 0;

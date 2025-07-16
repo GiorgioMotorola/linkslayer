@@ -180,11 +180,14 @@
         "result": "none",
         "responseText": "There is nothing behind the vending machine."
       },
-      {
-        "text": "Press upgrade without placing your weapon on the shelf.",
-        "details": "poison",
-        "responseText": "The vending machine fires on and violently spits out a glass vile full of a green liquid. It shatters on your face. It appears to be poison."
-      }
+ {
+      "text": "Press upgrade without placing your weapon on the shelf.",
+      "result": "item",
+      "details": "poison",
+      "amount": 5, 
+      "damage": 2,  
+      "responseText": "The vending machine fires on and violently spits out a glass vile full of a green liquid. It shatters on your face. It appears to be poison."
+    }
     ]
   },
   {
