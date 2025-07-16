@@ -100,8 +100,6 @@
         @buy="handleShopPurchase"
         @close="showShopModal = false"
       />
-
-      <!-- <TipsModal v-if="showTipsModal" @close="showTipsModal = false" /> -->
     </div>
   </div>
 
@@ -121,21 +119,15 @@ import { getRandomChain } from "@/utils/randomPair";
 import ArticleViewer from "@/components/ArticleViewer.vue";
 import Header from "@/components/Header.vue";
 import VictoryModal from "@/components/VictoryModal.vue";
-import { rollEncounter } from "@/utils/encounterGenerator";
 import ClassSelect from "@/components/ClassSelect.vue";
 import { classes } from "@/utils/classes";
-import { generateEnemy } from "@/utils/encounterGenerator";
-import friendlyEncounters from "@/assets/data/friendlyEncounters.json";
-import loreEncounters from "@/assets/data/loreEncounters.json";
 import DefeatModal from "@/components/DefeatModal.vue";
-import { getRandomBoss, isBoss } from "@/utils/bossGenerator";
 import RestModal from "@/components/RestModal.vue";
 import { handleCombatAction } from "@/utils/combat";
 import ShopModal from "@/components/ShopModal.vue";
 import { handleRest } from "@/utils/restHandler";
 import { handleClick as externalHandleClick } from "@/utils/clickHandler.js";
 import { handleEncounterOption as externalHandleEncounterOption } from "@/utils/encounterHandler";
-// import TipsModal from '@/components/TipsModal.vue';
 
 const chain = getRandomChain();
 const current = ref(chain[0]);
@@ -239,7 +231,6 @@ watch(clickCount, (newClicks) => {
       `🍺 You are still drunk. ${blurClicksLeft.value} clicks left til you sober up.`
     );
   }
-  // NEW: Handle poison damage per click
   if (poisonedClicksLeft.value > 0) {
     playerHP.value = Math.max(0, playerHP.value - poisonDamagePerClick.value);
     poisonedClicksLeft.value--;
@@ -291,7 +282,7 @@ async function callHandleClick(title) {
       formattedTitle,
       seenLoreEncounters,
       seenNPCEncounters,
-      timerInterval, // Pass the actual interval ID
+      timerInterval,
     },
     modalState: {
       inEncounter,
@@ -309,30 +300,29 @@ async function callHandleClick(title) {
       currentEnemy,
     },
     utilityFunctions: {
-      log, // Pass the log function
-      logEnemyAction, // Pass the logEnemyAction function
-      clearInterval: (intervalId) => clearInterval(intervalId), // Pass clearInterval as a function
+      log,
+      logEnemyAction,
+      clearInterval: (intervalId) => clearInterval(intervalId),
     },
   });
 }
 
 function callHandleRest(choice) {
-  // NEW: Create a wrapper function to pass the necessary refs and utilities
   handleRest({
     player: {
       playerHP,
-      playerClass, // Pass playerClass for maxHP and maxSpecialUses
+      playerClass,
       specialUsesLeft,
       playerName,
     },
     state: {
-      restChoice: choice, // Pass the chosen option
+      restChoice: choice,
       shortRestsUsed,
       longRestsUsed,
     },
     utils: {
       log,
-      showRestModal, // Pass the showRestModal ref directly
+      showRestModal,
     },
   });
 }
