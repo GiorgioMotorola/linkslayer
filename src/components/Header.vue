@@ -193,6 +193,7 @@ const props = defineProps({
   weaponBonus: Number,
   shortRestsUsed: Number,
   longRestsUsed: Number,
+  formattedTitle: String,
   shieldBonus: Number,
   playerGold: Number,
   isDarkened: {
@@ -271,7 +272,7 @@ watch(
         fullText = newEncounter.enemy.message;
       } else {
         fullText = `🗡️ You've been attacked by <strong>${
-          props.formattedTitle
+          formattedTitle.value
         }</strong> ${newEncounter.enemy.name ?? ""}. What do you do?`;
       }
 
