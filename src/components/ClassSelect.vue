@@ -1,7 +1,7 @@
 <template>
   <div class="modal">
     <div class="class-select">
-      <div class="game-title">LINKSLAYER IN THE INFINITE LIBRARY</div>
+      <div class="game-title">LINKSLAYER</div>
       <div class="journey-prompt">
         "{{ journeyOne }}
         <span style="color: #0645ad; font-weight: 400">{{
@@ -23,15 +23,14 @@
       </div>
       <div class="who-are-you-div"></div>
       <input v-model="name" placeholder="Enter your name" class="name-input" />
-      <!-- <div class="select-class">Select Your Class</div> -->
       <div class="class-grid">
         <div v-for="(c, key) in classes" :key="key" class="class-card">
           <button @click="selectClass(key)">> Select {{ c.name }}</button>
           <div class="desc">{{ c.description }}</div>
         </div>
       </div>
-        <button class="tips-button" @click="openModal">Game Tips</button>
-  <TipsModal v-if="isModalOpen" @close="closeModal" />
+      <button class="tips-button" @click="openModal">Game Tips</button>
+      <TipsModal v-if="isModalOpen" @close="closeModal" />
     </div>
   </div>
 </template>
@@ -40,10 +39,7 @@
 import { ref, watch, nextTick } from "vue";
 import { classes } from "@/utils/classes";
 import prompts from "@/assets/data/prompts.json";
-import TipsModal from './TipsModal.vue';
-
-console.log("ClassSelect.vue: Component setup started.");
-console.log("Prompts data loaded directly:", prompts);
+import TipsModal from "./TipsModal.vue";
 
 const name = ref("");
 const emit = defineEmits(["select", "show-tips"]);
@@ -64,16 +60,11 @@ const props = defineProps({
   fullChain: Array,
 });
 
-console.log(
-  "ClassSelect.vue: Initial props received (might be empty):",
-  props.fullChain
-);
+const isModalOpen = ref(false);
 
-const isModalOpen = ref(false); 
-
-const openModal = () => { 
+const openModal = () => {
   isModalOpen.value = true;
-  emit('show-tips'); 
+  emit("show-tips");
 };
 
 const closeModal = () => {
@@ -127,42 +118,22 @@ function selectClass(classKey) {
 }
 
 function loadRandomPrompt() {
-  console.log("loadRandomPrompt: Function called.");
-
   if (!prompts || prompts.length === 0) {
     console.error(
       "loadRandomPrompt: No prompts loaded from JSON or prompts array is empty."
     );
     return;
   }
-  console.log("loadRandomPrompt: Prompts array has", prompts.length, "items.");
 
   const randomIndex = Math.floor(Math.random() * prompts.length);
   const prompt = prompts[randomIndex];
-  console.log("loadRandomPrompt: Selected prompt:", prompt);
 
   journeyOne.value = prompt["journey-one"] || "";
   journeyTwo.value = prompt["journey-two"] || "";
   journeyThree.value = prompt["journey-three"] || "";
   journeyFour.value = prompt["journey-four"] || "";
-  console.log(
-    "loadRandomPrompt: Journey texts assigned. J1:",
-    journeyOne.value,
-    "J4:",
-    journeyFour.value
-  );
-
-  console.log(
-    "loadRandomPrompt: Checking fullChain status. Current fullChain:",
-    props.fullChain
-  );
 
   if (props.fullChain && props.fullChain.length >= 3) {
-    console.log(
-      "loadRandomPrompt: fullChain is available and has at least 3 elements. Length:",
-      props.fullChain.length
-    );
-
     const slotOneIndex = prompt["article-slot-one"];
     if (
       slotOneIndex !== undefined &&
@@ -170,12 +141,6 @@ function loadRandomPrompt() {
     ) {
       promptedArticleOne.value =
         props.fullChain[slotOneIndex].replaceAll("_", " ") ?? "";
-      console.log(
-        "loadRandomPrompt: Article 1 assigned:",
-        promptedArticleOne.value,
-        "from index",
-        slotOneIndex
-      );
     } else {
       promptedArticleOne.value = "";
       console.warn(
@@ -193,12 +158,6 @@ function loadRandomPrompt() {
     ) {
       promptedArticleTwo.value =
         props.fullChain[slotTwoIndex].replaceAll("_", " ") ?? "";
-      console.log(
-        "loadRandomPrompt: Article 2 assigned:",
-        promptedArticleTwo.value,
-        "from index",
-        slotTwoIndex
-      );
     } else {
       promptedArticleTwo.value = "";
       console.warn(
@@ -216,12 +175,6 @@ function loadRandomPrompt() {
     ) {
       promptedArticleThree.value =
         props.fullChain[slotThreeIndex].replaceAll("_", " ") ?? "";
-      console.log(
-        "loadRandomPrompt: Article 3 assigned:",
-        promptedArticleThree.value,
-        "from index",
-        slotThreeIndex
-      );
     } else {
       promptedArticleThree.value = "";
       console.warn(
@@ -244,16 +197,9 @@ function loadRandomPrompt() {
 watch(
   () => props.fullChain,
   (newChain) => {
-    console.log("Watcher: props.fullChain changed. New value:", newChain);
     if (newChain && newChain.length >= 3) {
-      console.log(
-        "Watcher: fullChain has at least 3 elements. Calling loadRandomPrompt."
-      );
       loadRandomPrompt();
     } else {
-      console.log(
-        "Watcher: fullChain is empty, null, or has fewer than 3 elements. Not calling loadRandomPrompt yet."
-      );
     }
   },
   { immediate: true }
@@ -270,12 +216,12 @@ watch(
   font-family: "Metal Mania", system-ui;
   font-size: 40px;
   font-weight: 400;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
   letter-spacing: 2px;
   text-decoration-line: underline;
   text-decoration-color: rgb(99, 79, 79);
   color: #990000;
-    text-shadow: -2px -2px 0 #000000, 2px -2px 0 #000000, -2px 2px 0 #000000,
+  text-shadow: -2px -2px 0 #000000, 2px -2px 0 #000000, -2px 2px 0 #000000,
     2px 2px 0 #000000, -2px 0px 0 #000000, 2px 0px 0 #000000, 0px -2px 0 #000000,
     0px 2px 0 #000000;
 }
@@ -309,12 +255,6 @@ watch(
 .who-are-you-div {
   margin-top: 1rem;
 }
-
-/* .select-class {
-  margin-top: 2rem;
-  font-size: 25px;
-  text-decoration-line: underline;
-} */
 
 .name-input {
   padding: 5px;
@@ -398,13 +338,13 @@ button:hover {
 }
 
 .tips-button {
-  margin-top: 1.5rem; 
+  margin-top: 1.5rem;
   background-color: transparent;
   color: rgb(8, 8, 8);
   font-size: 17px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  border: none; 
+  border: none;
   font-weight: 700;
 }
 

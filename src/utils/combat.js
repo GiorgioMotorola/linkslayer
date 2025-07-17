@@ -41,14 +41,6 @@ export function handleCombatAction({ player, enemy, state, utils }) {
   let skipEnemyCurrentTurn = false;
   let playerDefendedThisTurn = false;
 
-  console.log("DEBUG: Player Action:", playerAction);
-  console.log(
-    "DEBUG: Enemy Next Action (for this turn):",
-    enemyNextAction.value
-  );
-  console.log("DEBUG: Initial playerHP:", playerHP.value);
-  console.log("DEBUG: Initial enemyHP:", enemyHP.value);
-
   if (playerAction === "attack") {
     let randomDamage = Math.floor(Math.random() * 5) + 2;
     if (playerClass.value.name === "Fighter") randomDamage += 1;
@@ -122,18 +114,20 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     } else if (cls === "Paladin") {
       baseSpecialDamage = 5;
       damageToEnemy = baseSpecialDamage;
+
+      const oldPlayerHP = playerHP.value;
+
       const effect = playerClass.value.specialEffect(
         enemyHP.value,
         playerHP.value,
         playerClass.value.maxHP
       );
       playerHP.value = effect.playerHP;
+
+      const hpRestored = playerHP.value - oldPlayerHP;
+
       log(
-        `✨ <span class="player-name">${
-          playerName.value
-        }</span> calls upon **${specialName}**, dealing ${baseSpecialDamage} damage and restoring ${
-          playerHP.value - player.playerHP.value + damageToPlayer
-        } HP.`
+        `✨ <span class="player-name">${playerName.value}</span> calls upon **${specialName}**, dealing ${baseSpecialDamage} damage and restoring ${hpRestored} HP.`
       );
     } else if (cls === "Cleric") {
       baseSpecialDamage = 6;
@@ -189,9 +183,6 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       }
     }
   } else if (playerAction === "defend") {
-    log(
-      `🛡️ <span class="player-name">${playerName.value}</span> braces for impact.`
-    );
     playerDefendedThisTurn = true;
   } else if (playerAction === "flee") {
     if (isBoss(encounter.value?.enemy)) {
@@ -246,35 +237,34 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       if (enemyNextAction.value === "attack") {
         damageToPlayer = currentEnemyDamage;
 
-         damageToPlayer = Math.max(0, damageToPlayer - Math.floor(shieldBonus.value / 2));
+        damageToPlayer = Math.max(
+          0,
+          damageToPlayer - Math.floor(shieldBonus.value / 2)
+        );
 
         if (playerDefendedThisTurn) {
           damageToPlayer = Math.max(0, Math.floor(damageToPlayer * 0.7));
           log(
-            `🛡️ <span class="player-name">${playerName.value}</span> defended, taking ${damageToPlayer} damage.`
+            `🛡️ <span class="player-name">${playerName.value}</span> defended the attack, taking ${damageToPlayer} damage.`
           );
         } else {
           log(
-            `💥 ${formattedTitle} attacks! <span class="player-name">${playerName.value}</span> takes ${damageToPlayer} damage.`
+            `💥 ${formattedTitle} attacks back and <span class="player-name">${playerName.value}</span> takes ${damageToPlayer} damage.`
           );
         }
       } else if (enemyNextAction.value === "trip") {
-        log(`🤾 ${formattedTitle} trips. You get a free hit.`);
         damageToPlayer = 0;
       } else if (enemyNextAction.value === "flee") {
         log(`🏃 ${formattedTitle} flees.`);
         encounter.value = null;
         return;
       } else if (enemyNextAction.value === "defend") {
-        log(`🛡️ ${formattedTitle} is defending your next attack.`);
+        // log(`🛡️ ${formattedTitle} is defending your next attack.`);
         damageToPlayer = 0;
       }
     }
   } else {
     damageToPlayer = 0;
-    console.log(
-      "DEBUG: Enemy current turn skipped due to player's Class Ability action."
-    );
   }
 
   if (typeof damageToPlayer === "number" && !isNaN(damageToPlayer)) {
@@ -286,9 +276,6 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     );
     playerHP.value = Math.max(playerHP.value - 0, 0);
   }
-
-  console.log("DEBUG: playerHP after this turn:", playerHP.value);
-  console.log("DEBUG: enemyHP after this turn:", enemyHP.value);
 
   if (playerHP.value <= 0) {
     log(

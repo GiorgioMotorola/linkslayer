@@ -125,7 +125,9 @@
           >
             {{ expanded ? "Show Less" : "Show More" }}
           </button>
-          <button class="tips-button" @click="copyLogToClipboard" >Copy Log</button>
+          <button class="tips-button" @click="copyLogToClipboard">
+            Copy Log
+          </button>
           <button class="tips-button" @click="openModal">Game Tips</button>
           <TipsModal v-if="isModalOpen" @close="closeModal" />
         </div>
@@ -249,8 +251,15 @@ const playerSpecialAbilityName = computed(() => {
 watch(
   () => props.encounter,
   (newEncounter) => {
-    if (!newEncounter) return;
+    if (!newEncounter) {
+      typedLine.value = "";
+      typedGreeting.value = "";
+      clearInterval(typeInterval);
+      return;
+    }
+
     let fullText = "";
+
     if (newEncounter.type === "combat") {
       if (newEncounter.enemy?.isBoss) {
         fullText = `💀 <strong>BOSS ENCOUNTER:</strong> ${
@@ -262,17 +271,23 @@ watch(
         fullText = newEncounter.enemy.message;
       } else {
         fullText = `🗡️ You've been attacked by <strong>${
-          formattedTitle.value
+          props.formattedTitle
         }</strong> ${newEncounter.enemy.name ?? ""}. What do you do?`;
       }
 
       typedLine.value = "";
-      emit("log-line", fullText);
+      typedGreeting.value = "";
     } else if (newEncounter.type === "npc") {
       fullText = newEncounter.npc.greeting;
       typedGreeting.value = "";
+      typedLine.value = "";
     } else if (newEncounter.type === "lore") {
       fullText = newEncounter.lore.text;
+      typedGreeting.value = "";
+      typedLine.value = "";
+    } else {
+      fullText = "⚠️ Unknown encounter type.";
+      typedLine.value = "";
       typedGreeting.value = "";
     }
 

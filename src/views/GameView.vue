@@ -129,6 +129,8 @@ import ShopModal from "@/components/ShopModal.vue";
 import { handleRest } from "@/utils/restHandler";
 import { handleClick as externalHandleClick } from "@/utils/clickHandler.js";
 import { handleEncounterOption as externalHandleEncounterOption } from "@/utils/encounterHandler";
+import { handleLootDrop as externalHandleLootDrop } from "@/utils/lootHandler";
+import { handleEnemyTurn as externalHandleEnemyTurn } from "@/utils/enemyTurnHandler"; //
 
 const chain = getRandomChain();
 const current = ref(chain[0]);
@@ -201,10 +203,6 @@ const inEncounter = computed(() => {
   return false;
 });
 
-watch(encounter, (newVal) => {
-  console.log("[watch:encounter] changed to:", JSON.stringify(newVal, null, 2));
-});
-
 watch(playerHP, (newVal) => {
   if (playerClass.value && newVal <= 0 && !defeated.value) {
     log(
@@ -217,13 +215,10 @@ watch(playerHP, (newVal) => {
 });
 
 watch(clickCount, (newClicks) => {
-  console.log("clickCount changed:", newClicks);
   if (newClicks > 0 && newClicks % 11 === 0) {
-    console.log("Showing rest modal");
     showRestModal.value = true;
   }
   if (newClicks > 0 && newClicks % 15 === 0 && !showRestModal.value) {
-    console.log("Showing shop modal");
     showShopModal.value = true;
   }
   if (blurClicksLeft.value > 0) {
@@ -363,62 +358,28 @@ function handleCombatActionWrapper(playerAction) {
 }
 
 function gotoEnemyTurn() {
-  enemyStatusEffects.value = enemyStatusEffects.value.filter((effect) => {
-    if (effect.type === "bleed") {
-      enemyHP.value -= effect.damage;
-      log(
-        `🩸 ${formattedTitle.value} is bleeding. ${formattedTitle.value} takes ${effect.damage} additional damage.`
-      );
-    }
-
-    effect.duration -= 1;
-    return effect.duration > 0;
+  externalHandleEnemyTurn({
+    enemyState: {
+      enemyStatusEffects,
+      enemyHP,
+      encounter,
+      enemyIsStunned,
+      enemyNextAction,
+      nextEnemyAttack,
+    },
+    playerState: {
+      playerName,
+    },
+    gameData: {},
+    utilityFunctions: {
+      log,
+    },
+    combatFunctions: {
+      formattedTitle: formattedTitle,
+      decideEnemyAction: decideEnemyAction,
+      logEnemyAction: logEnemyAction,
+    },
   });
-
-  if (enemyHP.value <= 0) {
-    log(`💀 ${playerName.value} defeated ${formattedTitle.value}`);
-    encounter.value = null;
-    handleLootDrop();
-    return;
-  }
-
-  if (enemyIsStunned.value) {
-    log(`💤 ${formattedTitle.value} is stunned and skips their turn.`);
-    enemyNextAction.value = null;
-    enemyIsStunned.value = false;
-    return;
-  }
-
-  const tripChance = 0.1;
-  const rand = Math.random();
-
-  if (rand < tripChance) {
-    enemyNextAction.value = "trip";
-    nextEnemyAttack.value = null;
-  } else {
-    const action = decideEnemyAction();
-    enemyNextAction.value = action;
-
-    if (action === "attack") {
-      const currentEnemyData = encounter.value?.enemy;
-
-      if (currentEnemyData) {
-        nextEnemyAttack.value =
-          Math.floor(
-            Math.random() *
-              (currentEnemyData.maxDamage - currentEnemyData.minDamage + 1)
-          ) + currentEnemyData.minDamage;
-      } else {
-        console.warn(
-          "Enemy data not found for attack. Defaulting to 1-3 damage."
-        );
-        nextEnemyAttack.value = Math.floor(Math.random() * 3) + 1;
-      }
-    } else {
-      nextEnemyAttack.value = null;
-    }
-  }
-  logEnemyAction();
 }
 
 let logId = 0;
@@ -548,66 +509,23 @@ function callHandleEncounterOption(option) {
 }
 
 function handleLootDrop() {
-  const lootChance = Math.random();
-  if (lootChance > 0.7) {
-    console.log(lootChance);
-    log(`❌ Enemy has no loot to drop.`);
-    return;
-  }
-
-  const lootOptions = ["health", "weapon", "special", "shield", "gold"];
-  const selectedLoot =
-    lootOptions[Math.floor(Math.random() * lootOptions.length)];
-
-  switch (selectedLoot) {
-    case "health": {
-      const amount = 10;
-      playerHP.value = Math.min(
-        playerHP.value + amount,
-        playerClass.value.maxHP
-      );
-      log(
-        `🍎 <span class="player-name">${playerName.value}</span> loots +${amount} HP.`
-      );
-      break;
-    }
-
-    case "weapon": {
-      weaponBonus.value += 2;
-      log(
-        `🗡️ <span class="player-name">${playerName.value}</span> loots a sharper weapon. Weapon damage +2 (Base Damage Total: +${weaponBonus.value})`
-      );
-      break;
-    }
-
-    case "special": {
-      specialUsesLeft.value += 2;
-      log(
-        `🎁 <span class="player-name">${playerName.value}</span> regains +2 Class Ability charges. (Total: ${specialUsesLeft.value})`
-      );
-      break;
-    }
-
-    case "shield": {
-      shieldBonus.value += 2;
-      log(
-        `🛡️<span class="player-name">${playerName.value}</span> loots stronger Chainmail. Defense +2 (Base Defense Total: +${shieldBonus.value})`
-      );
-      break;
-    }
-    case "gold": {
-      const amount = Math.floor(Math.random() * 5) + 3;
-      playerGold.value += amount;
-      log(
-        `💰 <span class="player-name">${playerName.value}</span> loots ${amount} Gold Pieces!`
-      );
-      break;
-    }
-  }
+  externalHandleLootDrop({
+    playerState: {
+      playerHP,
+      playerName,
+      playerClass,
+      specialUsesLeft,
+      weaponBonus,
+      shieldBonus,
+      playerGold,
+    },
+    utilityFunctions: {
+      log,
+    },
+  });
 }
 
 function handleShopPurchase(item) {
-  console.log("Attempting to buy:", item);
   let purchased = false;
   if (playerGold.value >= item.cost) {
     playerGold.value -= item.cost;

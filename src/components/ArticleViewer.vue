@@ -170,29 +170,19 @@ const handleLinkClick = (event) => {
           `Sorry, "${title}" is a link that will not load properly, probably due to being in another language other than English or a Wikitionary article. Please try another article.`,
           4000
         );
-        console.log(`Clicked non-Wikipedia link: ${href}. Showing error.`);
         return;
       }
 
       if (langCode === "en") {
-        console.log(
-          `Clicked English link: en.wikipedia.org/wiki/${title}. Emitting link-clicked.`
-        );
         showAndClearError("");
         emit("link-clicked", title);
       } else {
-        console.log(
-          `Clicked foreign Wikipedia link: ${langCode}.wikipedia.org/wiki/${title}. This game only supports English Wikipedia.`
-        );
         showAndClearError(
           `Sorry, "${title}" is not an English Wikipedia article and will not load properly. Try another article.`,
           3500
         );
       }
     } else {
-      console.log(
-        `Clicked invalid or non-Wikipedia link: ${href}. Showing error.`
-      );
       showAndClearError(
         `Invalid or non-Wikipedia link clicked. Please click a valid Wikipedia article link.`,
         4000

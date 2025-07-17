@@ -42,7 +42,6 @@
 <script setup>
 import { defineEmits } from "vue";
 
-// Define the custom event that this component can emit
 const emit = defineEmits(["close"]);
 </script>
 
@@ -80,16 +79,16 @@ const emit = defineEmits(["close"]);
   right: 15px;
   background: none;
   border: none;
-  font-size: 2.5rem; /* Larger close button */
+  font-size: 2.5rem;
   color: #333;
   cursor: pointer;
-  line-height: 1; /* Adjust vertical alignment */
-  padding: 0; /* Remove default padding */
+  line-height: 1;
+  padding: 0;
   transition: color 0.2s ease;
 }
 
 .close-button:hover {
-  color: #a00; /* Redder on hover */
+  color: #a00;
 }
 
 h2 {

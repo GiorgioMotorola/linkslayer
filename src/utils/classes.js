@@ -15,10 +15,10 @@ export const classes = {
     maxHP: 60,
     special: "Smite",
     description:
-      "40 HP. Class Ability(Smite) deals 5 damage and gives +2 HP. Starts with +1 Defense Bonus",
+      "40 HP. Class Ability(Smite) deals 5 damage and gives +2 HP to player. Starts with +1 Defense Bonus",
     specialEffect: (enemyHP, playerHP, maxHP) => ({
       enemyHP: enemyHP - 5,
-      playerHP: playerHP + 1,
+      playerHP: playerHP + 2,
     }),
     startingWeaponBonus: 0,
     startingSpecialUses: 0,

@@ -8,7 +8,6 @@ export function handleRest({ player, state, utils }) {
 
   const choice = state.restChoice;
 
-  console.log("Rest choice:", choice);
 
   if (choice === "short" && shortRestsUsed.value < 4) {
     playerHP.value = playerHP.value + 5;

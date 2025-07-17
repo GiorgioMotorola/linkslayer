@@ -10,7 +10,6 @@ export function handleEncounterOption({
   modalState,
   utilityFunctions,
 }) {
-  console.log("[handleEncounterOption] option:", option);
   window.scrollTo({ top: 0, behavior: "smooth" });
 
   if (option.responseText) {
@@ -37,7 +36,11 @@ export function handleEncounterOption({
       enemy.minDamage;
     enemyState.enemyNextAction.value = "attack";
     playerState.combatEncountersFought.value++;
-    utilityFunctions.log(`⚔️ Your choice has resulted in combat.`);
+    utilityFunctions.log(
+      `🗡️ Your choice has resulted in combat and you have been attacked by <strong>${
+        gameData.formattedTitle.value
+      }</strong> ${enemy.name ?? ""}. What do you do?`
+    );
     return;
   }
 
