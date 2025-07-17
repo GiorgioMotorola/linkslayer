@@ -76,7 +76,7 @@ export function handleEncounterOption({
       playerState.poisonedClicksLeft.value += duration;
       playerState.poisonDamagePerClick.value = damage;
       utilityFunctions.log(
-        `🤢 <span class="player-name">${playerState.playerName.value}</span> is poisoned! You will lose ${damage} HP for the next ${duration} clicks.`
+        `🤢 <span class="player-name">${playerState.playerName.value}</span> is poisoned. You will lose ${damage} HP for the next ${duration} clicks.`
       );
     }
     if (option.details === "beer-health") {
@@ -91,7 +91,7 @@ export function handleEncounterOption({
       const amount = option.amount || 0;
       playerState.playerGold.value += amount;
       utilityFunctions.log(
-        `💰 <span class="player-name">${playerState.playerName.value}</span> found ${amount} Gold Pieces!`
+        `💰 <span class="player-name">${playerState.playerName.value}</span> obtained ${amount} Gold Pieces.`
       );
     }
   }
@@ -105,7 +105,7 @@ export function handleEncounterOption({
         `🧭 The compass guides you directly to ${gameData.chain[1].replaceAll(
           "_",
           " "
-        )}!`
+        )}.`
       );
       playerState.currentTargetIndex.value = Math.max(
         playerState.currentTargetIndex.value,
@@ -145,7 +145,7 @@ export function handleEncounterOption({
   if (option.details === "weapon" && option.result !== "item") {
     playerState.weaponBonus.value += 1;
     utilityFunctions.log(
-      `🎲 <span class="player-name">${playerState.playerName.value}</span> received a weapon upgrade! Weapon damage +1 (Base Damage Total: +${playerState.weaponBonus.value})`
+      `🎲 <span class="player-name">${playerState.playerName.value}</span> received a weapon upgrade. Weapon damage +1 (Base Damage Total: +${playerState.weaponBonus.value})`
     );
   }
 
@@ -155,7 +155,7 @@ export function handleEncounterOption({
     utilityFunctions.log(
       `🎲 <span class="player-name">${
         playerState.playerName.value
-      }</span> regained ${amount} special move${amount > 1 ? "s" : ""}!`
+      }</span> regained ${amount} class ability charges ${amount > 1 ? "s" : ""}.`
     );
   }
 
@@ -183,7 +183,7 @@ export function handleEncounterOption({
     );
     playerState.shortcutsUsedCount.value++;
     utilityFunctions.log(
-      `🎲 <span class="player-name">${playerState.playerName.value}</span> discovered a shortcut! Click count reduced by ${amount}.`
+      `🎲 <span class="player-name">${playerState.playerName.value}</span> discovered a shortcut. Click count reduced by ${amount}.`
     );
   }
 

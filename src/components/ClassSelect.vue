@@ -22,7 +22,14 @@
         <button class="close-button" @click="hideNotification">×</button>
       </div>
       <div class="who-are-you-div"></div>
-      <input v-model="name" placeholder="Enter your name" class="name-input" />
+      <div class="name-input-group">
+        <input
+          v-model="name"
+          placeholder="What is your name?"
+          class="name-input"
+        />
+        <button @click="randomizeName" class="randomize-name-button">🎲</button>
+      </div>
       <div class="class-grid">
         <div v-for="(c, key) in classes" :key="key" class="class-card">
           <button @click="selectClass(key)">> Select {{ c.name }}</button>
@@ -40,6 +47,7 @@ import { ref, watch, nextTick } from "vue";
 import { classes } from "@/utils/classes";
 import prompts from "@/assets/data/prompts.json";
 import TipsModal from "./TipsModal.vue";
+import randomNames from "@/assets/data/randomNames.json";
 
 const name = ref("");
 const emit = defineEmits(["select", "show-tips"]);
@@ -115,6 +123,16 @@ function selectClass(classKey) {
     return;
   }
   emit("select", { classKey, name: name.value.trim() });
+}
+
+function randomizeName() {
+  if (randomNames.length > 0) {
+    const randomIndex = Math.floor(Math.random() * randomNames.length);
+    name.value = randomNames[randomIndex];
+  } else {
+    console.warn("No names available in randomNames.json to randomize.");
+    showAlertAsBanner("Could not find names to randomize. Please type one.");
+  }
 }
 
 function loadRandomPrompt() {
@@ -351,6 +369,27 @@ button:hover {
 .tips-button:hover {
   color: rgb(28, 128, 158);
   cursor: pointer;
+}
+
+.randomize-name-button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 5px 10px;
+  margin-left: 4px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.randomize-name-button:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-1px);
+}
+
+.randomize-name-button:active {
+  background-color: #d0d0d0;
+  transform: translateY(0);
 }
 
 @keyframes pop-in {

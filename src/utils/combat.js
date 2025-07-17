@@ -210,7 +210,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       !(playerAction === "special" && playerClass.value.name === "Rogue")
     ) {
       finalDamageToEnemy = Math.floor(finalDamageToEnemy * 0.5);
-      log(`🛡️ ${formattedTitle} defends, reducing incoming damage.`);
+      log(`🛡️ ${formattedTitle} defends, reducing incoming damage to ${finalDamageToEnemy}HP.`);
     }
     enemyHP.value -= finalDamageToEnemy;
   }

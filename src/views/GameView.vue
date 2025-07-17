@@ -130,7 +130,7 @@ import { handleRest } from "@/utils/restHandler";
 import { handleClick as externalHandleClick } from "@/utils/clickHandler.js";
 import { handleEncounterOption as externalHandleEncounterOption } from "@/utils/encounterHandler";
 import { handleLootDrop as externalHandleLootDrop } from "@/utils/lootHandler";
-import { handleEnemyTurn as externalHandleEnemyTurn } from "@/utils/enemyTurnHandler"; //
+import { handleEnemyTurn as externalHandleEnemyTurn } from "@/utils/enemyTurnHandler";
 
 const chain = getRandomChain();
 const current = ref(chain[0]);
@@ -231,7 +231,7 @@ watch(clickCount, (newClicks) => {
     playerHP.value = Math.max(0, playerHP.value - poisonDamagePerClick.value);
     poisonedClicksLeft.value--;
     log(
-      `🤢 You are poisoned! You lose ${poisonDamagePerClick.value} HP. ${poisonedClicksLeft.value} clicks left until the poison wears off.`
+      `🤢 You are poisoned. You lose ${poisonDamagePerClick.value} HP. ${poisonedClicksLeft.value} clicks left until the poison wears off.`
     );
     if (playerHP.value <= 0) {
       log(
@@ -564,12 +564,12 @@ function handleShopPurchase(item) {
         break;
       case "blurCure":
         blurClicksLeft.value = 0;
-        log(`🧼 ${playerName.value} sobered up and vision is clear!`);
+        log(`🧼 ${playerName.value} sobered up.`);
         break;
     }
   } else {
     log(
-      `❌ Not enough Gold for ${item.name}! (Cost: ${item.cost}, You have: ${playerGold.value})`
+      `❌ Not enough Gold for ${item.name}. (Cost: ${item.cost}, You have: ${playerGold.value})`
     );
   }
 }
