@@ -612,7 +612,7 @@ function resetGame() {
   enemyIsStunned.value = false;
   seenLoreEncounters.value = [];
   seenNPCEncounters.value = [];
-  currentEnemy.value = null;
+  currentEnemy.value = null; 
   selectedBossType.value = "";
   bossSpawned.value = false;
   bossDefeated.value = false;
