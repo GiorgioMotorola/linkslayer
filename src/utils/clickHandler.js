@@ -31,6 +31,11 @@ export async function handleClick({
   playerState.clickCount.value++;
   playerState.path.value.push(title);
 
+  if (title === gameData.chain[playerState.currentTargetIndex.value + 1]) {
+  playerState.currentTargetIndex.value++;
+  utilityFunctions.log(`🎯 You have reached ${title.replaceAll("_", " ")}!`);
+}
+
   if (
     title === finalTarget &&
     playerState.currentTargetIndex.value === 2 &&
@@ -107,7 +112,6 @@ export async function handleClick({
       );
       if (availableLore.length === 0) {
         console.warn("All lore seen, skipping lore encounter.");
-        fungicide.fungi.push(fungus);
       } else {
         const lore =
           availableLore[Math.floor(Math.random() * availableLore.length)];

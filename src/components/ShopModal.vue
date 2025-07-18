@@ -2,8 +2,8 @@
   <div class="shop-overlay">
     <div class="shop-modal">
       <div class="shop-desc">
-        A mysterious merchant appears, ready to trade! You have
-        {{ playerGold }} Gold Pieces.
+        BELETHOR: "Some may call these treasures. Me, I call them junk." (Gold:
+        {{ playerGold }})
       </div>
       <div class="shop-items">
         <button @click="buyItem('health')" :disabled="playerGold < 15">
@@ -117,13 +117,8 @@ function showToast(message, isError = false) {
   align-items: center;
   justify-content: center;
   pointer-events: auto;
-  animation: fade-in-overlay 1.25s ease-out forwards;
-  background-image: linear-gradient(
-    to bottom,
-    rgba(10, 50, 100, 0.9),
-    rgba(50, 100, 150, 0.9),
-    rgba(150, 200, 250, 0.6)
-  );
+  animation: fade-in-overlay 0.75s ease-out forwards;
+  background-color: #545b63a6;
 }
 .shop-modal {
   background-color: rgb(197, 193, 193);
