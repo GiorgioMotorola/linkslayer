@@ -14,6 +14,9 @@ export async function handleClick({
   enemyState,
   utilityFunctions,
 }) {
+  // Destructure journeyLength from gameData for easier access
+  const { journeyLength } = gameData;
+
   if (
     modalState.inEncounter.value ||
     modalState.showRestModal.value ||
@@ -25,20 +28,23 @@ export async function handleClick({
 
   utilityFunctions.log(`📍 ARTICLE: ${title}`);
 
-  const finalTarget = gameData.chain[2];
+  // MODIFIED: Use journeyLength.value to get the final target dynamically
+  const finalTarget = gameData.chain[journeyLength.value - 1];
 
   gameData.current.value = title;
   playerState.clickCount.value++;
   playerState.path.value.push(title);
 
+  // Check if the current article is the next target in the chain
   if (title === gameData.chain[playerState.currentTargetIndex.value + 1]) {
-  playerState.currentTargetIndex.value++;
-  utilityFunctions.log(`🎯 You have reached ${title.replaceAll("_", " ")}!`);
-}
+    playerState.currentTargetIndex.value++;
+    utilityFunctions.log(`🎯 You have reached ${title.replaceAll("_", " ")}!`);
+  }
 
   if (
     title === finalTarget &&
-    playerState.currentTargetIndex.value === 2 &&
+    // MODIFIED: Use journeyLength.value for dynamic final target index check
+    playerState.currentTargetIndex.value === (journeyLength.value - 1) &&
     !gameData.bossSpawned.value &&
     !gameData.bossDefeated.value
   ) {
@@ -73,6 +79,7 @@ export async function handleClick({
     return;
   }
 
+  // Rest and Shop modals (unchanged logic for now)
   if (
     playerState.clickCount.value > 0 &&
     playerState.clickCount.value % 11 === 0

@@ -3,19 +3,15 @@
     <div class="class-select">
       <div class="game-title">LINKSLAYER</div>
       <div class="journey-prompt">
-        "{{ journeyOne }}
+        "{{ journeyIntro }}
         <span style="color: #0645ad; font-weight: 400">{{
-          promptedArticleOne
+          promptedArticleStart
         }}</span>
-        {{ journeyTwo }}
+        {{ journeyMiddle }}
         <span style="color: #0645ad; font-weight: 400">{{
-          promptedArticleTwo
+          promptedArticleEnd
         }}</span>
-        {{ journeyThree }}
-        <span style="color: #0645ad; font-weight: 400">{{
-          promptedArticleThree
-        }}</span>
-        {{ journeyFour }}"
+        {{ journeyOutro }}"
       </div>
       <div id="notification-banner" class="notification-banner">
         <span id="notification-message"></span>
@@ -29,6 +25,21 @@
           class="name-input"
         />
         <button @click="randomizeName" class="randomize-name-button">🎲</button>
+      </div>
+
+      <div class="journey-length-selection">
+        <div class="journey-length-prompt">Choose your journey length:</div>
+        <div class="slider-container">
+          <input
+            type="range"
+            min="3"
+            max="9"
+            step="1"
+            v-model="selectedJourneyLength"
+            class="journey-slider"
+          />
+          <span class="slider-value">{{ selectedJourneyLength }} Articles</span>
+        </div>
       </div>
       <div class="class-grid">
         <div v-for="(c, key) in classes" :key="key" class="class-card">
@@ -52,21 +63,25 @@ import randomNames from "@/assets/data/randomNames.json";
 const name = ref("");
 const emit = defineEmits(["select", "show-tips"]);
 
-const journeyOne = ref("");
-const journeyTwo = ref("");
-const journeyThree = ref("");
-const journeyFour = ref("");
+// MODIFIED: New refs for intro, middle, and outro text
+const journeyIntro = ref("");
+const journeyMiddle = ref("");
+const journeyOutro = ref("");
 
-const promptedArticleOne = ref("");
-const promptedArticleTwo = ref("");
-const promptedArticleThree = ref("");
+// MODIFIED: New refs for start and end prompted articles
+const promptedArticleStart = ref("");
+const promptedArticleEnd = ref("");
+
+// REMOVED: journeyOne, journeyTwo, journeyThree, journeyFour, promptedArticleOne, promptedArticleTwo, promptedArticleThree
 
 const props = defineProps({
   articleTitle: String,
   start: String,
-  targets: String,
+  targets: String, // This prop might become redundant
   fullChain: Array,
 });
+
+const selectedJourneyLength = ref(3);
 
 const isModalOpen = ref(false);
 
@@ -122,7 +137,11 @@ function selectClass(classKey) {
     showAlertAsBanner("Please enter your name before selecting a class.");
     return;
   }
-  emit("select", { classKey, name: name.value.trim() });
+  emit("select", {
+    classKey,
+    name: name.value.trim(),
+    journeyLength: selectedJourneyLength.value,
+  });
 }
 
 function randomizeName() {
@@ -146,58 +165,43 @@ function loadRandomPrompt() {
   const randomIndex = Math.floor(Math.random() * prompts.length);
   const prompt = prompts[randomIndex];
 
-  journeyOne.value = prompt["journey-one"] || "";
-  journeyTwo.value = prompt["journey-two"] || "";
-  journeyThree.value = prompt["journey-three"] || "";
-  journeyFour.value = prompt["journey-four"] || "";
+  // MODIFIED: Assigning new prompt parts
+  journeyIntro.value = prompt["journey-intro"] || "";
+  journeyMiddle.value = prompt["journey-middle"] || "";
+  journeyOutro.value = prompt["journey-outro"] || "";
+  // REMOVED: journeyOne, journeyTwo, journeyThree, journeyFour
 
+  // MODIFIED: Logic for assigning start and end articles
   if (props.fullChain && props.fullChain.length >= 3) {
-    const slotOneIndex = prompt["article-slot-one"];
-    if (
-      slotOneIndex !== undefined &&
-      props.fullChain[slotOneIndex] !== undefined
-    ) {
-      promptedArticleOne.value =
-        props.fullChain[slotOneIndex].replaceAll("_", " ") ?? "";
+    // Start article is always at index 0
+    const startIndex = prompt["article-slot-start"];
+    if (startIndex !== undefined && props.fullChain[startIndex] !== undefined) {
+      promptedArticleStart.value =
+        props.fullChain[startIndex].replaceAll("_", " ") ?? "";
     } else {
-      promptedArticleOne.value = "";
+      promptedArticleStart.value = "";
       console.warn(
-        "loadRandomPrompt: Could not assign Article 1. Slot index:",
-        slotOneIndex,
+        "loadRandomPrompt: Could not assign Start Article. Slot index:",
+        startIndex,
         "Full chain:",
         props.fullChain
       );
     }
 
-    const slotTwoIndex = prompt["article-slot-two"];
+    // End article is always at the last index (using -1 as a conceptual indicator)
+    const endIndex = prompt["article-slot-end"]; // This will be -1
+    const actualEndIndex = props.fullChain.length - 1; // Calculate actual last index
     if (
-      slotTwoIndex !== undefined &&
-      props.fullChain[slotTwoIndex] !== undefined
+      endIndex !== undefined && // Ensure it's defined (even if -1)
+      props.fullChain[actualEndIndex] !== undefined
     ) {
-      promptedArticleTwo.value =
-        props.fullChain[slotTwoIndex].replaceAll("_", " ") ?? "";
+      promptedArticleEnd.value =
+        props.fullChain[actualEndIndex].replaceAll("_", " ") ?? "";
     } else {
-      promptedArticleTwo.value = "";
+      promptedArticleEnd.value = "";
       console.warn(
-        "loadRandomPrompt: Could not assign Article 2. Slot index:",
-        slotTwoIndex,
-        "Full chain:",
-        props.fullChain
-      );
-    }
-
-    const slotThreeIndex = prompt["article-slot-three"];
-    if (
-      slotThreeIndex !== undefined &&
-      props.fullChain[slotThreeIndex] !== undefined
-    ) {
-      promptedArticleThree.value =
-        props.fullChain[slotThreeIndex].replaceAll("_", " ") ?? "";
-    } else {
-      promptedArticleThree.value = "";
-      console.warn(
-        "loadRandomPrompt: Could not assign Article 3. Slot index:",
-        slotThreeIndex,
+        "loadRandomPrompt: Could not assign End Article. Actual end index:",
+        actualEndIndex,
         "Full chain:",
         props.fullChain
       );
@@ -206,9 +210,8 @@ function loadRandomPrompt() {
     console.warn(
       "loadRandomPrompt: fullChain prop not yet available or does not have at least 3 elements. Articles will not be populated."
     );
-    promptedArticleOne.value = "";
-    promptedArticleTwo.value = "";
-    promptedArticleThree.value = "";
+    promptedArticleStart.value = "";
+    promptedArticleEnd.value = "";
   }
 }
 
@@ -218,6 +221,12 @@ watch(
     if (newChain && newChain.length >= 3) {
       loadRandomPrompt();
     } else {
+      // Potentially clear prompts if chain is too short, though it should always be >= 3
+      journeyIntro.value = "";
+      journeyMiddle.value = "";
+      journeyOutro.value = "";
+      promptedArticleStart.value = "";
+      promptedArticleEnd.value = "";
     }
   },
   { immediate: true }
@@ -225,6 +234,7 @@ watch(
 </script>
 
 <style scoped>
+/* All existing styles remain the same as the previous response */
 * {
   font-family: "IBM Plex Sans", sans-serif;
   font-optical-sizing: auto;
@@ -232,7 +242,7 @@ watch(
 
 .game-title {
   font-family: "Metal Mania", system-ui;
-  font-size: 40px;
+  font-size: 35px;
   font-weight: 400;
   margin-bottom: 0.5rem;
   letter-spacing: 2px;
@@ -274,6 +284,13 @@ watch(
   margin-top: 1rem;
 }
 
+.name-input-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 .name-input {
   padding: 5px;
   border-radius: 6px;
@@ -297,11 +314,11 @@ watch(
 button {
   background: #e2e6e7;
   border: none;
-  font-size: 25px;
+  font-size: 20px;
 }
 
 .desc {
-  font-size: 15px;
+  font-size: 14px;
 }
 
 button:hover {
@@ -314,7 +331,7 @@ button:hover {
   text-align: start;
   text-indent: 5rem;
   font-weight: 400;
-  font-size: 18px;
+  font-size: 16px;
   font-family: "MedievalSharp", cursive;
 }
 
@@ -401,5 +418,131 @@ button:hover {
     transform: scale(1);
     opacity: 1;
   }
+}
+
+@keyframes npc-drop {
+  0% {
+    opacity: 0;
+    transform: translateX(-150px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(10px);
+  }
+  80% {
+    transform: translateX(-5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .class-select {
+    padding: 0.8rem;
+  }
+  .game-title {
+    font-size: 30px;
+  }
+  .journey-prompt {
+    font-size: 16px;
+    text-indent: 2rem;
+  }
+  .name-input {
+    font-size: 16px;
+    padding: 3px;
+  }
+  .randomize-name-button {
+    font-size: 16px;
+    padding: 3px 8px;
+  }
+  .class-grid {
+    gap: 1rem;
+  }
+  button {
+    font-size: 20px;
+  }
+  .desc {
+    font-size: 13px;
+  }
+  .journey-length-selection {
+    font-size: 14px;
+    margin-top: 1rem;
+    padding: 0.5rem;
+  }
+  .tips-button {
+    font-size: 15px;
+  }
+}
+
+.journey-length-selection {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.journey-length-prompt {
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: #333;
+  font-size: 15px;
+}
+
+.slider-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10%;
+}
+
+.journey-slider {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
+  border-radius: 4px;
+}
+
+.journey-slider:hover {
+  opacity: 1;
+}
+
+.journey-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0645ad;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.journey-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0645ad;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.slider-value {
+  font-size: 1em;
+  font-weight: 600;
+  color: #0645ad;
+  min-width: 120px;
+  text-align: center;
 }
 </style>

@@ -132,7 +132,8 @@ import { handleEncounterOption as externalHandleEncounterOption } from "@/utils/
 import { handleLootDrop as externalHandleLootDrop } from "@/utils/lootHandler";
 import { handleEnemyTurn as externalHandleEnemyTurn } from "@/utils/enemyTurnHandler";
 
-const chain = getRandomChain();
+const journeyLength = ref(3);
+const chain = getRandomChain(journeyLength.value);
 const current = ref(chain[0]);
 
 const formattedStart = computed(() => chain[0]?.replaceAll("_", " ") ?? "");
@@ -257,10 +258,12 @@ const formattedTimer = computed(() => {
 });
 
 const isGameComplete = computed(() => {
-  return current.value === chain[2] && bossDefeated.value;
+  return current.value === chain[journeyLength.value - 1] && bossDefeated.value;
 });
 
 async function callHandleClick(title) {
+  const finalTarget = chain[journeyLength.value - 1];
+
   await externalHandleClick({
     title,
     playerState: {
@@ -279,6 +282,8 @@ async function callHandleClick(title) {
       seenLoreEncounters,
       seenNPCEncounters,
       timerInterval,
+      journeyLength,
+      finalTarget,
     },
     modalState: {
       inEncounter,
@@ -429,7 +434,7 @@ function handleCloseEncounter() {
   encounter.value = null;
 
   if (bossDefeated.value) {
-    current.value = chain[chain.length - 1];
+    current.value = chain[journeyLength.value - 1];
   }
 
   const lastTitle = path.value[path.value.length - 1];
@@ -437,15 +442,22 @@ function handleCloseEncounter() {
     currentTargetIndex.value++;
   }
 
-  if (lastTitle === chain[chain.length - 1]) {
+  if (lastTitle === chain[journeyLength.value - 1]) {
     clearInterval(timerInterval);
   }
 }
 
-function handleClassSelection({ classKey, name }) {
+function handleClassSelection({ classKey, name, journeyLength: selectedLen }) {
   playerClass.value = classes[classKey];
   playerHP.value = playerClass.value.maxHP;
   playerName.value = name;
+  journeyLength.value = selectedLen;
+
+  const newChain = getRandomChain(journeyLength.value);
+  chain.splice(0, chain.length, ...newChain);
+  current.value = chain[0];
+  path.value = [current.value];
+
   if (playerClass.value.startingWeaponBonus) {
     weaponBonus.value += playerClass.value.startingWeaponBonus;
     log(
@@ -466,6 +478,7 @@ function handleClassSelection({ classKey, name }) {
   }
   log(`Player name: ${playerName.value}`);
   log(`Class selected: ${playerClass.value.name}`);
+  log(`Journey length: ${journeyLength.value} articles.`);
 }
 
 function callHandleEncounterOption(option) {
@@ -576,14 +589,14 @@ function handleShopPurchase(item) {
 
 function markBossDefeated() {
   bossDefeated.value = true;
-  current.value = chain[chain.length - 1];
+  current.value = chain[journeyLength.value - 1];
   clearInterval(timerInterval);
   bossOverlay.value = false;
 }
 
 function resetGame() {
   clearInterval(timerInterval);
-  const newChain = getRandomChain();
+  const newChain = getRandomChain(journeyLength.value);
   chain.splice(0, chain.length, ...newChain);
   current.value = chain[0];
   weaponBonus.value = 0;
@@ -612,14 +625,14 @@ function resetGame() {
   enemyIsStunned.value = false;
   seenLoreEncounters.value = [];
   seenNPCEncounters.value = [];
-  currentEnemy.value = null; 
+  currentEnemy.value = null;
   selectedBossType.value = "";
   bossSpawned.value = false;
   bossDefeated.value = false;
   shortRestsUsed.value = 0;
   showRestModal.value = false;
   longRestsUsed.value = 0;
-  hasReachedFinalArticle.value = false;
+  hasReachedFinalArticle = ref(false);
   bossOverlay.value = false;
   defeated.value = false;
   blurClicksLeft.value = 0;

@@ -7,20 +7,17 @@
   </div>
   <div v-if="inEncounter" class="overlay"></div>
   <div class="path-display">
-    <span :style="{ color: currentTargetIndexProp === 0 ? '#0645ad' : '#555' }">
-      {{ formattedStart }}
-    </span>
-    <span>
-      &nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;
-    </span>
-    <span :style="{ color: currentTargetIndexProp === 1 ? '#0645ad' : '#555' }">
-      {{ formattedSecondTarget }}
-    </span>
-    <span>
-      &nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;
-    </span>
-    <span :style="{ color: currentTargetIndexProp === 2 ? '#0645ad' : '#555' }">
-      {{ formattedFinalTarget }}
+    <span v-for="(article, index) in props.fullChain" :key="index">
+      <span
+        :style="{
+          color: currentTargetIndexProp === index ? '#0645ad' : '#555',
+        }"
+      >
+        {{ article.replaceAll("_", " ") }}
+      </span>
+      <span v-if="index < props.fullChain.length - 1" class="separator">
+        &nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;
+      </span>
     </span>
   </div>
   <div class="article" :class="{ 'blurred-content': isBlurred }">
@@ -58,16 +55,6 @@ const clearErrorTimeout = ref(null);
 const hideElementTimeout = ref(null);
 
 const formattedTitle = computed(() => props.articleTitle.replaceAll("_", " "));
-
-const formattedStart = computed(
-  () => props.fullChain[0]?.replaceAll("_", " ") ?? ""
-);
-const formattedSecondTarget = computed(
-  () => props.fullChain[1]?.replaceAll("_", " ") ?? ""
-);
-const formattedFinalTarget = computed(
-  () => props.fullChain[2]?.replaceAll("_", " ") ?? ""
-);
 
 const currentTargetIndexProp = computed(() => props.currentTargetIndex);
 
@@ -251,6 +238,14 @@ onMounted(load);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   border-bottom: solid 1px black;
   z-index: 100;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.path-display .separator {
+  margin: 0 5px;
 }
 
 .error-message {
@@ -284,6 +279,13 @@ onMounted(load);
   }
   .title {
     font-size: 25px;
+  }
+  .path-display {
+    font-size: 14px;
+    padding: 5px 0;
+  }
+  .path-display .separator {
+    margin: 0 2px;
   }
 }
 </style>

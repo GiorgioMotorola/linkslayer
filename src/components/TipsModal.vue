@@ -5,31 +5,34 @@
       <h2>Game Tips</h2>
       <div class="tips-content">
         <p>
-          Even if you can get to your destinations quickly, it's best to look
-          around a bit. There are tough enemies, and the boss is tough as well,
-          so it's best to build up your character.
+          <span style="color: blue;">&#10011;</span> Even if you can get to your destinations quickly, it's best to look
+          around a bit. The final article will summon a boss and the boss can be
+          tough. taking your time and clicking on articles around your target
+          before you get to the last part can boost your HP or skills.
         </p>
         <p>
-          Fighting enemies can be deadly. Fleeing is always a good option if the
+          <span style="color: blue;">&#10011;</span> Fighting enemies can be deadly. Fleeing is always a good option if the
           dice are in your favor. However, enemies will often drop great loot
           that could quickly build up your character.
         </p>
         <p>
-          If you are lost (on an article that doesn't seem at all close to your
+          <span style="color: blue;">&#10011;</span> If you are lost (on an article that doesn't seem at all close to your
           next destination), why not try to "get to a higher ground to find
           something familiar in the distance" (click on familiar things until
           you find something that may connect to your next destination)? For
-          instance, you are in...
+          instance, you are on the article "King's German Legion" and you need
+          to get to The Grand Canyon. It might be advantageous to starting
+          clicking toward The United States via other Contients and Countries.
         </p>
         <p>
-          There may be some options that appear to be the right choice, but
+          <span style="color: blue;">&#10011;</span> There may be some options that appear to be the right choice, but
           consider your choices carefully. For instance, taking a shortcut may
           seem like a good idea, but it may cut your clicks down far enough to
           prevent a short or long rest trigger. On the other hand, it may get
           you closer...
         </p>
         <p>
-          Consider how you think about directions in the real world. You have to
+          <span style="color: blue;">&#10011;</span> Consider how you think about directions in the real world. You have to
           go down A Street and then turn on B Street, then turn down C Street,
           and so on... If you need to get somewhere, try to think of where you
           need to go several clicks before to get there.
