@@ -35,10 +35,8 @@
             </button>
           </div>
           <div class="enemy">
-            {{ props.playerName }} (HP: {{ playerHP }})&nbsp; vs. &nbsp;{{
-              props.encounter.enemy.name
-            }}
-            (HP: {{ enemyHP }})
+            {{ formattedTitle }} {{ props.encounter.enemy.name }} (HP:
+            {{ enemyHP }})
           </div>
         </div>
 
@@ -83,18 +81,63 @@
       </div>
     </transition>
 
-    <div class="player-stats">
-      <div class="clicks-top">
-        <div class="player-stats-item">
-          {{ props.playerName || "Unnamed" }}
-          <span style="font-weight: 600; color: #02204d"
-            >({{ playerClass?.name || `none` }})</span
-          >
+    <div class="player-stats-container">
+      <div class="player-name-line">
+        {{ props.playerName || "Unnamed" }}
+        <span style="font-weight: 600; color: #02204d"
+          >({{ playerClass?.name || `none` }})</span
+        >
+      </div>
+
+      <div class="all-stats-row-box">
+        <div class="stat-column-hp">
+          <div class="stat-label">HP</div>
+          <div class="stat-value" :class="hpAnimClass">{{ playerHP }}</div>
         </div>
-        &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
-        <div class="player-stats-item">
-          HP:
-          <span style="font-weight: 600; color: #02204d">{{ playerHP }}</span>
+
+        <div class="stat-column">
+          <div class="stat-label">Weapon</div>
+          <div class="stat-value" :class="weaponAnimClass">
+            +{{ weaponBonus }}
+          </div>
+        </div>
+
+        <div class="stat-column">
+          <div class="stat-label">Defense</div>
+          <div class="stat-value" :class="defenseAnimClass">
+            +{{ shieldBonus }}
+          </div>
+        </div>
+
+        <div class="stat-column">
+          <div class="stat-label">{{ playerSpecialAbilityName }}</div>
+          <div class="stat-value" :class="specialAnimClass">
+            {{ specialUsesLeft }}
+          </div>
+        </div>
+
+        <div class="stat-column">
+          <div class="stat-label">Short Rest</div>
+          <div class="stat-value" :class="shortRestAnimClass">
+            {{ 4 - shortRestsUsedCount }}
+          </div>
+        </div>
+
+        <div class="stat-column">
+          <div class="stat-label">Long Rest</div>
+          <div class="stat-value" :class="longRestAnimClass">
+            {{ 2 - longRestsUsedCount }}
+          </div>
+        </div>
+
+        <div class="stat-column">
+          <div class="stat-label">Gold</div>
+          <div class="stat-value" :class="goldAnimClass">{{ playerGold }}</div>
+        </div>
+
+        <div class="stat-column-clicks">
+          <div class="stat-label">Clicks</div>
+          <div class="stat-value" :class="clicksAnimClass">{{ clicks }}</div>
         </div>
       </div>
       <div class="game-log">
@@ -133,39 +176,8 @@
         </div>
       </div>
     </div>
-    <div class="clicks">
-      <div class="player-stats-item">
-        <span style="font-weight: 600"
-          >{{ playerSpecialAbilityName }} Charges Left:</span
-        >
-        {{ specialUsesLeft }}
-      </div>
-      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="player-stats-item">
-        <span style="font-weight: 600">Weapon: </span> +{{ weaponBonus }}
-      </div>
-      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="player-stats-item">
-        <span style="font-weight: 600">Defense:</span> +{{ shieldBonus }}
-      </div>
-      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="player-stats-item">
-        <span style="font-weight: 600">Clicks:</span> {{ clicks }}
-      </div>
-      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="player-stats-item">
-        <span style="font-weight: 600">Short Rests Left:</span>
-        {{ 4 - shortRestsUsedCount }}
-      </div>
-      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="player-stats-item">
-        <span style="font-weight: 600">Long Rests Left:</span>
-        {{ 2 - longRestsUsedCount }}
-      </div>
-      &nbsp;&nbsp;&nbsp;&nbsp;⁝⁝⁝&nbsp;&nbsp;&nbsp;&nbsp;
-      <div class="player-stats">
-        <span style="font-weight: 600">Gold: </span>{{ playerGold }}
-      </div>
+
+    <div class="footer-buttons">
       <button @click="emit('open-inventory-modal')" class="inventory-button">
         Inventory
       </button>
@@ -258,6 +270,157 @@ const shortRestsUsedCount = computed(() => props.shortRestsUsed ?? 0);
 
 const playerSpecialAbilityName = computed(() => {
   return props.playerClass?.special || "Special";
+});
+
+const hpAnimClass = ref("");
+const weaponAnimClass = ref("");
+const defenseAnimClass = ref("");
+const clicksAnimClass = ref("");
+const goldAnimClass = ref("");
+const specialAnimClass = ref("");
+const shortRestAnimClass = ref("");
+const longRestAnimClass = ref("");
+
+let hpTimeout = null;
+let weaponTimeout = null;
+let defenseTimeout = null;
+let clicksTimeout = null;
+let goldTimeout = null;
+let specialTimeout = null;
+let shortRestTimeout = null;
+let longRestTimeout = null;
+
+function triggerAnim(refVar, className, duration = 700) {
+  let currentTimeoutRef;
+  if (refVar === hpAnimClass) currentTimeoutRef = hpTimeout;
+  else if (refVar === weaponAnimClass) currentTimeoutRef = weaponTimeout;
+  else if (refVar === defenseAnimClass) currentTimeoutRef = defenseTimeout;
+  else if (refVar === clicksAnimClass) currentTimeoutRef = clicksTimeout;
+  else if (refVar === goldAnimClass) currentTimeoutRef = goldTimeout;
+  else if (refVar === specialAnimClass) currentTimeoutRef = specialTimeout;
+  else if (refVar === shortRestAnimClass) currentTimeoutRef = shortRestTimeout;
+  else if (refVar === longRestAnimClass) currentTimeoutRef = longRestTimeout;
+
+  if (currentTimeoutRef) {
+    clearTimeout(currentTimeoutRef);
+  }
+
+  refVar.value = "";
+
+  void refVar.value;
+  nextTick(() => {
+    refVar.value = className;
+
+    const newTimeout = setTimeout(() => {
+      refVar.value = "";
+    }, duration);
+
+    if (refVar === hpAnimClass) hpTimeout = newTimeout;
+    else if (refVar === weaponAnimClass) weaponTimeout = newTimeout;
+    else if (refVar === defenseAnimClass) defenseTimeout = newTimeout;
+    else if (refVar === clicksAnimClass) clicksTimeout = newTimeout;
+    else if (refVar === goldAnimClass) goldTimeout = newTimeout;
+    else if (refVar === specialAnimClass) specialTimeout = newTimeout;
+    else if (refVar === shortRestAnimClass) shortRestTimeout = newTimeout;
+    else if (refVar === longRestAnimClass) longRestTimeout = newTimeout;
+  });
+}
+
+watch(
+  () => props.playerHP,
+  (newVal, oldVal) => {
+    if (oldVal !== undefined && newVal !== oldVal) {
+      if (newVal > oldVal) {
+        triggerAnim(hpAnimClass, "hp-gain");
+      } else {
+        triggerAnim(hpAnimClass, "hp-loss");
+      }
+    }
+  }
+);
+
+watch(
+  () => props.encounter,
+  (newEncounter) => {
+    if (newEncounter && newEncounter.type === "combat" && newEncounter.enemy) {
+      console.log("Enemy object:", newEncounter.enemy);
+      console.log("Enemy image URL:", newEncounter.enemy.imageUrl);
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.weaponBonus,
+  (newVal, oldVal) => {
+    if (oldVal !== undefined && newVal !== oldVal) {
+      triggerAnim(weaponAnimClass, "stat-flash");
+    }
+  }
+);
+
+watch(
+  () => props.shieldBonus,
+  (newVal, oldVal) => {
+    if (oldVal !== undefined && newVal !== oldVal) {
+      triggerAnim(defenseAnimClass, "stat-flash");
+    }
+  }
+);
+
+watch(
+  () => props.clicks,
+  (newVal, oldVal) => {
+    if (oldVal !== undefined && newVal !== oldVal) {
+      triggerAnim(clicksAnimClass, "stat-bounce");
+    }
+  }
+);
+
+watch(
+  () => props.playerGold,
+  (newVal, oldVal) => {
+    if (oldVal !== undefined && newVal !== oldVal) {
+      if (newVal > oldVal) {
+        triggerAnim(goldAnimClass, "gold-gain");
+      } else {
+        triggerAnim(goldAnimClass, "gold-loss");
+      }
+    }
+  }
+);
+
+watch(
+  () => props.specialUsesLeft,
+  (newVal, oldVal) => {
+    if (oldVal !== undefined && newVal !== oldVal) {
+      if (newVal > oldVal) {
+        triggerAnim(specialAnimClass, "stat-gain");
+      } else {
+        triggerAnim(specialAnimClass, "stat-loss");
+      }
+    }
+  }
+);
+
+watch(shortRestsUsedCount, (newVal, oldVal) => {
+  if (oldVal !== undefined && newVal !== oldVal) {
+    if (newVal > oldVal) {
+      triggerAnim(shortRestAnimClass, "stat-loss");
+    } else {
+      triggerAnim(shortRestAnimClass, "stat-gain");
+    }
+  }
+});
+
+watch(longRestsUsedCount, (newVal, oldVal) => {
+  if (oldVal !== undefined && newVal !== oldVal) {
+    if (newVal > oldVal) {
+      triggerAnim(longRestAnimClass, "stat-loss");
+    } else {
+      triggerAnim(longRestAnimClass, "stat-gain");
+    }
+  }
 });
 
 watch(
@@ -394,6 +557,9 @@ header {
   color: rgb(35, 36, 35);
   transition: background-color 1.5s ease-in-out, filter 1.5s ease-in-out,
     color 1.5s ease-in-out;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .darkened-header {
@@ -402,9 +568,21 @@ header {
   color: rgb(200, 200, 200);
 }
 
-.darkened-header .clicks,
-.clicks-top {
+.darkened-header .player-name-line {
   color: rgb(150, 180, 255);
+}
+
+.darkened-header .all-stats-row-box {
+  background-color: #2a2828;
+  border-color: #777;
+}
+
+.darkened-header .stat-label {
+  color: rgb(180, 180, 180);
+}
+
+.darkened-header .stat-value {
+  color: rgb(255, 200, 0);
 }
 
 .darkened-header .game-log {
@@ -466,30 +644,87 @@ header {
   padding: 0.5rem;
 }
 
-.clicks-top {
+.player-name-line {
   font-family: "IBM Plex Sans", sans-serif;
   font-optical-sizing: auto;
-  font-size: 22px;
+  font-size: 24px;
   color: rgb(29, 29, 29);
   font-weight: 600;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+  text-align: center;
   margin-top: 0.5rem;
+  margin-bottom: 0.8rem;
 }
 
-.clicks {
-  font-family: "IBM Plex Sans", sans-serif;
-  font-optical-sizing: auto;
-  font-size: 16px;
-  color: rgb(35, 36, 35);
-  font-weight: 400;
+.all-stats-row-box {
+  background-color: #ccc5c5;
+  border: 1px solid #555;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: fit-content;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
   justify-content: center;
-  margin-top: 0.5rem;
+  gap: 5rem;
+  color: rgb(229, 231, 229);
 }
 
+.stat-column,
+.stat-column-hp,
+.stat-column-clicks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.stat-column-hp {
+  border-right: 2px solid rgb(141, 141, 141);
+  padding-right: 4.5rem;
+}
+
+.stat-column-clicks {
+  border-left: 2px solid rgb(141, 141, 141);
+  padding-left: 4.5rem;
+}
+
+.stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+  letter-spacing: 1px;
+  color: #000;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #374147;
+  display: inline-block;
+  will-change: transform, color, text-shadow;
+}
+
+.footer-buttons {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.inventory-button {
+  background-color: transparent;
+  color: rgb(185, 17, 17);
+  border: none;
+  border-radius: 5px;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 700;
+}
+.inventory-button:hover {
+  background-color: #0056b3;
+}
 .current-path {
   margin-top: 0.1rem;
   margin-bottom: 1rem;
@@ -523,7 +758,7 @@ header {
   border: none;
   background-color: #3a3737;
   font-size: 14px;
-  margin-top: 0.3rem;
+  margin-top: 0rem;
   color: rgb(229, 231, 229);
   font-weight: 400;
   gap: 1rem;
@@ -551,7 +786,7 @@ header {
 }
 
 .tips-button {
-  margin-top: 1.5rem;
+  margin-top: 0.3rem;
   background-color: transparent;
   color: beige;
   font-size: 17px;
@@ -873,20 +1108,204 @@ button:hover {
   transform: scale(0.95) translateY(-10px);
 }
 
-/* In Header.vue style scoped */
-.inventory-button {
-  /* Example styles, adjust as needed */
-  padding: 10px 15px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  margin-left: 10px; /* Adjust spacing */
+@keyframes stat-flash {
+  0% {
+    transform: scale(1);
+    color: inherit;
+  }
+  50% {
+    transform: scale(1.25);
+    color: #031788;
+    text-shadow: 0 0 8px #032288;
+  }
+  100% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
 }
-.inventory-button:hover {
-  background-color: #0056b3;
+
+@keyframes gold-gain {
+  0% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+  50% {
+    transform: scale(1.3);
+    color: gold;
+    text-shadow: 0 0 15px gold, 0 0 25px rgba(255, 215, 0, 0.7);
+  }
+  100% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+}
+
+@keyframes gold-loss {
+  0% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+  50% {
+    transform: scale(1.3);
+    color: #f44336;
+    text-shadow: 0 0 15px #f44336, 0 0 25px rgba(244, 67, 54, 0.7);
+  }
+  100% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+}
+
+.enemy-icon {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  margin-right: 8px;
+  border-radius: 4px;
+}
+
+.darkened-header .enemy-icon {
+  filter: brightness(0.8);
+}
+
+@keyframes stat-gain {
+  0% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+  /* Color and shadow appear here and reach peak scale */
+  50% {
+    transform: scale(1.3);
+    color: #042f8b; /* Blue color */
+    text-shadow: 0 0 10px #043a8ba1; /* Blue shadow */
+  }
+  /* Hold the color and shadow at this percentage */
+  80% {
+    /* <-- NEW: Hold the color and shadow until 80% */
+    transform: scale(1.1); /* Slightly reduce scale as it holds */
+    color: #042f8b; /* Maintain blue color */
+    text-shadow: 0 0 8px #043a8ba1; /* Maintain blue shadow, perhaps slightly less intense */
+  }
+  100% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+}
+
+@keyframes stat-loss {
+  0% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+  /* Color and shadow appear here and reach peak scale */
+  50% {
+    transform: scale(1.3);
+    color: #e26060; /* Red color */
+    text-shadow: 0 0 10px rgba(241, 110, 100, 0.9); /* Red shadow */
+  }
+  /* Hold the color and shadow at this percentage */
+  80% {
+    /* <-- NEW: Hold the color and shadow until 80% */
+    transform: scale(1.1); /* Slightly reduce scale as it holds */
+    color: #e26060; /* Maintain red color */
+    text-shadow: 0 0 8px rgba(241, 110, 100, 0.7); /* Maintain red shadow, perhaps slightly less intense */
+  }
+  100% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+}
+
+@keyframes hp-gain {
+  0% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+  50% {
+    transform: scale(1.3);
+    color: #1db30f;
+    text-shadow: 0 0 10px rgba(76, 175, 80, 0.9);
+  }
+  100% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+}
+
+@keyframes hp-loss {
+  0% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+  50% {
+    transform: scale(1.3);
+    color: #f44336;
+    text-shadow: 0 0 10px rgba(244, 67, 54, 0.9);
+  }
+  100% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+}
+@keyframes stat-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-5px) scale(1.1);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  75% {
+    transform: translateY(-2px) scale(1.05);
+  }
+}
+
+.stat-flash {
+  animation: stat-flash 1s ease-out;
+}
+
+.stat-gain {
+  animation: stat-gain 1s ease-out;
+}
+
+.stat-loss {
+  animation: stat-loss 1s ease-out;
+}
+
+.hp-gain {
+  animation: hp-gain 1s ease-out;
+}
+
+.hp-loss {
+  animation: hp-loss 1s ease-out;
+}
+
+.gold-gain {
+  animation: gold-gain 1s ease-out;
+}
+
+.gold-loss {
+  animation: gold-loss 1s ease-out;
+}
+
+.stat-bounce {
+  animation: stat-bounce 0.8s ease-out;
 }
 
 @media screen and (max-width: 600px) {
@@ -895,8 +1314,21 @@ button:hover {
     margin-bottom: 1rem;
   }
 
-  .clicks {
-    font-size: 13px;
+  .player-name-line {
+    font-size: 20px;
+  }
+
+  .all-stats-row-box {
+    padding: 0.6rem 0.8rem;
+    gap: 1rem;
+  }
+
+  .stat-label {
+    font-size: 14px;
+  }
+
+  .stat-value {
+    font-size: 24px;
   }
 
   .current-path {

@@ -69,6 +69,10 @@ defineEmits(["rest"]);
   box-shadow: 0 8px 24px rgba(37, 37, 37, 0.671);
   animation: pop-in 0.3s ease;
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
 }
 
 .rest-desc {
@@ -88,26 +92,34 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: start;
+  align-items: flex-start;
   text-align: start;
-  border: none;
-  background-color: rgb(197, 193, 193);
+  border: 1px solid #616060;
+  border-radius: 8px;
+  background-color: #c5c1c1;
+  padding: 0.8rem 1rem;
   font-size: 17px;
-  margin-bottom: 0.5rem;
   color: #303030;
   font-weight: 400;
-  margin-top: 0.5rem;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
 }
 
 button:hover {
-  color: rgb(28, 128, 158);
-  cursor: pointer;
+  text-decoration: none;
+  opacity: 0.6;
+  background-color: #c5c1c1;
+  color: #777;
+  border-color: #6e6e6e;
 }
 
 button:disabled {
-  text-decoration: line-through;
-  opacity: 0.5;
+  text-decoration-line: line-through;
+  opacity: 0.6;
   cursor: not-allowed;
+  background-color: #c5c1c1;
   color: #777;
+  border: 1px solid #616060;
 }
 
 button:disabled:hover {

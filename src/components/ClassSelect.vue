@@ -2,17 +2,6 @@
   <div class="modal">
     <div class="class-select">
       <div class="game-title">LINKSLAYER</div>
-      <div class="journey-prompt">
-        "{{ journeyIntro }}
-        <span style="color: #0645ad; font-weight: 400">{{
-          promptedArticleStart
-        }}</span>
-        {{ journeyMiddle }}
-        <span style="color: #0645ad; font-weight: 400">{{
-          promptedArticleEnd
-        }}</span>
-        {{ journeyOutro }}"
-      </div>
       <div id="notification-banner" class="notification-banner">
         <span id="notification-message"></span>
         <button class="close-button" @click="hideNotification">×</button>
@@ -28,19 +17,20 @@
       </div>
 
       <div class="journey-length-selection">
-        <div class="journey-length-prompt">Choose your journey length:</div>
-        <div class="slider-container">
-          <input
-            type="range"
-            min="3"
-            max="9"
-            step="1"
-            v-model="selectedJourneyLength"
-            class="journey-slider"
-          />
-          <span class="slider-value">{{ selectedJourneyLength }} Articles</span>
+        <div class="journey-length-prompt"></div>
+        <div class="button-group-container">
+          <button
+            v-for="length in [3, 4, 5, 6, 7, 8, 9]"
+            :key="length"
+            :class="{ 'selected-button': selectedJourneyLength === length }"
+            @click="selectedJourneyLength = length"
+            class="journey-length-button"
+          >
+            {{ length }} Articles
+          </button>
         </div>
       </div>
+
       <div class="class-grid">
         <div v-for="(c, key) in classes" :key="key" class="class-card">
           <button @click="selectClass(key)">> Select {{ c.name }}</button>
@@ -63,21 +53,17 @@ import randomNames from "@/assets/data/randomNames.json";
 const name = ref("");
 const emit = defineEmits(["select", "show-tips"]);
 
-// MODIFIED: New refs for intro, middle, and outro text
 const journeyIntro = ref("");
 const journeyMiddle = ref("");
 const journeyOutro = ref("");
 
-// MODIFIED: New refs for start and end prompted articles
 const promptedArticleStart = ref("");
 const promptedArticleEnd = ref("");
-
-// REMOVED: journeyOne, journeyTwo, journeyThree, journeyFour, promptedArticleOne, promptedArticleTwo, promptedArticleThree
 
 const props = defineProps({
   articleTitle: String,
   start: String,
-  targets: String, // This prop might become redundant
+  targets: String,
   fullChain: Array,
 });
 
@@ -165,15 +151,11 @@ function loadRandomPrompt() {
   const randomIndex = Math.floor(Math.random() * prompts.length);
   const prompt = prompts[randomIndex];
 
-  // MODIFIED: Assigning new prompt parts
   journeyIntro.value = prompt["journey-intro"] || "";
   journeyMiddle.value = prompt["journey-middle"] || "";
   journeyOutro.value = prompt["journey-outro"] || "";
-  // REMOVED: journeyOne, journeyTwo, journeyThree, journeyFour
 
-  // MODIFIED: Logic for assigning start and end articles
   if (props.fullChain && props.fullChain.length >= 3) {
-    // Start article is always at index 0
     const startIndex = prompt["article-slot-start"];
     if (startIndex !== undefined && props.fullChain[startIndex] !== undefined) {
       promptedArticleStart.value =
@@ -188,11 +170,10 @@ function loadRandomPrompt() {
       );
     }
 
-    // End article is always at the last index (using -1 as a conceptual indicator)
-    const endIndex = prompt["article-slot-end"]; // This will be -1
-    const actualEndIndex = props.fullChain.length - 1; // Calculate actual last index
+    const endIndex = prompt["article-slot-end"];
+    const actualEndIndex = props.fullChain.length - 1;
     if (
-      endIndex !== undefined && // Ensure it's defined (even if -1)
+      endIndex !== undefined &&
       props.fullChain[actualEndIndex] !== undefined
     ) {
       promptedArticleEnd.value =
@@ -221,7 +202,6 @@ watch(
     if (newChain && newChain.length >= 3) {
       loadRandomPrompt();
     } else {
-      // Potentially clear prompts if chain is too short, though it should always be >= 3
       journeyIntro.value = "";
       journeyMiddle.value = "";
       journeyOutro.value = "";
@@ -234,7 +214,6 @@ watch(
 </script>
 
 <style scoped>
-/* All existing styles remain the same as the previous response */
 * {
   font-family: "IBM Plex Sans", sans-serif;
   font-optical-sizing: auto;
@@ -242,10 +221,10 @@ watch(
 
 .game-title {
   font-family: "Metal Mania", system-ui;
-  font-size: 35px;
+  font-size: 40px;
   font-weight: 400;
   margin-bottom: 0.5rem;
-  letter-spacing: 2px;
+  letter-spacing: 4px;
   text-decoration-line: underline;
   text-decoration-color: rgb(99, 79, 79);
   color: #990000;
@@ -264,8 +243,10 @@ watch(
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 0vh;
+  padding-top: 4vh;
   z-index: 1000;
+  background: #5e5e5e8e;
+  backdrop-filter: blur(6px);
 }
 
 .class-select {
@@ -281,7 +262,8 @@ watch(
 }
 
 .who-are-you-div {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5;
 }
 
 .name-input-group {
@@ -314,11 +296,12 @@ watch(
 button {
   background: #e2e6e7;
   border: none;
-  font-size: 20px;
+  font-size: 25px;
+  font-family: "MedievalSharp", cursive;
 }
 
 .desc {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 button:hover {
@@ -437,6 +420,43 @@ button:hover {
   }
 }
 
+.button-group-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+.journey-length-button {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  min-width: 120px;
+  text-align: center;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 500;
+}
+
+.journey-length-button:hover {
+  background-color: #e0e0e0;
+  border-color: #999;
+}
+
+.journey-length-button.selected-button {
+  background-color: #0645ad;
+  color: white;
+  border-color: #003380;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-weight: 700;
+}
+
 @media screen and (max-width: 600px) {
   .class-select {
     padding: 0.8rem;
@@ -476,10 +496,8 @@ button:hover {
 }
 
 .journey-length-selection {
-  background-color: #f8f8f8;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 1rem;
+  background-color: #e2e6e7;
+  padding: 0.5rem;
   margin-top: 1.5rem;
   text-align: center;
 }
@@ -491,58 +509,13 @@ button:hover {
   font-size: 15px;
 }
 
-.slider-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 0 10%;
+.button-group-container {
+  gap: 5px;
 }
-
-.journey-slider {
-  width: 100%;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 6px;
-  background: #d3d3d3;
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: 0.2s;
-  transition: opacity 0.2s;
-  border-radius: 4px;
-}
-
-.journey-slider:hover {
-  opacity: 1;
-}
-
-.journey-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0645ad;
-  cursor: pointer;
-  border: 2px solid #fff;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-}
-
-.journey-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0645ad;
-  cursor: pointer;
-  border: 2px solid #fff;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-}
-
-.slider-value {
-  font-size: 1em;
-  font-weight: 600;
-  color: #0645ad;
-  min-width: 120px;
-  text-align: center;
+.journey-length-button {
+  font-size: 14px;
+  padding: 6px 10px;
+  min-width: unset;
+  flex-grow: 1;
 }
 </style>

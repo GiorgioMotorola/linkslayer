@@ -188,7 +188,7 @@ onMounted(load);
 }
 .article {
   position: relative;
-  border: solid 1px black;
+  /* border: solid 1px black; */
   border-radius: 5px;
   padding: 1.5rem;
   background-color: #ffffff;

@@ -13,7 +13,7 @@ export const ENEMY_TYPES = [
     minHP: 22,
     maxHP: 28,
     minDamage: 2,
-    maxDamage: 6,
+    maxDamage: 7,
   },
   {
     name: "Skeleton",
@@ -26,14 +26,21 @@ export const ENEMY_TYPES = [
     name: "Fiend",
     minHP: 30,
     maxHP: 35,
-    minDamage: 5,
+    minDamage: 4,
     maxDamage: 6,
   },
   {
     name: "Ooze",
     minHP: 25,
     maxHP: 30,
-    minDamage: 1,
+    minDamage: 2,
     maxDamage: 4,
   },
+    {
+    name: "Bandit",
+    minHP: 25,
+    maxHP: 30,
+    minDamage: 2,
+    maxDamage: 6,
+  }
 ];

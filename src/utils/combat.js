@@ -188,7 +188,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     if (isBoss(encounter.value?.enemy)) {
       log(`You cannot flee from ${encounter.value?.enemy?.name}.`);
     } else {
-      if (Math.random() > 0.4) {
+      if (Math.random() > 0.7) {
         log(
           `🏃 <span class="player-name">${playerName.value}</span> fled successfully.`
         );

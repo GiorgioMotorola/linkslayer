@@ -416,8 +416,8 @@
       {
         "text": "Buy the mysterious item from the Mysterious Man",
         "responseText": "The item looks like a normal compass, except it's glowing slightly. You walk outside with the compass, and without warning, you are transported to another area.",
-        "effect": "inventoryItem",
-        "details": "compass"
+        "result": "inventoryItem",
+        "id": "arcane_compass"
       },
       {
         "text": "Leave",

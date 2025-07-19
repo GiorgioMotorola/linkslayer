@@ -646,6 +646,11 @@ function useCompass() {
     return;
   }
 
+   if (encounter.value && encounter.value.type === "combat" && isBoss(encounter.value.enemy)) {
+    log(`🚫 You cannot use the Arcane Compass during a boss battle!`);
+    return; // Stop the function execution
+  }
+
   const startArticle = fullChain[0];
   const endArticle = fullChain[fullChain.length - 1];
 
@@ -732,9 +737,11 @@ function handleUseInventoryItem(itemType) {
 }
 
 function resetGame() {
-  clearInterval(timerInterval);
-  const newChain = getRandomChain(journeyLength.value);
-  chain.splice(0, chain.length, ...newChain);
+  clearInterval(timerInterval); // Stop the current timer
+
+  // Reset all game state variables
+  const newChain = getRandomChain(journeyLength.value); // Generate a new chain
+  chain.splice(0, chain.length, ...newChain); // Efficiently update the reactive array
   current.value = chain[0];
   weaponBonus.value = 0;
   poisonedClicksLeft.value = 0;
@@ -747,17 +754,18 @@ function resetGame() {
   totalSpecialsUsed.value = 0;
   path.value = [current.value];
   encounter.value = null;
-  playerHP.value = 0;
+  // playerHP.value needs to be reset appropriately for class selection to work again
+  // Set it to an initial value that will trigger class selection, e.g., 0,
+  // then the class selection will set it to playerClass.maxHP
+  playerHP.value = 0; // Or -1 if that's what triggers your class selection logic
   enemyHP.value = DEFAULT_ENEMY_HP;
   nextEnemyAttack.value = null;
   enemyNextAction.value = "attack";
   specialUsesLeft.value = 5;
-  playerClass.value = null;
-  playerHP.value = -1;
+  playerClass.value = null; // This is key to re-showing ClassSelect
   gameLog.value = [];
   encounterMessage.value = "";
   playerName.value = "";
-  weaponBonus.value = 0;
   enemyStatusEffects.value = [];
   enemyIsStunned.value = false;
   seenLoreEncounters.value = [];
@@ -769,19 +777,24 @@ function resetGame() {
   shortRestsUsed.value = 0;
   showRestModal.value = false;
   longRestsUsed.value = 0;
-  hasReachedFinalArticle = ref(false);
   bossOverlay.value = false;
-  defeated.value = false;
+  defeated.value = false; // Ensure this is explicitly set to false
   blurClicksLeft.value = 0;
   timer.value = 0;
   playerGold.value = 0;
   showShopModal.value = false;
-  inventory.compass = 0;
-  hasReachedFinalArticle = ref(false);
+  inventory.value.compass = 0; // Access .value for refs
+  inventory.value.healthPotions = 0; // Reset health potions too
+  // Fix: Correctly update the ref's value, not reassign the ref itself
+  hasReachedFinalArticle.value = false;
+  showTipsModal.value = false; // Reset tips modal as well
+
+  // Restart the timer
   timerInterval = setInterval(() => {
     timer.value++;
   }, 1000);
 
+  // Scroll to top
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 

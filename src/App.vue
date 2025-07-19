@@ -14,7 +14,7 @@ import scenicLogo from "@/assets/scenic-logo.png";
 <style scoped>
 body {
   margin: 0;
-  background: #f8f9fa;
+  background: #e2e6e7;
   color: #222;
   font-weight: 300;
   font-size: 16px;
@@ -22,7 +22,6 @@ body {
 .app-container {
   max-width: 2000px;
   margin: auto;
-  padding: 0.5rem;
 }
 
 .logo {
