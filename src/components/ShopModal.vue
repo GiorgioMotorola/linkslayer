@@ -6,17 +6,35 @@
         {{ playerGold }})
       </div>
       <div class="shop-items">
-        <button @click="buyItem('health')" :disabled="playerGold < 15">
-          > Buy Potion of Healing (+15 HP) - 15 Gold
-        </button>
-        <button @click="buyItem('weapon')" :disabled="playerGold < 20">
-          > Buy Whetstone (+1 Weapon Damage) - 20 Gold
-        </button>
-        <button @click="buyItem('shield')" :disabled="playerGold < 20">
-          > Buy Sturdy Buckler (+1 Defense Bonus) - 20 Gold
-        </button>
-        <button @click="buyItem('special')" :disabled="playerGold < 15">
-          > Buy Tome of Knowledge (+1 Class Ability Charge) - 15 Gold
+        <button
+          v-for="item in props.shopItems"
+          :key="item.id"
+          @click="buyItem(item)"
+          :disabled="props.playerGold < item.cost"
+        >
+          > Buy {{ item.name }}
+          <span v-if="item.effect === 'health'"> (+{{ item.amount }} HP)</span>
+          <span v-else-if="item.effect === 'weapon'">
+            (+{{ item.amount }} Weapon Damage)</span
+          >
+          <span v-else-if="item.effect === 'shield'">
+            (+{{ item.amount }} Defense Bonus)</span
+          >
+          <span v-else-if="item.effect === 'special'">
+            (+{{ item.amount }} Class Ability Charge)</span
+          >
+          <span v-else-if="item.effect === 'inventoryItem'">
+            <span v-if="item.details === 'compass'">
+              (Skip to a random non-start/end article)</span
+            >
+            <span v-else-if="item.details === 'healthPotion'">
+              (Consumable Health Potion)</span
+            >
+          </span>
+          <span v-else-if="item.effect === 'blurCure'">
+            (Sober up instantly)</span
+          >
+          - {{ item.cost }} Gold
         </button>
       </div>
       <button @click="$emit('close')">> Done Shopping</button>
@@ -39,6 +57,7 @@ import { ref } from "vue";
 
 const props = defineProps({
   playerGold: Number,
+  shopItems: Array,
 });
 
 const emit = defineEmits(["buy", "close"]);
@@ -53,16 +72,21 @@ const shopItems = {
     effect: "special",
     amount: 1,
   },
+  compass: {
+    name: "Arcane Compass",
+    cost: 1,
+    effect: "route",
+    details: "compass",
+  },
 };
 
 const toastMessage = ref(null);
 const isToastError = ref(false);
 let toastTimeout = null;
 
-const buyItem = (itemType) => {
-  const item = shopItems[itemType];
+const buyItem = (item) => {
   if (!item) {
-    console.error("Attempted to buy an unknown item type:", itemType);
+    console.error("Attempted to buy an undefined item:", item);
     showToast("Error: Unknown item!", true);
     return;
   }

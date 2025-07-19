@@ -19,6 +19,7 @@
     @close="handleCloseEncounter"
     :playerName="playerName"
     @log-line="log"
+    :compass-count="inventory.compass"
     :shieldBonus="shieldBonus"
     :weaponBonus="weaponBonus"
     :longRestsUsed="longRestsUsed"
@@ -26,6 +27,9 @@
     :shortRestsUsed="shortRestsUsed"
     :playerGold="playerGold"
     @show-tips="showTipsModal = true"
+    :game-chain="chain"
+    @open-inventory-modal="openInventoryModal"
+  />
   />
 
   <div class="main-content-wrapper">
@@ -99,6 +103,14 @@
         :playerGold="playerGold"
         @buy="handleShopPurchase"
         @close="showShopModal = false"
+        :shopItems="shopItems"
+      />
+
+      <InventoryModal
+        v-if="isInventoryModalOpen"
+        :inventory="inventory"
+        @close="closeInventoryModal"
+        @use-item="handleUseInventoryItem"
       />
     </div>
   </div>
@@ -109,6 +121,7 @@
 <script setup>
 import {
   ref,
+  reactive,
   computed,
   onMounted,
   onBeforeUnmount,
@@ -131,11 +144,12 @@ import { handleClick as externalHandleClick } from "@/utils/clickHandler.js";
 import { handleEncounterOption as externalHandleEncounterOption } from "@/utils/encounterHandler";
 import { handleLootDrop as externalHandleLootDrop } from "@/utils/lootHandler";
 import { handleEnemyTurn as externalHandleEnemyTurn } from "@/utils/enemyTurnHandler";
+import InventoryModal from "@/components/InventoryModal.vue";
+import { shopItems } from "@/utils/shopItems";
 
 const journeyLength = ref(3);
 const chain = getRandomChain(journeyLength.value);
 const current = ref(chain[0]);
-
 const formattedStart = computed(() => chain[0]?.replaceAll("_", " ") ?? "");
 const formattedTitle = computed(
   () => current.value?.replaceAll("_", " ") ?? ""
@@ -180,6 +194,13 @@ const showShopModal = ref(false);
 const showTipsModal = ref(false);
 const poisonedClicksLeft = ref(0);
 const poisonDamagePerClick = ref(0);
+const HEALTH_POTION_HEAL_AMOUNT = 30;
+const inventory = ref({
+  compass: 0,
+  healthPotions: 0,
+});
+
+const isInventoryModalOpen = ref(false);
 
 const inEncounter = computed(() => {
   const e = encounter.value;
@@ -481,8 +502,8 @@ function handleClassSelection({ classKey, name, journeyLength: selectedLen }) {
   log(`Journey length: ${journeyLength.value} articles.`);
 }
 
-function callHandleEncounterOption(option) {
-  externalHandleEncounterOption({
+async function callHandleEncounterOption(option) {
+  const encounterResult = await externalHandleEncounterOption({
     option,
     playerState: {
       playerHP,
@@ -500,10 +521,12 @@ function callHandleEncounterOption(option) {
       path,
       clickCount,
       shortcutsUsedCount,
+      inventory,
     },
     gameData: {
       chain,
       current,
+      formattedTitle: formattedTitle.value,
     },
     enemyState: {
       encounter,
@@ -579,6 +602,19 @@ function handleShopPurchase(item) {
         blurClicksLeft.value = 0;
         log(`🧼 ${playerName.value} sobered up.`);
         break;
+
+      case "inventoryItem":
+        if (item.details === "compass") {
+          inventory.value.compass++;
+          log(`🧭 ${playerName.value} acquired an Arcane Compass!`);
+        } else if (item.details === "healthPotion") {
+          inventory.value.healthPotions++;
+          log(`➕ ${playerName.value} acquired a Health Potion!`);
+        }
+        break;
+
+      default:
+        break;
     }
   } else {
     log(
@@ -587,11 +623,112 @@ function handleShopPurchase(item) {
   }
 }
 
+function useCompass() {
+  const fullChain = chain;
+
+  if (inventory.value.compass <= 0) {
+    log(`🧭 You don't have any Arcane Compasses to use!`);
+    return;
+  }
+
+  inventory.value.compass--;
+  log(`🧭 You use an Arcane Compass!`);
+
+  if (!fullChain || fullChain.length === 0) {
+    log(
+      `🧭 The compass spins wildly; there's no defined path to jump within yet!`
+    );
+
+    console.warn(
+      "useCompass: Attempted to use compass when fullChain is undefined or empty."
+    );
+    closeInventoryModal();
+    return;
+  }
+
+  const startArticle = fullChain[0];
+  const endArticle = fullChain[fullChain.length - 1];
+
+  const potentialTargets = fullChain.filter((article) => {
+    return (
+      article !== startArticle &&
+      article !== endArticle &&
+      article !== current.value
+    );
+  });
+
+  if (potentialTargets.length > 0) {
+    const randomIndex = Math.floor(Math.random() * potentialTargets.length);
+    const targetArticle = potentialTargets[randomIndex];
+
+    current.value = targetArticle;
+    path.value.push(targetArticle);
+    clickCount.value++;
+    shortcutsUsedCount.value++;
+
+    log(
+      `🧭 The compass pulls you, disorienting you for a moment, then guides you directly to ${targetArticle.replaceAll(
+        "_",
+        " "
+      )}!`
+    );
+
+    const targetIndexInChain = fullChain.indexOf(targetArticle);
+    currentTargetIndex.value = targetIndexInChain;
+
+    log(`✨ You feel a step closer to your goal.`);
+  } else {
+    log(
+      `🧭 The compass seems confused; there are no intermediate paths to jump to. (Perhaps you're at the start/end or only one article in length?)`
+    );
+  }
+
+  if (encounter.value) {
+    log(`The previous encounter was disrupted by the compass's pull.`);
+    encounter.value = null;
+    bossOverlay.value = false;
+  }
+  nextTick(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+
+const useHealthPotion = () => {
+  if (inventory.value.healthPotions > 0) {
+    inventory.value.healthPotions--;
+    playerHP.value = playerHP.value + HEALTH_POTION_HEAL_AMOUNT;
+    log(
+      `You consumed a Health Potion and recovered ${HEALTH_POTION_HEAL_AMOUNT} HP! Your HP is now ${playerHP.value}.`
+    );
+    closeInventoryModal();
+  } else {
+    log("You don't have any Health Potions to use.");
+  }
+};
+
 function markBossDefeated() {
   bossDefeated.value = true;
   current.value = chain[journeyLength.value - 1];
   clearInterval(timerInterval);
   bossOverlay.value = false;
+}
+
+function openInventoryModal() {
+  isInventoryModalOpen.value = true;
+  console.log("Inventory modal opened!");
+  console.log("isInventoryModalOpen value:", isInventoryModalOpen.value);
+}
+
+function closeInventoryModal() {
+  isInventoryModalOpen.value = false;
+}
+
+function handleUseInventoryItem(itemType) {
+  if (itemType === "compass") {
+    useCompass();
+  } else if (itemType === "healthPotion") {
+    useHealthPotion();
+  }
 }
 
 function resetGame() {
@@ -639,6 +776,8 @@ function resetGame() {
   timer.value = 0;
   playerGold.value = 0;
   showShopModal.value = false;
+  inventory.compass = 0;
+  hasReachedFinalArticle = ref(false);
   timerInterval = setInterval(() => {
     timer.value++;
   }, 1000);

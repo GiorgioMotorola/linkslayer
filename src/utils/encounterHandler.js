@@ -18,27 +18,58 @@ export function handleEncounterOption({
     enemyState.encounterMessage.value = option.responseText;
   }
 
+  const {
+    playerHP,
+    playerName,
+    playerClass,
+    combatEncountersFought,
+    specialUsesLeft,
+    weaponBonus,
+    shieldBonus,
+    blurClicksLeft,
+    poisonedClicksLeft,
+    poisonDamagePerClick,
+    playerGold,
+    currentTargetIndex,
+    path,
+    clickCount,
+    shortcutsUsedCount,
+    inventory,
+  } = playerState;
+
+  const { log } = utilityFunctions;
+
+  const {
+    encounter,
+    enemyHP,
+    encounterMessage,
+    nextEnemyAttack,
+    enemyNextAction,
+  } = enemyState;
+  const { current, formattedTitle, chain } = gameData;
+  const { bossOverlay } = modalState;
+
   if (option.result === "combat") {
     const enemy = generateEnemy();
     if (!enemy) {
       console.warn("Could not generate enemy from option, skipping combat.");
-      enemyState.encounter.value = null;
+      encounter.value = null;
       return;
     }
 
-    enemyState.encounter.value = {
+    encounter.value = {
       type: "combat",
       enemy: enemy,
     };
-    enemyState.enemyHP.value = enemy.currentHP;
-    enemyState.nextEnemyAttack.value =
+    enemyHP.value = enemy.currentHP;
+    nextEnemyAttack.value =
       Math.floor(Math.random() * (enemy.maxDamage - enemy.minDamage + 1)) +
       enemy.minDamage;
-    enemyState.enemyNextAction.value = "attack";
-    playerState.combatEncountersFought.value++;
-    utilityFunctions.log(
+    enemyNextAction.value = "attack";
+    combatEncountersFought.value++;
+    log(
       `🗡️ Your choice has resulted in combat and you have been attacked by <strong>${
-        gameData.formattedTitle.value
+        formattedTitle.value
       }</strong> ${enemy.name ?? ""}. What do you do?`
     );
     return;
@@ -46,174 +77,159 @@ export function handleEncounterOption({
 
   if (option.result === "item") {
     if (option.details === "health") {
-      playerState.playerHP.value = playerState.playerHP.value + 5;
-      utilityFunctions.log(
-        `🎲 <span class="player-name">${playerState.playerName.value}</span> has gained +5 HP.`
+      playerHP.value = playerHP.value + 5;
+      log(
+        `🎲 <span class="player-name">${playerName.value}</span> has gained +5 HP.`
       );
     }
+
     if (option.details === "health-major") {
-      playerState.playerHP.value = playerState.playerHP.value + 15;
-      utilityFunctions.log(
-        `🎲 <span class="player-name">${playerState.playerName.value}</span> has gained +15 HP.`
+      playerHP.value = playerHP.value + 15;
+      log(
+        `🎲 <span class="player-name">${playerName.value}</span> has gained +15 HP.`
       );
     }
     if (option.details === "weapon") {
-      playerState.weaponBonus.value += 1;
-      utilityFunctions.log(
-        `🎲 <span class="player-name">${playerState.playerName.value}</span> found a weapon upgrade. Weapon damage +1 (Base Damage Total: +${playerState.weaponBonus.value})`
+      weaponBonus.value += 1;
+      log(
+        `🎲 <span class="player-name">${playerName.value}</span> found a weapon upgrade. Weapon damage +1 (Base Damage Total: +${weaponBonus.value})`
       );
     }
     if (option.details === "beer") {
       const duration = option.amount || 4;
-      playerState.blurClicksLeft.value += duration;
-      utilityFunctions.log(
-        `🍺 <span class="player-name">${playerState.playerName.value}</span> chugs the beer. Your vision becomes blurry for ${duration} clicks.`
+      blurClicksLeft.value += duration;
+      log(
+        `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision becomes blurry for ${duration} clicks.`
       );
     }
     if (option.details === "poison") {
       const duration = option.amount || 3;
       const damage = option.damage || 1;
-      playerState.poisonedClicksLeft.value += duration;
-      playerState.poisonDamagePerClick.value = damage;
-      utilityFunctions.log(
-        `🤢 <span class="player-name">${playerState.playerName.value}</span> is poisoned. You will lose ${damage} HP for the next ${duration} clicks.`
+      poisonedClicksLeft.value += duration;
+      poisonDamagePerClick.value = damage;
+      log(
+        `🤢 <span class="player-name">${playerName.value}</span> is poisoned. You will lose ${damage} HP for the next ${duration} clicks.`
       );
     }
     if (option.details === "beer-health") {
       const duration = option.amount || 4;
-      playerState.blurClicksLeft.value += duration;
-      playerState.playerHP.value = playerState.playerHP.value + 5;
-      utilityFunctions.log(
-        `🍺 <span class="player-name">${playerState.playerName.value}</span> chugs the beer. Your vision becomes blurry for ${duration} clicks but you gain +5HP.`
+      blurClicksLeft.value += duration;
+      playerHP.value = playerHP.value + 5;
+      log(
+        `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision becomes blurry for ${duration} clicks but you gain +5HP.`
       );
     }
     if (option.details === "gold") {
       const amount = option.amount || 0;
-      playerState.playerGold.value += amount;
-      utilityFunctions.log(
-        `💰 <span class="player-name">${playerState.playerName.value}</span> obtained ${amount} Gold Pieces.`
+      playerGold.value += amount;
+      log(
+        `💰 <span class="player-name">${playerName.value}</span> obtained ${amount} Gold Pieces.`
       );
     }
+  } else if (option.result === "inventoryItem") {
+    if (option.id === "health_potion_consumable") {
+      inventory.value.healthPotions++;
+      log(
+        `➕ <span class="player-name">${playerName.value}</span> found a Health Potion!`
+      );
+    } else if (option.id === "arcane_compass") {
+      inventory.value.compass++;
+      log(
+        `🧭 <span class="player-name">${playerName.value}</span> found an Arcane Compass!`
+      );
+    }
+    log(option.responseText);
+    encounter.value = null;
+    bossOverlay.value = false;
+    return null;
   }
 
-  if (option.result === "route" && option.details === "compass") {
-    if (playerState.currentTargetIndex.value < 1) {
-      gameData.current.value = gameData.chain[1];
-      playerState.path.value.push(gameData.chain[1]);
-      playerState.clickCount.value++;
-      utilityFunctions.log(
-        `🧭 The compass guides you directly to ${gameData.chain[1].replaceAll(
-          "_",
-          " "
-        )}.`
-      );
-      playerState.currentTargetIndex.value = Math.max(
-        playerState.currentTargetIndex.value,
-        1
-      );
-      utilityFunctions.log(`✨ You feel a step closer to your goal.`);
-    } else {
-      utilityFunctions.log(
-        `🧭 The compass seems to point to a place you've already been, or are already near. It offers no new path.`
-      );
-    }
-    enemyState.encounter.value = null;
-    modalState.bossOverlay.value = false;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    return;
-  }
+  encounter.value = null;
+  bossOverlay.value = false;
 
   if (option.result === "damage") {
-    playerState.playerHP.value = Math.max(playerState.playerHP.value - 5, 0);
-    utilityFunctions.log(
-      `🎲 <span class="player-name">${playerState.playerName.value}</span> took 5 damage.`
+    playerHP.value = Math.max(playerHP.value - 5, 0);
+    log(
+      `🎲 <span class="player-name">${playerName.value}</span> took 5 damage.`
     );
   }
   if (option.result === "damage-minor") {
-    playerState.playerHP.value = Math.max(playerState.playerHP.value - 1, 0);
-    utilityFunctions.log(
-      `🎲 <span class="player-name">${playerState.playerName.value}</span> took 1 damage.`
+    playerHP.value = Math.max(playerHP.value - 1, 0);
+    log(
+      `🎲 <span class="player-name">${playerName.value}</span> took 1 damage.`
     );
   }
   if (option.result === "damage-major") {
-    playerState.playerHP.value = Math.max(playerState.playerHP.value - 50, 0);
-    utilityFunctions.log(
-      `🎲 <span class="player-name">${playerState.playerName.value}</span> took 50 damage.`
+    playerHP.value = Math.max(playerHP.value - 50, 0);
+    log(
+      `🎲 <span class="player-name">${playerName.value}</span> took 50 damage.`
     );
   }
 
   if (option.details === "weapon" && option.result !== "item") {
-    playerState.weaponBonus.value += 1;
-    utilityFunctions.log(
-      `🎲 <span class="player-name">${playerState.playerName.value}</span> received a weapon upgrade. Weapon damage +1 (Base Damage Total: +${playerState.weaponBonus.value})`
+    weaponBonus.value += 1;
+    log(
+      `🎲 <span class="player-name">${playerName.value}</span> received a weapon upgrade. Weapon damage +1 (Base Damage Total: +${weaponBonus.value})`
     );
   }
 
   if (option.result === "special" && option.details === "recover") {
     const amount = option.amount || 1;
-    playerState.specialUsesLeft.value += amount;
-    utilityFunctions.log(
+    specialUsesLeft.value += amount;
+    log(
       `🎲 <span class="player-name">${
-        playerState.playerName.value
-      }</span> regained ${amount} class ability charges ${amount > 1 ? "s" : ""}.`
+        playerName.value
+      }</span> regained ${amount} class ability charges ${
+        amount > 1 ? "s" : ""
+      }.`
     );
   }
 
   if (option.result === "shortcut-damage") {
     const damageTaken = 10;
     const clicksReduced = 10;
-    playerState.playerHP.value = Math.max(
-      playerState.playerHP.value - damageTaken,
-      0
-    );
-    playerState.clickCount.value = Math.max(
-      0,
-      playerState.clickCount.value - clicksReduced
-    );
-    playerState.shortcutsUsedCount.value++;
-    utilityFunctions.log(
-      `🎲 <span class="player-name">${playerState.playerName.value}</span> took ${damageTaken} damage for taking the shortcut, but saved ${clicksReduced} clicks.`
+    playerHP.value = Math.max(playerHP.value - damageTaken, 0);
+    clickCount.value = Math.max(0, clickCount.value - clicksReduced);
+    shortcutsUsedCount.value++;
+    log(
+      `🎲 <span class="player-name">${playerName.value}</span> took ${damageTaken} damage for taking the shortcut, but saved ${clicksReduced} clicks.`
     );
   }
   if (option.result === "shortcut" && option.details === "clicks") {
     const amount = option.amount || 1;
-    playerState.clickCount.value = Math.max(
-      0,
-      playerState.clickCount.value - amount
-    );
-    playerState.shortcutsUsedCount.value++;
-    utilityFunctions.log(
-      `🎲 <span class="player-name">${playerState.playerName.value}</span> discovered a shortcut. Click count reduced by ${amount}.`
+    clickCount.value = Math.max(0, clickCount.value - amount);
+    shortcutsUsedCount.value++;
+    log(
+      `🎲 <span class="player-name">${playerName.value}</span> discovered a shortcut. Click count reduced by ${amount}.`
     );
   }
 
   if (option.details === "shield") {
-    playerState.shieldBonus.value += 1;
-    utilityFunctions.log(
-      `🛡️ <span class="player-name">${playerState.playerName.value}</span> has increased their Defense by +1 (Base Defense Total: +${playerState.shieldBonus.value})`
+    shieldBonus.value += 1;
+    log(
+      `🛡️ <span class="player-name">${playerName.value}</span> has increased their Defense by +1 (Base Defense Total: +${shieldBonus.value})`
     );
   }
 
   if (option.routeTitle) {
-    utilityFunctions.log(`📚 You choose: ${option.text}`);
-    gameData.current.value = option.routeTitle;
-    playerState.path.value.push(option.routeTitle);
-    playerState.clickCount.value++;
+    log(`📚 You choose: ${option.text}`);
+    current.value = option.routeTitle;
+    path.value.push(option.routeTitle);
+    clickCount.value++;
 
-    modalState.bossOverlay.value = false;
-    enemyState.encounter.value = null;
+    bossOverlay.value = false;
+    encounter.value = null;
 
-    if (
-      option.routeTitle ===
-      gameData.chain[playerState.currentTargetIndex.value + 1]
-    ) {
-      playerState.currentTargetIndex.value++;
+    if (option.routeTitle === chain[currentTargetIndex.value + 1]) {
+      currentTargetIndex.value++;
     }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
 
-  enemyState.encounter.value = null;
-  modalState.bossOverlay.value = false;
+  // These lines here are redundant if all other branches return null or handle closing themselves.
+  // If this is meant as a default 'close' when nothing else applies, it's fine.
+  // encounter.value = null;
+  // bossOverlay.value = false;
 }

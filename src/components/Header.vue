@@ -166,6 +166,9 @@
       <div class="player-stats">
         <span style="font-weight: 600">Gold: </span>{{ playerGold }}
       </div>
+      <button @click="emit('open-inventory-modal')" class="inventory-button">
+        Inventory
+      </button>
     </div>
   </header>
 </template>
@@ -196,9 +199,15 @@ const props = defineProps({
   formattedTitle: String,
   shieldBonus: Number,
   playerGold: Number,
+  hasCompass: Number,
+  gameChain: Array,
   isDarkened: {
     type: Boolean,
     default: false,
+  },
+  compassCount: {
+    type: Number,
+    required: true,
   },
 });
 
@@ -211,6 +220,8 @@ const emit = defineEmits([
   "option-chosen",
   "log-line",
   "show-tips",
+  "use-compass",
+  "open-inventory-modal",
 ]);
 
 const activeAction = ref("");
@@ -860,6 +871,22 @@ button:hover {
 .encounter-fade-leave-to {
   opacity: 0;
   transform: scale(0.95) translateY(-10px);
+}
+
+/* In Header.vue style scoped */
+.inventory-button {
+  /* Example styles, adjust as needed */
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  margin-left: 10px; /* Adjust spacing */
+}
+.inventory-button:hover {
+  background-color: #0056b3;
 }
 
 @media screen and (max-width: 600px) {

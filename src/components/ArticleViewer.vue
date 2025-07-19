@@ -10,7 +10,7 @@
     <span v-for="(article, index) in props.fullChain" :key="index">
       <span
         :style="{
-          color: currentTargetIndexProp === index ? '#0645ad' : '#555',
+          color: props.currentTargetIndex === index ? '#0645ad' : '#555',
         }"
       >
         {{ article.replaceAll("_", " ") }}
@@ -55,8 +55,6 @@ const clearErrorTimeout = ref(null);
 const hideElementTimeout = ref(null);
 
 const formattedTitle = computed(() => props.articleTitle.replaceAll("_", " "));
-
-const currentTargetIndexProp = computed(() => props.currentTargetIndex);
 
 function parseWikipediaUrl(url) {
   try {
@@ -225,7 +223,7 @@ onMounted(load);
 }
 
 .path-display {
-  font-size: 20px;
+  font-size: 16px;
   text-align: center;
   margin-bottom: 0.5rem;
   color: #555;
@@ -258,7 +256,7 @@ onMounted(load);
   padding: 15px 30px;
   border-radius: 8px;
   z-index: 1000;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 44px 15px rgba(0, 0, 0, 0.2);
   font-size: 1.1em;
   text-align: center;
   opacity: 1;

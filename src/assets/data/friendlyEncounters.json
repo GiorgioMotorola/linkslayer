@@ -62,9 +62,9 @@
     "options": [
       {
         "text": "I have not seen him, but if I do, I'll run back here and let you know.",
-        "result": "item",
-        "details": "health",
-        "responseText": "OLD GUY ACCARDI: That's what's up. Thanks for telling me. As a reward, here is some chicken I grilled."
+        "result": "inventoryItem",
+        "id": "health_potion_consumable",
+        "responseText": "OLD GUY ACCARDI: That's what's up. Thanks for telling me. As a reward, here is a sealed Health Potion I found earlier."
       },
       {
         "text": "Ignore him and walk away",
@@ -224,8 +224,8 @@
       {
         "text": "What about compasses?",
         "responseText": "DANIEL THE MAP SELLER: Oh yeah, I have those, too. Here you go.",
-        "result": "route",
-        "details": "compass"
+        "result": "inventoryItem",
+        "id": "arcane_compass"
       }
     ]
   },
@@ -416,7 +416,7 @@
       {
         "text": "Buy the mysterious item from the Mysterious Man",
         "responseText": "The item looks like a normal compass, except it's glowing slightly. You walk outside with the compass, and without warning, you are transported to another area.",
-        "result": "route",
+        "effect": "inventoryItem",
         "details": "compass"
       },
       {
