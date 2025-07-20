@@ -35,6 +35,7 @@ export function handleEncounterOption({
     clickCount,
     shortcutsUsedCount,
     inventory,
+    effectiveMaxHP,
   } = playerState;
 
   const { log } = utilityFunctions;
@@ -77,14 +78,14 @@ export function handleEncounterOption({
 
   if (option.result === "item") {
     if (option.details === "health") {
-      playerHP.value = playerHP.value + 5;
+      playerHP.value = Math.min(playerHP.value + 5, effectiveMaxHP);
       log(
         `🎲 <span class="player-name">${playerName.value}</span> has gained +5 HP.`
       );
     }
 
     if (option.details === "health-major") {
-      playerHP.value = playerHP.value + 15;
+      playerHP.value = Math.min(playerHP.value + 15, effectiveMaxHP);
       log(
         `🎲 <span class="player-name">${playerName.value}</span> has gained +15 HP.`
       );
@@ -104,7 +105,8 @@ export function handleEncounterOption({
     }
     if (option.details === "poison") {
       const duration = option.amount || 3;
-      const damage = option.damage || 1;
+      const damage = Number(option.damage) || 1;
+
       poisonedClicksLeft.value += duration;
       poisonDamagePerClick.value = damage;
       log(
@@ -114,7 +116,7 @@ export function handleEncounterOption({
     if (option.details === "beer-health") {
       const duration = option.amount || 4;
       blurClicksLeft.value += duration;
-      playerHP.value = playerHP.value + 5;
+      playerHP.value = Math.min(playerHP.value + 5, effectiveMaxHP);
       log(
         `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision becomes blurry for ${duration} clicks but you gain +5HP.`
       );
@@ -131,7 +133,10 @@ export function handleEncounterOption({
       const goldCost = option.goldCost || 0;
 
       if (playerGold.value >= goldCost) {
-        playerHP.value = playerHP.value + healthAmount;
+        playerHP.value = Math.min(
+          playerHP.value + healthAmount,
+          effectiveMaxHP
+        );
         playerGold.value -= goldCost;
         log(
           `❤️‍🩹 <span class="player-name">${playerName.value}</span> gained ${healthAmount} HP but lost ${goldCost} Gold.`
@@ -149,7 +154,10 @@ export function handleEncounterOption({
 
       if (playerGold.value >= goldCost) {
         blurClicksLeft.value += duration;
-        playerHP.value = playerHP.value + healthAmount;
+        playerHP.value = Math.min(
+          playerHP.value + healthAmount,
+          effectiveMaxHP
+        );
         playerGold.value -= goldCost;
         log(
           `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision blurs for ${duration} clicks and you gained ${healthAmount} HP, but lost ${goldCost} Gold.`

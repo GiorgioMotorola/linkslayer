@@ -214,7 +214,7 @@
       {
         "text": "'The only guidance I need is from the sun and the stars.'",
         "result": "none",
-        "responseText": "DANIEL THE MAP SELLER: The only guidance I need is from the sun and the stars."
+        "responseText": "DANIEL THE MAP SELLER: Cool."
       },
       {
         "text": "What about food?",
@@ -222,8 +222,8 @@
         "result": "none"
       },
       {
-        "text": "What about compasses?",
-        "responseText": "DANIEL THE MAP SELLER: Oh yeah, I have those, too. Here you go.",
+        "text": "Give me that compass or else I will make you pay!",
+        "responseText": "DANIEL THE MAP SELLER: Ok, geeze... Here you go, man. Relax.",
         "result": "inventoryItem",
         "id": "arcane_compass"
       }

@@ -92,7 +92,10 @@
       <div class="all-stats-row-box">
         <div class="stat-column-hp">
           <div class="stat-label">HP</div>
-          <div class="stat-value" :class="hpAnimClass">{{ playerHP }}</div>
+          <div class="stat-value">
+            <span :class="hpAnimClass">{{ playerHP }}</span
+            >/<span :class="maxHpAnimClass">{{ effectiveMaxHP }}</span>
+          </div>
         </div>
 
         <div class="stat-column">
@@ -221,6 +224,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  effectiveMaxHP: {
+    type: Number,
+    required: true,
+  },
 });
 
 const emit = defineEmits([
@@ -280,6 +287,7 @@ const goldAnimClass = ref("");
 const specialAnimClass = ref("");
 const shortRestAnimClass = ref("");
 const longRestAnimClass = ref("");
+const maxHpAnimClass = ref("");
 
 let hpTimeout = null;
 let weaponTimeout = null;
@@ -289,6 +297,7 @@ let goldTimeout = null;
 let specialTimeout = null;
 let shortRestTimeout = null;
 let longRestTimeout = null;
+let maxHpTimeout = null;
 
 function triggerAnim(refVar, className, duration = 700) {
   let currentTimeoutRef;
@@ -300,6 +309,7 @@ function triggerAnim(refVar, className, duration = 700) {
   else if (refVar === specialAnimClass) currentTimeoutRef = specialTimeout;
   else if (refVar === shortRestAnimClass) currentTimeoutRef = shortRestTimeout;
   else if (refVar === longRestAnimClass) currentTimeoutRef = longRestTimeout;
+  else if (refVar === maxHpAnimClass) currentTimeoutRef = maxHpTimeout;
 
   if (currentTimeoutRef) {
     clearTimeout(currentTimeoutRef);
@@ -323,6 +333,7 @@ function triggerAnim(refVar, className, duration = 700) {
     else if (refVar === specialAnimClass) specialTimeout = newTimeout;
     else if (refVar === shortRestAnimClass) shortRestTimeout = newTimeout;
     else if (refVar === longRestAnimClass) longRestTimeout = newTimeout;
+    else if (refVar === maxHpAnimClass) maxHpTimeout = newTimeout;
   });
 }
 
@@ -445,7 +456,7 @@ watch(
       } else if (newEncounter.enemy?.message) {
         fullText = newEncounter.enemy.message;
       } else {
-      fullText = `🗡️ You've been attacked by <strong>${
+        fullText = `🗡️ You've been attacked by <strong>${
           formattedTitle.value
         }</strong> ${newEncounter.enemy.name ?? ""}. (HP: ${
           newEncounter.enemy.currentHP
@@ -469,6 +480,15 @@ watch(
     }
 
     startTyping(fullText, newEncounter.type);
+  }
+);
+
+watch(
+  () => props.effectiveMaxHP,
+  (newVal, oldVal) => {
+    if (oldVal !== undefined && newVal !== oldVal) {
+      triggerAnim(maxHpAnimClass, "stat-gain");
+    }
   }
 );
 
@@ -1184,15 +1204,14 @@ button:hover {
 
   50% {
     transform: scale(1.3);
-    color: #042f8b; 
-    text-shadow: 0 0 10px #043a8ba1; 
+    color: #042f8b;
+    text-shadow: 0 0 10px #043a8ba1;
   }
 
   80% {
-
-    transform: scale(1.1); 
-    color: #042f8b; 
-    text-shadow: 0 0 8px #043a8ba1; 
+    transform: scale(1.1);
+    color: #042f8b;
+    text-shadow: 0 0 8px #043a8ba1;
   }
   100% {
     transform: scale(1);
@@ -1210,15 +1229,14 @@ button:hover {
 
   50% {
     transform: scale(1.3);
-    color: #e26060; 
+    color: #e26060;
     text-shadow: 0 0 10px rgba(241, 110, 100, 0.9);
   }
 
   80% {
- 
-    transform: scale(1.1); 
+    transform: scale(1.1);
     color: #e26060;
-    text-shadow: 0 0 8px rgba(241, 110, 100, 0.7); 
+    text-shadow: 0 0 8px rgba(241, 110, 100, 0.7);
   }
   100% {
     transform: scale(1);
@@ -1308,6 +1326,28 @@ button:hover {
 
 .stat-bounce {
   animation: stat-bounce 0.8s ease-out;
+}
+
+@keyframes max-hp-increase-animation {
+  0% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+  50% {
+    transform: scale(1.2); /* Slightly larger bounce */
+    color: #4caf50; /* A green color for positive change */
+    text-shadow: 0 0 12px rgba(76, 175, 80, 0.7);
+  }
+  100% {
+    transform: scale(1);
+    color: inherit;
+    text-shadow: none;
+  }
+}
+
+.max-hp-increase {
+  animation: max-hp-increase-animation 1s ease-out;
 }
 
 @media screen and (max-width: 600px) {

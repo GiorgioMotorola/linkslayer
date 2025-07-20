@@ -263,7 +263,9 @@
       {
         "text": "Step on the Blue square",
         "responseText": "The Blue square lights up, then dims. Then all the squares turn blue. You walk across the bridge safely.",
-        "result": "shortcut"
+        "result": "shortcut",
+        "details": "clicks",
+        "amount": 6
       },
       {
         "text": "Step on the Red square",

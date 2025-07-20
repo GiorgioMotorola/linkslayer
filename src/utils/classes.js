@@ -4,7 +4,8 @@ export const classes = {
     name: "Fighter",
     maxHP: 65,
     special: "Power Strike",
-    description: "65 HP. Class Ability(Power Strike) deals 6 damage. Starts with +1 Weapon Damage.",
+    description:
+      "65 HP. Class Ability(Power Strike) deals 6 damage. Starts with +1 Weapon Damage.",
     specialEffect: (enemyHP) => enemyHP - 6,
     startingWeaponBonus: 1,
     startingSpecialUses: 0,
@@ -16,10 +17,13 @@ export const classes = {
     special: "Smite",
     description:
       "60 HP. Class Ability(Smite) deals 5 damage and gives +2 HP to player. Starts with +1 Defense Bonus",
-    specialEffect: (enemyHP, playerHP, maxHP) => ({
-      enemyHP: enemyHP - 5,
-      playerHP: playerHP + 2,
-    }),
+    specialEffect: (enemyHP, playerHP, maxHP) => {
+      const healAmount = 2;
+      return {
+        enemyHP: enemyHP - 5,
+        playerHP: Math.min(playerHP + healAmount, maxHP),
+      };
+    },
     startingWeaponBonus: 0,
     startingSpecialUses: 0,
     startingShieldBonus: 1,
@@ -65,11 +69,15 @@ export const classes = {
     name: "Cleric",
     maxHP: 60,
     special: "Divine Blessing",
-    description: "60 HP. Class Ability(Divine Blessing) heals 5 HP and deals 6 damage.",
-    specialEffect: (enemyHP, playerHP, maxHP) => ({
-      enemyHP: enemyHP - 5,
-      playerHP: playerHP + 5,
-    }),
+    description:
+      "60 HP. Class Ability(Divine Blessing) heals 5 HP and deals 6 damage.",
+    specialEffect: (enemyHP, playerHP, maxHP) => {
+      const healAmount = 5;
+      return {
+        enemyHP: enemyHP - 5,
+        playerHP: Math.min(playerHP + healAmount, maxHP),
+      };
+    },
     startingWeaponBonus: 0,
     startingSpecialUses: 0,
     startingShieldBonus: 0,

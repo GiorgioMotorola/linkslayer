@@ -7,7 +7,8 @@
     :playerClass="playerClass"
     :specialUsesLeft="specialUsesLeft"
     :playerHP="playerHP"
-    :maxHP="playerClass?.maxHP ?? 0"
+    :maxHP="playerClass?.maxHP"
+    :effectiveMaxHP="effectiveMaxHP"
     :gameLog="gameLog"
     :encounter="encounter"
     :enemyHP="enemyHP"
@@ -31,7 +32,8 @@
     @open-inventory-modal="openInventoryModal"
     :is-cloak-active="isCloakActive"
     :cloak-clicks-remaining="cloakClicksRemaining"
-  />
+    :combatWinsSinceLastCapIncrease="combatWinsSinceLastCapIncrease"
+    :hpCapBonus="hpCapBonus"
   />
 
   <div class="main-content-wrapper">
@@ -164,6 +166,8 @@ const currentTargetIndex = ref(0);
 const clickCount = ref(0);
 const shortcutsUsedCount = ref(0);
 const combatEncountersFought = ref(0);
+const combatWinsSinceLastCapIncrease = ref(0);
+const hpCapBonus = ref(0);
 const totalSpecialsUsed = ref(0);
 const path = ref([current.value]);
 const encounter = ref(null);
@@ -235,6 +239,10 @@ const inEncounter = computed(() => {
   return false;
 });
 
+const effectiveMaxHP = computed(() => {
+  return playerClass.value ? playerClass.value.maxHP + hpCapBonus.value : 0;
+});
+
 watch(playerHP, (newVal) => {
   if (playerClass.value && newVal <= 0 && !defeated.value) {
     log(
@@ -245,6 +253,7 @@ watch(playerHP, (newVal) => {
     encounter.value = null;
   }
 });
+
 
 watch(clickCount, (newClicks) => {
   if (newClicks > 0 && newClicks % 11 === 0) {
@@ -290,6 +299,34 @@ watch(clickCount, (newClicks) => {
   }
 });
 
+// src/views/GameView.vue (around line 304)
+watch(clickCount, (newClicks) => {
+  // ...
+  if (poisonedClicksLeft.value > 0) {
+    // Add these console.log statements
+    console.log("DEBUG: Applying poison damage.");
+    console.log("DEBUG: playerHP.value before poison:", playerHP.value);
+    console.log("DEBUG: poisonDamagePerClick.value:", poisonDamagePerClick.value);
+
+    // Ensure poisonDamagePerClick.value is a number right before use
+    const effectivePoisonDamage = Number(poisonDamagePerClick.value);
+    if (isNaN(effectivePoisonDamage)) {
+      console.error("CRITICAL ERROR: poisonDamagePerClick.value is NaN before application! Resetting to 0.", poisonDamagePerClick.value);
+      poisonDamagePerClick.value = 0; // Reset it to a safe value
+      playerHP.value = Math.max(0, playerHP.value - 0); // Apply 0 damage
+    } else {
+      playerHP.value = Math.max(0, playerHP.value - effectivePoisonDamage);
+    }
+
+    poisonedClicksLeft.value--; // This needs to happen regardless
+    log(
+      `🤢 You are poisoned. You lose ${effectivePoisonDamage} HP. ${poisonedClicksLeft.value} clicks left until the poison wears off.`
+    );
+    // ... rest of your poison logic
+  }
+  // ...
+});
+
 const timer = ref(0);
 let timerInterval;
 
@@ -316,6 +353,7 @@ async function callHandleClick(title) {
       path,
       currentTargetIndex,
       combatEncountersFought,
+      combatWinsSinceLastCapIncrease,
     },
     gameData: {
       chain,
@@ -364,6 +402,7 @@ function callHandleRest(choice) {
       playerClass,
       specialUsesLeft,
       playerName,
+      effectiveMaxHP: effectiveMaxHP.value,
     },
     state: {
       restChoice: choice,
@@ -386,6 +425,7 @@ function handleCombatActionWrapper(playerAction) {
       shieldBonus,
       playerName,
       action: playerAction,
+      effectiveMaxHP: effectiveMaxHP.value,
     },
     enemy: {
       enemyHP,
@@ -400,6 +440,8 @@ function handleCombatActionWrapper(playerAction) {
       formattedTitle: formattedTitle.value,
       DEFAULT_ENEMY_HP,
       isBoss,
+      combatWinsSinceLastCapIncrease,
+      hpCapBonus,
     },
     utils: {
       clearTimer: () => clearInterval(timerInterval),
@@ -423,6 +465,8 @@ function gotoEnemyTurn() {
     },
     playerState: {
       playerName,
+      playerHP,
+      effectiveMaxHP: effectiveMaxHP.value,
     },
     gameData: {},
     utilityFunctions: {
@@ -550,6 +594,7 @@ async function callHandleEncounterOption(option) {
       clickCount,
       shortcutsUsedCount,
       inventory,
+      effectiveMaxHP: effectiveMaxHP.value,
     },
     gameData: {
       chain,
@@ -582,6 +627,7 @@ function handleLootDrop() {
       weaponBonus,
       shieldBonus,
       playerGold,
+      effectiveMaxHP: effectiveMaxHP.value,
     },
     utilityFunctions: {
       log,
@@ -602,7 +648,7 @@ function handleShopPurchase(item) {
       case "health":
         playerHP.value = Math.min(
           playerHP.value + item.amount,
-          playerClass.value.maxHP
+          effectiveMaxHP.value
         );
         log(`➕ ${playerName.value} gained ${item.amount} HP.`);
         break;
@@ -646,7 +692,7 @@ function handleShopPurchase(item) {
           log(`👻 ${playerName.value} acquired a Cloak of Invisibility!`);
           console.log("Inventory after cloak purchase:", inventory.value);
         }
-        break; 
+        break;
 
       default:
         break;
@@ -740,7 +786,10 @@ function useCompass() {
 const useHealthPotion = () => {
   if (inventory.value.healthPotions > 0) {
     inventory.value.healthPotions--;
-    playerHP.value = playerHP.value + HEALTH_POTION_HEAL_AMOUNT;
+    playerHP.value = Math.min(
+      playerHP.value + HEALTH_POTION_HEAL_AMOUNT,
+      effectiveMaxHP.value
+    );
     log(
       `You consumed a Health Potion and recovered ${HEALTH_POTION_HEAL_AMOUNT} HP! Your HP is now ${playerHP.value}.`
     );
@@ -753,7 +802,10 @@ const useHealthPotion = () => {
 const useTurkeyLeg = () => {
   if (inventory.value.turkeyLegs > 0) {
     inventory.value.turkeyLegs--;
-    playerHP.value = playerHP.value + TURKEY_LEG_HEAL_AMOUNT;
+    playerHP.value = Math.min(
+      playerHP.value + TURKEY_LEG_HEAL_AMOUNT,
+      effectiveMaxHP.value
+    );
     log(
       `🍖 You consumed a Turkey Leg and recovered ${TURKEY_LEG_HEAL_AMOUNT} HP! Your HP is now ${playerHP.value}.`
     );
@@ -859,6 +911,8 @@ function resetGame() {
   inventory.value.invisibilityCloaks = 0;
   isCloakActive.value = false;
   cloakClicksRemaining.value = 0;
+  combatWinsSinceLastCapIncrease.value = 0;
+  hpCapBonus.value = 0;
 
   timerInterval = setInterval(() => {
     timer.value++;

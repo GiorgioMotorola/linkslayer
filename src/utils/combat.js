@@ -1,3 +1,4 @@
+// src/utils/combat.js
 export function handleCombatAction({ player, enemy, state, utils }) {
   const {
     playerHP,
@@ -7,6 +8,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     shieldBonus,
     playerName,
     action: playerAction,
+    effectiveMaxHP,
   } = player;
 
   const {
@@ -17,7 +19,14 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     enemyIsStunned,
   } = enemy;
 
-  const { log, formattedTitle, DEFAULT_ENEMY_HP, isBoss } = state;
+  const {
+    log,
+    formattedTitle,
+    DEFAULT_ENEMY_HP,
+    isBoss,
+    combatWinsSinceLastCapIncrease,
+    hpCapBonus,
+  } = state;
 
   const {
     clearTimer,
@@ -26,6 +35,8 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     markBossDefeated,
     gotoEnemyTurn,
   } = utils;
+
+  const currentEffectiveMaxHP = player.effectiveMaxHP;
 
   let currentEnemyDamage = nextEnemyAttack.value;
   if (typeof currentEnemyDamage !== "number" || isNaN(currentEnemyDamage)) {
@@ -84,8 +95,6 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       );
       baseSpecialDamage = effect.wizardDamage;
       damageToEnemy = baseSpecialDamage;
-      playerHP.value = effect.playerHP;
-
       log(
         `🔥 <span class="player-name">${
           playerName.value
@@ -120,7 +129,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       const effect = playerClass.value.specialEffect(
         enemyHP.value,
         playerHP.value,
-        playerClass.value.maxHP
+        currentEffectiveMaxHP
       );
       playerHP.value = effect.playerHP;
 
@@ -135,7 +144,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       const effect = playerClass.value.specialEffect(
         enemyHP.value,
         playerHP.value,
-        playerClass.value.maxHP
+        currentEffectiveMaxHP
       );
       playerHP.value = effect.playerHP;
 
@@ -163,11 +172,11 @@ export function handleCombatAction({ player, enemy, state, utils }) {
         const effect = playerClass.value.specialEffect(
           enemyHP.value,
           playerHP.value,
-          playerClass.value.maxHP
+          effectiveMaxHP.value
         );
         if (typeof effect === "object" && effect !== null) {
           if (effect.playerHP !== undefined) {
-            playerHP.value = effect.playerHP;
+            playerHP.value = Math.min(effect.playerHP, effectiveMaxHP.value);
           }
           if (effect.enemyDamage !== undefined) {
             damageToEnemy = effect.enemyDamage;
@@ -210,7 +219,9 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       !(playerAction === "special" && playerClass.value.name === "Rogue")
     ) {
       finalDamageToEnemy = Math.floor(finalDamageToEnemy * 0.5);
-      log(`🛡️ ${formattedTitle} defends, reducing incoming damage to ${finalDamageToEnemy}HP.`);
+      log(
+        `🛡️ ${formattedTitle} defends, reducing incoming damage to ${finalDamageToEnemy}HP.`
+      );
     }
     enemyHP.value -= finalDamageToEnemy;
   }
@@ -222,6 +233,18 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     const defeatedEnemyData = encounter.value?.enemy;
     encounter.value = null;
     handleLootDrop();
+
+    combatWinsSinceLastCapIncrease.value++;
+    if (combatWinsSinceLastCapIncrease.value >= 5) {
+      hpCapBonus.value += 10;
+
+      log(
+        `🎉 You have gained experience from defeating the evil in this land and your maximum HP increased by <strong>10</strong>. New max HP: ${currentEffectiveMaxHP}`
+      );
+      combatWinsSinceLastCapIncrease.value = 0;
+      playerHP.value = Math.min(playerHP.value, currentEffectiveMaxHP);
+    }
+
     if (isBoss(defeatedEnemyData)) {
       markBossDefeated();
     }
@@ -259,7 +282,6 @@ export function handleCombatAction({ player, enemy, state, utils }) {
         encounter.value = null;
         return;
       } else if (enemyNextAction.value === "defend") {
-        // log(`🛡️ ${formattedTitle} is defending your next attack.`);
         damageToPlayer = 0;
       }
     }

@@ -1,21 +1,22 @@
 // src/utils/restHandler.js
 
-
 export function handleRest({ player, state, utils }) {
-  const { playerHP, playerClass, specialUsesLeft, playerName } = player;
+  const { playerHP, playerClass, specialUsesLeft, playerName, effectiveMaxHP } =
+    player;
   const { shortRestsUsed, longRestsUsed } = state;
   const { log, showRestModal } = utils;
 
   const choice = state.restChoice;
 
-
   if (choice === "short" && shortRestsUsed.value < 4) {
-    playerHP.value = playerHP.value + 5;
-    log(`${playerName.value} feels rested and has gained +5HP.`);
+    const healAmount = 5;
+    playerHP.value = Math.min(playerHP.value + healAmount, effectiveMaxHP);
+    log(`${playerName.value} feels rested and has gained +${healAmount}HP.`);
     shortRestsUsed.value++;
   } else if (choice === "long" && longRestsUsed.value < 2) {
-    playerHP.value = playerHP.value + 10;
-    log(`${playerName.value} feels rested and has gained +10HP.`);
+    const healAmount = 10;
+    playerHP.value = Math.min(playerHP.value + healAmount, effectiveMaxHP);
+    log(`${playerName.value} feels rested and has gained +${healAmount}HP.`);
     longRestsUsed.value++;
     specialUsesLeft.value = specialUsesLeft.value + 1;
     log(`${playerName.value} also recovered 1 Class Ability charge.`);
@@ -23,5 +24,5 @@ export function handleRest({ player, state, utils }) {
     log(`${playerName.value} decided not to rest and continued their journey.`);
   }
 
-  showRestModal.value = false; 
+  showRestModal.value = false;
 }
