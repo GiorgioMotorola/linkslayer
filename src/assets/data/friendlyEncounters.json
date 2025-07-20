@@ -343,7 +343,7 @@
     ]
   },
   {
-    "id": "npc_012",
+    "id": "npc_013",
     "name": "The Scroll Dealer",
     "greeting": "THE SCROLL DEALER: If you're tired of looking at the same rocks and trees, then I may have a scroll for you...",
     "options": [
@@ -365,7 +365,7 @@
     ]
   },
   {
-    "id": "npc_013",
+    "id": "npc_014",
     "name": "Lord Bruenor Battlehammer",
     "greeting": "LORD BRUENOR BATTLEHAMMER: Good sir, I am Lord Bruenor Battlehammer, Lord of these lands and heir of King Bort Battlehammer. I confess I am lost. I understand being lost and a Lord of this land seems like something a crazy beggar would say, but I implore you, I am telling the truth! You seem like you know these lands better than most. Please, tell me which direction would be Castle Battlehammer?",
     "options": [
@@ -396,7 +396,7 @@
     ]
   },
   {
-    "id": "npc_014",
+    "id": "npc_015",
     "name": "The Lighthouse Tavern",
     "greeting": "Just ahead, you spot a one-story building with what looks like a tall structure built to the left. The structure resembles a lighthouse. There is a handmade sign attached to the structure that says 'The Lighthouse Tavern'. You infer the tall structure is where this place got its name. Walking into the bar, there are a few patrons: a farmhand, a dwarf, and a mysterious man sitting in the shadows. The barkeep smiles at you. The bartender appears to be selling Beer and Boiled Peanuts. As you approach the bar, the mysterious man appears to also have something for sale...",
     "options": [
@@ -431,7 +431,7 @@
     ]
   },
   {
-    "id": "npc_015",
+    "id": "npc_016",
     "name": "A Cute Dog",
     "greeting": "'woof'",
     "options": [
@@ -459,7 +459,7 @@
     ]
   },
     {
-    "id": "npc_016",
+    "id": "npc_017",
     "name": "Dead Body",
     "greeting": "In front of you, there is a dead body. You recognize the person as Dr. Agula, a doctor from your village. Dr. Agula does not appear to have decayed much which indicates this may have happened recently. You hear about witches in this area and wonder if thats what did him in. The Doctor is out, it seems.",
     "options": [

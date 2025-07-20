@@ -360,7 +360,7 @@
     ]
   },
   {
-    "id": "lore_013",
+    "id": "lore_014",
     "text": "After following a set of train tracks for 2 miles, you come across a train station heading to far away lands.",
     "options": [
       { "text": "Blackstaff Tower", "routeTitle": "College_Fjord" },
@@ -381,7 +381,7 @@
     ]
   },
   {
-    "id": "lore_014",
+    "id": "lore_015",
     "text": "You find a dusty old chest hidden beneath a gnarled tree root. It looks untouched for centuries.",
     "options": [
       {
@@ -411,7 +411,7 @@
     ]
   },
   {
-    "id": "lore_015",
+    "id": "lore_016",
     "text": "You find a wooden box sitting in the mud. Inside the box, you find 6 masks. Outside of each mask, dawning a letter on the forehead, you notice the masks are otherwise featureless. Each mask has a different letter: F, P, W, R, C, and S.",
     "options": [
       {
@@ -454,7 +454,7 @@
     ]
   },
   {
-    "id": "lore_015",
+    "id": "lore_017",
     "text": "You come across a tavern that seems to be bustling with life. As you walk in, you see several patrons drinking and yelling in excitement. They appear to be surrounded by something called Tymora’s Spinner. You ask one patron what is going on and they say 'I have lost 10 times in a row on this stupid game. Here, have my last gold piece. See if your luck is better than mine.' You accept the gold piece. After watching a couple of rounds, it appears you can spend 1 gold piece to bet on a range of numbers and if the ball lands in that range, you win.",
     "options": [
       {
@@ -537,7 +537,7 @@
     ]
   },
   {
-    "id": "lore_016",
+    "id": "lore_018",
     "text": "There appears to be a stone block with a hole carved into it. The hole appears to be worn away while the rest of the block seems to be smooth. While staring at the block, you hear the sound of a voice that shouts 'Halt, trespasser! If you come any closer, you better tell me how fast you want to die!'",
     "options": [
       {
