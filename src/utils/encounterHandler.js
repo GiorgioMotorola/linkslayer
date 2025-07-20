@@ -126,6 +126,40 @@ export function handleEncounterOption({
         `💰 <span class="player-name">${playerName.value}</span> obtained ${amount} Gold Pieces.`
       );
     }
+    if (option.details === "health-gold-loss") {
+      const healthAmount = option.healthAmount || 0;
+      const goldCost = option.goldCost || 0;
+
+      if (playerGold.value >= goldCost) {
+        playerHP.value = playerHP.value + healthAmount;
+        playerGold.value -= goldCost;
+        log(
+          `❤️‍🩹 <span class="player-name">${playerName.value}</span> gained ${healthAmount} HP but lost ${goldCost} Gold.`
+        );
+      } else {
+        log(
+          `❌ <span class="player-name">${playerName.value}</span> doesn't have enough Gold for this. (Need: ${goldCost}, Have: ${playerGold.value})`
+        );
+      }
+    }
+    if (option.details === "beer-cost-blur") {
+      const duration = option.amount || 4;
+      const goldCost = option.goldCost || 0;
+      const healthAmount = option.healthAmount || 0;
+
+      if (playerGold.value >= goldCost) {
+        blurClicksLeft.value += duration;
+        playerHP.value = playerHP.value + healthAmount;
+        playerGold.value -= goldCost;
+        log(
+          `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision blurs for ${duration} clicks and you gained ${healthAmount} HP, but lost ${goldCost} Gold.`
+        );
+      } else {
+        log(
+          `❌ <span class="player-name">${playerName.value}</span> can't afford that drink! (Need: ${goldCost}, Have: ${playerGold.value})`
+        );
+      }
+    }
   } else if (option.result === "inventoryItem") {
     if (option.id === "health_potion_consumable") {
       inventory.value.healthPotions++;
@@ -136,6 +170,11 @@ export function handleEncounterOption({
       inventory.value.compass++;
       log(
         `🧭 <span class="player-name">${playerName.value}</span> found an Arcane Compass!`
+      );
+    } else if (option.id === "turkey_leg_consumable") {
+      inventory.value.turkeyLegs++;
+      log(
+        `🍖 <span class="player-name">${playerName.value}</span> found a Turkey Leg!`
       );
     }
     log(option.responseText);
@@ -227,9 +266,4 @@ export function handleEncounterOption({
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
-
-  // These lines here are redundant if all other branches return null or handle closing themselves.
-  // If this is meant as a default 'close' when nothing else applies, it's fine.
-  // encounter.value = null;
-  // bossOverlay.value = false;
 }

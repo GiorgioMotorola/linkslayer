@@ -5,8 +5,7 @@
         BELETHOR: "Some may call these treasures. Me, I call them junk."
       </div>
       <div class="shop-items">
-        <div class="player-gold">You have 
-        {{ playerGold }} Gold</div>
+        <div class="player-gold">You have {{ playerGold }} Gold</div>
         <button
           v-for="item in props.shopItems"
           :key="item.id"
@@ -37,6 +36,9 @@
               </span>
               <span v-else-if="item.details === 'healthPotion'">
                 A consumable potion that restores health.
+              </span>
+              <span v-else-if="item.details === 'invisibilityCloak'">
+                Avoids non-boss encounters for 10 clicks.
               </span>
             </span>
             <span v-else-if="item.effect === 'blurCure'">
@@ -70,24 +72,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["buy", "close"]);
-
-const shopItems = {
-  health: { name: "Potion of Healing", cost: 15, effect: "health", amount: 15 },
-  weapon: { name: "Whetstone", cost: 20, effect: "weapon", amount: 1 },
-  shield: { name: "Sturdy Buckler", cost: 20, effect: "shield", amount: 1 },
-  special: {
-    name: "Tome of Knowledge",
-    cost: 15,
-    effect: "special",
-    amount: 1,
-  },
-  compass: {
-    name: "Arcane Compass",
-    cost: 1,
-    effect: "route",
-    details: "compass",
-  },
-};
 
 const toastMessage = ref(null);
 const isToastError = ref(false);
@@ -152,7 +136,7 @@ function showToast(message, isError = false) {
   pointer-events: auto;
   animation: fade-in-overlay 0.75s ease-out forwards;
   background-color: #545b63a6;
-    background-image: linear-gradient(
+  background-image: linear-gradient(
     to bottom,
     rgba(8, 12, 17, 0.9),
     rgba(17, 27, 37, 0.9),
@@ -177,10 +161,10 @@ function showToast(message, isError = false) {
 
 .player-gold {
   font-size: 14px;
-  padding: .5rem;
+  padding: 0.5rem;
   color: #000000;
   font-weight: 300;
-  margin-bottom: .3rem;
+  margin-bottom: 0.3rem;
 }
 
 .shop-desc {

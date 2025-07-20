@@ -5,7 +5,7 @@
     "greeting": "OLD MAN FLYNN: Did you know They Know?",
     "options": [
       {
-        "text": "YOU: Yes sir, I did.",
+        "text": "'Yes sir, I did.'",
         "result": "item",
         "details": "weapon",
         "responseText": "OLD MAN FLYNN: I knew it! I knew someone would know! You will need a better weapon than that. Let me give it a fair polishing, my son."
@@ -16,12 +16,12 @@
         "responseText": "You nod politely and keep moving. They continue to know."
       },
       {
-        "text": "YOU: What do you mean?",
+        "text": "'What do you mean?'",
         "result": "none",
         "responseText": "OLD MAN FLYNN: You... don't know? Then I have nothing to discuss with you."
       },
       {
-        "text": "YOU: From what I heard, they do NOT know, actually.",
+        "text": "'From what I heard, they do NOT know, actually.'",
         "result": "damage-minor",
         "responseText": "Old Man Flynn uses his cane to bop you on the head. He then walks away."
       }
@@ -33,23 +33,23 @@
     "greeting": "SMITH THE BLACKSMITH: Hello.",
     "options": [
       {
-        "text": "YOU: Howdy",
+        "text": "'Howdy'",
         "result": "item",
         "details": "weapon",
         "responseText": "SMITH THE BLACKSMITH: Hello. Here is a weapon upgrade."
       },
       {
-        "text": "YOU: Hello?",
+        "text": "'Hello?'",
         "result": "none",
         "responseText": "SMITH THE BLACKSMITH: Howdy."
       },
       {
-        "text": "YOU: Hello.",
+        "text": "'Hello.'",
         "result": "none",
         "responseText": "SMITH THE BLACKSMITH: Howdy."
       },
       {
-        "text": "YOU: Hi.",
+        "text": "'Hi.'",
         "result": "none",
         "responseText": "SMITH THE BLACKSMITH: Howdy."
       }
@@ -61,7 +61,7 @@
     "greeting": "OLD GUY ACCARDI: Have you seen my dog? His name is Artie. Honestly, he’ll eat any food. He even eats the tops of strawberries. Also, he likes two clicks at the same time.",
     "options": [
       {
-        "text": "I have not seen him, but if I do, I'll run back here and let you know.",
+        "text": "'I have not seen him, but if I do, I'll run back here and let you know.'",
         "result": "inventoryItem",
         "id": "health_potion_consumable",
         "responseText": "OLD GUY ACCARDI: That's what's up. Thanks for telling me. As a reward, here is a sealed Health Potion I found earlier."
@@ -77,7 +77,7 @@
         "responseText": "Old Guy Accardi's smile turns to a deep and angry scowl. He says, 'You're going to eat those words,' makes a ton of noise to attract unwanted attention, and then throws a smoke bomb at his feet. He is now gone and in his place is something ready to kill you."
       },
       {
-        "text": "YOU: Yes. I saw him a few clicks back that way. Gave him a couple of pets on the noggin, I did.",
+        "text": "'Yes. I saw him a few clicks back that way. Gave him a couple of pets on the noggin, I did.'",
         "result": "item",
         "details": "gold",
         "amount": 15,
@@ -97,17 +97,17 @@
         "responseText": "Your mind and body are restored by a father's kindness and you gain +5 HP, and your vision is blurry from the delicious beer."
       },
       {
-        "text": "YOU: No thanks, I only like to Imagine the Dragon I am going to fight later.",
+        "text": "'No thanks, I only like to Imagine the Dragon I am going to fight later.'",
         "result": "none",
         "responseText": "TJ THE GOLDEN: Alright. Suit yourself, padre."
       },
       {
-        "text": "YOU: No thanks, I have no time to learn the saxophone.",
+        "text": "'No thanks, I have no time to learn the saxophone.'",
         "result": "none",
         "responseText": "TJ THE GOLDEN: They got a name for the winners in the world. I hope you have a name for when you lose."
       },
       {
-        "text": "YOU: Hell yeah I'd have a beer.",
+        "text": "'Hell yeah I'd have a beer.'",
         "result": "item",
         "details": "beer-health",
         "responseText": "Your mind and body are restored by a father's kindness and you gain +5 HP, and your vision is blurry from the delicious beer."
@@ -120,22 +120,22 @@
     "greeting": "FAIRWYN THE TONGUELESS: Oouu eeeahh ouu! Eerrr eh ah eehahee!!!",
     "options": [
       {
-        "text": "YOU: Did you say 'Look behind you, there is an enemy?'",
+        "text": "'Did you say 'Look behind you, there is an enemy?'",
         "result": "combat",
         "responseText": "There was, in fact, an enemy behind you."
       },
       {
-        "text": "YOU: Out of the way, peck!",
+        "text": "'Out of the way, peck!'",
         "result": "damage",
         "responseText": "You should have listened. An enemy appears, hits you with its claws, and runs away. You take damage."
       },
       {
-        "text": "YOU: What?",
+        "text": "'What?'",
         "result": "damage",
         "responseText": "You should have listened. An enemy appears, hits you with its claws, and runs away. You take damage."
       },
       {
-        "text": "YOU: I believe you with all of my soul even if I didn't understand what you said.",
+        "text": "'I believe you with all of my soul even if I didn't understand what you said.'",
         "result": "item",
         "details": "health",
         "responseText": "You must have rested well last night because you knew what he meant before his tongueless mouth started flapping. You take your weapon and dig it into the enemy's skull, immediately dropping it back into the hell it came from, and you gain +5 HP."
@@ -148,22 +148,22 @@
     "greeting": "EVIL TOM: My name is Evil Tom. I'm a really nice guy. 😃",
     "options": [
       {
-        "text": "YOU: I don't believe you, Evil Tom.",
+        "text": "'I don't believe you, Evil Tom.'",
         "result": "combat",
         "responseText": "EVIL TOM: Well, I never!"
       },
       {
-        "text": "YOU: Right on.",
+        "text": "'Right on.'",
         "result": "damage",
         "responseText": "Evil Tom sneezes and vanishes in a puff of smoke, leaving only a pair of old Crocs. The Crocs hurt to look at and deal 5 damage."
       },
       {
-        "text": "YOU: For sure.",
+        "text": "'For sure.'",
         "result": "damage",
         "responseText": "Evil Tom coughs so hard he accidentally punches you in the face and you take 5 damage."
       },
       {
-        "text": "YOU: You should change your name to Nice Tom then.",
+        "text": "'You should change your name to Nice Tom then.'",
         "result": "item",
         "details": "health",
         "responseText": "EVIL TOM: Thank you. There is a lack of kindness in this world, and it's nice to meet someone who is counter to the culture. Here is some fresh bread."
@@ -212,9 +212,9 @@
         "amount": 3
       },
       {
-        "text": "Decline taking a map.",
-        "responseText": "YOU: The only guidance I need is from the sun and the stars.",
-        "result": "none"
+        "text": "'The only guidance I need is from the sun and the stars.'",
+        "result": "none",
+        "responseText": "DANIEL THE MAP SELLER: The only guidance I need is from the sun and the stars."
       },
       {
         "text": "What about food?",
@@ -263,23 +263,23 @@
     "greeting": "RON VON ZAROVICH: Bobby Lasagna is not to be trusted. I would sooner trust Strahd Von Zarovich over Bobby L. She lives in a hut and she killed my friend who once turned into a T-Rex.",
     "options": [
       {
-        "text": "YOU: I am sorry for your loss.",
+        "text": "'I am sorry for your loss.'",
         "result": "item",
         "details": "health",
         "responseText": "RON VON ZAROVICH: Wow... Is this loss?"
       },
       {
-        "text": "YOU: I could kill her for you.",
+        "text": "'I could kill her for you.'",
         "details": "weapon",
         "responseText": "RON VON ZAROVICH: You could try. Here is some help. You'll end up vampire food, I fear. Good luck."
       },
       {
-        "text": "YOU: You shouldn't talk about your relations that way.",
+        "text": "'You shouldn't talk about your relations that way.'",
         "result": "none",
         "responseText": "RON VON ZAROVICH: You don't understand."
       },
       {
-        "text": "YOU: Well, if you think you are going to die, then maybe I can have your gold.",
+        "text": "'Well, if you think you are going to die, then maybe I can have your gold.'",
         "result": "item",
         "details": "gold",
         "amount": 15,
@@ -293,23 +293,23 @@
     "greeting": "MISS RIDDLESWORTH: You see me once in a minute, twice in a moment, but never in a thousand years. What am I?",
     "options": [
       {
-        "text": "YOU: A blink",
+        "text": "'A blink'",
         "result": "none",
         "responseText": "MISS RIDDLESWORTH: Wrong!"
       },
       {
-        "text": "YOU: The letter M",
+        "text": "'The letter M'",
         "result": "item",
         "details": "health",
         "responseText": "MISS RIDDLESWORTH: H- How did you guess?"
       },
       {
-        "text": "YOU: A memory",
+        "text": "'A memory'",
         "result": "none",
         "responseText": "MISS RIDDLESWORTH: Not a chance!"
       },
       {
-        "text": "YOU: The moon",
+        "text": "'The moon'",
         "result": "none",
         "responseText": "MISS RIDDLESWORTH: You could not be more incorrect."
       }
@@ -321,22 +321,22 @@
     "greeting": "MR RIDDLESWORTH: I build up castles, I tear down mountains. I make some men blind, I help others to see. What am I?",
     "options": [
       {
-        "text": "YOU: Time",
+        "text": "'Time'",
         "result": "none",
         "responseText": "MR RIDDLESWORTH: Incorrect!"
       },
       {
-        "text": "YOU: Fire",
+        "text": "'Fire'",
         "result": "none",
         "responseText": "MR RIDDLESWORTH: Well, that's not the answer."
       },
       {
-        "text": "YOU: Sand",
+        "text": "'Sand'",
         "details": "weapon",
         "responseText": "MR RIDDLESWORTH: You got it!"
       },
       {
-        "text": "YOU: Gold",
+        "text": "'Gold'",
         "result": "none",
         "responseText": "MR RIDDLESWORTH: Wrong!"
       }
@@ -358,7 +358,7 @@
       },
       { "text": "Gullible's Travels", "routeTitle": "Rabbit_Hash,_Kentucky" },
       {
-        "text": "YOU: No, thank you.",
+        "text": "'No, thank you.'",
         "result": "none",
         "responseText": "THE SCROLL DEALER: Be careful out there..."
       }
@@ -370,20 +370,20 @@
     "greeting": "LORD BRUENOR BATTLEHAMMER: Good sir, I am Lord Bruenor Battlehammer, Lord of these lands and heir of King Bort Battlehammer. I confess I am lost. I understand being lost and a Lord of this land seems like something a crazy beggar would say, but I implore you, I am telling the truth! You seem like you know these lands better than most. Please, tell me which direction would be Castle Battlehammer?",
     "options": [
       {
-        "text": "YOU: My Lord, go past those bushes over there and through the clearing. You will be able to see your castle in the distance.",
-        "result": "item",
-        "details": "health",
-        "responseText": "LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Come visit me anytime and we will dine on the flesh of wheat fields!"
+        "text": "'My Lord, go past those bushes over there and through the clearing. You will be able to see your castle in the distance.'",
+        "result": "inventoryItem",
+        "id": "turkey_leg_consumable",
+        "responseText": "LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Here is a Turkey Leg from my finest Turkey. Come by any time and we can dine on a full Turkey!"
       },
       {
-        "text": "YOU: This path will lead you there safely. You will just have to head the other direction, My Lord.",
+        "text": "'This path will lead you there safely. You will just have to head the other direction, My Lord.'",
         "responseText": "LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Come visit me anytime and I will show you how to harness the power of your highest ability!",
         "result": "special",
         "details": "recover",
         "amount": 1
       },
       {
-        "text": "YOU: These things happen, My Lord. However, I seem to be just as lost as you are, sadly.",
+        "text": "'These things happen, My Lord. However, I seem to be just as lost as you are, sadly.'",
         "result": "item",
         "details": "weapon",
         "responseText": "LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Come visit me anytime and we will improve that sword of yours!"
@@ -401,17 +401,21 @@
     "greeting": "Just ahead, you spot a one-story building with what looks like a tall structure built to the left. The structure resembles a lighthouse. There is a handmade sign attached to the structure that says 'The Lighthouse Tavern'. You infer the tall structure is where this place got its name. Walking into the bar, there are a few patrons: a farmhand, a dwarf, and a mysterious man sitting in the shadows. The barkeep smiles at you. The bartender appears to be selling Beer and Boiled Peanuts. As you approach the bar, the mysterious man appears to also have something for sale...",
     "options": [
       {
-        "text": "Buy a beer from the Barkeep",
+        "text": "Buy a beer from the Barkeep (10 Gold)",
         "responseText": "You drink the beer and start to feel lighter, happier, and very, very wavy.",
         "result": "item",
-        "details": "beer",
-        "amount": 3
+        "details": "beer-cost-blur",
+        "amount": 4,
+        "goldCost": 5,
+        "healthAmount": 10
       },
       {
-        "text": "Buy some boiled peanuts from the Barkeep",
-        "responseText": "You eat the peanuts. They are pretty good!",
+        "text": "Buy Hardtack (5 Gold)",
+        "responseText": "It sure is hard.",
         "result": "item",
-        "details": "health"
+        "details": "health-gold-loss",
+        "healthAmount": 10,
+        "goldCost": 5
       },
       {
         "text": "Buy the mysterious item from the Mysterious Man",
@@ -423,6 +427,64 @@
         "text": "Leave",
         "responseText": "THE BARKEEP: Be careful of the goblins on this road, traveler.",
         "result": "none"
+      }
+    ]
+  },
+  {
+    "id": "npc_015",
+    "name": "A Cute Dog",
+    "greeting": "OLD GUY ACCARDI'S DOG: woof",
+    "options": [
+      {
+        "text": "'Hey I think a guy is looking for you.'",
+        "result": "combat",
+        "responseText": "The dog doesn't appear to be a dog after all and morphs into a disgusting creature."
+      },
+      {
+        "text": "'Woof' back at ya.",
+        "result": "combat",
+        "responseText": "The dog doesn't appear to be a dog after all and morphs into a disgusting creature."
+      },
+      {
+        "text": "More like Fartie, heh.",
+        "result": "combat",
+        "responseText": "The dog doesn't appear to be a dog after all and morphs into a disgusting creature."
+      },
+      {
+        "text": "Attack the dog",
+        "result": "inventoryItem",
+        "id": "turkey_leg_consumable",
+        "responseText": "You must have smelled something fishy because the dog was an enemy in disguise. The 'dog' dies immediately and drops a Turkey Leg, for some reason."
+      }
+    ]
+  },
+    {
+    "id": "npc_016",
+    "name": "Dead Body",
+    "greeting": "In front of you, there is a dead body. You recognize the person as Dr. Agula, a doctor from your village. Dr. Agula does not appear to have decayed much which indicates this may have happened recently. You hear about witches in this area and wonder if thats what did him in. The Doctor is out, it seems.",
+    "options": [
+      {
+        "text": "Take the Doctors Padded Armor",
+        "result": "item",
+        "details": "shield",
+        "responseText": "You take the dead man's Padded Armor"
+      },
+      {
+        "text": "Take the Doctors Gold",
+        "result": "item",
+        "details": "gold",
+        "amount": 19,
+        "responseText": "You take the dead man's gold."
+      },
+      {
+        "text": "Dig through some ditches and bury the Doctor. Say a prayer, swear you will burn through whatever witches did this to the Doctor and move on.",
+        "result": "none",
+        "responseText": "'Rest in Peace, Rob Agula.'"
+      },
+      {
+        "text": "'Hello'",
+        "result": "none",
+        "responseText": "Nothing Happens because its a dead body."
       }
     ]
   }

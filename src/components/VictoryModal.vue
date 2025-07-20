@@ -117,6 +117,10 @@ const share = () => {
 };
 
 function copyLogToClipboard() {
+  const rawLog = props.gameLog
+    .map((entry) => entry.text.replace(/<[^>]*>/g, ""))
+    .join("\n");
+
   navigator.clipboard
     .writeText(rawLog)
     .then(() => showAlertAsBanner("Game log copied to clipboard!", "success"))

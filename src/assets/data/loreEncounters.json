@@ -59,7 +59,7 @@
         "text": "Pick it out of the crack and use it for a glowing herb stew",
         "result": "item",
         "details": "health",
-        "responseText": "YOU: This is very good and VERY minty stew."
+        "responseText": "'This is very good and VERY minty stew.'"
       },
       {
         "text": "Eat it",
@@ -92,12 +92,12 @@
       {
         "text": "Throw a middle finger at the rock",
         "result": "none",
-        "responseText": "YOU: What an ugly rock."
+        "responseText": "'What an ugly rock.'"
       },
       {
         "text": "Appreciate the rock for what it is and move on.",
         "result": "none",
-        "responseText": "YOU: I must continue on."
+        "responseText": "'I must continue on.'"
       },
       {
         "text": "Pray upon the rock and thank the Gods for safety and health",
@@ -130,7 +130,7 @@
       {
         "text": "Leave it alone",
         "result": "none",
-        "responseText": "YOU: I have no use for violently shaking rocks, to be quite honest."
+        "responseText": "'I have no use for violently shaking rocks, to be quite honest.'"
       }
     ]
   },
@@ -180,14 +180,14 @@
         "result": "none",
         "responseText": "There is nothing behind the vending machine."
       },
- {
-      "text": "Press upgrade without placing your weapon on the shelf.",
-      "result": "item",
-      "details": "poison",
-      "amount": 5, 
-      "damage": 2,  
-      "responseText": "The vending machine fires on and violently spits out a glass vile full of a green liquid. It shatters on your face. It appears to be poison."
-    }
+      {
+        "text": "Press upgrade without placing your weapon on the shelf.",
+        "result": "item",
+        "details": "poison",
+        "amount": 5,
+        "damage": 2,
+        "responseText": "The vending machine fires on and violently spits out a glass vial full of a green liquid. It shatters on your face. It appears to be poison."
+      }
     ]
   },
   {
@@ -208,7 +208,7 @@
       },
       {
         "text": "Admire the treasure chest from afar",
-        "responseText": "YOU: This is a nice treasure chest.",
+        "responseText": "'This is a nice treasure chest.'",
         "result": "none"
       },
       {
@@ -372,7 +372,7 @@
       },
       { "text": "Oceanside Caverns", "routeTitle": "Great_Barrier_Reef" },
       {
-        "text": "YOU: No, thank you.",
+        "text": "No, thank you.",
         "result": "none",
         "responseText": "THE SCROLL DEALER: Be careful out there..."
       }
@@ -527,10 +527,45 @@
       },
       {
         "text": "Don't bet. Keep the gold piece and leave the tavern.",
-        "responseText": "YOU: I can't leave my life up to chance.",
+        "responseText": "'I can't leave my life up to chance.'",
         "result": "item",
         "details": "gold",
         "amount": 1
+      }
+    ]
+  },
+  {
+    "id": "lore_016",
+    "text": "There appears to be a stone block with a hole carved into it. The hole appears to be worn away while the rest of the block seems to be smooth. While staring at the block, you hear the sound of a voice that shouts 'Halt, trespasser! If you come any closer, you better tell me how fast you want to die!'",
+    "options": [
+      {
+        "text": "Test the voice and take one small step forward.",
+        "result": "item",
+        "details": "poison",
+        "amount": 10,
+        "damage": 1,
+        "responseText": "The voice shouts 'I warned you!' and spits a small dose of poison from the hole in the stone block."
+      },
+      {
+        "text": "Decide the voice is bluffing and start running toward the stone block with your weapon.",
+        "result": "item",
+        "details": "poison",
+        "amount": 10,
+        "damage": 2,
+        "responseText": "The voice shouts 'I warned you!' and spits a medium dose of poison from the hole in the stone block."
+      },
+      {
+        "text": "'Oh yeah? What are you going to do... spit a large dose of poison from that hole in the stone block?'",
+        "result": "item",
+        "details": "poison",
+        "amount": 15,
+        "damage": 2,
+        "responseText": "The voice spits a large dose of poison from the hole in the stone block."
+      },
+      {
+        "text": "Turn around and walk away.",
+        "result": "none",
+        "responseText": "The voice yells 'Yeah, you better walk away!'"
       }
     ]
   }

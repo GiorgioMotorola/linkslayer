@@ -29,6 +29,8 @@
     @show-tips="showTipsModal = true"
     :game-chain="chain"
     @open-inventory-modal="openInventoryModal"
+    :is-cloak-active="isCloakActive"
+    :cloak-clicks-remaining="cloakClicksRemaining"
   />
   />
 
@@ -111,6 +113,8 @@
         :inventory="inventory"
         @close="closeInventoryModal"
         @use-item="handleUseInventoryItem"
+        :is-cloak-active="isCloakActive"
+        :cloak-clicks-remaining="cloakClicksRemaining"
       />
     </div>
   </div>
@@ -195,9 +199,15 @@ const showTipsModal = ref(false);
 const poisonedClicksLeft = ref(0);
 const poisonDamagePerClick = ref(0);
 const HEALTH_POTION_HEAL_AMOUNT = 30;
+const TURKEY_LEG_HEAL_AMOUNT = 6;
+const isCloakActive = ref(false);
+const CLOAK_DURATION = 10;
+const cloakClicksRemaining = ref(0);
 const inventory = ref({
   compass: 0,
   healthPotions: 0,
+  turkeyLegs: 0,
+  invisibilityCloaks: 0,
 });
 
 const isInventoryModalOpen = ref(false);
@@ -243,6 +253,20 @@ watch(clickCount, (newClicks) => {
   if (newClicks > 0 && newClicks % 15 === 0 && !showRestModal.value) {
     showShopModal.value = true;
   }
+
+  if (isCloakActive.value) {
+    cloakClicksRemaining.value--;
+    log(
+      `✨ Cloak of Invisibility active: ${cloakClicksRemaining.value} clicks remaining.`
+    );
+
+    if (cloakClicksRemaining.value <= 0) {
+      isCloakActive.value = false;
+      cloakClicksRemaining.value = 0;
+      log(`👻 The Cloak of Invisibility fades away.`);
+    }
+  }
+
   if (blurClicksLeft.value > 0) {
     blurClicksLeft.value--;
     log(
@@ -264,6 +288,8 @@ watch(clickCount, (newClicks) => {
       encounter.value = null;
     }
   }
+  // Remove the old empty if (isCloakActive.value && cloakClicksRemaining.value > 0) {} block
+  // as the logic is now handled above.
 });
 
 const timer = ref(0);
@@ -326,6 +352,10 @@ async function callHandleClick(title) {
       logEnemyAction,
       clearInterval: (intervalId) => clearInterval(intervalId),
     },
+    isCloakActive,
+    cloakClicksRemaining,
+    setIsCloakActive: (value) => (isCloakActive.value = value),
+    setCloakClicksRemaining: (value) => (cloakClicksRemaining.value = value),
   });
 }
 
@@ -603,6 +633,7 @@ function handleShopPurchase(item) {
         log(`🧼 ${playerName.value} sobered up.`);
         break;
 
+      // CONSOLIDATED INVENTORY ITEM CASE:
       case "inventoryItem":
         if (item.details === "compass") {
           inventory.value.compass++;
@@ -610,8 +641,17 @@ function handleShopPurchase(item) {
         } else if (item.details === "healthPotion") {
           inventory.value.healthPotions++;
           log(`➕ ${playerName.value} acquired a Health Potion!`);
+        } else if (item.details === "turkeyLeg") {
+          // Make sure turkeyLegs is here if you have it
+          inventory.value.turkeyLegs++;
+          log(`🍗 ${playerName.value} acquired a Turkey Leg!`);
+        } else if (item.details === "invisibilityCloak") {
+          // This line will now be reached and correctly increment the value.
+          inventory.value.invisibilityCloaks++;
+          log(`👻 ${playerName.value} acquired a Cloak of Invisibility!`);
+          console.log("Inventory after cloak purchase:", inventory.value);
         }
-        break;
+        break; // Ensure this break is at the end of the consolidated case
 
       default:
         break;
@@ -646,9 +686,13 @@ function useCompass() {
     return;
   }
 
-   if (encounter.value && encounter.value.type === "combat" && isBoss(encounter.value.enemy)) {
+  if (
+    encounter.value &&
+    encounter.value.type === "combat" &&
+    isBoss(encounter.value.enemy)
+  ) {
     log(`🚫 You cannot use the Arcane Compass during a boss battle!`);
-    return; // Stop the function execution
+    return;
   }
 
   const startArticle = fullChain[0];
@@ -711,6 +755,36 @@ const useHealthPotion = () => {
   }
 };
 
+const useTurkeyLeg = () => {
+  if (inventory.value.turkeyLegs > 0) {
+    inventory.value.turkeyLegs--;
+    playerHP.value = playerHP.value + TURKEY_LEG_HEAL_AMOUNT;
+    log(
+      `🍖 You consumed a Turkey Leg and recovered ${TURKEY_LEG_HEAL_AMOUNT} HP! Your HP is now ${playerHP.value}.`
+    );
+    closeInventoryModal();
+  } else {
+    log("You don't have any Turkey Legs to use.");
+  }
+};
+const useInvisibilityCloak = () => {
+  if (isCloakActive.value) {
+    log(`👻 The Cloak of Invisibility is already active!`);
+    return;
+  }
+  if (inventory.value.invisibilityCloaks > 0) {
+    inventory.value.invisibilityCloaks--;
+    isCloakActive.value = true;
+    cloakClicksRemaining.value = CLOAK_DURATION;
+    log(
+      `👻 You don the Cloak of Invisibility! You will avoid non-boss encounters for ${CLOAK_DURATION} clicks.`
+    );
+    closeInventoryModal();
+  } else {
+    log(`👻 You don't have a Cloak of Invisibility.`);
+  }
+};
+
 function markBossDefeated() {
   bossDefeated.value = true;
   current.value = chain[journeyLength.value - 1];
@@ -733,15 +807,18 @@ function handleUseInventoryItem(itemType) {
     useCompass();
   } else if (itemType === "healthPotion") {
     useHealthPotion();
+  } else if (itemType === "turkeyLeg") {
+    useTurkeyLeg();
+  } else if (itemType === "invisibilityCloak") {
+    useInvisibilityCloak();
   }
 }
 
 function resetGame() {
-  clearInterval(timerInterval); // Stop the current timer
+  clearInterval(timerInterval);
 
-  // Reset all game state variables
-  const newChain = getRandomChain(journeyLength.value); // Generate a new chain
-  chain.splice(0, chain.length, ...newChain); // Efficiently update the reactive array
+  const newChain = getRandomChain(journeyLength.value);
+  chain.splice(0, chain.length, ...newChain);
   current.value = chain[0];
   weaponBonus.value = 0;
   poisonedClicksLeft.value = 0;
@@ -754,15 +831,12 @@ function resetGame() {
   totalSpecialsUsed.value = 0;
   path.value = [current.value];
   encounter.value = null;
-  // playerHP.value needs to be reset appropriately for class selection to work again
-  // Set it to an initial value that will trigger class selection, e.g., 0,
-  // then the class selection will set it to playerClass.maxHP
-  playerHP.value = 0; // Or -1 if that's what triggers your class selection logic
+  playerHP.value = 0;
   enemyHP.value = DEFAULT_ENEMY_HP;
   nextEnemyAttack.value = null;
   enemyNextAction.value = "attack";
   specialUsesLeft.value = 5;
-  playerClass.value = null; // This is key to re-showing ClassSelect
+  playerClass.value = null;
   gameLog.value = [];
   encounterMessage.value = "";
   playerName.value = "";
@@ -778,23 +852,23 @@ function resetGame() {
   showRestModal.value = false;
   longRestsUsed.value = 0;
   bossOverlay.value = false;
-  defeated.value = false; // Ensure this is explicitly set to false
+  defeated.value = false;
   blurClicksLeft.value = 0;
   timer.value = 0;
   playerGold.value = 0;
   showShopModal.value = false;
-  inventory.value.compass = 0; // Access .value for refs
-  inventory.value.healthPotions = 0; // Reset health potions too
-  // Fix: Correctly update the ref's value, not reassign the ref itself
+  inventory.value.compass = 0;
+  inventory.value.healthPotions = 0;
   hasReachedFinalArticle.value = false;
-  showTipsModal.value = false; // Reset tips modal as well
+  showTipsModal.value = false;
+  inventory.value.invisibilityCloaks = 0;
+  isCloakActive.value = false;
+  cloakClicksRemaining.value = 0;
 
-  // Restart the timer
   timerInterval = setInterval(() => {
     timer.value++;
   }, 1000);
 
-  // Scroll to top
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 

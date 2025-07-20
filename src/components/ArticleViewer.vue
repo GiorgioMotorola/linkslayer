@@ -193,7 +193,7 @@ onMounted(load);
   padding: 1.5rem;
   background-color: #ffffff;
   max-width: 2000px;
-  margin-bottom: 20rem;
+  margin-bottom: 25rem;
   z-index: 10;
 }
 

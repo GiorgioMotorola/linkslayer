@@ -13,6 +13,10 @@ export async function handleClick({
   modalState,
   enemyState,
   utilityFunctions,
+  isCloakActive,
+  cloakClicksRemaining,
+  setIsCloakActive,
+  setCloakClicksRemaining,
 }) {
   const { journeyLength } = gameData;
 
@@ -38,6 +42,27 @@ export async function handleClick({
     utilityFunctions.log(`🎯 You have reached ${title.replaceAll("_", " ")}!`);
   }
 
+  let encounterPreventedByCloak = false;
+  if (isCloakActive.value) {
+    setCloakClicksRemaining(cloakClicksRemaining.value - 1);
+
+    if (cloakClicksRemaining.value <= 0) {
+      setIsCloakActive(false);
+      utilityFunctions.log("✨ The Cloak of Invisibility fades away.");
+    } else {
+      utilityFunctions.log(
+        `✨ Cloak of Invisibility active: ${cloakClicksRemaining.value} clicks remaining.`
+      );
+    }
+
+    if (title !== finalTarget) {
+      encounterPreventedByCloak = true;
+      utilityFunctions.log(
+        "👻 You slip past unseen thanks to the Cloak of Invisibility."
+      );
+    }
+  }
+
   if (
     title === finalTarget &&
     playerState.currentTargetIndex.value === journeyLength.value - 1 &&
@@ -45,6 +70,7 @@ export async function handleClick({
     !gameData.bossDefeated.value
   ) {
     modalState.showRestModal.value = false;
+    modalState.showShopModal.value = false;
     modalState.bossOverlay.value = true;
     const boss = getRandomBoss();
     gameData.selectedBossType.value = boss.type;
@@ -77,7 +103,8 @@ export async function handleClick({
 
   if (
     playerState.clickCount.value > 0 &&
-    playerState.clickCount.value % 11 === 0
+    playerState.clickCount.value % 11 === 0 &&
+    !encounterPreventedByCloak
   ) {
     modalState.showRestModal.value = true;
     return;
@@ -85,13 +112,18 @@ export async function handleClick({
   if (
     playerState.clickCount.value > 0 &&
     playerState.clickCount.value % 15 === 0 &&
-    !modalState.showRestModal.value
+    !modalState.showRestModal.value &&
+    !encounterPreventedByCloak
   ) {
     modalState.showShopModal.value = true;
     return;
   }
 
-  if (title !== finalTarget && Math.random() < 0.4) {
+  if (
+    title !== finalTarget &&
+    !encounterPreventedByCloak &&
+    Math.random() < 0.4
+  ) {
     const roll = rollEncounter();
     let fullEncounter = null;
 
@@ -151,6 +183,10 @@ export async function handleClick({
 
       return;
     }
+  }
+
+  if (encounterPreventedByCloak) {
+    enemyState.encounter.value = null;
   }
 
   if (title === finalTarget && gameData.bossDefeated.value) {

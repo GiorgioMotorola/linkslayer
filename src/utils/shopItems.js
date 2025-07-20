@@ -2,12 +2,13 @@
 
 export const shopItems = [
   {
-    id: "potion_healing",
-    name: "Potion of Healing",
+    id: "health_potion_consumable",
+    name: "Health Potion",
     cost: 15,
-    effect: "health",
-    amount: 15,
-    description: "Restores 15 HP instantly.",
+    effect: "inventoryItem",
+    details: "healthPotion",
+    amount: 30,
+    description: "Consumable. Recovers 30 HP when used from inventory.",
   },
   {
     id: "whetstone",
@@ -42,12 +43,11 @@ export const shopItems = [
     description: "Skips you to a random non-start/end article. Consumable.",
   },
   {
-    id: "health_potion_consumable",
-    name: "Health Potion",
-    cost: 15,
+    id: "invisibility_cloak",
+    name: "Cloak of Invisibility",
+    cost: 1,
     effect: "inventoryItem",
-    details: "healthPotion",
-    amount: 30,
-    description: "Consumable. Recovers 30 HP when used from inventory.",
+    details: "invisibilityCloak",
+    description: "Consumable. Avoids non-boss encounters for 10 clicks.",
   },
 ];

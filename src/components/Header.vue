@@ -35,7 +35,7 @@
             </button>
           </div>
           <div class="enemy">
-            {{ formattedTitle }} {{ props.encounter.enemy.name }} (HP:
+            💀 (HP:
             {{ enemyHP }})
           </div>
         </div>
@@ -445,9 +445,11 @@ watch(
       } else if (newEncounter.enemy?.message) {
         fullText = newEncounter.enemy.message;
       } else {
-        fullText = `🗡️ You've been attacked by <strong>${
+      fullText = `🗡️ You've been attacked by <strong>${
           formattedTitle.value
-        }</strong> ${newEncounter.enemy.name ?? ""}. What do you do?`;
+        }</strong> ${newEncounter.enemy.name ?? ""}. (HP: ${
+          newEncounter.enemy.currentHP
+        }) What do you do?`;
       }
 
       typedLine.value = "";
@@ -656,7 +658,7 @@ header {
 }
 
 .all-stats-row-box {
-  background-color: #ccc5c5;
+  background-color: #d4dddd;
   border: 1px solid #555;
   border-radius: 8px;
   padding: 0.8rem 1rem;
@@ -831,8 +833,8 @@ button:hover {
 }
 
 .enemy {
-  color: #02204d;
-  font-weight: 600;
+  color: #990702;
+  font-weight: 400;
   font-size: 20px;
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -1179,18 +1181,18 @@ button:hover {
     color: inherit;
     text-shadow: none;
   }
-  /* Color and shadow appear here and reach peak scale */
+
   50% {
     transform: scale(1.3);
-    color: #042f8b; /* Blue color */
-    text-shadow: 0 0 10px #043a8ba1; /* Blue shadow */
+    color: #042f8b; 
+    text-shadow: 0 0 10px #043a8ba1; 
   }
-  /* Hold the color and shadow at this percentage */
+
   80% {
-    /* <-- NEW: Hold the color and shadow until 80% */
-    transform: scale(1.1); /* Slightly reduce scale as it holds */
-    color: #042f8b; /* Maintain blue color */
-    text-shadow: 0 0 8px #043a8ba1; /* Maintain blue shadow, perhaps slightly less intense */
+
+    transform: scale(1.1); 
+    color: #042f8b; 
+    text-shadow: 0 0 8px #043a8ba1; 
   }
   100% {
     transform: scale(1);
@@ -1205,18 +1207,18 @@ button:hover {
     color: inherit;
     text-shadow: none;
   }
-  /* Color and shadow appear here and reach peak scale */
+
   50% {
     transform: scale(1.3);
-    color: #e26060; /* Red color */
-    text-shadow: 0 0 10px rgba(241, 110, 100, 0.9); /* Red shadow */
+    color: #e26060; 
+    text-shadow: 0 0 10px rgba(241, 110, 100, 0.9);
   }
-  /* Hold the color and shadow at this percentage */
+
   80% {
-    /* <-- NEW: Hold the color and shadow until 80% */
-    transform: scale(1.1); /* Slightly reduce scale as it holds */
-    color: #e26060; /* Maintain red color */
-    text-shadow: 0 0 8px rgba(241, 110, 100, 0.7); /* Maintain red shadow, perhaps slightly less intense */
+ 
+    transform: scale(1.1); 
+    color: #e26060;
+    text-shadow: 0 0 8px rgba(241, 110, 100, 0.7); 
   }
   100% {
     transform: scale(1);
