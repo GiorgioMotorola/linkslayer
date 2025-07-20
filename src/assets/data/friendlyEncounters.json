@@ -7,8 +7,8 @@
       {
         "text": "'Yes sir, I did.'",
         "result": "item",
-        "details": "weapon",
-        "responseText": "OLD MAN FLYNN: I knew it! I knew someone would know! You will need a better weapon than that. Let me give it a fair polishing, my son."
+        "details": "shield",
+        "responseText": "OLD MAN FLYNN: I knew it! I knew someone would know! That brace looks like it needs a fair polishing. Let me give it a fair polishing, my son."
       },
       {
         "text": "Ignore him and walk away",
@@ -35,8 +35,8 @@
       {
         "text": "'Howdy'",
         "result": "item",
-        "details": "weapon",
-        "responseText": "SMITH THE BLACKSMITH: Hello. Here is a weapon upgrade."
+        "details": "shield",
+        "responseText": "SMITH THE BLACKSMITH: You can see me?! No one has talked to me or looked at me in 50 years. Oh heavens this is incredible. I spend my days and nights sleeping and tending to various pieces of armor. All day. All Night. You have given me hope. Here, take this bracer. Its my best yet."
       },
       {
         "text": "'Hello?'",
@@ -433,7 +433,7 @@
   {
     "id": "npc_015",
     "name": "A Cute Dog",
-    "greeting": "OLD GUY ACCARDI'S DOG: woof",
+    "greeting": "'woof'",
     "options": [
       {
         "text": "'Hey I think a guy is looking for you.'",
