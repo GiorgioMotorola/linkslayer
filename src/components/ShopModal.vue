@@ -2,7 +2,7 @@
   <div class="shop-overlay">
     <div class="shop-modal">
       <div class="shop-desc">
-        BELETHOR: "Some may call these treasures. Me, I call them junk."
+        {{ shopkeeperGreeting }}
       </div>
       <div class="shop-items">
         <div class="player-gold">You have {{ playerGold }} Gold</div>
@@ -22,13 +22,16 @@
               >Restores {{ item.amount }} Health.</span
             >
             <span v-else-if="item.effect === 'weapon'">
-              Increases Weapon Damage by {{ item.amount }}.
+              Increases Weapon Damage by {{ item.amount }} (You have
+              <strong>+{{ weaponBonus }}</strong> Weapon Bonus).
             </span>
             <span v-else-if="item.effect === 'shield'">
-              Adds {{ item.amount }} Defense.
+              Adds {{ item.amount }} Defense (You have
+              <strong>+{{ shieldBonus }}</strong> Defense Bonus).
             </span>
             <span v-else-if="item.effect === 'special'">
-              Grants {{ item.amount }} Class Ability Charge.
+              Grants {{ item.amount }} Class Ability Charge (You have
+              <strong>{{ specialUsesLeft }}</strong> Charges Left).
             </span>
             <span v-else-if="item.effect === 'inventoryItem'">
               <span v-if="item.details === 'compass'">
@@ -64,11 +67,15 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { getRandomShopPhrase } from "@/utils/shopKeeperPhrases";
 
 const props = defineProps({
   playerGold: Number,
   shopItems: Array,
+  weaponBonus: Number,
+  shieldBonus: Number, 
+  specialUsesLeft: Number,
 });
 
 const emit = defineEmits(["buy", "close"]);
@@ -76,6 +83,11 @@ const emit = defineEmits(["buy", "close"]);
 const toastMessage = ref(null);
 const isToastError = ref(false);
 let toastTimeout = null;
+const shopkeeperGreeting = ref("");
+
+onMounted(() => {
+  shopkeeperGreeting.value = getRandomShopPhrase();
+});
 
 const buyItem = (item) => {
   if (!item) {

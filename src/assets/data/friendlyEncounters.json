@@ -402,7 +402,7 @@
     "options": [
       {
         "text": "Buy a beer from the Barkeep (10 Gold)",
-        "responseText": "You drink the beer and start to feel lighter, happier, and very, very wavy.",
+        "responseText": "'I'll take a Beer, please.'.",
         "result": "item",
         "details": "beer-cost-blur",
         "amount": 4,
@@ -411,7 +411,7 @@
       },
       {
         "text": "Buy Hardtack (5 Gold)",
-        "responseText": "It sure is hard.",
+        "responseText": "I'll take a Hardtack, please.",
         "result": "item",
         "details": "health-gold-loss",
         "healthAmount": 10,

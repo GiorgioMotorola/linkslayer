@@ -108,6 +108,9 @@
         @buy="handleShopPurchase"
         @close="showShopModal = false"
         :shopItems="shopItems"
+        :weaponBonus="weaponBonus"
+        :shieldBonus="shieldBonus"
+        :specialUsesLeft="specialUsesLeft"
       />
 
       <InventoryModal
@@ -254,7 +257,6 @@ watch(playerHP, (newVal) => {
   }
 });
 
-
 watch(clickCount, (newClicks) => {
   if (newClicks > 0 && newClicks % 11 === 0) {
     showRestModal.value = true;
@@ -306,12 +308,18 @@ watch(clickCount, (newClicks) => {
     // Add these console.log statements
     console.log("DEBUG: Applying poison damage.");
     console.log("DEBUG: playerHP.value before poison:", playerHP.value);
-    console.log("DEBUG: poisonDamagePerClick.value:", poisonDamagePerClick.value);
+    console.log(
+      "DEBUG: poisonDamagePerClick.value:",
+      poisonDamagePerClick.value
+    );
 
     // Ensure poisonDamagePerClick.value is a number right before use
     const effectivePoisonDamage = Number(poisonDamagePerClick.value);
     if (isNaN(effectivePoisonDamage)) {
-      console.error("CRITICAL ERROR: poisonDamagePerClick.value is NaN before application! Resetting to 0.", poisonDamagePerClick.value);
+      console.error(
+        "CRITICAL ERROR: poisonDamagePerClick.value is NaN before application! Resetting to 0.",
+        poisonDamagePerClick.value
+      );
       poisonDamagePerClick.value = 0; // Reset it to a safe value
       playerHP.value = Math.max(0, playerHP.value - 0); // Apply 0 damage
     } else {

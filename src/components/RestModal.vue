@@ -2,8 +2,7 @@
   <div class="rest-overlay">
     <div class="rest-modal">
       <div class="rest-desc">
-        The sky emits a gloam only owned by a finishing sunset. What do you do?
-        🌙
+        {{ restGreeting }}
       </div>
       <button @click="$emit('rest', 'short')" :disabled="shortRestsUsed >= 4">
         > You find a good leaning tree, eat an apple and take a load off for a
@@ -21,6 +20,16 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from "vue";
+import { getRandomRestPhrase } from "@/utils/restPhrases";
+
+const restGreeting = ref("");
+
+onMounted(() => {
+  restGreeting.value = getRandomRestPhrase();
+});
+
+
 defineProps(["shortRestsUsed", "longRestsUsed"]);
 defineEmits(["rest"]);
 </script>
