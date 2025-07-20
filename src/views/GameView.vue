@@ -288,8 +288,6 @@ watch(clickCount, (newClicks) => {
       encounter.value = null;
     }
   }
-  // Remove the old empty if (isCloakActive.value && cloakClicksRemaining.value > 0) {} block
-  // as the logic is now handled above.
 });
 
 const timer = ref(0);
@@ -633,7 +631,6 @@ function handleShopPurchase(item) {
         log(`🧼 ${playerName.value} sobered up.`);
         break;
 
-      // CONSOLIDATED INVENTORY ITEM CASE:
       case "inventoryItem":
         if (item.details === "compass") {
           inventory.value.compass++;
@@ -642,16 +639,14 @@ function handleShopPurchase(item) {
           inventory.value.healthPotions++;
           log(`➕ ${playerName.value} acquired a Health Potion!`);
         } else if (item.details === "turkeyLeg") {
-          // Make sure turkeyLegs is here if you have it
           inventory.value.turkeyLegs++;
           log(`🍗 ${playerName.value} acquired a Turkey Leg!`);
         } else if (item.details === "invisibilityCloak") {
-          // This line will now be reached and correctly increment the value.
           inventory.value.invisibilityCloaks++;
           log(`👻 ${playerName.value} acquired a Cloak of Invisibility!`);
           console.log("Inventory after cloak purchase:", inventory.value);
         }
-        break; // Ensure this break is at the end of the consolidated case
+        break; 
 
       default:
         break;
