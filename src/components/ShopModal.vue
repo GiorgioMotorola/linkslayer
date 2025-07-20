@@ -43,6 +43,9 @@
               <span v-else-if="item.details === 'invisibilityCloak'">
                 Avoids non-boss encounters for 10 clicks.
               </span>
+              <span v-else-if="item.details === 'stickItem'">
+                Doesn't do much. It's just a cool stick that I found.
+              </span>
             </span>
             <span v-else-if="item.effect === 'blurCure'">
               Sober up instantly, clearing blur effects.
@@ -74,7 +77,7 @@ const props = defineProps({
   playerGold: Number,
   shopItems: Array,
   weaponBonus: Number,
-  shieldBonus: Number, 
+  shieldBonus: Number,
   specialUsesLeft: Number,
 });
 

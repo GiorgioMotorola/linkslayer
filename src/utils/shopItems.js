@@ -50,4 +50,12 @@ export const shopItems = [
     details: "invisibilityCloak",
     description: "Consumable. Avoids non-boss encounters for 10 clicks.",
   },
+    {
+    id: "stick_item",
+    name: "A Cool Stick That I Found",
+    cost: 1,
+    effect: "inventoryItem",
+    details: "stickItem",
+    description: "Doesn't do much. It's just a cool stick that I found.",
+  },
 ];

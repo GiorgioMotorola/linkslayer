@@ -35,13 +35,18 @@
             {{ isCloakActive ? `Active (${cloakClicksRemaining})` : "Use" }}
           </button>
         </div>
+        <div v-if="inventory.stickItem > 0" class="item-slot">
+          <span class="item-name">A Cool Stick (hangs out in your inventory)</span>
+          <span class="item-quantity">x{{ inventory.stickItem }}</span>
+        </div>
 
         <div
           v-if="
             inventory.compass === 0 &&
             inventory.healthPotions === 0 &&
             inventory.turkeyLegs === 0 &&
-            inventory.invisibilityCloaks === 0
+            inventory.invisibilityCloaks === 0 &&
+            inventory.stickItem === 0
           "
           class="item-slot no-items-game-style"
         >

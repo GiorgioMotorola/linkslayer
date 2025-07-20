@@ -215,6 +215,7 @@ const inventory = ref({
   healthPotions: 0,
   turkeyLegs: 0,
   invisibilityCloaks: 0,
+  stickItem: 0,
 });
 
 const isInventoryModalOpen = ref(false);
@@ -301,11 +302,8 @@ watch(clickCount, (newClicks) => {
   }
 });
 
-// src/views/GameView.vue (around line 304)
 watch(clickCount, (newClicks) => {
-  // ...
   if (poisonedClicksLeft.value > 0) {
-    // Add these console.log statements
     console.log("DEBUG: Applying poison damage.");
     console.log("DEBUG: playerHP.value before poison:", playerHP.value);
     console.log(
@@ -313,26 +311,23 @@ watch(clickCount, (newClicks) => {
       poisonDamagePerClick.value
     );
 
-    // Ensure poisonDamagePerClick.value is a number right before use
     const effectivePoisonDamage = Number(poisonDamagePerClick.value);
     if (isNaN(effectivePoisonDamage)) {
       console.error(
         "CRITICAL ERROR: poisonDamagePerClick.value is NaN before application! Resetting to 0.",
         poisonDamagePerClick.value
       );
-      poisonDamagePerClick.value = 0; // Reset it to a safe value
-      playerHP.value = Math.max(0, playerHP.value - 0); // Apply 0 damage
+      poisonDamagePerClick.value = 0;
+      playerHP.value = Math.max(0, playerHP.value - 0);
     } else {
       playerHP.value = Math.max(0, playerHP.value - effectivePoisonDamage);
     }
 
-    poisonedClicksLeft.value--; // This needs to happen regardless
+    poisonedClicksLeft.value--;
     log(
       `🤢 You are poisoned. You lose ${effectivePoisonDamage} HP. ${poisonedClicksLeft.value} clicks left until the poison wears off.`
     );
-    // ... rest of your poison logic
   }
-  // ...
 });
 
 const timer = ref(0);
@@ -688,17 +683,20 @@ function handleShopPurchase(item) {
       case "inventoryItem":
         if (item.details === "compass") {
           inventory.value.compass++;
-          log(`🧭 ${playerName.value} acquired an Arcane Compass!`);
+          log(`🧭 ${playerName.value} acquired an Arcane Compass.`);
         } else if (item.details === "healthPotion") {
           inventory.value.healthPotions++;
-          log(`➕ ${playerName.value} acquired a Health Potion!`);
+          log(`➕ ${playerName.value} acquired a Health Potion.`);
         } else if (item.details === "turkeyLeg") {
           inventory.value.turkeyLegs++;
-          log(`🍗 ${playerName.value} acquired a Turkey Leg!`);
+          log(`🍗 ${playerName.value} acquired a Turkey Leg.`);
         } else if (item.details === "invisibilityCloak") {
           inventory.value.invisibilityCloaks++;
-          log(`👻 ${playerName.value} acquired a Cloak of Invisibility!`);
+          log(`👻 ${playerName.value} acquired a Cloak of Invisibility.`);
           console.log("Inventory after cloak purchase:", inventory.value);
+        } else if (item.details === "stickItem") {
+          inventory.value.stickItem++;
+          log(`😎 ${playerName.value} acquired a Cool Stick.`);
         }
         break;
 
@@ -817,7 +815,6 @@ const useTurkeyLeg = () => {
     log(
       `🍖 You consumed a Turkey Leg and recovered ${TURKEY_LEG_HEAL_AMOUNT} HP! Your HP is now ${playerHP.value}.`
     );
-    closeInventoryModal();
   } else {
     log("You don't have any Turkey Legs to use.");
   }
@@ -834,7 +831,6 @@ const useInvisibilityCloak = () => {
     log(
       `👻 You don the Cloak of Invisibility! You will avoid non-boss encounters for ${CLOAK_DURATION} clicks.`
     );
-    closeInventoryModal();
   } else {
     log(`👻 You don't have a Cloak of Invisibility.`);
   }
@@ -921,6 +917,7 @@ function resetGame() {
   cloakClicksRemaining.value = 0;
   combatWinsSinceLastCapIncrease.value = 0;
   hpCapBonus.value = 0;
+  inventory.value.stickItem = 0;
 
   timerInterval = setInterval(() => {
     timer.value++;
