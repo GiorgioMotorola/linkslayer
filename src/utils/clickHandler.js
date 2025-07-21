@@ -15,8 +15,6 @@ export async function handleClick({
   utilityFunctions,
   isCloakActive,
   cloakClicksRemaining,
-  setIsCloakActive,
-  setCloakClicksRemaining,
 }) {
   const { journeyLength } = gameData;
 
@@ -43,24 +41,15 @@ export async function handleClick({
   }
 
   let encounterPreventedByCloak = false;
-  if (isCloakActive.value) {
-    setCloakClicksRemaining(cloakClicksRemaining.value - 1);
 
-    if (cloakClicksRemaining.value <= 0) {
-      setIsCloakActive(false);
-      utilityFunctions.log("✨ The Cloak of Invisibility fades away.");
-    } else {
-      utilityFunctions.log(
-        `✨ Cloak of Invisibility active: ${cloakClicksRemaining.value} clicks remaining.`
-      );
-    }
-
-    if (title !== finalTarget) {
-      encounterPreventedByCloak = true;
-      utilityFunctions.log(
-        "👻 You slip past unseen thanks to the Cloak of Invisibility."
-      );
-    }
+  if (isCloakActive.value && title !== finalTarget) {
+    utilityFunctions.log(
+      `✨ Cloak of Invisibility active: ${cloakClicksRemaining.value} clicks remaining.`
+    );
+    utilityFunctions.log(
+      "👻 You slip past unseen thanks to the Cloak of Invisibility."
+    );
+    encounterPreventedByCloak = true;
   }
 
   if (

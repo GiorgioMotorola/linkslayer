@@ -120,6 +120,7 @@
         @use-item="handleUseInventoryItem"
         :is-cloak-active="isCloakActive"
         :cloak-clicks-remaining="cloakClicksRemaining"
+        :is-health-regen-active="healthRegenActive"
       />
     </div>
   </div>
@@ -155,6 +156,14 @@ import { handleLootDrop as externalHandleLootDrop } from "@/utils/lootHandler";
 import { handleEnemyTurn as externalHandleEnemyTurn } from "@/utils/enemyTurnHandler";
 import InventoryModal from "@/components/InventoryModal.vue";
 import { shopItems } from "@/utils/shopItems";
+import {
+  handleShopPurchase as externalHandleShopPurchase,
+  useCompass as externalUseCompass,
+  useHealthPotion as externalUseHealthPotion,
+  useTurkeyLeg as externalUseTurkeyLeg,
+  useInvisibilityCloak as externalUseInvisibilityCloak,
+  useHerbalPoultice as externalUseHerbalPoultice,
+} from "@/utils/itemHandlers";
 
 const journeyLength = ref(3);
 const chain = getRandomChain(journeyLength.value);
@@ -210,12 +219,18 @@ const TURKEY_LEG_HEAL_AMOUNT = 6;
 const isCloakActive = ref(false);
 const CLOAK_DURATION = 10;
 const cloakClicksRemaining = ref(0);
+const healthRegenActive = ref(false);
+const healthRegenAmount = ref(0);
+const healthRegenClicksRemaining = ref(0);
+const healthRegenMaxHeal = ref(0);
+const healthRegenHealedCount = ref(0);
 const inventory = ref({
   compass: 0,
   healthPotions: 0,
   turkeyLegs: 0,
   invisibilityCloaks: 0,
   stickItem: 0,
+  herbalPoultices: 0,
 });
 
 const isInventoryModalOpen = ref(false);
@@ -266,12 +281,97 @@ watch(clickCount, (newClicks) => {
     showShopModal.value = true;
   }
 
+  let netHealthChange = 0;
+
+  if (poisonedClicksLeft.value > 0) {
+    const effectivePoisonDamage = Number(poisonDamagePerClick.value);
+    if (isNaN(effectivePoisonDamage)) {
+      console.error(
+        "CRITICAL ERROR: poisonDamagePerClick.value is NaN! Resetting to 0.",
+        poisonDamagePerClick.value
+      );
+      poisonDamagePerClick.value = 0;
+    } else {
+      netHealthChange -= effectivePoisonDamage;
+      log(`🤢 You are poisoned. You lose ${effectivePoisonDamage} HP.`);
+    }
+    poisonedClicksLeft.value--;
+    if (poisonedClicksLeft.value <= 0) {
+      log(`✅ The poison wears off.`);
+    } else {
+      log(
+        `🤢 ${poisonedClicksLeft.value} clicks left until the poison wears off.`
+      );
+    }
+  }
+
+  if (healthRegenActive.value) {
+    if (
+      healthRegenClicksRemaining.value > 0 &&
+      healthRegenHealedCount.value < healthRegenMaxHeal.value
+    ) {
+      const potentialHeal = healthRegenAmount.value;
+      const remainingHealCapacity =
+        effectiveMaxHP.value - (playerHP.value + netHealthChange);
+      const remainingTotalHealFromPoultice =
+        healthRegenMaxHeal.value - healthRegenHealedCount.value;
+
+      const actualHeal = Math.min(
+        potentialHeal,
+        remainingHealCapacity,
+        remainingTotalHealFromPoultice
+      );
+
+      if (actualHeal > 0) {
+        netHealthChange += actualHeal;
+        healthRegenHealedCount.value += actualHeal;
+        log(
+          `🌱 You feel a surge of vitality! Healed ${actualHeal} HP from Herbal Poultice.`
+        );
+      }
+
+      healthRegenClicksRemaining.value--;
+
+      if (
+        healthRegenClicksRemaining.value <= 0 ||
+        healthRegenHealedCount.value >= healthRegenMaxHeal.value
+      ) {
+        healthRegenActive.value = false;
+        healthRegenAmount.value = 0;
+        healthRegenClicksRemaining.value = 0;
+        healthRegenMaxHeal.value = 0;
+        healthRegenHealedCount.value = 0;
+        log(`✅ The Herbal Poultice's effect wears off.`);
+      }
+    } else {
+      healthRegenActive.value = false;
+      healthRegenAmount.value = 0;
+      healthRegenClicksRemaining.value = 0;
+      healthRegenMaxHeal.value = 0;
+      healthRegenHealedCount.value = 0;
+      log(`✅ The Herbal Poultice's effect wears off.`);
+    }
+  }
+
+  playerHP.value = Math.min(
+    effectiveMaxHP.value,
+    Math.max(0, playerHP.value + netHealthChange)
+  );
+
+  if (playerHP.value <= 0 && !defeated.value) {
+    log(
+      `💀 <span class="player-name">${playerName.value}</span> was defeated.`
+    );
+    defeated.value = true;
+    clearInterval(timerInterval);
+    encounter.value = null;
+  }
+
   if (isCloakActive.value) {
     cloakClicksRemaining.value--;
     log(
       `✨ Cloak of Invisibility active: ${cloakClicksRemaining.value} clicks remaining.`
     );
-
     if (cloakClicksRemaining.value <= 0) {
       isCloakActive.value = false;
       cloakClicksRemaining.value = 0;
@@ -283,49 +383,6 @@ watch(clickCount, (newClicks) => {
     blurClicksLeft.value--;
     log(
       `🍺 You are still drunk. ${blurClicksLeft.value} clicks left til you sober up.`
-    );
-  }
-  if (poisonedClicksLeft.value > 0) {
-    playerHP.value = Math.max(0, playerHP.value - poisonDamagePerClick.value);
-    poisonedClicksLeft.value--;
-    log(
-      `🤢 You are poisoned. You lose ${poisonDamagePerClick.value} HP. ${poisonedClicksLeft.value} clicks left until the poison wears off.`
-    );
-    if (playerHP.value <= 0) {
-      log(
-        `💀 <span class="player-name">${playerName.value}</span> was defeated by poison.`
-      );
-      defeated.value = true;
-      clearInterval(timerInterval);
-      encounter.value = null;
-    }
-  }
-});
-
-watch(clickCount, (newClicks) => {
-  if (poisonedClicksLeft.value > 0) {
-    console.log("DEBUG: Applying poison damage.");
-    console.log("DEBUG: playerHP.value before poison:", playerHP.value);
-    console.log(
-      "DEBUG: poisonDamagePerClick.value:",
-      poisonDamagePerClick.value
-    );
-
-    const effectivePoisonDamage = Number(poisonDamagePerClick.value);
-    if (isNaN(effectivePoisonDamage)) {
-      console.error(
-        "CRITICAL ERROR: poisonDamagePerClick.value is NaN before application! Resetting to 0.",
-        poisonDamagePerClick.value
-      );
-      poisonDamagePerClick.value = 0;
-      playerHP.value = Math.max(0, playerHP.value - 0);
-    } else {
-      playerHP.value = Math.max(0, playerHP.value - effectivePoisonDamage);
-    }
-
-    poisonedClicksLeft.value--;
-    log(
-      `🤢 You are poisoned. You lose ${effectivePoisonDamage} HP. ${poisonedClicksLeft.value} clicks left until the poison wears off.`
     );
   }
 });
@@ -345,6 +402,8 @@ const formattedTimer = computed(() => {
 const isGameComplete = computed(() => {
   return current.value === chain[journeyLength.value - 1] && bossDefeated.value;
 });
+
+
 
 async function callHandleClick(title) {
   const finalTarget = chain[journeyLength.value - 1];
@@ -390,11 +449,11 @@ async function callHandleClick(title) {
       log,
       logEnemyAction,
       clearInterval: (intervalId) => clearInterval(intervalId),
+      isBoss,
     },
     isCloakActive,
     cloakClicksRemaining,
-    setIsCloakActive: (value) => (isCloakActive.value = value),
-    setCloakClicksRemaining: (value) => (cloakClicksRemaining.value = value),
+
   });
 }
 
@@ -578,7 +637,7 @@ function handleClassSelection({ classKey, name, journeyLength: selectedLen }) {
 }
 
 async function callHandleEncounterOption(option) {
-  const encounterResult = await externalHandleEncounterOption({
+  await externalHandleEncounterOption({
     option,
     playerState: {
       playerHP,
@@ -639,201 +698,122 @@ function handleLootDrop() {
 }
 
 function handleShopPurchase(item) {
-  let purchased = false;
-  if (playerGold.value >= item.cost) {
-    playerGold.value -= item.cost;
-    purchased = true;
-    log(
-      `💸 <span class="player-name">${playerName.value}</span> purchased ${item.name} for ${item.cost} Gold.`
-    );
-
-    switch (item.effect) {
-      case "health":
-        playerHP.value = Math.min(
-          playerHP.value + item.amount,
-          effectiveMaxHP.value
-        );
-        log(`➕ ${playerName.value} gained ${item.amount} HP.`);
-        break;
-      case "weapon":
-        weaponBonus.value += item.amount;
-        log(`🗡️ ${playerName.value} gained +${item.amount} Weapon Bonus.`);
-        break;
-      case "shield":
-        shieldBonus.value += item.amount;
-        log(`🛡️ ${playerName.value} gained +${item.amount} Defense Bonus.`);
-        break;
-      case "special":
-        specialUsesLeft.value += item.amount;
-        log(`✨ ${playerName.value} gained +${item.amount} Ability charges.`);
-        break;
-      case "longRest":
-        longRestsUsed.value = Math.max(0, longRestsUsed.value - item.amount);
-        log(`🛌 ${playerName.value} refreshed ${item.amount} Long Rest(s).`);
-        break;
-      case "shortRest":
-        shortRestsUsed.value = Math.max(0, shortRestsUsed.value - item.amount);
-        log(`🧘 ${playerName.value} refreshed ${item.amount} Short Rest(s).`);
-        break;
-      case "blurCure":
-        blurClicksLeft.value = 0;
-        log(`🧼 ${playerName.value} sobered up.`);
-        break;
-
-      case "inventoryItem":
-        if (item.details === "compass") {
-          inventory.value.compass++;
-          log(`🧭 ${playerName.value} acquired an Arcane Compass.`);
-        } else if (item.details === "healthPotion") {
-          inventory.value.healthPotions++;
-          log(`➕ ${playerName.value} acquired a Health Potion.`);
-        } else if (item.details === "turkeyLeg") {
-          inventory.value.turkeyLegs++;
-          log(`🍗 ${playerName.value} acquired a Turkey Leg.`);
-        } else if (item.details === "invisibilityCloak") {
-          inventory.value.invisibilityCloaks++;
-          log(`👻 ${playerName.value} acquired a Cloak of Invisibility.`);
-          console.log("Inventory after cloak purchase:", inventory.value);
-        } else if (item.details === "stickItem") {
-          inventory.value.stickItem++;
-          log(`😎 ${playerName.value} acquired a Cool Stick.`);
-        }
-        break;
-
-      default:
-        break;
+  externalHandleShopPurchase(
+    item,
+    {
+      playerGold,
+      playerHP,
+      effectiveMaxHP,
+      weaponBonus,
+      shieldBonus,
+      specialUsesLeft,
+      longRestsUsed,
+      shortRestsUsed,
+      blurClicksLeft,
+      inventory,
+    },
+    {
+      playerName,
+    },
+    {
+      log,
     }
-  } else {
-    log(
-      `❌ Not enough Gold for ${item.name}. (Cost: ${item.cost}, You have: ${playerGold.value})`
-    );
-  }
+  );
 }
 
 function useCompass() {
-  const fullChain = chain;
-
-  if (inventory.value.compass <= 0) {
-    log(`🧭 You don't have any Arcane Compasses to use!`);
-    return;
-  }
-
-  inventory.value.compass--;
-  log(`🧭 You use an Arcane Compass!`);
-
-  if (!fullChain || fullChain.length === 0) {
-    log(
-      `🧭 The compass spins wildly; there's no defined path to jump within yet!`
-    );
-
-    console.warn(
-      "useCompass: Attempted to use compass when fullChain is undefined or empty."
-    );
-    closeInventoryModal();
-    return;
-  }
-
-  if (
-    encounter.value &&
-    encounter.value.type === "combat" &&
-    isBoss(encounter.value.enemy)
-  ) {
-    log(`🚫 You cannot use the Arcane Compass during a boss battle!`);
-    return;
-  }
-
-  const startArticle = fullChain[0];
-  const endArticle = fullChain[fullChain.length - 1];
-
-  const potentialTargets = fullChain.filter((article) => {
-    return (
-      article !== startArticle &&
-      article !== endArticle &&
-      article !== current.value
-    );
-  });
-
-  if (potentialTargets.length > 0) {
-    const randomIndex = Math.floor(Math.random() * potentialTargets.length);
-    const targetArticle = potentialTargets[randomIndex];
-
-    current.value = targetArticle;
-    path.value.push(targetArticle);
-    clickCount.value++;
-    shortcutsUsedCount.value++;
-
-    log(
-      `🧭 The compass pulls you, disorienting you for a moment, then guides you directly to ${targetArticle.replaceAll(
-        "_",
-        " "
-      )}!`
-    );
-
-    const targetIndexInChain = fullChain.indexOf(targetArticle);
-    currentTargetIndex.value = targetIndexInChain;
-
-    log(`✨ You feel a step closer to your goal.`);
-  } else {
-    log(
-      `🧭 The compass seems confused; there are no intermediate paths to jump to. (Perhaps you're at the start/end or only one article in length?)`
-    );
-  }
-
-  if (encounter.value) {
-    log(`The previous encounter was disrupted by the compass's pull.`);
-    encounter.value = null;
-    bossOverlay.value = false;
-  }
-  nextTick(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
+  externalUseCompass(
+    {
+      inventory,
+      current,
+      path,
+      clickCount,
+      shortcutsUsedCount,
+      currentTargetIndex,
+    },
+    {
+      chain,
+      formattedTitle,
+    },
+    {
+      bossOverlay,
+    },
+    {
+      log,
+      isBoss,
+      nextTick,
+      closeInventoryModal,
+    },
+    {
+      encounter,
+    }
+  );
 }
 
 const useHealthPotion = () => {
-  if (inventory.value.healthPotions > 0) {
-    inventory.value.healthPotions--;
-    playerHP.value = Math.min(
-      playerHP.value + HEALTH_POTION_HEAL_AMOUNT,
-      effectiveMaxHP.value
-    );
-    log(
-      `You consumed a Health Potion and recovered ${HEALTH_POTION_HEAL_AMOUNT} HP! Your HP is now ${playerHP.value}.`
-    );
-    closeInventoryModal();
-  } else {
-    log("You don't have any Health Potions to use.");
-  }
+  externalUseHealthPotion(
+    {
+      inventory,
+      playerHP,
+      effectiveMaxHP,
+    },
+    {
+      log,
+      closeInventoryModal,
+    },
+    {
+      HEALTH_POTION_HEAL_AMOUNT,
+    }
+  );
 };
 
 const useTurkeyLeg = () => {
-  if (inventory.value.turkeyLegs > 0) {
-    inventory.value.turkeyLegs--;
-    playerHP.value = Math.min(
-      playerHP.value + TURKEY_LEG_HEAL_AMOUNT,
-      effectiveMaxHP.value
-    );
-    log(
-      `🍖 You consumed a Turkey Leg and recovered ${TURKEY_LEG_HEAL_AMOUNT} HP! Your HP is now ${playerHP.value}.`
-    );
-  } else {
-    log("You don't have any Turkey Legs to use.");
-  }
+  externalUseTurkeyLeg(
+    {
+      inventory,
+      playerHP,
+      effectiveMaxHP,
+    },
+    {
+      log,
+    },
+    {
+      TURKEY_LEG_HEAL_AMOUNT,
+    }
+  );
 };
+
 const useInvisibilityCloak = () => {
-  if (isCloakActive.value) {
-    log(`👻 The Cloak of Invisibility is already active!`);
-    return;
-  }
-  if (inventory.value.invisibilityCloaks > 0) {
-    inventory.value.invisibilityCloaks--;
-    isCloakActive.value = true;
-    cloakClicksRemaining.value = CLOAK_DURATION;
-    log(
-      `👻 You don the Cloak of Invisibility! You will avoid non-boss encounters for ${CLOAK_DURATION} clicks.`
-    );
-  } else {
-    log(`👻 You don't have a Cloak of Invisibility.`);
-  }
+  externalUseInvisibilityCloak(
+    {
+      isCloakActive,
+      inventory,
+      cloakClicksRemaining,
+    },
+    {
+      log,
+    },
+    {
+      CLOAK_DURATION,
+    }
+  );
+};
+
+const useHerbalPoultice = () => {
+  externalUseHerbalPoultice(
+    {
+      inventory,
+      healthRegenActive,
+      healthRegenAmount,
+      healthRegenClicksRemaining,
+      healthRegenMaxHeal,
+      healthRegenHealedCount,
+    },
+    {
+      log,
+      closeInventoryModal,
+    }
+  );
 };
 
 function markBossDefeated() {
@@ -862,6 +842,8 @@ function handleUseInventoryItem(itemType) {
     useTurkeyLeg();
   } else if (itemType === "invisibilityCloak") {
     useInvisibilityCloak();
+  } else if (itemType === "herbalPoultice") {
+    useHerbalPoultice();
   }
 }
 
@@ -918,6 +900,11 @@ function resetGame() {
   combatWinsSinceLastCapIncrease.value = 0;
   hpCapBonus.value = 0;
   inventory.value.stickItem = 0;
+  healthRegenActive.value = false;
+  healthRegenAmount.value = 0;
+  healthRegenClicksRemaining.value = 0;
+  healthRegenMaxHeal.value = 0;
+  healthRegenHealedCount.value = 0;
 
   timerInterval = setInterval(() => {
     timer.value++;

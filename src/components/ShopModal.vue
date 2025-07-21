@@ -40,6 +40,11 @@
               <span v-else-if="item.details === 'healthPotion'">
                 A consumable potion that restores health.
               </span>
+              <span v-else-if="item.details === 'herbalPoultice'">
+                A potent herbal remedy that heals {{ item.amount }} Health per
+                click for {{ item.durationClicks }} clicks (Total of
+                {{ item.maxHeal }} Health).
+              </span>
               <span v-else-if="item.details === 'invisibilityCloak'">
                 Avoids non-boss encounters for 10 clicks.
               </span>

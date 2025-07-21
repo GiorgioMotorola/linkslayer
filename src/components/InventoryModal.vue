@@ -24,6 +24,18 @@
           <button class="use-button" @click="useItem('turkeyLeg')">Use</button>
         </div>
 
+        <div v-if="inventory.herbalPoultices > 0" class="item-slot">
+          <span class="item-name">Herbal Poultice</span>
+          <span class="item-quantity">x{{ inventory.herbalPoultices }}</span>
+          <button
+            class="use-button"
+            @click="useItem('herbalPoultice')"
+            :disabled="isHealthRegenActive"
+          >
+            {{ isHealthRegenActive ? "Regen Active" : "Use" }}
+          </button>
+        </div>
+
         <div v-if="inventory.invisibilityCloaks > 0" class="item-slot">
           <span class="item-name">Cloak of Invisibility</span>
           <span class="item-quantity">x{{ inventory.invisibilityCloaks }}</span>
@@ -36,7 +48,9 @@
           </button>
         </div>
         <div v-if="inventory.stickItem > 0" class="item-slot">
-          <span class="item-name">A Cool Stick (hangs out in your inventory)</span>
+          <span class="item-name"
+            >A Cool Stick (hangs out in your inventory)</span
+          >
           <span class="item-quantity">x{{ inventory.stickItem }}</span>
         </div>
 
@@ -46,7 +60,8 @@
             inventory.healthPotions === 0 &&
             inventory.turkeyLegs === 0 &&
             inventory.invisibilityCloaks === 0 &&
-            inventory.stickItem === 0
+            inventory.stickItem === 0 &&
+            inventory.herbalPoultices === 0
           "
           class="item-slot no-items-game-style"
         >
@@ -74,6 +89,10 @@ const props = defineProps({
   cloakClicksRemaining: {
     type: Number,
     default: 0,
+  },
+  isHealthRegenActive: {
+    type: Boolean,
+    default: false,
   },
 });
 
