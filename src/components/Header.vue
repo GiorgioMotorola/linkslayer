@@ -43,9 +43,9 @@
         <div class="npc" v-else-if="encounter.type === 'npc'">
           <div class="npc-name">{{ encounter.npc.name }} 💬</div>
           <div class="npc-greeting" v-html="typedGreeting"></div>
-          <div v-if="encounter.npc.options">
+          <div v-if="currentDialogue && currentDialogue.options">
             <button
-              v-for="(option, index) in encounter.npc.options"
+              v-for="(option, index) in currentDialogue.options"
               :key="index"
               @click="emit('option-chosen', option)"
             >
@@ -247,7 +247,7 @@ const activeAction = ref("");
 const typedLine = ref("");
 const typedGreeting = ref("");
 let typeInterval = null;
-
+const currentDialogueNodeId = ref(null);
 const expanded = ref(false);
 const visibleLogCount = ref(Math.min(props.gameLog?.length ?? 0, 5));
 const newLineIds = ref([]);
@@ -270,6 +270,32 @@ const openModal = () => {
 const closeModal = () => {
   isModalOpen.value = false;
 };
+
+const currentDialogue = computed(() => {
+  if (!props.encounter) return null;
+
+  if (props.encounter.type === "npc" && props.encounter.npc.dialogueNodes) {
+    const nodeId = currentDialogueNodeId.value || "start";
+    return props.encounter.npc.dialogueNodes[nodeId];
+  }
+  if (props.encounter.type === "lore" && props.encounter.lore.dialogueNodes) {
+    const nodeId = currentDialogueNodeId.value || "start";
+    return props.encounter.lore.dialogueNodes[nodeId];
+  }
+  if (props.encounter.type === "npc") {
+    return {
+      text: props.encounter.npc.greeting,
+      options: props.encounter.npc.options,
+    };
+  }
+  if (props.encounter.type === "lore") {
+    return {
+      text: props.encounter.lore.text,
+      options: props.encounter.lore.options,
+    };
+  }
+  return null;
+});
 
 const longRestsUsedCount = computed(() => props.longRestsUsed ?? 0);
 
@@ -353,13 +379,56 @@ watch(
 watch(
   () => props.encounter,
   (newEncounter) => {
-    if (newEncounter && newEncounter.type === "combat" && newEncounter.enemy) {
-      console.log("Enemy object:", newEncounter.enemy);
-      console.log("Enemy image URL:", newEncounter.enemy.imageUrl);
+    if (!newEncounter) {
+      typedLine.value = "";
+      typedGreeting.value = "";
+      clearInterval(typeInterval);
+      currentDialogueNodeId.value = null;
+      return;
     }
+
+    let fullText = "";
+
+    if (newEncounter.type === "npc" && newEncounter.npc) {
+      currentDialogueNodeId.value = newEncounter.npc.currentNodeId || "start";
+      fullText = currentDialogue.value?.text || newEncounter.npc.greeting || "";
+    } else if (newEncounter.type === "lore" && newEncounter.lore) {
+      currentDialogueNodeId.value = newEncounter.lore.currentNodeId || "start";
+      fullText = currentDialogue.value?.text || newEncounter.lore.text || "";
+    } else if (newEncounter.type === "combat") {
+      currentDialogueNodeId.value = null;
+      if (newEncounter.enemy?.isBoss) {
+        fullText = `💀 <strong>BOSS ENCOUNTER:</strong> ${
+          newEncounter.enemy.name
+        }!<br><br>${
+          newEncounter.enemy.message || "Prepare for the fight of your life."
+        }`;
+      } else if (newEncounter.enemy?.message) {
+        fullText = newEncounter.enemy.message;
+      } else {
+        fullText = `🗡️ You've been attacked by <strong>${
+          props.formattedTitle
+        }</strong> ${newEncounter.enemy.name ?? ""}. (HP: ${
+          newEncounter.enemy.currentHP
+        }) What do you do?`;
+      }
+    } else {
+      fullText = "⚠️ Unknown encounter type.";
+    }
+
+    startTyping(fullText, newEncounter.type);
   },
-  { immediate: true }
+  {
+    immediate: true,
+    deep: true,
+  }
 );
+
+watch(currentDialogueNodeId, (newNodeId) => {
+  if (newNodeId && currentDialogue.value) {
+    startTyping(currentDialogue.value.text, props.encounter.type);
+  }
+});
 
 watch(
   () => props.weaponBonus,
@@ -434,19 +503,24 @@ watch(longRestsUsedCount, (newVal, oldVal) => {
   }
 });
 
+// KEEP THIS ONE AND ENSURE IT HAS THE NULL CHECK
 watch(
   () => props.encounter,
   (newEncounter) => {
     if (!newEncounter) {
+      // This is the correct null check
       typedLine.value = "";
       typedGreeting.value = "";
       clearInterval(typeInterval);
       return;
     }
 
+    // ... rest of the encounter handling logic for typing and currentDialogueNodeId ...
     let fullText = "";
-
-    if (newEncounter.type === "combat") {
+    if (newEncounter.type === "npc" || newEncounter.type === "lore") {
+      fullText = currentDialogue.value?.text || "";
+    } else if (newEncounter.type === "combat") {
+      // ... combat message logic
       if (newEncounter.enemy?.isBoss) {
         fullText = `💀 <strong>BOSS ENCOUNTER:</strong> ${
           newEncounter.enemy.name
@@ -457,30 +531,32 @@ watch(
         fullText = newEncounter.enemy.message;
       } else {
         fullText = `🗡️ You've been attacked by <strong>${
-          formattedTitle.value
+          props.formattedTitle
         }</strong> ${newEncounter.enemy.name ?? ""}. (HP: ${
           newEncounter.enemy.currentHP
         }) What do you do?`;
       }
-
-      typedLine.value = "";
-      typedGreeting.value = "";
-    } else if (newEncounter.type === "npc") {
-      fullText = newEncounter.npc.greeting;
-      typedGreeting.value = "";
-      typedLine.value = "";
-    } else if (newEncounter.type === "lore") {
-      fullText = newEncounter.lore.text;
-      typedGreeting.value = "";
-      typedLine.value = "";
     } else {
       fullText = "⚠️ Unknown encounter type.";
-      typedLine.value = "";
-      typedGreeting.value = "";
     }
 
     startTyping(fullText, newEncounter.type);
-  }
+
+    // Reset dialogue node when a new encounter starts
+    // This part should ideally be at the top of the 'if (newEncounter)' block
+    if (newEncounter.type === "npc" || newEncounter.type === "lore") {
+      // Only reset if it's a new NPC/Lore encounter, not just a node change
+      if (
+        !newEncounter.npc?.currentNodeId &&
+        !newEncounter.lore?.currentNodeId
+      ) {
+        currentDialogueNodeId.value = "start";
+      }
+    } else {
+      currentDialogueNodeId.value = null; // Clear for other encounter types
+    }
+  },
+  { immediate: true }
 );
 
 watch(

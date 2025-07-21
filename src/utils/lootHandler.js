@@ -37,30 +37,30 @@ export function handleLootDrop({ playerState, utilityFunctions }) {
     }
 
     case "weapon": {
-      weaponBonus.value += 2;
+      weaponBonus.value += 1;
       log(
-        `🗡️ <span class="player-name">${playerName.value}</span> loots a sharper weapon. Weapon damage +2 (Base Damage Total: +${weaponBonus.value})`
+        `🗡️ <span class="player-name">${playerName.value}</span> loots a sharper weapon. Weapon damage +1 (Base Damage Total: +${weaponBonus.value})`
       );
       break;
     }
 
     case "special": {
-      specialUsesLeft.value += 2;
+      specialUsesLeft.value += 1;
       log(
-        `🎁 <span class="player-name">${playerName.value}</span> regains +2 Class Ability charges. (Total: ${specialUsesLeft.value})`
+        `🎁 <span class="player-name">${playerName.value}</span> regains +1 Class Ability charges. (Total: ${specialUsesLeft.value})`
       );
       break;
     }
 
     case "shield": {
-      shieldBonus.value += 2;
+      shieldBonus.value += 1;
       log(
-        `🛡️<span class="player-name">${playerName.value}</span> loots stronger Chainmail. Defense +2 (Base Defense Total: +${shieldBonus.value})`
+        `🛡️<span class="player-name">${playerName.value}</span> loots stronger Chainmail. Defense +1 (Base Defense Total: +${shieldBonus.value})`
       );
       break;
     }
     case "gold": {
-      const amount = Math.floor(Math.random() * 5) + 3;
+      const amount = Math.floor(Math.random() * 16) + 5;
       playerGold.value += amount;
       log(
         `💰 <span class="player-name">${playerName.value}</span> loots ${amount} Gold Pieces!`

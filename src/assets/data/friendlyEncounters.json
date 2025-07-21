@@ -247,6 +247,7 @@
       },
       {
         "text": "Take the guns, knives, and bullets and duct tape them to your chainmail gloves.",
+        "result": "item",
         "details": "shield",
         "responseText": "THE LOST BARTENDER: Very interesting."
       },
@@ -458,7 +459,7 @@
       }
     ]
   },
-    {
+  {
     "id": "npc_017",
     "name": "Dead Body",
     "greeting": "In front of you, there is a dead body. You recognize the person as Dr. Agula, a doctor from your village. Dr. Agula does not appear to have decayed much which indicates this may have happened recently. You hear about witches in this area and wonder if thats what did him in. The Doctor is out, it seems.",
@@ -487,5 +488,103 @@
         "responseText": "Nothing Happens because its a dead body."
       }
     ]
+  },
+  {
+    "id": "mysterious_merchant",
+    "name": "Mysterious Merchant",
+    "greeting": "Greetings, traveler. Care for some rare wares?",
+    "dialogueNodes": {
+      "start": {
+        "text": "Greetings, traveler. Care for some rare wares?",
+        "options": [
+          {
+            "text": "What do you sell?",
+            "result": "dialogue_branch",
+            "next_node_id": "wares_inquiry"
+          },
+          {
+            "text": "Tell me about yourself.",
+            "result": "dialogue_branch",
+            "next_node_id": "merchant_info"
+          },
+          {
+            "text": "No, thanks. Goodbye.",
+            "result": "close_encounter",
+            "responseText": "The merchant nods curtly as you depart."
+          }
+        ]
+      },
+      "wares_inquiry": {
+        "text": "I offer health potions, powerful charms, and ancient maps. What interests you?",
+        "options": [
+          {
+            "text": "Show me the health potions. (5 Gold)",
+            "result": "item",
+            "details": "health-gold-loss",
+            "healthAmount": 10,
+            "goldCost": 5,
+            "responseText": "You buy a potion and feel a surge of vitality."
+          },
+          {
+            "text": "What about the ancient maps?",
+            "result": "dialogue_branch",
+            "next_node_id": "maps_info"
+          },
+          {
+            "text": "Actually, I'm just Browse.",
+            "result": "dialogue_branch",
+            "next_node_id": "start"
+          }
+        ]
+      },
+      "merchant_info": {
+        "text": "My origins are shrouded in mist, much like my destination. I seek rare artifacts and knowledge.",
+        "options": [
+          {
+            "text": "Intriguing. What kind of artifacts?",
+            "result": "dialogue_branch",
+            "next_node_id": "artifact_details"
+          },
+          {
+            "text": "Fascinating. Back to your wares.",
+            "result": "dialogue_branch",
+            "next_node_id": "wares_inquiry"
+          }
+        ]
+      },
+      "maps_info": {
+        "text": "My maps reveal hidden shortcuts and forgotten treasures, but they come at a cost.",
+        "options": [
+            {
+                "text": "I'm interested in a shortcut. (20 Gold, -10 clicks)",
+                "result": "shortcut",
+                "details": "clicks",
+                "amount": 10,
+                "goldCost": 20,
+                "responseText": "You buy a map and feel the path shorten before you."
+            },
+            {
+                "text": "Maybe later. What else do you have?",
+                "result": "dialogue_branch",
+                "next_node_id": "wares_inquiry"
+            }
+        ]
+      },
+      "artifact_details": {
+        "text": "I'm particularly interested in relics from the Sunken City of Eldoria. Have you heard of it?",
+        "options": [
+          {
+            "text": "I have not.",
+            "result": "dialogue_branch",
+            "next_node_id": "start"
+          },
+          {
+            "text": "I might know a thing or two...",
+            "result": "close_encounter",
+            "responseText": "The merchant's eyes gleam. 'Perhaps we can do business later then.'"
+          }
+        ]
+      }
+    }
   }
 ]
