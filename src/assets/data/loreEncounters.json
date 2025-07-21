@@ -422,6 +422,7 @@
       },
       {
         "text": "Put on the P mask.",
+        "result": "item",
         "details": "shield",
         "responseText": "You feel safer and ready for any attack."
       },

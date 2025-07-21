@@ -28,7 +28,6 @@ export function handleLootDrop({ playerState, utilityFunctions }) {
 
       playerHP.value = Math.min(
         playerHP.value + amount,
-        playerClass.value.maxHP
       );
       log(
         `🍎 <span class="player-name">${playerName.value}</span> loots +${amount} HP.`

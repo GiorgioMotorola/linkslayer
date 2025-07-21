@@ -83,7 +83,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     let baseSpecialDamage = 0;
 
     if (cls === "Fighter") {
-      baseSpecialDamage = 6;
+      baseSpecialDamage = 8;
       damageToEnemy = baseSpecialDamage;
       log(
         `⚔️ <span class="player-name">${playerName.value}</span> unleashes **${specialName}** for ${baseSpecialDamage} damage.`
