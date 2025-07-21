@@ -628,10 +628,30 @@ function handleClassSelection({ classKey, name, journeyLength: selectedLen }) {
       `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingShieldBonus} starting Defense Bonus.`
     );
   }
+  if (playerClass.value.startingHealthPotionBonus) {
+    inventory.value.healthPotions = playerClass.value.startingHealthPotionBonus;
+        log(
+      `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingHealthPotionBonus} starting Health Potions.`
+    );
+  }
+    if (playerClass.value.startingInvisibilityCloaks) {
+    inventory.value.invisibilityCloaks = playerClass.value.startingInvisibilityCloaks;
+        log(
+      `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingInvisibilityCloaks} starting Invisibility Cloaks.`
+    );
+  }
+      if (playerClass.value.startingPlayerGold) {
+    playerGold.value = playerClass.value.startingPlayerGold;
+        log(
+      `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingPlayerGold} starting Gold.`
+    );
+  }
   log(`Player name: ${playerName.value}`);
   log(`Class selected: ${playerClass.value.name}`);
   log(`Journey length: ${journeyLength.value} articles.`);
 }
+
+//playerGold.value = 0;
 
 async function callHandleEncounterOption(option) {
   await externalHandleEncounterOption({

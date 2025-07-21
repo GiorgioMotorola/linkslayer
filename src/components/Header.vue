@@ -182,7 +182,7 @@
 
     <div class="footer-buttons">
       <button @click="emit('open-inventory-modal')" class="inventory-button">
-        Inventory
+        INVENTORY &#x2694;
       </button>
     </div>
   </header>
@@ -808,14 +808,12 @@ header {
   background-color: transparent;
   color: rgb(185, 17, 17);
   border: none;
-  border-radius: 5px;
-  margin-top: 0.5rem;
   cursor: pointer;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 25px;
+  font-weight: 900;
 }
 .inventory-button:hover {
-  background-color: #0056b3;
+  box-shadow: rgba(179, 177, 177, 0.35) 0px 5px 15px;
 }
 .current-path {
   margin-top: 0.1rem;

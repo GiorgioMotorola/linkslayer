@@ -584,5 +584,107 @@
       ]
     }
   }
+},
+ {
+  "id": "mysterious_cave",
+  "name": "The Mysterious Cave",
+  "greeting": "A narrow opening, almost hidden by thick vines, leads into a dark cave. A faint, earthy smell wafts from within, along with a whisper of cool air. Do you dare to enter?",
+  "dialogueNodes": {
+    "start": {
+      "text": "A narrow opening, almost hidden by thick vines, leads into a dark cave. A faint, earthy smell wafts from within, along with a whisper of cool air. Do you dare to enter?",
+      "options": [
+        {
+          "text": "Venture inside cautiously.",
+          "result": "dialogue_branch",
+          "next_node_id": "cave_entrance"
+        },
+        {
+          "text": "Leave the cave undisturbed.",
+          "result": "close_encounter",
+          "responseText": "You decide it's best not to disturb the ancient silence of the cave. You continue on your journey."
+        }
+      ]
+    },
+    "cave_entrance": {
+      "text": "The darkness inside is absolute, broken only by the drip of water. You can barely make out two paths ahead: one narrow and winding, the other wider and leading deeper.",
+      "options": [
+        {
+          "text": "Take the narrow, winding path.",
+          "result": "dialogue_branch",
+          "next_node_id": "narrow_path"
+        },
+        {
+          "text": "Take the wider, deeper path.",
+          "result": "dialogue_branch",
+          "next_node_id": "wide_path"
+        },
+        {
+          "text": "This is too spooky. I'm leaving.",
+          "result": "close_encounter",
+          "responseText": "The cave's eerie silence is too much. You carefully backtrack and exit the cave."
+        }
+      ]
+    },
+    "narrow_path": {
+      "text": "You squeeze through a tight passage. Suddenly, your foot slips on loose rocks! You brace for impact...",
+      "options": [
+        {
+          "text": "Attempt to regain your balance. (This might have consequences or rewards)",
+          "result": "dialogue_branch",
+          "next_node_id": "narrow_path_outcome"
+        },
+        {
+          "text": "Give up and return to the entrance.",
+          "result": "dialogue_branch",
+          "next_node_id": "cave_entrance"
+        }
+      ]
+    },
+    "narrow_path_outcome": {
+      "text": "You manage to catch yourself, or perhaps you stumble. The cave offers no easy answers.",
+      "options": [
+        {
+          "text": "Continue exploring the narrow path.",
+          "result": "close_encounter",
+          "responseText": "You proceed further, finding nothing else of note at the moment. The path eventually leads you out of the cave."
+        },
+        {
+          "text": "Return to the main entrance.",
+          "result": "dialogue_branch",
+          "next_node_id": "cave_entrance"
+        }
+      ]
+    },
+    "wide_path": {
+      "text": "The wider path leads to a large cavern. In the center, a faint light flickers, revealing a strange altar. You feel a sudden chill...",
+      "options": [
+        {
+          "text": "Investigate the altar. (This might have significant consequences or rewards)",
+          "result": "dialogue_branch",
+          "next_node_id": "wide_path_outcome"
+        },
+        {
+          "text": "Decide it's too dangerous and turn back.",
+          "result": "dialogue_branch",
+          "next_node_id": "cave_entrance"
+        }
+      ]
+    },
+    "wide_path_outcome": {
+      "text": "As you investigate, a presence makes itself known, or perhaps a hidden item is revealed. The cave's secrets unfold.",
+      "options": [
+        {
+          "text": "You have faced the cave's secret.",
+          "result": "close_encounter",
+          "responseText": "You have explored the depths of the wide path and seen what lies within. Your journey continues."
+        },
+        {
+          "text": "Return to the main entrance.",
+          "result": "dialogue_branch",
+          "next_node_id": "cave_entrance"
+        }
+      ]
+    }
+  }
 }
 ]
