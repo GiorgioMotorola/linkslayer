@@ -489,102 +489,100 @@
       }
     ]
   },
-  {
-    "id": "mysterious_merchant",
-    "name": "Mysterious Merchant",
-    "greeting": "Greetings, traveler. Care for some rare wares?",
-    "dialogueNodes": {
-      "start": {
-        "text": "Greetings, traveler. Care for some rare wares?",
-        "options": [
-          {
-            "text": "What do you sell?",
-            "result": "dialogue_branch",
-            "next_node_id": "wares_inquiry"
-          },
-          {
-            "text": "Tell me about yourself.",
-            "result": "dialogue_branch",
-            "next_node_id": "merchant_info"
-          },
-          {
-            "text": "No, thanks. Goodbye.",
-            "result": "close_encounter",
-            "responseText": "The merchant nods curtly as you depart."
-          }
-        ]
-      },
-      "wares_inquiry": {
-        "text": "I offer health potions, powerful charms, and ancient maps. What interests you?",
-        "options": [
-          {
-            "text": "Show me the health potions. (5 Gold)",
-            "result": "item",
-            "details": "health-gold-loss",
-            "healthAmount": 10,
-            "goldCost": 5,
-            "responseText": "You buy a potion and feel a surge of vitality."
-          },
-          {
-            "text": "What about the ancient maps?",
-            "result": "dialogue_branch",
-            "next_node_id": "maps_info"
-          },
-          {
-            "text": "Actually, I'm just Browse.",
-            "result": "dialogue_branch",
-            "next_node_id": "start"
-          }
-        ]
-      },
-      "merchant_info": {
-        "text": "My origins are shrouded in mist, much like my destination. I seek rare artifacts and knowledge.",
-        "options": [
-          {
-            "text": "Intriguing. What kind of artifacts?",
-            "result": "dialogue_branch",
-            "next_node_id": "artifact_details"
-          },
-          {
-            "text": "Fascinating. Back to your wares.",
-            "result": "dialogue_branch",
-            "next_node_id": "wares_inquiry"
-          }
-        ]
-      },
-      "maps_info": {
-        "text": "My maps reveal hidden shortcuts and forgotten treasures, but they come at a cost.",
-        "options": [
-            {
-                "text": "I'm interested in a shortcut. (20 Gold, -10 clicks)",
-                "result": "shortcut",
-                "details": "clicks",
-                "amount": 10,
-                "goldCost": 20,
-                "responseText": "You buy a map and feel the path shorten before you."
-            },
-            {
-                "text": "Maybe later. What else do you have?",
-                "result": "dialogue_branch",
-                "next_node_id": "wares_inquiry"
-            }
-        ]
-      },
-      "artifact_details": {
-        "text": "I'm particularly interested in relics from the Sunken City of Eldoria. Have you heard of it?",
-        "options": [
-          {
-            "text": "I have not.",
-            "result": "dialogue_branch",
-            "next_node_id": "start"
-          },
-          {
-            "text": "I might know a thing or two...",
-            "result": "close_encounter",
-            "responseText": "The merchant's eyes gleam. 'Perhaps we can do business later then.'"
-          }
-        ]
-      }
+{
+  "id": "hanni_aebi",
+  "name": "Hanni Aebi",
+  "greeting": "Well, hello there, dearie. New face in town, aren't you? Come, sit a spell.",
+  "dialogueNodes": {
+    "start": {
+      "text": "Well, hello there, dearie. New face in town, aren't you? My name's Hanni Aebi. Come, sit a spell, and tell me what brings you to our humble village.",
+      "options": [
+        {
+          "text": "Tell me about this village.",
+          "result": "dialogue_branch",
+          "next_node_id": "village_backstory"
+        },
+        {
+          "text": "I could use some healing.",
+          "result": "dialogue_branch",
+          "next_node_id": "healing_offer"
+        },
+        {
+          "text": "I'm fine, thank you. Just passing through.",
+          "result": "close_encounter",
+          "responseText": "Hanni nods kindly. 'Safe travels then, dearie. May your path be clear.'"
+        }
+      ]
+    },
+    "village_backstory": {
+      "text": "Oh, this village has seen many seasons. We're nestled right at the foot of the Whisperwind Peaks, you see. Long ago, they say ancient spirits dwelled there, protecting us from the creeping shadows of the Sunken City. It's quieter now, but the old ways linger.",
+      "options": [
+        {
+          "text": "Fascinating! Tell me more about the Sunken City.",
+          "result": "dialogue_branch",
+          "next_node_id": "sunken_city_lore"
+        },
+        {
+          "text": "That's enough history for now. Can you help me?",
+          "result": "dialogue_branch",
+          "next_node_id": "healing_offer"
+        },
+        {
+          "text": "Thank you for the stories. I should go.",
+          "result": "close_encounter",
+          "responseText": "Hanni smiles warmly. 'Anytime, dearie. Come back if you need a warm word or a helping hand.'"
+        }
+      ]
+    },
+    "sunken_city_lore": {
+      "text": "The Sunken City... a tragic tale. It was once a grand kingdom, swallowed by the earth and sea in a single night. Some say it was a curse, others, a forgotten magic. Best not to dwell on such things too long; they tend to draw unwanted attention.",
+      "options": [
+        {
+          "text": "Creepy! Back to village stories.",
+          "result": "dialogue_branch",
+          "next_node_id": "village_backstory"
+        },
+        {
+          "text": "I've heard enough. Goodbye.",
+          "result": "close_encounter",
+          "responseText": "Hanni nods, her expression thoughtful. 'Indeed. Some stories are best left untold.'"
+        }
+      ]
+    },
+    "healing_offer": {
+      "text": "Oh, you poor thing! You look a bit rough. I've got some remedies. What do you need?",
+      "options": [
+        {
+          "text": "A quick pick-me-up. (Free +5 HP)",
+          "result": "item",
+          "details": "health",
+          "healthAmount": 5,
+          "responseText": "Hanni presses a warm poultice into your hand. 'There, that should help with the aches. No charge, dearie.'"
+        },
+        {
+          "text": "Something stronger for 10 Gold. (+20 HP)",
+          "result": "item",
+          "details": "health-gold-loss",
+          "healthAmount": 20,
+          "goldCost": 10,
+          "responseText": "Hanni produces a small, glowing vial. 'This special brew will set you right. Just 10 gold, for my troubles.'"
+        },
+        {
+          "text": "Do you have any ale? (2 Gold, +5 HP, Blur)",
+          "result": "item",
+          "details": "beer-cost-blur",
+          "healthAmount": 5,
+          "goldCost": 2,
+          "amount": 4,
+          "responseText": "Hanni chuckles, pulling out a tankard. 'Always got some homebrew for a parched throat! Just 2 gold, but it's strong stuff!'"
+        },
+        {
+          "text": "Never mind, I'm alright now.",
+          "result": "dialogue_branch",
+          "next_node_id": "start"
+        }
+      ]
     }
   }
+}
 ]

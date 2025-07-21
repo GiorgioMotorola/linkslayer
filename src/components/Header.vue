@@ -503,24 +503,20 @@ watch(longRestsUsedCount, (newVal, oldVal) => {
   }
 });
 
-// KEEP THIS ONE AND ENSURE IT HAS THE NULL CHECK
 watch(
   () => props.encounter,
   (newEncounter) => {
     if (!newEncounter) {
-      // This is the correct null check
       typedLine.value = "";
       typedGreeting.value = "";
       clearInterval(typeInterval);
       return;
     }
 
-    // ... rest of the encounter handling logic for typing and currentDialogueNodeId ...
     let fullText = "";
     if (newEncounter.type === "npc" || newEncounter.type === "lore") {
       fullText = currentDialogue.value?.text || "";
     } else if (newEncounter.type === "combat") {
-      // ... combat message logic
       if (newEncounter.enemy?.isBoss) {
         fullText = `💀 <strong>BOSS ENCOUNTER:</strong> ${
           newEncounter.enemy.name
@@ -542,10 +538,7 @@ watch(
 
     startTyping(fullText, newEncounter.type);
 
-    // Reset dialogue node when a new encounter starts
-    // This part should ideally be at the top of the 'if (newEncounter)' block
     if (newEncounter.type === "npc" || newEncounter.type === "lore") {
-      // Only reset if it's a new NPC/Lore encounter, not just a node change
       if (
         !newEncounter.npc?.currentNodeId &&
         !newEncounter.lore?.currentNodeId
@@ -553,7 +546,7 @@ watch(
         currentDialogueNodeId.value = "start";
       }
     } else {
-      currentDialogueNodeId.value = null; // Clear for other encounter types
+      currentDialogueNodeId.value = null;
     }
   },
   { immediate: true }
@@ -570,6 +563,7 @@ watch(
 
 function startTyping(fullText, type = "combat") {
   clearInterval(typeInterval);
+  typedGreeting.value = "";
   let index = 0;
 
   typeInterval = setInterval(() => {
