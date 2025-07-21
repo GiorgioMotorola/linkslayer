@@ -403,8 +403,6 @@ const isGameComplete = computed(() => {
   return current.value === chain[journeyLength.value - 1] && bossDefeated.value;
 });
 
-
-
 async function callHandleClick(title) {
   const finalTarget = chain[journeyLength.value - 1];
 
@@ -453,7 +451,6 @@ async function callHandleClick(title) {
     },
     isCloakActive,
     cloakClicksRemaining,
-
   });
 }
 
@@ -849,27 +846,13 @@ function handleUseInventoryItem(itemType) {
 
 function resetGame() {
   clearInterval(timerInterval);
-
-  const newChain = getRandomChain(journeyLength.value);
-  chain.splice(0, chain.length, ...newChain);
-  current.value = chain[0];
-  weaponBonus.value = 0;
-  poisonedClicksLeft.value = 0;
-  poisonDamagePerClick.value = 0;
-  shieldBonus.value = 0;
-  currentTargetIndex.value = 0;
-  clickCount.value = 0;
-  shortcutsUsedCount.value = 0;
-  combatEncountersFought.value = 0;
-  totalSpecialsUsed.value = 0;
-  path.value = [current.value];
   encounter.value = null;
-  playerHP.value = 0;
   enemyHP.value = DEFAULT_ENEMY_HP;
   nextEnemyAttack.value = null;
   enemyNextAction.value = "attack";
   specialUsesLeft.value = 5;
   playerClass.value = null;
+  playerHP.value = 0;
   gameLog.value = [];
   encounterMessage.value = "";
   playerName.value = "";
