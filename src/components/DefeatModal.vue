@@ -23,17 +23,17 @@
           <span class="label">HP Remaining:&nbsp;</span>
           <span class="value">{{ playerHP }}</span>
         </div>
-        <div class="detail-item" v-if="weaponBonus > 0">
+        <div class="detail-item">
           <span class="label">Weapon Bonus:&nbsp;</span>
           <span class="value">+{{ weaponBonus }}</span>
         </div>
-        <div class="detail-item" v-if="shieldBonus > 0">
+        <div class="detail-item">
           <span class="label">Defense Bonus:&nbsp;</span>
           <span class="value">+{{ shieldBonus }}</span>
         </div>
-        <div class="detail-item" v-if="totalSpecialsUsed > 0">
+        <div class="detail-item">
           <span class="label">Specials Used:&nbsp;</span>
-          <span class="value">{{ totalSpecialsUsed }}</span>
+          <span class="value">{{ props.specialsUsed }}</span>
         </div>
         <div class="detail-item">
           <span class="label">Long Rests Used:&nbsp;</span>
@@ -74,6 +74,7 @@ const props = defineProps([
   "longRestsUsed",
   "shortRestsUsed",
   "shieldBonus",
+  "specialsUsed",
   "gameLog",
 ]);
 
@@ -85,20 +86,25 @@ const formattedPath = computed(() =>
 
 const share = () => {
   const summaryText =
-    `☠️ Death ☠️\n` +
-    `Clicks: ${props.clicks}\n` +
+    `☠️ You Died ☠️\n` +
+    `Total Clicks: ${props.clicks}\n` +
     (props.shortcutsUsed > 0
       ? `Shortcuts Used: ${props.shortcutsUsed}\n`
-      : "") +
+      : "Shortcuts Used: 0\n") + // Added '\n' for consistency
     `Time: ${props.timer}\n` +
-    `Combat Fought: ${props.combatEncountersFought}\n` +
+    `Combat Encounters: ${props.combatEncountersFought}\n` +
     `HP Remaining: ${props.playerHP}\n` +
-    (props.weaponBonus > 0 ? `Weapon Bonus: +${props.weaponBonus}\n` : "") +
-    (props.shieldBonus > 0 ? `Defense Bonus: +${props.shieldBonus}\n` : "") +
-    (props.totalSpecialsUsed > 0
-      ? `Specials Used: ${props.totalSpecialsUsed}\n`
-      : "") +
-    `Rests Used(L/S): ${props.longRestsUsed}/${props.shortRestsUsed}\n` +
+    (props.weaponBonus > 0
+      ? `Weapon Bonus: +${props.weaponBonus}\n`
+      : "Weapon Bonus: 0\n") +
+    (props.shieldBonus > 0
+      ? `Defense Bonus: +${props.shieldBonus}\n`
+      : "Defense Bonus: 0\n") +
+    (props.specialsUsed > 0
+      ? `Specials Used: ${props.specialsUsed}\n`
+      : "Specials Used: 0\n") +
+    `Short Rests Used: ${props.longRestsUsed}\n` +
+    `Long Rests Used: ${props.shortRestsUsed}\n` +
     `https://example.com`;
 
   if (navigator.clipboard) {

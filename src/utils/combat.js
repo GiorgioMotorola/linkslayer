@@ -9,6 +9,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     playerName,
     action: playerAction,
     effectiveMaxHP,
+    totalSpecialsUsed,
   } = player;
 
   const {
@@ -68,7 +69,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     log(
       `🗡️ <span class="player-name">${playerName.value}</span> hits ${formattedTitle} for ${damageToEnemy} damage.`
     );
-  } else if (playerAction === "special") {
+} else if (playerAction === "special") {
     if (specialUsesLeft.value <= 0) {
       log(
         `<span class="player-name">${playerName.value}</span> is out of ${playerClass.value.special} charges.`
@@ -76,7 +77,10 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       return;
     }
     specialUsesLeft.value--;
-
+    if (totalSpecialsUsed) {
+      totalSpecialsUsed.value++;
+    }
+    // All the class-specific special ability logic should be inside this block
     const cls = playerClass.value.name;
     const specialName = playerClass.value.special;
 
@@ -191,9 +195,10 @@ export function handleCombatAction({ player, enemy, state, utils }) {
         }
       }
     }
-  } else if (playerAction === "defend") {
+} // <-- This is the missing curly brace that closes the 'else if (playerAction === "special")' block.
+else if (playerAction === "defend") {
     playerDefendedThisTurn = true;
-  } else if (playerAction === "flee") {
+} else if (playerAction === "flee") {
     if (isBoss(encounter.value?.enemy)) {
       log(`You cannot flee from ${encounter.value?.enemy?.name}.`);
     } else {

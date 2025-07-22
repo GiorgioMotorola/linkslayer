@@ -59,6 +59,7 @@
         :combatEncountersFought="combatEncountersFought"
         :playerHP="playerHP"
         :weaponBonus="weaponBonus"
+        :shieldBonus="shieldBonus"
         :specialsUsed="totalSpecialsUsed"
         :longRestsUsed="longRestsUsed"
         :shortRestsUsed="shortRestsUsed"
@@ -76,6 +77,7 @@
         :combatEncountersFought="combatEncountersFought"
         :playerHP="playerHP"
         :weaponBonus="weaponBonus"
+        :shieldBonus="shieldBonus"
         :specialsUsed="totalSpecialsUsed"
         :longRestsUsed="longRestsUsed"
         :shortRestsUsed="shortRestsUsed"
@@ -485,6 +487,7 @@ function handleCombatActionWrapper(playerAction) {
       playerName,
       action: playerAction,
       effectiveMaxHP: effectiveMaxHP.value,
+      totalSpecialsUsed,
     },
     enemy: {
       enemyHP,
@@ -630,19 +633,20 @@ function handleClassSelection({ classKey, name, journeyLength: selectedLen }) {
   }
   if (playerClass.value.startingHealthPotionBonus) {
     inventory.value.healthPotions = playerClass.value.startingHealthPotionBonus;
-        log(
+    log(
       `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingHealthPotionBonus} starting Health Potions.`
     );
   }
-    if (playerClass.value.startingInvisibilityCloaks) {
-    inventory.value.invisibilityCloaks = playerClass.value.startingInvisibilityCloaks;
-        log(
+  if (playerClass.value.startingInvisibilityCloaks) {
+    inventory.value.invisibilityCloaks =
+      playerClass.value.startingInvisibilityCloaks;
+    log(
       `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingInvisibilityCloaks} starting Invisibility Cloaks.`
     );
   }
-      if (playerClass.value.startingPlayerGold) {
+  if (playerClass.value.startingPlayerGold) {
     playerGold.value = playerClass.value.startingPlayerGold;
-        log(
+    log(
       `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingPlayerGold} starting Gold.`
     );
   }
@@ -865,55 +869,7 @@ function handleUseInventoryItem(itemType) {
 }
 
 function resetGame() {
-  clearInterval(timerInterval);
-  encounter.value = null;
-  enemyHP.value = DEFAULT_ENEMY_HP;
-  nextEnemyAttack.value = null;
-  enemyNextAction.value = "attack";
-  specialUsesLeft.value = 5;
-  playerClass.value = null;
-  playerHP.value = 0;
-  gameLog.value = [];
-  encounterMessage.value = "";
-  playerName.value = "";
-  enemyStatusEffects.value = [];
-  enemyIsStunned.value = false;
-  seenLoreEncounters.value = [];
-  seenNPCEncounters.value = [];
-  currentEnemy.value = null;
-  selectedBossType.value = "";
-  bossSpawned.value = false;
-  bossDefeated.value = false;
-  shortRestsUsed.value = 0;
-  showRestModal.value = false;
-  longRestsUsed.value = 0;
-  bossOverlay.value = false;
-  defeated.value = false;
-  blurClicksLeft.value = 0;
-  timer.value = 0;
-  playerGold.value = 0;
-  showShopModal.value = false;
-  inventory.value.compass = 0;
-  inventory.value.healthPotions = 0;
-  hasReachedFinalArticle.value = false;
-  showTipsModal.value = false;
-  inventory.value.invisibilityCloaks = 0;
-  isCloakActive.value = false;
-  cloakClicksRemaining.value = 0;
-  combatWinsSinceLastCapIncrease.value = 0;
-  hpCapBonus.value = 0;
-  inventory.value.stickItem = 0;
-  healthRegenActive.value = false;
-  healthRegenAmount.value = 0;
-  healthRegenClicksRemaining.value = 0;
-  healthRegenMaxHeal.value = 0;
-  healthRegenHealedCount.value = 0;
-
-  timerInterval = setInterval(() => {
-    timer.value++;
-  }, 1000);
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  location.reload(); 
 }
 
 onMounted(() => {
