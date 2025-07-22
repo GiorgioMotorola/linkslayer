@@ -60,9 +60,10 @@
         <div class="lore" v-else-if="encounter.type === 'lore'">
           <div class="lore-name">Discovery 🔎</div>
           <div class="lore-greeting" v-html="typedGreeting"></div>
-          <div v-if="encounter.lore.options">
+          <!-- CRITICAL FIX: Use currentDialogue.value.options for lore branching -->
+          <div v-if="currentDialogue && currentDialogue.options">
             <button
-              v-for="(option, index) in encounter.lore.options"
+              v-for="(option, index) in currentDialogue.options"
               :key="index"
               @click="emit('option-chosen', option)"
             >
@@ -280,6 +281,14 @@ const currentDialogue = computed(() => {
   }
   if (props.encounter.type === "lore" && props.encounter.lore.dialogueNodes) {
     const nodeId = currentDialogueNodeId.value || "start";
+    console.log(
+      "Header: Lore Encounter - currentDialogue computed. Node ID:",
+      nodeId
+    );
+    console.log(
+      "Header: currentDialogue.value (Lore):",
+      props.encounter.lore.dialogueNodes[nodeId]
+    );
     return props.encounter.lore.dialogueNodes[nodeId];
   }
   if (props.encounter.type === "npc") {
@@ -396,6 +405,17 @@ watch(
       currentDialogueNodeId.value = newEncounter.lore.currentNodeId || "start";
       fullText = currentDialogue.value?.text || newEncounter.lore.text || "";
     } else if (newEncounter.type === "combat") {
+      console.log("--- Combat Encounter Debug ---");
+      console.log("props.formattedTitle:", props.formattedTitle);
+      console.log("newEncounter.enemy:", newEncounter.enemy);
+      console.log("newEncounter.enemy?.name:", newEncounter.enemy?.name);
+      console.log("newEncounter.enemy?.isBoss:", newEncounter.enemy?.isBoss);
+      console.log(
+        "newEncounter.enemy?.isMiniBoss:",
+        newEncounter.enemy?.isMiniBoss
+      );
+      console.log("----------------------------");
+
       if (newEncounter.enemy?.isBoss) {
         fullText = `💀 <strong>BOSS ENCOUNTER:</strong> ${
           newEncounter.enemy.name ?? "Unknown Boss"
@@ -428,6 +448,11 @@ watch(
     startTyping(fullText, newEncounter.type);
 
     if (newEncounter.type === "npc" || newEncounter.type === "lore") {
+      if (currentDialogue.value?.text) {
+        typedGreeting.value = "";
+        startTyping(currentDialogue.value.text, newEncounter.type);
+      }
+
       if (
         !newEncounter.npc?.currentNodeId &&
         !newEncounter.lore?.currentNodeId

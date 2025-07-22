@@ -571,5 +571,87 @@
         "responseText": "The voice yells 'Yeah, you better walk away!'"
       }
     ]
+  },
+  {
+  "id": "lore_019_branching",
+  "text": "You stumble upon an ancient, moss-covered stone tablet deep within the forest. Strange symbols glow faintly on its surface, hinting at forgotten knowledge.",
+  "dialogueNodes": {
+    "start": {
+      "text": "The stone tablet hums with a faint energy. You can almost feel the weight of centuries of secrets emanating from it. What do you do?",
+      "options": [
+        {
+          "text": "Attempt to decipher the symbols.",
+          "result": "dialogue_branch",
+          "next_node_id": "decipher_attempt"
+        },
+        {
+          "text": "Touch the glowing surface.",
+          "result": "dialogue_branch",
+          "next_node_id": "touch_surface"
+        },
+        {
+          "text": "Leave the tablet undisturbed.",
+          "result": "close_encounter",
+          "responseText": "You decide that some secrets are best left buried. You carefully back away from the glowing tablet."
+        }
+      ]
+    },
+    "decipher_attempt": {
+      "text": "You spend some time tracing the ancient symbols. They seem to speak of a hidden path, but the meaning is obscure. You feel a slight drain on your energy.",
+      "options": [
+        {
+          "text": "Focus harder on the symbols. (Risk damage, gain insight)",
+          "result": "dialogue_branch",
+          "next_node_id": "decipher_deeper"
+        },
+        {
+          "text": "Give up and return to the start.",
+          "result": "dialogue_branch",
+          "next_node_id": "start"
+        }
+      ]
+    },
+    "decipher_deeper": {
+      "text": "A jolt of arcane energy passes through you as the symbols briefly flare. You understand a piece of the puzzle, but it comes at a cost.",
+      "options": [
+        {
+          "text": "Take the shortcut revealed by the tablet. (-10 HP, -5 Clicks)",
+          "result": "shortcut-damage",
+          "damageTaken": 10,
+          "clicksReduced": 5,
+          "responseText": "The tablet's magic guides you through a hidden passage, but the strain takes its toll."
+        },
+        {
+          "text": "You've learned enough. Leave the tablet.",
+          "result": "close_encounter",
+          "responseText": "With newfound knowledge and a slight headache, you depart from the ancient tablet."
+        }
+      ]
+    },
+    "touch_surface": {
+      "text": "As your fingers meet the glowing stone, a wave of warmth washes over you. You feel invigorated.",
+      "options": [
+        {
+          "text": "Feel for hidden compartments. (Gain Gold)",
+          "result": "item",
+          "details": "gold",
+          "amount": 25,
+          "responseText": "Your touch reveals a hidden compartment at the base of the tablet, filled with glimmering gold."
+        },
+        {
+          "text": "Try to absorb more energy. (Gain HP)",
+          "result": "item",
+          "details": "health",
+          "healthAmount": 10,
+          "responseText": "The tablet's warmth fills you, mending some of your wounds."
+        },
+        {
+          "text": "Return to the initial message.",
+          "result": "dialogue_branch",
+          "next_node_id": "start"
+        }
+      ]
+    }
   }
+}
 ]

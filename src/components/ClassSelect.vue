@@ -243,7 +243,7 @@ watch(
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 4vh;
+  padding-top: 2vh;
   z-index: 1000;
   background: #5e5e5e8e;
   backdrop-filter: blur(6px);
