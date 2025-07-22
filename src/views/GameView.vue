@@ -34,6 +34,7 @@
     :cloak-clicks-remaining="cloakClicksRemaining"
     :combatWinsSinceLastCapIncrease="combatWinsSinceLastCapIncrease"
     :hpCapBonus="hpCapBonus"
+    :formattedTitle="formattedTitle"
   />
 
   <div class="main-content-wrapper">
@@ -869,7 +870,7 @@ function handleUseInventoryItem(itemType) {
 }
 
 function resetGame() {
-  location.reload(); 
+  location.reload();
 }
 
 onMounted(() => {

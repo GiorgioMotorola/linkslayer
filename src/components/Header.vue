@@ -396,32 +396,49 @@ watch(
       currentDialogueNodeId.value = newEncounter.lore.currentNodeId || "start";
       fullText = currentDialogue.value?.text || newEncounter.lore.text || "";
     } else if (newEncounter.type === "combat") {
-      currentDialogueNodeId.value = null;
       if (newEncounter.enemy?.isBoss) {
         fullText = `💀 <strong>BOSS ENCOUNTER:</strong> ${
-          newEncounter.enemy.name
+          newEncounter.enemy.name ?? "Unknown Boss"
         }!<br><br>${
           newEncounter.enemy.message || "Prepare for the fight of your life."
         }`;
-      } else if (newEncounter.enemy?.message) {
-        fullText = newEncounter.enemy.message;
+      } else if (newEncounter.enemy?.isMiniBoss) {
+        fullText = `💥 You've been attacked by the mini-boss <strong>${
+          newEncounter.enemy.name ?? "Unknown Mini-Boss"
+        }</strong> from <strong>${
+          props.formattedTitle ?? "an unknown location"
+        }</strong>! (HP: ${newEncounter.enemy.currentHP}) What do you do?`;
       } else {
-        fullText = `🗡️ You've been attacked by <strong>${
-          props.formattedTitle
-        }</strong> ${newEncounter.enemy.name ?? ""}. (HP: ${
+        let baseCombatMessage = `🗡️ You've been attacked by <strong>${
+          props.formattedTitle ?? "an unknown location"
+        }</strong> ${newEncounter.enemy.name ?? "Unknown Enemy"}. (HP: ${
           newEncounter.enemy.currentHP
         }) What do you do?`;
+
+        if (newEncounter.enemy?.message) {
+          fullText = `${baseCombatMessage}<br><br>${newEncounter.enemy.message}`;
+        } else {
+          fullText = baseCombatMessage;
+        }
       }
     } else {
       fullText = "⚠️ Unknown encounter type.";
     }
 
     startTyping(fullText, newEncounter.type);
+
+    if (newEncounter.type === "npc" || newEncounter.type === "lore") {
+      if (
+        !newEncounter.npc?.currentNodeId &&
+        !newEncounter.lore?.currentNodeId
+      ) {
+        currentDialogueNodeId.value = "start";
+      }
+    } else {
+      currentDialogueNodeId.value = null;
+    }
   },
-  {
-    immediate: true,
-    deep: true,
-  }
+  { immediate: true, deep: true }
 );
 
 watch(currentDialogueNodeId, (newNodeId) => {

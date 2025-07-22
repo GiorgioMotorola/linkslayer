@@ -1,6 +1,7 @@
 // src/utils/encounterHandler.js
 
 import { generateEnemy } from "@/utils/encounterGenerator";
+import { generateMiniBoss } from "@/utils/miniBossGenerator";
 
 export function handleEncounterOption({
   option,
@@ -281,6 +282,33 @@ export function handleEncounterOption({
     log(
       `🎲 <span class="player-name">${playerName.value}</span> took 50 damage.`
     );
+  }
+
+  if (option.result === "mini_boss_combat") {
+    const miniBoss = generateMiniBoss();
+    if (!miniBoss) {
+      console.warn("Could not generate mini-boss, skipping combat.");
+      enemyState.encounter.value = null;
+      modalState.bossOverlay.value = false;
+      return;
+    }
+
+    enemyState.encounter.value = {
+      type: "combat",
+      enemy: miniBoss,
+      isMiniBoss: true,
+    };
+    enemyState.enemyHP.value = miniBoss.currentHP;
+    enemyState.nextEnemyAttack.value =
+      Math.floor(
+        Math.random() * (miniBoss.maxDamage - miniBoss.minDamage + 1)
+      ) + miniBoss.minDamage;
+    enemyState.enemyNextAction.value = "attack";
+    combatEncountersFought.value++;
+    log(
+      `💥 Your choice has led to a fierce battle! You are attacked by the mini-boss: <strong>${miniBoss.name}</strong>! What do you do?`
+    );
+    return;
   }
 
   if (option.details === "weapon" && option.result !== "item") {
