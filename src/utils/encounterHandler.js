@@ -3,8 +3,12 @@
 import { generateEnemy } from "@/utils/encounterGenerator";
 import { generateMiniBoss } from "@/utils/miniBossGenerator";
 
-// Helper function to apply effects without necessarily closing the encounter
-function applyOptionEffects({ effectType, option, playerState, utilityFunctions }) {
+function applyOptionEffects({
+  effectType,
+  option,
+  playerState,
+  utilityFunctions,
+}) {
   const {
     playerHP,
     playerName,
@@ -29,9 +33,9 @@ function applyOptionEffects({ effectType, option, playerState, utilityFunctions 
           Number(effectiveMaxHP || 0)
         );
         log(
-          `🎲 <span class="player-name">${playerName.value}</span> has gained +${
-            option.healthAmount || 5
-          } HP.`
+          `🎲 <span class="player-name">${
+            playerName.value
+          }</span> has gained +${option.healthAmount || 5} HP.`
         );
       }
       if (option.details === "health-major") {
@@ -40,15 +44,17 @@ function applyOptionEffects({ effectType, option, playerState, utilityFunctions 
           Number(effectiveMaxHP || 0)
         );
         log(
-          `🎲 <span class="player-name">${playerName.value}</span> has gained +${
-            option.healthAmount || 15
-          } HP.`
+          `🎲 <span class="player-name">${
+            playerName.value
+          }</span> has gained +${option.healthAmount || 15} HP.`
         );
       }
       if (option.details === "weapon") {
         weaponBonus.value += Number(option.amount || 1);
         log(
-          `🎲 <span class="player-name">${playerName.value}</span> found a weapon upgrade. Weapon damage +${
+          `🎲 <span class="player-name">${
+            playerName.value
+          }</span> found a weapon upgrade. Weapon damage +${
             option.amount || 1
           } (Base Damage Total: +${weaponBonus.value})`
         );
@@ -133,7 +139,9 @@ function applyOptionEffects({ effectType, option, playerState, utilityFunctions 
       if (option.details === "shield") {
         shieldBonus.value += Number(option.amount || 1);
         log(
-          `🛡️ <span class="player-name">${playerName.value}</span> has increased their Defense by +${
+          `🛡️ <span class="player-name">${
+            playerName.value
+          }</span> has increased their Defense by +${
             option.amount || 1
           } (Base Defense Total: +${shieldBonus.value})`
         );
@@ -158,7 +166,10 @@ function applyOptionEffects({ effectType, option, playerState, utilityFunctions 
       }
       break;
     case "damage":
-      playerHP.value = Math.max(Number(playerHP.value || 0) - (option.amount || 5), 0);
+      playerHP.value = Math.max(
+        Number(playerHP.value || 0) - (option.amount || 5),
+        0
+      );
       log(
         `🎲 <span class="player-name">${playerName.value}</span> took ${
           option.amount || 5
@@ -166,7 +177,10 @@ function applyOptionEffects({ effectType, option, playerState, utilityFunctions 
       );
       break;
     case "damage-minor":
-      playerHP.value = Math.max(Number(playerHP.value || 0) - (option.amount || 1), 0);
+      playerHP.value = Math.max(
+        Number(playerHP.value || 0) - (option.amount || 1),
+        0
+      );
       log(
         `🎲 <span class="player-name">${playerName.value}</span> took ${
           option.amount || 1
@@ -174,7 +188,10 @@ function applyOptionEffects({ effectType, option, playerState, utilityFunctions 
       );
       break;
     case "damage-major":
-      playerHP.value = Math.max(Number(playerHP.value || 0) - (option.amount || 50), 0);
+      playerHP.value = Math.max(
+        Number(playerHP.value || 0) - (option.amount || 50),
+        0
+      );
       log(
         `🎲 <span class="player-name">${playerName.value}</span> took ${
           option.amount || 50
@@ -197,8 +214,14 @@ function applyOptionEffects({ effectType, option, playerState, utilityFunctions 
     case "shortcut-damage":
       const damageTaken = Number(option.damageTaken) || 10;
       const clicksReduced = Number(option.clicksReduced) || 10;
-      playerState.playerHP.value = Math.max(Number(playerState.playerHP.value || 0) - damageTaken, 0);
-      playerState.clickCount.value = Math.max(0, playerState.clickCount.value - clicksReduced);
+      playerState.playerHP.value = Math.max(
+        Number(playerState.playerHP.value || 0) - damageTaken,
+        0
+      );
+      playerState.clickCount.value = Math.max(
+        0,
+        playerState.clickCount.value - clicksReduced
+      );
       playerState.shortcutsUsedCount.value++;
       log(
         `🎲 <span class="player-name">${playerName.value}</span> took ${damageTaken} damage for taking the shortcut, but saved ${clicksReduced} clicks.`
@@ -207,7 +230,10 @@ function applyOptionEffects({ effectType, option, playerState, utilityFunctions 
     case "shortcut":
       if (option.details === "clicks") {
         const amount = Number(option.amount) || 1;
-        playerState.clickCount.value = Math.max(0, playerState.clickCount.value - amount);
+        playerState.clickCount.value = Math.max(
+          0,
+          playerState.clickCount.value - amount
+        );
         playerState.shortcutsUsedCount.value++;
         log(
           `🎲 <span class="player-name">${playerName.value}</span> discovered a shortcut. Click count reduced by ${amount}.`
@@ -237,13 +263,15 @@ export function handleEncounterOption({
     enemyState.encounterMessage.value = option.responseText;
   }
 
-  // Step 1: Apply immediate effects if 'option.effect' is specified.
-  // This does NOT terminate the encounter, allowing dialogue to continue.
   if (option.effect) {
-    applyOptionEffects({ effectType: option.effect, option, playerState, utilityFunctions });
+    applyOptionEffects({
+      effectType: option.effect,
+      option,
+      playerState,
+      utilityFunctions,
+    });
   }
 
-  // Step 2: Handle explicit flow control based on 'option.flow'.
   if (option.flow === "dialogue_branch" && option.next_node_id) {
     if (isNpcEncounter && currentEncounter.npc.dialogueNodes) {
       const nextNode = currentEncounter.npc.dialogueNodes[option.next_node_id];
@@ -255,7 +283,7 @@ export function handleEncounterOption({
             currentNodeId: option.next_node_id,
           },
         };
-        return; // Encounter continues, dialogue branches
+        return;
       } else {
         console.warn(
           `Dialogue node '${option.next_node_id}' not found for NPC.`
@@ -263,7 +291,7 @@ export function handleEncounterOption({
         utilityFunctions.log(`NPC seems confused. The conversation ends.`);
         enemyState.encounter.value = null;
         modalState.bossOverlay.value = false;
-        return; // Encounter ends due to error
+        return;
       }
     } else if (isLoreEncounter && currentEncounter.lore.dialogueNodes) {
       const nextNode = currentEncounter.lore.dialogueNodes[option.next_node_id];
@@ -275,16 +303,15 @@ export function handleEncounterOption({
             currentNodeId: option.next_node_id,
           },
         };
-        return; // Encounter continues, dialogue branches
+        return;
       } else {
         console.warn(
           `Dialogue node '${option.next_node_id}' not found for Lore.`
-
         );
         utilityFunctions.log(`You couldn't find more information.`);
         enemyState.encounter.value = null;
         modalState.bossOverlay.value = false;
-        return; // Encounter ends due to error
+        return;
       }
     }
   }
@@ -292,10 +319,9 @@ export function handleEncounterOption({
   if (option.flow === "close_encounter") {
     enemyState.encounter.value = null;
     modalState.bossOverlay.value = false;
-    return; // Encounter explicitly ends
+    return;
   }
 
-  // Step 3: Handle terminal results based on 'option.result'.
   if (option.result === "combat") {
     const enemy = generateEnemy();
     if (!enemy) {
@@ -320,7 +346,7 @@ export function handleEncounterOption({
         gameData.formattedTitle.value
       }</strong> ${enemy.name ?? ""}. What do you do?`
     );
-    return; // Encounter ends, combat begins
+    return;
   }
 
   if (option.result === "mini_boss_combat") {
@@ -347,7 +373,7 @@ export function handleEncounterOption({
     utilityFunctions.log(
       `💥 Your choice has led to a fierce battle! You are attacked by the mini-boss: <strong>${miniBoss.name}</strong>! What do you do?`
     );
-    return; // Encounter ends, mini-boss combat begins
+    return;
   }
 
   if (option.routeTitle) {
@@ -359,27 +385,39 @@ export function handleEncounterOption({
     enemyState.encounter.value = null;
     modalState.bossOverlay.value = false;
 
-    if (option.routeTitle === gameData.chain[playerState.currentTargetIndex.value + 1]) {
+    if (
+      option.routeTitle ===
+      gameData.chain[playerState.currentTargetIndex.value + 1]
+    ) {
       playerState.currentTargetIndex.value++;
     }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
-    return; // Encounter ends, player moves to new article
+    return;
+  }
+  const isTerminalEffectResult = [
+    "item",
+    "inventoryItem",
+    "damage",
+    "damage-minor",
+    "damage-major",
+    "special",
+    "shortcut",
+    "shortcut-damage",
+  ].includes(option.result);
+
+  if (isTerminalEffectResult && !option.effect) {
+    applyOptionEffects({
+      effectType: option.result,
+      option,
+      playerState,
+      utilityFunctions,
+    });
+    enemyState.encounter.value = null;
+    modalState.bossOverlay.value = false;
+    return;
   }
 
-  // Step 4: If 'option.result' is an effect type AND 'option.effect' was NOT used for this option,
-  // apply the effect and then close the encounter. This handles older options or
-  // effects that are intended to be terminal when not part of a branch.
-  const isTerminalEffectResult = ["item", "inventoryItem", "damage", "damage-minor", "damage-major", "special", "shortcut", "shortcut-damage"].includes(option.result);
-
-  if (isTerminalEffectResult && !option.effect) { // Only apply if 'effect' was NOT used
-      applyOptionEffects({ effectType: option.result, option, playerState, utilityFunctions });
-      enemyState.encounter.value = null;
-      modalState.bossOverlay.value = false;
-      return; // Encounter ends after applying terminal effect
-  }
-
-  // Fallback to close encounter if no other specific result was handled
   if (currentEncounter !== null) {
     enemyState.encounter.value = null;
     modalState.bossOverlay.value = false;
