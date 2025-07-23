@@ -333,6 +333,7 @@
       },
       {
         "text": "'Sand'",
+        "result": "item",
         "details": "weapon",
         "responseText": "MR RIDDLESWORTH: You got it!"
       },
@@ -492,10 +493,10 @@
   {
     "id": "hanni_aebi",
     "name": "Hanni Aebi",
-    "greeting": "Well, hello there, dearie. New face in town, aren't you? Come, sit a spell.",
+    "greeting": "New face in town, aren't you? My name's Hanni Aebi. Come, sit a spell, and tell me what brings you to our humble village.",
     "dialogueNodes": {
       "start": {
-        "text": "Well, hello there, dearie. New face in town, aren't you? My name's Hanni Aebi. Come, sit a spell, and tell me what brings you to our humble village.",
+        "text": "New face in town, aren't you? My name's Hanni Aebi. Come, sit a spell, and tell me what brings you to our humble village.",
         "options": [
           {
             "text": "Tell me about this village.",
@@ -515,10 +516,10 @@
         ]
       },
       "village_backstory": {
-        "text": "Oh, this village has seen many seasons. We're nestled right at the foot of the Whisperwind Peaks, you see. Long ago, they say ancient spirits dwelled there, protecting us from the creeping shadows of the Sunken City. It's quieter now, but the old ways linger.",
+        "text": "Oh, this village has seen many seasons. We're nestled right at the foot of the Whisperwind Peaks, you see. Long ago, they say ancient spirits dwelled there, protecting us from the creeping shadows of the Sunken City. It's quieter now, but the old ways linger. We will know the shadows are back if our young ones start disappearing. The shadows crave innocent minds. But so far, no missing children!",
         "options": [
           {
-            "text": "Fascinating! Tell me more about the Sunken City.",
+            "text": "Thats... great for you...",
             "result": "dialogue_branch",
             "next_node_id": "sunken_city_lore"
           },
@@ -538,7 +539,7 @@
         "text": "The Sunken City... a tragic tale. It was once a grand kingdom, swallowed by the earth and sea in a single night. Some say it was a curse, others, a forgotten magic. Best not to dwell on such things too long; they tend to draw unwanted attention.",
         "options": [
           {
-            "text": "Creepy! Back to village stories.",
+            "text": "That's enough history for now. Can you help me?",
             "result": "dialogue_branch",
             "next_node_id": "village_backstory"
           },
@@ -568,10 +569,10 @@
             "responseText": "Hanni produces a small, glowing vial. 'This special brew will set you right. Just 10 gold, for my troubles.'"
           },
           {
-            "text": "Do you have any ale? (2 Gold, +5 HP, Blur)",
+            "text": "Do you have any ale? (2 Gold, +15 HP)",
             "result": "item",
             "details": "beer-cost-blur",
-            "healthAmount": 5,
+            "healthAmount": 15,
             "goldCost": 2,
             "amount": 4,
             "responseText": "Hanni chuckles, pulling out a tankard. 'Always got some homebrew for a parched throat! Just 2 gold, but it's strong stuff!'"
@@ -595,12 +596,12 @@
         "options": [
           {
             "text": "Venture inside cautiously.",
-            "result": "dialogue_branch",
+            "flow": "dialogue_branch",
             "next_node_id": "cave_entrance"
           },
           {
             "text": "Leave the cave undisturbed.",
-            "result": "close_encounter",
+            "flow": "close_encounter",
             "responseText": "You decide your journey is too important. You continue on."
           }
         ]
@@ -610,32 +611,32 @@
         "options": [
           {
             "text": "Take the narrow, winding path.",
-            "result": "dialogue_branch",
+            "flow": "dialogue_branch",
             "next_node_id": "narrow_path"
           },
           {
             "text": "Take the wider, deeper path.",
-            "result": "dialogue_branch",
+            "flow": "dialogue_branch",
             "next_node_id": "wide_path"
           },
           {
             "text": "This is too spooky. I'm leaving.",
-            "result": "close_encounter",
+            "flow": "close_encounter",
             "responseText": "The cave's eerie silence is too much. You carefully backtrack and exit the cave."
           }
         ]
       },
       "narrow_path": {
-        "text": "You squeeze through a tight passage. Suddenly, your foot slips on loose rocks. You brace for impact...",
+        "text": "You squeeze through a tight passage. The passage seems to become more and more narrow as you go on.",
         "options": [
           {
-            "text": "Attempt to regain your balance. (This might have consequences or rewards)",
-            "result": "dialogue_branch",
+            "text": "Continue down the narrow passage.",
+            "flow": "dialogue_branch",
             "next_node_id": "narrow_path_outcome"
           },
           {
             "text": "Give up and return to the entrance.",
-            "result": "dialogue_branch",
+            "flow": "dialogue_branch",
             "next_node_id": "cave_entrance"
           }
         ]
@@ -645,27 +646,27 @@
         "options": [
           {
             "text": "Continue exploring the narrow path.",
-            "result": "close_encounter",
+            "flow": "close_encounter",
             "responseText": "You proceed further, finding nothing else of note at the moment. The path eventually leads you out of the cave."
           },
           {
             "text": "Return to the main entrance.",
-            "result": "dialogue_branch",
+            "flow": "dialogue_branch",
             "next_node_id": "cave_entrance"
           }
         ]
       },
       "wide_path": {
-        "text": "The wider path leads to a large cavern. In the center, a faint light flickers, revealing a strange altar. You feel a sudden chill...",
+        "text": "The wider path leads to a large cavern. In the center, a faint light flickers, revealing a strange altar.",
         "options": [
           {
             "text": "Investigate the altar.",
-            "result": "dialogue_branch",
+            "flow": "dialogue_branch",
             "next_node_id": "wide_path_outcome"
           },
           {
             "text": "Decide it's too dangerous and turn back.",
-            "result": "dialogue_branch",
+            "flow": "dialogue_branch",
             "next_node_id": "cave_entrance"
           }
         ]
@@ -676,12 +677,313 @@
           {
             "text": "Touch the alter.",
             "result": "mini_boss_combat",
-            "responseText": "Ack!"
+            "responseText": "'You'll learn to regret touching my altar!'"
           },
           {
             "text": "'I don't want any part of this. I am outta here.'",
-            "result": "dialogue_branch",
+            "flow": "dialogue_branch",
             "next_node_id": "cave_entrance"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "npc_018_drunken_dragon",
+    "name": "The Drunken Dragon Inn",
+    "greeting": "As you push open the heavy wooden door, the warm, boisterous air of 'The Drunken Dragon Inn' washes over you. Laughter, clinking tankards, and the murmur of countless conversations fill the room. Travelers and dock workers alike are gathered, sharing tales and drinks. The barkeep nods a greeting from behind a polished counter.",
+    "dialogueNodes": {
+      "start": {
+        "text": "The Drunken Dragon Inn is a lively place. The smell of roasted meat and ale hangs heavy in the air. What's your pleasure?",
+        "options": [
+          {
+            "text": "Order a hearty ale and find a quiet corner to listen.",
+            "effect": "item",
+            "details": "beer",
+            "amount": 4,
+            "healthAmount": 1,
+            "responseText": "You enjoy a fine, free ale, the blur of the drink helping you relax as you soak in the atmosphere. You feel a little healthier. The night passes peacefully.",
+            "flow": "close_encounter"
+          },
+          {
+            "text": "Approach the rosy-cheeked dwarf at the end of the bar.",
+            "flow": "dialogue_branch",
+            "next_node_id": "talk_to_mornik"
+          },
+          {
+            "text": "Leave the tavern. It's too loud for you.",
+            "flow": "close_encounter",
+            "responseText": "You prefer the quiet of the road. You slip out, leaving the merriment behind."
+          }
+        ]
+      },
+      "talk_to_mornik": {
+        "text": "You sidle up to the dwarf, who looks up with a grin. 'Well, hello there, stranger! Name's Mornik Ironaxe. Care for a drink? On me!' He shoves a tankard of potent-smelling brew into your hand.",
+        "options": [
+          {
+            "text": "Accept Mornik's drink.",
+            "effect": "item",
+            "details": "beer-health",
+            "healthAmount": 1,
+            "amount": 6,
+            "responseText": "You take a long swig of the free ale. It's strong, but surprisingly refreshing, and you feel a little healthier. Mornik claps you on the back.",
+            "flow": "dialogue_branch",
+            "next_node_id": "mornik_conversation"
+          },
+          {
+            "text": "Politely decline the drink.",
+            "responseText": "Mornik shrugs. 'Suit yourself. More for me, then!' He goes back to his ale.",
+            "flow": "close_encounter"
+          }
+        ]
+      },
+      "mornik_conversation": {
+        "text": "Mornik, now a fast friend, launches into a series of wild tales about his mining days, interrupted only by more rounds of drinks. The night blurs into a haze of laughter and increasingly improbable stories. You feel your head getting heavy...",
+        "options": [
+          {
+            "text": "Try to keep up with Mornik's drinking.",
+            "effect": "beer",
+            "amount": 10,
+            "healthAmount": 1,
+            "responseText": "You match Mornik drink for drink. The world spins, and the last thing you remember is a loud dwarf singing about a pickaxe. You feel a tiny bit healthier from all the free ale.",
+            "flow": "dialogue_branch",
+            "next_node_id": "wake_up_hangover"
+          },
+          {
+            "text": "Ask Mornik about his life as a dwarf.",
+            "flow": "dialogue_branch",
+            "next_node_id": "mornik_life_start"
+          },
+          {
+            "text": "Excuse yourself and try to find a room for the night.",
+            "responseText": "You manage to stumble to a vacant room just before passing out. A rough but restful night.",
+            "flow": "close_encounter"
+          }
+        ]
+      },
+      "mornik_life_start": {
+        "text": "Mornik's eyes twinkle. 'Ah, me lad/lass, a dwarf's life is a simple one, full of rock, ale, and the occasional goblin skirmish. But there's more to it than that... What do ye wish to hear?'",
+        "options": [
+          {
+            "text": "Tell me more about the rock and mining.",
+            "flow": "dialogue_branch",
+            "next_node_id": "mornik_rock_tales"
+          },
+          {
+            "text": "What about the goblins and skirmishes?",
+            "flow": "dialogue_branch",
+            "next_node_id": "mornik_goblin_tales"
+          },
+          {
+            "text": "Let's just drink.",
+            "flow": "close_encounter",
+            "responseText": "Mornik grins. 'Aye, a fine choice!'"
+          },
+          {
+            "text": "I've heard enough for tonight.",
+            "flow": "close_encounter",
+            "responseText": "You bid Mornik farewell, feeling a little wiser."
+          }
+        ]
+      },
+      "mornik_rock_tales": {
+        "text": "He recounts tales of deep delves, finding rare gems, and the echoes of ancient pickaxes. 'A good shield, that's what keeps ye safe in the dark! My old dwarven shield, it's seen many a scrape, but it's still sturdy.'",
+        "options": [
+          {
+            "text": "I could use a good shield.",
+            "effect": "item",
+            "details": "shield",
+            "amount": 1,
+            "responseText": "Mornik grunts. 'Aye, take this old thing. It's seen a few scrapes, but it'll serve ye well.' You gain +1 Defense.",
+            "flow": "dialogue_branch",
+            "next_node_id": "wake_up_hangover"
+          },
+          {
+            "text": "Fascinating! Any other tales?",
+            "flow": "dialogue_branch",
+            "next_node_id": "mornik_life_start"
+          },
+          {
+            "text": "I've heard enough.",
+            "flow": "close_encounter",
+            "responseText": "You thank Mornik for his stories and head out."
+          }
+        ]
+      },
+      "mornik_goblin_tales": {
+        "text": "Mornik's face darkens slightly as he speaks of cunning goblins and narrow escapes. 'Always keep yer wits about ye, and never trust a shiny object that ain't gold! They're tricksters, those green skins.'",
+        "options": [
+          {
+            "text": "Any advice on dealing with them?",
+            "effect": "special",
+            "details": "recover",
+            "amount": 1,
+            "responseText": "Mornik shares a secret dwarven combat trick, restoring some of your special ability charges. You feel more prepared for the road ahead.",
+            "flow": "close_encounter"
+          },
+          {
+            "text": "Back to your life stories.",
+            "flow": "dialogue_branch",
+            "next_node_id": "mornik_life_start"
+          },
+          {
+            "text": "I've heard enough.",
+            "flow": "close_encounter",
+            "responseText": "You thank Mornik for his stories and head out."
+          }
+        ]
+      },
+      "wake_up_hangover": {
+        "text": "The morning sun is blinding. You groan, your head pounding like a blacksmith's hammer. You're not in a bed. You're lying on a pile of leaves, surrounded by trees. You're in the woods, and you have no idea how you got here. And you feel a bit worse for wear.",
+        "effect": "damage-minor",
+        "amount": 3,
+        "responseText": "A truly epic hangover. You take 3 damage from the ordeal. The tavern is nowhere in sight.",
+        "options": [
+          {
+            "text": "Continue on.",
+            "flow": "close_encounter",
+            "responseText": "You shake your head, trying to clear the fog, and stumble forward, leaving the mystery of last night behind."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "npc_019_karaoke_contest",
+    "name": "The Bard's Library Karaoke",
+    "greeting": "You step into the grand hall of the Bard's Library, usually a place of quiet study, but tonight it's abuzz with an unusual energy. A makeshift stage is set up, and a sign reads: 'Improv Medieval Karaoke Contest! Master the Ballad of the Wandering Blade!'",
+    "dialogueNodes": {
+      "start": {
+        "text": "The air vibrates with nervous excitement and off-key singing. A cheerful gnome gestures towards the stage. 'Care to try your hand, traveler? Tonight, we seek the finest rendition of 'The Ballad of the Wandering Blade'! Do you dare to improvise a verse?'",
+        "options": [
+          {
+            "text": "Sign up for the contest! (I'll try 'The Wandering Blade')",
+            "flow": "dialogue_branch",
+            "next_node_id": "pick_song"
+          },
+          {
+            "text": "Decline. Singing isn't your forte.",
+            "flow": "close_encounter",
+            "responseText": "You politely decline, deciding to leave the stage to the more musically inclined. The library's usual quiet calls to you."
+          },
+          {
+            "text": "Just listen to the other contestants.",
+            "flow": "close_encounter",
+            "responseText": "You find a comfortable spot and enjoy the spectacle, chuckling at some of the more enthusiastic, if untalented, performers."
+          }
+        ]
+      },
+      "pick_song": {
+        "text": "The gnome hands you a scroll with the opening line of 'The Ballad of the Wandering Blade'. 'Alright, traveler! Let's hear your heart's song! Your first line is: 'From misty peaks, where dragons soar, a hero's journey, forevermore...''",
+        "options": [
+          {
+            "text": "Sing: 'With steel in hand, and courage bright, he sought the dawn, through darkest night.'",
+            "flow": "dialogue_branch",
+            "next_node_id": "line_1"
+          },
+          {
+            "text": "Sing: 'The baker bakes, the bread is warm, I love a good, fresh morning storm.'",
+            "flow": "dialogue_branch",
+            "next_node_id": "lose_contest"
+          },
+          {
+            "text": "Sing: 'My belly aches, for stew and pie, beneath the vast and endless sky.'",
+            "flow": "dialogue_branch",
+            "next_node_id": "lose_contest"
+          }
+        ]
+      },
+      "line_1": {
+        "text": "The crowd murmurs approvingly, a few bards nod. The gnome smiles. 'A strong start! Now, for the next verse!'",
+        "options": [
+          {
+            "text": "Sing: 'Through ancient crypts, and shadowed glades, he faced the beasts, with shining blades.'",
+            "flow": "dialogue_branch",
+            "next_node_id": "line_2"
+          },
+          {
+            "text": "Sing: 'The tavern's ale, so rich and deep, where weary travelers softly sleep.'",
+            "flow": "dialogue_branch",
+            "next_node_id": "lose_contest"
+          },
+          {
+            "text": "Sing: 'My lute strings hum, a gentle tune, beneath the pale and silver moon.'",
+            "flow": "dialogue_branch",
+            "next_node_id": "lose_contest"
+          }
+        ]
+      },
+      "line_2": {
+        "text": "A few audience members clap, impressed by your lyrical flow. 'Marvelous! One more line, traveler!'",
+        "options": [
+          {
+            "text": "Sing: 'No magic spell, nor dark deceit, could turn him from his noble feat.'",
+            "flow": "dialogue_branch",
+            "next_node_id": "line_3"
+          },
+          {
+            "text": "Sing: 'The dragon sleeps, on piles of gold, a tale for bards, both new and old.'",
+            "flow": "dialogue_branch",
+            "next_node_id": "lose_contest"
+          },
+          {
+            "text": "Sing: 'So gather round, and hear my song, where valiant heroes truly belong!'",
+            "flow": "dialogue_branch",
+            "next_node_id": "lose_contest"
+          }
+        ]
+      },
+      "line_3": {
+        "text": "The crowd holds its breath. You feel the final, triumphant line forming in your mind.",
+        "options": [
+          {
+            "text": "Sing: 'For justice true, and freedom's call, the Wandering Blade would conquer all!'",
+            "flow": "dialogue_branch",
+            "next_node_id": "win_contest"
+          },
+          {
+            "text": "Sing: 'My journey ends, my quest is done, beneath the setting, golden sun.'",
+            "flow": "dialogue_branch",
+            "next_node_id": "lose_contest"
+          },
+          {
+            "text": "Sing: 'The sun descends, the day is done, my weary travels now are run.'",
+            "flow": "dialogue_branch",
+            "next_node_id": "lose_contest"
+          }
+        ]
+      },
+      "win_contest": {
+        "text": "A roar erupts from the crowd! The gnome jumps up and down, throwing his hat in the air. 'A perfect rendition! You've captured the spirit of the ballad, traveler! You've won the contest!'",
+        "options": [
+          {
+            "text": "Claim your prize!",
+            "flow": "dialogue_branch",
+            "next_node_id": "claim_prize"
+          }
+        ]
+      },
+      "claim_prize": {
+        "text": "The gnome hands you a heavy pouch. 'Here is your prize, as promised!'",
+        "result": "item",
+        "details": "gold",
+        "amount": 19,
+        "responseText": "You receive a heavy pouch of 100 gleaming gold pieces! Your vocal cords might be sore, but your purse is certainly not, and you've earned the respect of the bards present.",
+        "options": [
+          {
+            "text": "Accept your winnings and leave.",
+            "flow": "close_encounter",
+            "responseText": "With your pockets jingling, you make a triumphant exit from the Bard's Library."
+          }
+        ]
+      },
+      "lose_contest": {
+        "text": "A collective groan rises from the audience. The gnome sighs. 'Ah, a valiant effort, but alas, not quite the right tune for 'The Wandering Blade'. Better luck next time, traveler!'",
+        "options": [
+          {
+            "text": "Accept defeat and leave.",
+            "flow": "close_encounter",
+            "responseText": "You bow awkwardly and exit the stage, perhaps a little wiser about impromptu karaoke."
           }
         ]
       }

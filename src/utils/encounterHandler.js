@@ -3,6 +3,220 @@
 import { generateEnemy } from "@/utils/encounterGenerator";
 import { generateMiniBoss } from "@/utils/miniBossGenerator";
 
+// Helper function to apply effects without necessarily closing the encounter
+function applyOptionEffects({ effectType, option, playerState, utilityFunctions }) {
+  const {
+    playerHP,
+    playerName,
+    specialUsesLeft,
+    weaponBonus,
+    shieldBonus,
+    blurClicksLeft,
+    poisonedClicksLeft,
+    poisonDamagePerClick,
+    playerGold,
+    inventory,
+    effectiveMaxHP,
+  } = playerState;
+
+  const { log } = utilityFunctions;
+
+  switch (effectType) {
+    case "item":
+      if (option.details === "health") {
+        playerHP.value = Math.min(
+          Number(playerHP.value || 0) + (option.healthAmount || 5),
+          Number(effectiveMaxHP || 0)
+        );
+        log(
+          `🎲 <span class="player-name">${playerName.value}</span> has gained +${
+            option.healthAmount || 5
+          } HP.`
+        );
+      }
+      if (option.details === "health-major") {
+        playerHP.value = Math.min(
+          Number(playerHP.value || 0) + (option.healthAmount || 15),
+          Number(effectiveMaxHP || 0)
+        );
+        log(
+          `🎲 <span class="player-name">${playerName.value}</span> has gained +${
+            option.healthAmount || 15
+          } HP.`
+        );
+      }
+      if (option.details === "weapon") {
+        weaponBonus.value += Number(option.amount || 1);
+        log(
+          `🎲 <span class="player-name">${playerName.value}</span> found a weapon upgrade. Weapon damage +${
+            option.amount || 1
+          } (Base Damage Total: +${weaponBonus.value})`
+        );
+      }
+      if (option.details === "beer") {
+        const duration = Number(option.amount) || 4;
+        blurClicksLeft.value += duration;
+        log(
+          `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision becomes blurry for ${duration} clicks.`
+        );
+      }
+      if (option.details === "poison") {
+        const duration = Number(option.amount) || 3;
+        const damage = Number(option.damage) || 1;
+
+        poisonedClicksLeft.value += duration;
+        poisonDamagePerClick.value = damage;
+        log(
+          `🤢 <span class="player-name">${playerName.value}</span> is poisoned. You will lose ${damage} HP for the next ${duration} clicks.`
+        );
+      }
+      if (option.details === "beer-health") {
+        const duration = Number(option.amount) || 4;
+        const healthAmount = Number(option.healthAmount) || 5;
+
+        blurClicksLeft.value += duration;
+        playerHP.value = Math.min(
+          Number(playerHP.value || 0) + healthAmount,
+          Number(effectiveMaxHP || 0)
+        );
+        log(
+          `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision blurs for ${duration} clicks and you gained ${healthAmount} HP.`
+        );
+      }
+      if (option.details === "gold") {
+        const amount = Number(option.amount) || 0;
+        playerGold.value += amount;
+        log(
+          `💰 <span class="player-name">${playerName.value}</span> obtained ${amount} Gold Pieces.`
+        );
+      }
+      if (option.details === "health-gold-loss") {
+        const healthAmount = Number(option.healthAmount) || 0;
+        const goldCost = Number(option.goldCost) || 0;
+
+        if (playerGold.value >= goldCost) {
+          playerHP.value = Math.min(
+            Number(playerHP.value || 0) + healthAmount,
+            Number(effectiveMaxHP || 0)
+          );
+          playerGold.value -= goldCost;
+          log(
+            `❤️‍🩹 <span class="player-name">${playerName.value}</span> gained ${healthAmount} HP but lost ${goldCost} Gold.`
+          );
+        } else {
+          log(
+            `❌ <span class="player-name">${playerName.value}</span> doesn't have enough Gold for this. (Need: ${goldCost}, Have: ${playerGold.value})`
+          );
+        }
+      }
+      if (option.details === "beer-cost-blur") {
+        const duration = Number(option.amount) || 4;
+        const goldCost = Number(option.goldCost) || 0;
+        const healthAmount = Number(option.healthAmount) || 0;
+
+        if (playerGold.value >= goldCost) {
+          blurClicksLeft.value += duration;
+          playerHP.value = Math.min(
+            Number(playerHP.value || 0) + healthAmount,
+            Number(effectiveMaxHP || 0)
+          );
+          playerGold.value -= goldCost;
+          log(
+            `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision blurs for ${duration} clicks and you gained ${healthAmount} HP, but lost ${goldCost} Gold.`
+          );
+        } else {
+          log(
+            `❌ <span class="player-name">${playerName.value}</span> can't afford that drink! (Need: ${goldCost}, Have: ${playerGold.value})`
+          );
+        }
+      }
+      if (option.details === "shield") {
+        shieldBonus.value += Number(option.amount || 1);
+        log(
+          `🛡️ <span class="player-name">${playerName.value}</span> has increased their Defense by +${
+            option.amount || 1
+          } (Base Defense Total: +${shieldBonus.value})`
+        );
+      }
+      break;
+    case "inventoryItem":
+      if (option.id === "health_potion_consumable") {
+        inventory.value.healthPotions++;
+        log(
+          `➕ <span class="player-name">${playerName.value}</span> found a Health Potion!`
+        );
+      } else if (option.id === "arcane_compass") {
+        inventory.value.compass++;
+        log(
+          `🧭 <span class="player-name">${playerName.value}</span> found an Arcane Compass!`
+        );
+      } else if (option.id === "turkey_leg_consumable") {
+        inventory.value.turkeyLegs++;
+        log(
+          `🍖 <span class="player-name">${playerName.value}</span> found a Turkey Leg!`
+        );
+      }
+      break;
+    case "damage":
+      playerHP.value = Math.max(Number(playerHP.value || 0) - (option.amount || 5), 0);
+      log(
+        `🎲 <span class="player-name">${playerName.value}</span> took ${
+          option.amount || 5
+        } damage.`
+      );
+      break;
+    case "damage-minor":
+      playerHP.value = Math.max(Number(playerHP.value || 0) - (option.amount || 1), 0);
+      log(
+        `🎲 <span class="player-name">${playerName.value}</span> took ${
+          option.amount || 1
+        } damage.`
+      );
+      break;
+    case "damage-major":
+      playerHP.value = Math.max(Number(playerHP.value || 0) - (option.amount || 50), 0);
+      log(
+        `🎲 <span class="player-name">${playerName.value}</span> took ${
+          option.amount || 50
+        } damage.`
+      );
+      break;
+    case "special":
+      if (option.details === "recover") {
+        const amount = Number(option.amount) || 1;
+        specialUsesLeft.value += amount;
+        log(
+          `🎲 <span class="player-name">${
+            playerName.value
+          }</span> regained ${amount} class ability charges ${
+            amount > 1 ? "s" : ""
+          }.`
+        );
+      }
+      break;
+    case "shortcut-damage":
+      const damageTaken = Number(option.damageTaken) || 10;
+      const clicksReduced = Number(option.clicksReduced) || 10;
+      playerState.playerHP.value = Math.max(Number(playerState.playerHP.value || 0) - damageTaken, 0);
+      playerState.clickCount.value = Math.max(0, playerState.clickCount.value - clicksReduced);
+      playerState.shortcutsUsedCount.value++;
+      log(
+        `🎲 <span class="player-name">${playerName.value}</span> took ${damageTaken} damage for taking the shortcut, but saved ${clicksReduced} clicks.`
+      );
+      break;
+    case "shortcut":
+      if (option.details === "clicks") {
+        const amount = Number(option.amount) || 1;
+        playerState.clickCount.value = Math.max(0, playerState.clickCount.value - amount);
+        playerState.shortcutsUsedCount.value++;
+        log(
+          `🎲 <span class="player-name">${playerName.value}</span> discovered a shortcut. Click count reduced by ${amount}.`
+        );
+      }
+      break;
+  }
+}
+
 export function handleEncounterOption({
   option,
   playerState,
@@ -23,7 +237,14 @@ export function handleEncounterOption({
     enemyState.encounterMessage.value = option.responseText;
   }
 
-  if (option.result === "dialogue_branch" && option.next_node_id) {
+  // Step 1: Apply immediate effects if 'option.effect' is specified.
+  // This does NOT terminate the encounter, allowing dialogue to continue.
+  if (option.effect) {
+    applyOptionEffects({ effectType: option.effect, option, playerState, utilityFunctions });
+  }
+
+  // Step 2: Handle explicit flow control based on 'option.flow'.
+  if (option.flow === "dialogue_branch" && option.next_node_id) {
     if (isNpcEncounter && currentEncounter.npc.dialogueNodes) {
       const nextNode = currentEncounter.npc.dialogueNodes[option.next_node_id];
       if (nextNode) {
@@ -34,7 +255,7 @@ export function handleEncounterOption({
             currentNodeId: option.next_node_id,
           },
         };
-        return;
+        return; // Encounter continues, dialogue branches
       } else {
         console.warn(
           `Dialogue node '${option.next_node_id}' not found for NPC.`
@@ -42,7 +263,7 @@ export function handleEncounterOption({
         utilityFunctions.log(`NPC seems confused. The conversation ends.`);
         enemyState.encounter.value = null;
         modalState.bossOverlay.value = false;
-        return;
+        return; // Encounter ends due to error
       }
     } else if (isLoreEncounter && currentEncounter.lore.dialogueNodes) {
       const nextNode = currentEncounter.lore.dialogueNodes[option.next_node_id];
@@ -54,58 +275,27 @@ export function handleEncounterOption({
             currentNodeId: option.next_node_id,
           },
         };
-        return;
+        return; // Encounter continues, dialogue branches
       } else {
         console.warn(
           `Dialogue node '${option.next_node_id}' not found for Lore.`
+
         );
         utilityFunctions.log(`You couldn't find more information.`);
         enemyState.encounter.value = null;
         modalState.bossOverlay.value = false;
-        return;
+        return; // Encounter ends due to error
       }
     }
   }
 
-  if (option.result === "close_encounter") {
+  if (option.flow === "close_encounter") {
     enemyState.encounter.value = null;
     modalState.bossOverlay.value = false;
-    return;
+    return; // Encounter explicitly ends
   }
 
-  const {
-    playerHP,
-    playerName,
-    playerClass,
-    combatEncountersFought,
-    specialUsesLeft,
-    weaponBonus,
-    shieldBonus,
-    blurClicksLeft,
-    poisonedClicksLeft,
-    poisonDamagePerClick,
-    playerGold,
-    currentTargetIndex,
-    path,
-    clickCount,
-    shortcutsUsedCount,
-    inventory,
-    effectiveMaxHP,
-  } = playerState;
-
-  const { log } = utilityFunctions;
-
-  const {
-    encounter,
-    enemyHP,
-    encounterMessage,
-    nextEnemyAttack,
-    enemyNextAction,
-  } = enemyState;
-
-  const { current, formattedTitle, chain } = gameData;
-  const { bossOverlay } = modalState;
-
+  // Step 3: Handle terminal results based on 'option.result'.
   if (option.result === "combat") {
     const enemy = generateEnemy();
     if (!enemy) {
@@ -124,164 +314,13 @@ export function handleEncounterOption({
       Math.floor(Math.random() * (enemy.maxDamage - enemy.minDamage + 1)) +
       enemy.minDamage;
     enemyState.enemyNextAction.value = "attack";
-    combatEncountersFought.value++;
-    log(
+    playerState.combatEncountersFought.value++;
+    utilityFunctions.log(
       `🗡️ Your choice has resulted in combat and you have been attacked by <strong>${
-        formattedTitle.value
+        gameData.formattedTitle.value
       }</strong> ${enemy.name ?? ""}. What do you do?`
     );
-    return;
-  }
-
-  if (option.result === "item") {
-    if (option.details === "health") {
-      playerHP.value = Math.min(
-        Number(playerHP.value || 0) + 5,
-        Number(effectiveMaxHP || 0)
-      );
-      log(
-        `🎲 <span class="player-name">${playerName.value}</span> has gained +5 HP.`
-      );
-    }
-    if (option.details === "health-major") {
-      playerHP.value = Math.min(
-        Number(playerHP.value || 0) + 15,
-        Number(effectiveMaxHP || 0)
-      );
-      log(
-        `🎲 <span class="player-name">${playerName.value}</span> has gained +15 HP.`
-      );
-    }
-    if (option.details === "weapon") {
-      weaponBonus.value += 1;
-      log(
-        `🎲 <span class="player-name">${playerName.value}</span> found a weapon upgrade. Weapon damage +1 (Base Damage Total: +${weaponBonus.value})`
-      );
-    }
-    if (option.details === "beer") {
-      const duration = Number(option.amount) || 4;
-      blurClicksLeft.value += duration;
-      log(
-        `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision becomes blurry for ${duration} clicks.`
-      );
-    }
-    if (option.details === "poison") {
-      const duration = Number(option.amount) || 3;
-      const damage = Number(option.damage) || 1;
-
-      poisonedClicksLeft.value += duration;
-      poisonDamagePerClick.value = damage;
-      log(
-        `🤢 <span class="player-name">${playerName.value}</span> is poisoned. You will lose ${damage} HP for the next ${duration} clicks.`
-      );
-    }
-    if (option.details === "beer-health") {
-      const duration = Number(option.amount) || 4;
-      blurClicksLeft.value += duration;
-
-      playerHP.value = Math.min(
-        Number(playerHP.value || 0) + 5,
-        Number(effectiveMaxHP || 0)
-      );
-      log(
-        `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision becomes blurry for ${duration} clicks but you gain +5HP.`
-      );
-    }
-    if (option.details === "gold") {
-      const amount = Number(option.amount) || 0;
-      playerGold.value += amount;
-      log(
-        `💰 <span class="player-name">${playerName.value}</span> obtained ${amount} Gold Pieces.`
-      );
-    }
-    if (option.details === "health-gold-loss") {
-      const healthAmount = Number(option.healthAmount) || 0;
-      const goldCost = Number(option.goldCost) || 0;
-
-      if (playerGold.value >= goldCost) {
-        playerHP.value = Math.min(
-          Number(playerHP.value || 0) + healthAmount,
-          Number(effectiveMaxHP || 0)
-        );
-        playerGold.value -= goldCost;
-        log(
-          `❤️‍🩹 <span class="player-name">${playerName.value}</span> gained ${healthAmount} HP but lost ${goldCost} Gold.`
-        );
-      } else {
-        log(
-          `❌ <span class="player-name">${playerName.value}</span> doesn't have enough Gold for this. (Need: ${goldCost}, Have: ${playerGold.value})`
-        );
-      }
-    }
-    if (option.details === "beer-cost-blur") {
-      const duration = Number(option.amount) || 4;
-      const goldCost = Number(option.goldCost) || 0;
-      const healthAmount = Number(option.healthAmount) || 0;
-
-      if (playerGold.value >= goldCost) {
-        blurClicksLeft.value += duration;
-        playerHP.value = Math.min(
-          Number(playerHP.value || 0) + healthAmount,
-          Number(effectiveMaxHP || 0)
-        );
-        playerGold.value -= goldCost;
-        log(
-          `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision blurs for ${duration} clicks and you gained ${healthAmount} HP, but lost ${goldCost} Gold.`
-        );
-      } else {
-        log(
-          `❌ <span class="player-name">${playerName.value}</span> can't afford that drink! (Need: ${goldCost}, Have: ${playerGold.value})`
-        );
-      }
-    }
-    if (option.details === "shield") {
-      shieldBonus.value += 1;
-      log(
-        `🛡️ <span class="player-name">${playerName.value}</span> has increased their Defense by +1 (Base Defense Total: +${shieldBonus.value})`
-      );
-    }
-    enemyState.encounter.value = null;
-    modalState.bossOverlay.value = false;
-    return;
-  } else if (option.result === "inventoryItem") {
-    if (option.id === "health_potion_consumable") {
-      inventory.value.healthPotions++;
-      log(
-        `➕ <span class="player-name">${playerName.value}</span> found a Health Potion!`
-      );
-    } else if (option.id === "arcane_compass") {
-      inventory.value.compass++;
-      log(
-        `🧭 <span class="player-name">${playerName.value}</span> found an Arcane Compass!`
-      );
-    } else if (option.id === "turkey_leg_consumable") {
-      inventory.value.turkeyLegs++;
-      log(
-        `🍖 <span class="player-name">${playerName.value}</span> found a Turkey Leg!`
-      );
-    }
-    log(option.responseText);
-    enemyState.encounter.value = null;
-    modalState.bossOverlay.value = false;
-    return;
-  }
-  if (option.result === "damage") {
-    playerHP.value = Math.max(Number(playerHP.value || 0) - 5, 0);
-    log(
-      `🎲 <span class="player-name">${playerName.value}</span> took 5 damage.`
-    );
-  }
-  if (option.result === "damage-minor") {
-    playerHP.value = Math.max(Number(playerHP.value || 0) - 1, 0);
-    log(
-      `🎲 <span class="player-name">${playerName.value}</span> took 1 damage.`
-    );
-  }
-  if (option.result === "damage-major") {
-    playerHP.value = Math.max(Number(playerHP.value || 0) - 50, 0);
-    log(
-      `🎲 <span class="player-name">${playerName.value}</span> took 50 damage.`
-    );
+    return; // Encounter ends, combat begins
   }
 
   if (option.result === "mini_boss_combat") {
@@ -304,67 +343,43 @@ export function handleEncounterOption({
         Math.random() * (miniBoss.maxDamage - miniBoss.minDamage + 1)
       ) + miniBoss.minDamage;
     enemyState.enemyNextAction.value = "attack";
-    combatEncountersFought.value++;
-    log(
+    playerState.combatEncountersFought.value++;
+    utilityFunctions.log(
       `💥 Your choice has led to a fierce battle! You are attacked by the mini-boss: <strong>${miniBoss.name}</strong>! What do you do?`
     );
-    return;
-  }
-
-  if (option.details === "weapon" && option.result !== "item") {
-    weaponBonus.value += 1;
-    log(
-      `🎲 <span class="player-name">${playerName.value}</span> received a weapon upgrade. Weapon damage +1 (Base Damage Total: +${weaponBonus.value})`
-    );
-  }
-
-  if (option.result === "special" && option.details === "recover") {
-    const amount = Number(option.amount) || 1;
-    specialUsesLeft.value += amount;
-    log(
-      `🎲 <span class="player-name">${
-        playerName.value
-      }</span> regained ${amount} class ability charges ${
-        amount > 1 ? "s" : ""
-      }.`
-    );
-  }
-
-  if (option.result === "shortcut-damage") {
-    const damageTaken = 10;
-    const clicksReduced = 10;
-    playerHP.value = Math.max(Number(playerHP.value || 0) - damageTaken, 0);
-    clickCount.value = Math.max(0, clickCount.value - clicksReduced);
-    shortcutsUsedCount.value++;
-    log(
-      `🎲 <span class="player-name">${playerName.value}</span> took ${damageTaken} damage for taking the shortcut, but saved ${clicksReduced} clicks.`
-    );
-  }
-  if (option.result === "shortcut" && option.details === "clicks") {
-    const amount = Number(option.amount) || 1;
-    clickCount.value = Math.max(0, clickCount.value - amount);
-    shortcutsUsedCount.value++;
-    log(
-      `🎲 <span class="player-name">${playerName.value}</span> discovered a shortcut. Click count reduced by ${amount}.`
-    );
+    return; // Encounter ends, mini-boss combat begins
   }
 
   if (option.routeTitle) {
     utilityFunctions.log(`📚 You choose: ${option.text}`);
     gameData.current.value = option.routeTitle;
-    path.value.push(option.routeTitle);
+    playerState.path.value.push(option.routeTitle);
     playerState.clickCount.value++;
 
     enemyState.encounter.value = null;
     modalState.bossOverlay.value = false;
 
-    if (option.routeTitle === chain[playerState.currentTargetIndex.value + 1]) {
+    if (option.routeTitle === gameData.chain[playerState.currentTargetIndex.value + 1]) {
       playerState.currentTargetIndex.value++;
     }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
-    return;
+    return; // Encounter ends, player moves to new article
   }
+
+  // Step 4: If 'option.result' is an effect type AND 'option.effect' was NOT used for this option,
+  // apply the effect and then close the encounter. This handles older options or
+  // effects that are intended to be terminal when not part of a branch.
+  const isTerminalEffectResult = ["item", "inventoryItem", "damage", "damage-minor", "damage-major", "special", "shortcut", "shortcut-damage"].includes(option.result);
+
+  if (isTerminalEffectResult && !option.effect) { // Only apply if 'effect' was NOT used
+      applyOptionEffects({ effectType: option.result, option, playerState, utilityFunctions });
+      enemyState.encounter.value = null;
+      modalState.bossOverlay.value = false;
+      return; // Encounter ends after applying terminal effect
+  }
+
+  // Fallback to close encounter if no other specific result was handled
   if (currentEncounter !== null) {
     enemyState.encounter.value = null;
     modalState.bossOverlay.value = false;

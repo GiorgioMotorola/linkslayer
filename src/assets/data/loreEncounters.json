@@ -573,85 +573,220 @@
     ]
   },
   {
-  "id": "lore_019_branching",
-  "text": "You stumble upon an ancient, moss-covered stone tablet deep within the forest. Strange symbols glow faintly on its surface, hinting at forgotten knowledge.",
-  "dialogueNodes": {
-    "start": {
-      "text": "The stone tablet hums with a faint energy. You can almost feel the weight of centuries of secrets emanating from it. What do you do?",
-      "options": [
-        {
-          "text": "Attempt to decipher the symbols.",
-          "result": "dialogue_branch",
-          "next_node_id": "decipher_attempt"
-        },
-        {
-          "text": "Touch the glowing surface.",
-          "result": "dialogue_branch",
-          "next_node_id": "touch_surface"
-        },
-        {
-          "text": "Leave the tablet undisturbed.",
-          "result": "close_encounter",
-          "responseText": "You decide that some secrets are best left buried. You carefully back away from the glowing tablet."
-        }
-      ]
-    },
-    "decipher_attempt": {
-      "text": "You spend some time tracing the ancient symbols. They seem to speak of a hidden path, but the meaning is obscure. You feel a slight drain on your energy.",
-      "options": [
-        {
-          "text": "Focus harder on the symbols. (Risk damage, gain insight)",
-          "result": "dialogue_branch",
-          "next_node_id": "decipher_deeper"
-        },
-        {
-          "text": "Give up and return to the start.",
-          "result": "dialogue_branch",
-          "next_node_id": "start"
-        }
-      ]
-    },
-    "decipher_deeper": {
-      "text": "A jolt of arcane energy passes through you as the symbols briefly flare. You understand a piece of the puzzle, but it comes at a cost.",
-      "options": [
-        {
-          "text": "Take the shortcut revealed by the tablet. (-10 HP, -5 Clicks)",
-          "result": "shortcut-damage",
-          "damageTaken": 10,
-          "clicksReduced": 5,
-          "responseText": "The tablet's magic guides you through a hidden passage, but the strain takes its toll."
-        },
-        {
-          "text": "You've learned enough. Leave the tablet.",
-          "result": "close_encounter",
-          "responseText": "With newfound knowledge and a slight headache, you depart from the ancient tablet."
-        }
-      ]
-    },
-    "touch_surface": {
-      "text": "As your fingers meet the glowing stone, a wave of warmth washes over you. You feel invigorated.",
-      "options": [
-        {
-          "text": "Feel for hidden compartments. (Gain Gold)",
-          "result": "item",
-          "details": "gold",
-          "amount": 25,
-          "responseText": "Your touch reveals a hidden compartment at the base of the tablet, filled with glimmering gold."
-        },
-        {
-          "text": "Try to absorb more energy. (Gain HP)",
-          "result": "item",
-          "details": "health",
-          "healthAmount": 10,
-          "responseText": "The tablet's warmth fills you, mending some of your wounds."
-        },
-        {
-          "text": "Return to the initial message.",
-          "result": "dialogue_branch",
-          "next_node_id": "start"
-        }
-      ]
+    "id": "lore_020_wizards_tower",
+    "dialogueNodes": {
+      "start": {
+        "text": "Before you stands an ominous wizard's tower, its stone weathered and ancient. Rumors whisper that the wizard who once lived here was slain, and now a monstrous entity inhabits its halls. The monster refuses to leave and the nearby town fears it.",
+        "options": [
+          {
+            "text": "Open the main entrance.",
+            "flow": "dialogue_branch",
+            "next_node_id": "main_entrance"
+          },
+          {
+            "text": "Search for a less obvious way in.",
+            "flow": "dialogue_branch",
+            "next_node_id": "hidden_entry_search"
+          },
+          {
+            "text": "Decide it's too dangerous and leave.",
+            "flow": "close_encounter",
+            "responseText": "Maybe someone else can kill the monster..."
+          }
+        ]
+      },
+      "main_entrance": {
+        "text": "The heavy oak doors are slightly ajar, revealing a dark, dusty foyer. A faint, metallic scent hangs in the air.",
+        "options": [
+          {
+            "text": "Step cautiously into the foyer, trying to make not even a footstep apparent.",
+            "flow": "dialogue_branch",
+            "next_node_id": "foyer"
+          },
+          {
+            "text": "Push the doors wide open and announce your presence.",
+            "result": "mini_boss_combat",
+            "responseText": "The monster announces their presence as well with a loud growl..."
+          },
+          {
+            "text": "Reconsider and look for another way in.",
+            "flow": "dialogue_branch",
+            "next_node_id": "hidden_entry_search"
+          }
+        ]
+      },
+      "hidden_entry_search": {
+        "text": "You circle the tower, examining its crumbling walls. Near the back, you find a small, overgrown service entrance, almost completely hidden by ivy. It looks less used, but potentially unstable.",
+        "options": [
+          {
+            "text": "Try the service entrance.",
+            "flow": "dialogue_branch",
+            "next_node_id": "service_entrance"
+          },
+          {
+            "text": "Go back to the main entrance.",
+            "flow": "dialogue_branch",
+            "next_node_id": "main_entrance"
+          }
+        ]
+      },
+      "service_entrance": {
+        "text": "The service door creaks open with surprising ease. Inside, a narrow, dimly lit corridor stretches before you. You notice a glimmer in a shadowy corner.",
+        "options": [
+          {
+            "text": "Investigate the glimmer.",
+            "effect": "item",
+            "details": "gold",
+            "amount": 40,
+            "responseText": "You find a small pouch dropped by a previous visitor, containing 40 gold pieces. You continue on...",
+            "flow": "dialogue_branch",
+            "next_node_id": "foyer"
+          },
+          {
+            "text": "Proceed down the corridor.",
+            "flow": "dialogue_branch",
+            "next_node_id": "foyer"
+          }
+        ]
+      },
+      "foyer": {
+        "text": "The foyer is grand but decaying. A majestic, spiraling staircase dominates the center, and two dark corridors lead off to the left and right.",
+        "options": [
+          {
+            "text": "Ascend the grand staircase.",
+            "flow": "dialogue_branch",
+            "next_node_id": "grand_staircase"
+          },
+          {
+            "text": "Take the left corridor.",
+            "flow": "dialogue_branch",
+            "next_node_id": "left_corridor"
+          },
+          {
+            "text": "Take the right corridor.",
+            "flow": "dialogue_branch",
+            "next_node_id": "right_corridor"
+          }
+        ]
+      },
+      "grand_staircase": {
+        "text": "The stairs creak under your weight, echoing loudly. Halfway up, a trap unsprings and you see a dozen nails flying in your direction.",
+        "options": [
+          {
+            "text": "Quickly dodge the nail trap.",
+            "effect": "damage-minor",
+            "amount": 3,
+            "responseText": "You manage to avoid the worst, but a nail grazes your arm. You take 3 damage. You continue on.",
+            "flow": "dialogue_branch",
+            "next_node_id": "top_of_tower"
+          },
+          {
+            "text": "Tank the nail trap.",
+            "flow": "dialogue_branch",
+            "effect": "damage-minor",
+            "amount": 10,
+            "responseText": "You tank the nails and a few get stuck in your skin. You take 10 damage. You continue on.",
+            "next_node_id": "top_of_tower"
+          }
+        ]
+      },
+      "left_corridor": {
+        "text": "This corridor is lined with empty shelves and overturned furniture. It smells faintly of dust and something sweet. You spot a discarded vial on the floor.",
+        "options": [
+          {
+            "text": "Pick up the vial.",
+            "effect": "inventoryItem",
+            "id": "health_potion_consumable",
+            "responseText": "You pick up the vial. It's a Health Potion. A lucky find. You continue on.",
+            "flow": "dialogue_branch",
+            "next_node_id": "dead_end_left"
+          },
+          {
+            "text": "Continue to the end of the corridor.",
+            "flow": "dialogue_branch",
+            "next_node_id": "dead_end_left"
+          }
+        ]
+      },
+      "right_corridor": {
+        "text": "This corridor is surprisingly well-maintained, adorned with faded tapestries. The air here is colder, and you hear a faint, guttural growl from deeper within.",
+        "options": [
+          {
+            "text": "Follow the growling sound.",
+            "flow": "dialogue_branch",
+            "next_node_id": "monster_lair_approach"
+          },
+          {
+            "text": "Return to the foyer.",
+            "flow": "dialogue_branch",
+            "next_node_id": "foyer"
+          }
+        ]
+      },
+      "dead_end_left": {
+        "text": "The corridor ends abruptly at a solid, unyielding wall. There's no way forward here.",
+        "options": [
+          {
+            "text": "Return to the foyer.",
+            "flow": "dialogue_branch",
+            "next_node_id": "foyer"
+          }
+        ]
+      },
+      "monster_lair_approach": {
+        "text": "The growling grows louder, echoing from a large, ornate door at the end of the corridor.",
+        "options": [
+          {
+            "text": "Brace yourself and open the door.",
+            "result": "mini_boss_combat",
+            "responseText": "The monster announces their presence by emitting an ear piercing growl."
+          },
+          {
+            "text": "Hesitate and return to the foyer.",
+            "flow": "dialogue_branch",
+            "next_node_id": "foyer"
+          }
+        ]
+      },
+      "top_of_tower": {
+        "text": "You reach the top floor. The wizard's study is here, filled with arcane instruments and dusty tomes. A strange, pulsating orb floats in the center of the room.",
+        "options": [
+          {
+            "text": "Confront the pulsating orb.",
+            "result": "mini_boss_combat",
+            "responseText": "The orb flares brightly, revealing its true, monstrous form."
+          },
+          {
+            "text": "Search the study for clues.",
+            "effect": "item",
+            "details": "gold",
+            "amount": 30,
+            "responseText": "You quickly search the study, finding a hidden stash of gold beneath a loose floorboard.",
+            "flow": "dialogue_branch",
+            "next_node_id": "top_of_tower_search_outcome"
+          },
+          {
+            "text": "Descend the stairs and leave the tower.",
+            "flow": "close_encounter",
+            "responseText": "You decide the top floor is too dangerous for now. You carefully descend and leave the tower."
+          }
+        ]
+      },
+      "top_of_tower_search_outcome": {
+        "text": "You've found some gold! What do you do next?",
+        "options": [
+          {
+            "text": "Confront the pulsating orb.",
+            "result": "mini_boss_combat",
+            "responseText": "The orb flares brightly, revealing its true, monstrous form."
+          },
+          {
+            "text": "Descend the stairs and leave the tower.",
+            "flow": "close_encounter",
+            "responseText": "You decide the top floor is too dangerous for now. You carefully descend and leave the tower."
+          }
+        ]
+      }
     }
   }
-}
 ]

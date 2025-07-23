@@ -60,7 +60,6 @@
         <div class="lore" v-else-if="encounter.type === 'lore'">
           <div class="lore-name">Discovery 🔎</div>
           <div class="lore-greeting" v-html="typedGreeting"></div>
-          <!-- CRITICAL FIX: Use currentDialogue.value.options for lore branching -->
           <div v-if="currentDialogue && currentDialogue.options">
             <button
               v-for="(option, index) in currentDialogue.options"
