@@ -788,5 +788,120 @@
         ]
       }
     }
+  },
+  {
+    "id": "lore_021_whispering_well",
+    "dialogueNodes": {
+      "start": {
+        "text": "You discover an ancient stone well, strangely overgrown with a gnarled, moss-covered tree that seems to sprout directly from its depths. A faint, cool breeze whispers from within, carrying a scent of damp earth and something else... something wild.",
+        "options": [
+          {
+            "text": "Jump into the well.",
+            "flow": "dialogue_branch",
+            "next_node_id": "well_bottom"
+          },
+          {
+            "text": "Walk away. Some mysteries are best left alone.",
+            "flow": "close_encounter",
+            "responseText": "You decide the well holds more trouble than treasure and continue on your journey."
+          }
+        ]
+      },
+      "well_bottom": {
+        "text": "You splash down into shallow, cool water. The air is damp, and a faint light reveals a narrow tunnel leading away from the bottom of the well. The tunnel seems to lead towards a distant, flickering light and the faint sounds of voices.",
+        "options": [
+          {
+            "text": "Follow the tunnel cautiously towards the light.",
+            "flow": "dialogue_branch",
+            "next_node_id": "tunnel_fork"
+          },
+          {
+            "text": "Walk through the tunnel yelling and screaming like a crazy person.",
+            "result": "mini_boss_combat",
+            "responseText": "Your shouts echo, and a monstrous growl answers! A hulking figure bursts from the shadows, ready for a fight!"
+          },
+          {
+            "text": "Climb back out of the well.",
+            "flow": "close_encounter",
+            "responseText": "The well's depths are too unsettling. You carefully climb back to the surface and leave."
+          }
+        ]
+      },
+      "tunnel_fork": {
+        "text": "The tunnel opens into a small cavern. Ahead, the tunnel continues straight, but a smaller, darker passage branches off to your left. The sounds of the voices seem closer down the straight path.",
+        "options": [
+          {
+            "text": "Go left into the darker passage.",
+            "flow": "dialogue_branch",
+            "next_node_id": "ladder_to_camp"
+          },
+          {
+            "text": "Go straight, deeper into the main tunnel.",
+            "flow": "dialogue_branch",
+            "next_node_id": "straight_path_fork"
+          },
+          {
+            "text": "Turn around and climb out of the well. This is too risky.",
+            "flow": "close_encounter",
+            "responseText": "The thought of bandits makes you reconsider. You backtrack and climb out of the well."
+          }
+        ]
+      },
+      "ladder_to_camp": {
+        "text": "The dark passage leads to a rickety wooden ladder ascending into what sounds like a very active bandit camp. You hear boisterous laughter and the clinking of steel. Going up this ladder now would surely lead to immediate discovery and probably death.",
+        "options": [
+          {
+            "text": "Say 'screw it' and go up the ladder.",
+            "effect": "damage-minor",
+            "amount": 100,
+            "responseText": "You bravely (or foolishly) ascend the ladder. You're immediately spotted.",
+            "flow": "close_encounter"
+          },
+          {
+            "text": "Go back and take the straight path instead.",
+            "flow": "dialogue_branch",
+            "next_node_id": "straight_path_fork"
+          },
+          {
+            "text": "Go back the way you came and leave the well.",
+            "flow": "close_encounter",
+            "responseText": "The bandit camp is too dangerous. You retreat and leave the well behind."
+          }
+        ]
+      },
+      "straight_path_fork": {
+        "text": "The straight tunnel continues, then forks again. To your left, you see a faint, soft glow. To your right, you hear a low, rhythmic thudding sound.",
+        "options": [
+          {
+            "text": "Turn left towards the soft glow.",
+            "result": "inventoryItem",
+            "id": "health_potion_consumable",
+            "responseText": "You find a hidden alcove with a glowing moss that, when consumed, restores 10 HP. It tastes faintly of lemon and regret.",
+            "flow": "dialogue_branch",
+            "next_node_id": "exit_tunnel_safe"
+          },
+          {
+            "text": "Turn right towards the thudding sound.",
+            "result": "mini_boss_combat",
+            "responseText": "The thudding grows louder, revealing a crude training area where a hulking brute practices with a heavy club. It sees you!"
+          },
+          {
+            "text": "Go back the way you came and leave the well.",
+            "flow": "close_encounter",
+            "responseText": "You've seen enough of this underground network. You retreat and leave the well."
+          }
+        ]
+      },
+      "exit_tunnel_safe": {
+        "text": "The tunnel continues for a short distance and opens into a secluded part of the forest, far from the bandit camp. You've found a safe exit.",
+        "options": [
+          {
+            "text": "Exit the tunnel and continue your journey.",
+            "flow": "close_encounter",
+            "responseText": "You emerge from the tunnel, blinking in the sunlight, ready for your next adventure."
+          }
+        ]
+      }
+    }
   }
 ]

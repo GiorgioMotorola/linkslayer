@@ -157,6 +157,7 @@ import { handleClick as externalHandleClick } from "@/utils/clickHandler.js";
 import { handleEncounterOption as externalHandleEncounterOption } from "@/utils/encounterHandler";
 import { handleLootDrop as externalHandleLootDrop } from "@/utils/lootHandler";
 import { handleEnemyTurn as externalHandleEnemyTurn } from "@/utils/enemyTurnHandler";
+import { handleMiniBossLootDrop } from "@/utils/miniBossLootHandler";
 import InventoryModal from "@/components/InventoryModal.vue";
 import { shopItems } from "@/utils/shopItems";
 import {
@@ -478,6 +479,36 @@ function callHandleRest(choice) {
   });
 }
 function handleCombatActionWrapper(playerAction) {
+  const handleLoot = (defeatedEnemyData) => {
+    const lootHandlerArgs = {
+      playerState: {
+        playerHP,
+        playerName,
+        playerClass,
+        specialUsesLeft,
+        weaponBonus,
+        shieldBonus,
+        playerGold,
+        effectiveMaxHP: effectiveMaxHP.value,
+        inventory,
+      },
+      utilityFunctions: {
+        log,
+      },
+    };
+
+    if (isBoss(defeatedEnemyData)) {
+      log(
+        `✨ The ${defeatedEnemyData.name} dissipates, leaving no worldly possessions behind.`
+      );
+      markBossDefeated();
+    } else if (defeatedEnemyData.isMiniBoss) {
+      handleMiniBossLootDrop(lootHandlerArgs);
+    } else {
+      externalHandleLootDrop(lootHandlerArgs);
+    }
+  };
+
   handleCombatAction({
     player: {
       playerHP,
@@ -487,7 +518,7 @@ function handleCombatActionWrapper(playerAction) {
       shieldBonus,
       playerName,
       action: playerAction,
-      effectiveMaxHP: effectiveMaxHP.value,
+      effectiveMaxHP,
       totalSpecialsUsed,
     },
     enemy: {
@@ -509,9 +540,10 @@ function handleCombatActionWrapper(playerAction) {
     utils: {
       clearTimer: () => clearInterval(timerInterval),
       setDefeated: () => (defeated.value = true),
-      handleLootDrop,
+      handleLootDrop: handleLoot,
       markBossDefeated,
       gotoEnemyTurn,
+      bossOverlay: bossOverlay,
     },
   });
 }
@@ -694,24 +726,6 @@ async function callHandleEncounterOption(option) {
     },
     modalState: {
       bossOverlay,
-    },
-    utilityFunctions: {
-      log,
-    },
-  });
-}
-
-function handleLootDrop() {
-  externalHandleLootDrop({
-    playerState: {
-      playerHP,
-      playerName,
-      playerClass,
-      specialUsesLeft,
-      weaponBonus,
-      shieldBonus,
-      playerGold,
-      effectiveMaxHP: effectiveMaxHP.value,
     },
     utilityFunctions: {
       log,

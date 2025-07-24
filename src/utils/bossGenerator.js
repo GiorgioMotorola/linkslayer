@@ -80,9 +80,6 @@ export function getRandomBoss() {
   };
 }
 
-export function isBoss(enemyOrName) {
-  const name =
-    typeof enemyOrName === "string" ? enemyOrName : enemyOrName?.name ?? "";
-
-  return BOSS_TYPES.some((boss) => name.includes(boss.type));
+export function isBoss(enemyObject) {
+  return enemyObject && enemyObject.isBoss === true;
 }

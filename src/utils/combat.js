@@ -1,4 +1,5 @@
-// src/utils/combat.js
+import { isBoss } from "./bossGenerator.js";
+
 export function handleCombatAction({ player, enemy, state, utils }) {
   const {
     playerHP,
@@ -24,7 +25,6 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     log,
     formattedTitle,
     DEFAULT_ENEMY_HP,
-    isBoss,
     combatWinsSinceLastCapIncrease,
     hpCapBonus,
   } = state;
@@ -36,6 +36,8 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     markBossDefeated,
     gotoEnemyTurn,
   } = utils;
+
+  const isBossFromState = state.isBoss;
 
   const currentEffectiveMaxHP = player.effectiveMaxHP;
 
@@ -69,7 +71,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     log(
       `🗡️ <span class="player-name">${playerName.value}</span> hits ${formattedTitle} for ${damageToEnemy} damage.`
     );
-} else if (playerAction === "special") {
+  } else if (playerAction === "special") {
     if (specialUsesLeft.value <= 0) {
       log(
         `<span class="player-name">${playerName.value}</span> is out of ${playerClass.value.special} charges.`
@@ -80,7 +82,6 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     if (totalSpecialsUsed) {
       totalSpecialsUsed.value++;
     }
-    // All the class-specific special ability logic should be inside this block
     const cls = playerClass.value.name;
     const specialName = playerClass.value.special;
 
@@ -195,11 +196,10 @@ export function handleCombatAction({ player, enemy, state, utils }) {
         }
       }
     }
-} // <-- This is the missing curly brace that closes the 'else if (playerAction === "special")' block.
-else if (playerAction === "defend") {
+  } else if (playerAction === "defend") {
     playerDefendedThisTurn = true;
-} else if (playerAction === "flee") {
-    if (isBoss(encounter.value?.enemy)) {
+  } else if (playerAction === "flee") {
+    if (isBossFromState(encounter.value?.enemy)) {
       log(`You cannot flee from ${encounter.value?.enemy?.name}.`);
     } else {
       if (Math.random() > 0.7) {
@@ -237,21 +237,17 @@ else if (playerAction === "defend") {
     );
     const defeatedEnemyData = encounter.value?.enemy;
     encounter.value = null;
-    handleLootDrop();
+    handleLootDrop(defeatedEnemyData);
 
     combatWinsSinceLastCapIncrease.value++;
     if (combatWinsSinceLastCapIncrease.value >= 5) {
       hpCapBonus.value += 10;
 
       log(
-        `🎉 You have gained experience from defeating the evil in this land and your maximum HP increased by <strong>10</strong>. New max HP: ${currentEffectiveMaxHP}`
+        `🎉 You have gained experience from defeating the evil in this land and your maximum HP increased by <strong>10</strong>. New max HP: ${effectiveMaxHP.value}` // Access its value here
       );
       combatWinsSinceLastCapIncrease.value = 0;
-      playerHP.value = Math.min(playerHP.value, currentEffectiveMaxHP);
-    }
-
-    if (isBoss(defeatedEnemyData)) {
-      markBossDefeated();
+      playerHP.value = Math.min(playerHP.value, effectiveMaxHP.value); // Access its value here
     }
     return;
   }

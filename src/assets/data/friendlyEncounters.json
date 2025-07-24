@@ -500,17 +500,17 @@
         "options": [
           {
             "text": "Tell me about this village.",
-            "result": "dialogue_branch",
+            "flow": "dialogue_branch",
             "next_node_id": "village_backstory"
           },
           {
             "text": "I could use some healing.",
-            "result": "dialogue_branch",
+            "flow": "dialogue_branch",
             "next_node_id": "healing_offer"
           },
           {
             "text": "I'm fine, thank you. Just passing through.",
-            "result": "close_encounter",
+            "flow": "close_encounter",
             "responseText": "Hanni nods kindly. 'Safe travels then, dearie. May your path be clear.'"
           }
         ]
@@ -520,17 +520,17 @@
         "options": [
           {
             "text": "Thats... great for you...",
-            "result": "dialogue_branch",
+            "flow": "dialogue_branch",
             "next_node_id": "sunken_city_lore"
           },
           {
             "text": "That's enough history for now. Can you help me?",
-            "result": "dialogue_branch",
+            "flow": "dialogue_branch",
             "next_node_id": "healing_offer"
           },
           {
             "text": "Thank you for the stories. I should go.",
-            "result": "close_encounter",
+            "flow": "close_encounter",
             "responseText": "Hanni smiles warmly. 'Anytime, dearie. Come back if you need a warm word or a helping hand.'"
           }
         ]
@@ -540,12 +540,12 @@
         "options": [
           {
             "text": "That's enough history for now. Can you help me?",
-            "result": "dialogue_branch",
+            "flow": "dialogue_branch",
             "next_node_id": "village_backstory"
           },
           {
             "text": "I've heard enough. Goodbye.",
-            "result": "close_encounter",
+            "flow": "close_encounter",
             "responseText": "Hanni nods, her expression thoughtful. 'Indeed. Some stories are best left untold.'"
           }
         ]
@@ -555,31 +555,34 @@
         "options": [
           {
             "text": "A quick pick-me-up. (Free +5 HP)",
-            "result": "item",
+            "effect": "item",
             "details": "health",
             "healthAmount": 5,
-            "responseText": "Hanni presses a warm poultice into your hand. 'There, that should help with the aches. No charge, dearie.'"
+            "responseText": "Hanni presses a warm poultice into your hand. 'There, that should help with the aches. No charge, dearie.'",
+            "flow": "close_encounter"
           },
           {
             "text": "Something stronger for 10 Gold. (+20 HP)",
-            "result": "item",
+            "effect": "item",
             "details": "health-gold-loss",
             "healthAmount": 20,
             "goldCost": 10,
-            "responseText": "Hanni produces a small, glowing vial. 'This special brew will set you right. Just 10 gold, for my troubles.'"
+            "responseText": "Hanni produces a small, glowing vial. 'This special brew will set you right. Just 10 gold, for my troubles.'",
+            "flow": "close_encounter"
           },
           {
             "text": "Do you have any ale? (2 Gold, +15 HP)",
-            "result": "item",
+            "effect": "item",
             "details": "beer-cost-blur",
             "healthAmount": 15,
             "goldCost": 2,
             "amount": 4,
-            "responseText": "Hanni chuckles, pulling out a tankard. 'Always got some homebrew for a parched throat! Just 2 gold, but it's strong stuff!'"
+            "responseText": "Hanni chuckles, pulling out a tankard. 'Always got some homebrew for a parched throat! Just 2 gold, but it's strong stuff!'",
+            "flow": "close_encounter"
           },
           {
             "text": "Never mind, I'm alright now.",
-            "result": "dialogue_branch",
+            "flow": "dialogue_branch",
             "next_node_id": "start"
           }
         ]
@@ -851,13 +854,13 @@
   {
     "id": "npc_019_karaoke_contest",
     "name": "The Bard's Library Karaoke",
-    "greeting": "You step into the grand hall of the Bard's Library, usually a place of quiet study, but tonight it's abuzz with an unusual energy. A makeshift stage is set up, and a sign reads: 'Improv Medieval Karaoke Contest! Master the Ballad of the Wandering Blade!'",
+    "greeting": "You step into the grand hall of the Bard's Library, usually a place of quiet study, but tonight it's abuzz with an unusual energy. A makeshift stage is set up, and a sign reads: 'Karaoke Contest. Master the Ballad of the Wandering Blade.'",
     "dialogueNodes": {
       "start": {
-        "text": "The air vibrates with nervous excitement and off-key singing. A cheerful gnome gestures towards the stage. 'Care to try your hand, traveler? Tonight, we seek the finest rendition of 'The Ballad of the Wandering Blade'! Do you dare to improvise a verse?'",
+        "text": "The air vibrates with nervous excitement and off-key singing. A cheerful gnome gestures towards the stage. 'Care to try your hand, traveler? Tonight, we seek the finest rendition of 'Molly Malone'. Winner gets 100 Gold Pieces!'",
         "options": [
           {
-            "text": "Sign up for the contest! (I'll try 'The Wandering Blade')",
+            "text": "Sign up for the contest despite not knowing the song at all.",
             "flow": "dialogue_branch",
             "next_node_id": "pick_song"
           },
@@ -874,116 +877,105 @@
         ]
       },
       "pick_song": {
-        "text": "The gnome hands you a scroll with the opening line of 'The Ballad of the Wandering Blade'. 'Alright, traveler! Let's hear your heart's song! Your first line is: 'From misty peaks, where dragons soar, a hero's journey, forevermore...''",
+        "text": "The gnome directs you to the stage where some 50 patrons half drunk cheer. The small band in the corner begins the song as the crowd sings the first line 'In Dublin's fair city, Where the girls are so pretty, I first set my eyes on sweet Molly Malone' and they await for you to belt out the next line...",
         "options": [
           {
-            "text": "Sing: 'With steel in hand, and courage bright, he sought the dawn, through darkest night.'",
+            "text": "Sing: 'As she wheeled her wheel-barrow, Through streets broad and narrow, Crying: Cockles and mussels, alive, alive, oh!",
             "flow": "dialogue_branch",
             "next_node_id": "line_1"
           },
           {
-            "text": "Sing: 'The baker bakes, the bread is warm, I love a good, fresh morning storm.'",
+            "text": "Sing: 'As she ate a squirrel, Through streets full of barrels, Sighing: Rocks and muskrats, alive, alive, oh!'",
             "flow": "dialogue_branch",
             "next_node_id": "lose_contest"
           },
           {
-            "text": "Sing: 'My belly aches, for stew and pie, beneath the vast and endless sky.'",
+            "text": "Dont sing and instead begin sweating and anxiously shaking.'",
             "flow": "dialogue_branch",
             "next_node_id": "lose_contest"
           }
         ]
       },
       "line_1": {
-        "text": "The crowd murmurs approvingly, a few bards nod. The gnome smiles. 'A strong start! Now, for the next verse!'",
+        "text": "The crowd begins clapping along moderately and singing along: 'Alive, alive, oh, Alive, alive, oh! Crying Cockles and mussels, alive, alive, oh!'",
         "options": [
           {
-            "text": "Sing: 'Through ancient crypts, and shadowed glades, he faced the beasts, with shining blades.'",
-            "flow": "dialogue_branch",
-            "next_node_id": "line_2"
-          },
-          {
-            "text": "Sing: 'The tavern's ale, so rich and deep, where weary travelers softly sleep.'",
+            "text": "Sing: 'She was a nice mother, But sure 'twas no father, For so were her brother and sister before'",
             "flow": "dialogue_branch",
             "next_node_id": "lose_contest"
           },
           {
-            "text": "Sing: 'My lute strings hum, a gentle tune, beneath the pale and silver moon.'",
+            "text": "Sing: 'She was a fishmonger, But sure 'twas no wonder, For so were her father and mother before'",
+            "flow": "dialogue_branch",
+            "next_node_id": "line_2"
+          },
+          {
+            "text": "Dont sing and instead vomit off stage left and run out of the Library.",
             "flow": "dialogue_branch",
             "next_node_id": "lose_contest"
           }
         ]
       },
       "line_2": {
-        "text": "A few audience members clap, impressed by your lyrical flow. 'Marvelous! One more line, traveler!'",
+        "text": "The crowd begins wildly singing back: 'And they each wheel'd their barrow, Through streets broad and narrow'",
         "options": [
           {
-            "text": "Sing: 'No magic spell, nor dark deceit, could turn him from his noble feat.'",
-            "flow": "dialogue_branch",
-            "next_node_id": "line_3"
-          },
-          {
-            "text": "Sing: 'The dragon sleeps, on piles of gold, a tale for bards, both new and old.'",
+            "text": "Sing back to the crowd: 'Sighing: Rocks and muskrats, alive, alive, oh!'",
             "flow": "dialogue_branch",
             "next_node_id": "lose_contest"
           },
           {
-            "text": "Sing: 'So gather round, and hear my song, where valiant heroes truly belong!'",
+            "text": "Sing back to the crowd: 'Crying Cockles and mussels alive, alive oh!'",
+            "flow": "dialogue_branch",
+            "next_node_id": "line_3"
+          },
+          {
+            "text": "Sing: 'Molly Maloooone! Molly MaloooooooooOOoooooOoOone!'",
             "flow": "dialogue_branch",
             "next_node_id": "lose_contest"
           }
         ]
       },
       "line_3": {
-        "text": "The crowd holds its breath. You feel the final, triumphant line forming in your mind.",
+        "text": "The crowd is out of control. The floor is being scuffed with the amount of feet scraping in rhythm and neighbors nearby are poking their heads in a sleepy eyed state as the crowd sings back to you 'She died of a fever and no one could save her. And that was the end of sweet Molly Malone!'.",
         "options": [
           {
-            "text": "Sing: 'For justice true, and freedom's call, the Wandering Blade would conquer all!'",
+            "text": "Sing: 'But her goat wheels her barrow, Through streets made of marrow, Crying Socks filled of muscle, alive, alive, oh!'",
+            "flow": "dialogue_branch",
+            "next_node_id": "lose_contest"
+          },
+          {
+            "text": "Sing: 'Rest in Peace, Mollllyyy Maaaaloooooneee!'",
+            "flow": "dialogue_branch",
+            "next_node_id": "lose_contest"
+          },
+          {
+            "text": "Sing: 'But her ghost wheels her barrow, Through streets broad and narrow, Crying, Cockles and mussels, alive, alive, oh!'",
             "flow": "dialogue_branch",
             "next_node_id": "win_contest"
-          },
-          {
-            "text": "Sing: 'My journey ends, my quest is done, beneath the setting, golden sun.'",
-            "flow": "dialogue_branch",
-            "next_node_id": "lose_contest"
-          },
-          {
-            "text": "Sing: 'The sun descends, the day is done, my weary travels now are run.'",
-            "flow": "dialogue_branch",
-            "next_node_id": "lose_contest"
           }
         ]
       },
       "win_contest": {
-        "text": "A roar erupts from the crowd! The gnome jumps up and down, throwing his hat in the air. 'A perfect rendition! You've captured the spirit of the ballad, traveler! You've won the contest!'",
+        "text": "The crowd is in a steady roar. The gnome is running toward you with a big pouch of gold. He is jumping up and down shouting 'You win! You Win! Here is your prize!'",
         "options": [
           {
-            "text": "Claim your prize!",
-            "flow": "dialogue_branch",
-            "next_node_id": "claim_prize"
-          }
-        ]
-      },
-      "claim_prize": {
-        "text": "The gnome hands you a heavy pouch. 'Here is your prize, as promised!'",
-        "result": "item",
-        "details": "gold",
-        "amount": 19,
-        "responseText": "You receive a heavy pouch of 100 gleaming gold pieces! Your vocal cords might be sore, but your purse is certainly not, and you've earned the respect of the bards present.",
-        "options": [
-          {
-            "text": "Accept your winnings and leave.",
-            "flow": "close_encounter",
-            "responseText": "With your pockets jingling, you make a triumphant exit from the Bard's Library."
+            "text": "Accept your winnings.",
+            "effect": "item",
+            "details": "gold",
+            "amount": 100,
+            "responseText": "You receive a heavy pouch of 100 gleaming gold pieces! Your vocal cords might be sore, but your purse is certainly not, and you've earned the respect of the bards present.",
+            "flow": "close_encounter"
           }
         ]
       },
       "lose_contest": {
-        "text": "A collective groan rises from the audience. The gnome sighs. 'Ah, a valiant effort, but alas, not quite the right tune for 'The Wandering Blade'. Better luck next time, traveler!'",
+        "text": "A collective groan rises from the audience. The gnome sighs. Better luck next time.",
         "options": [
           {
             "text": "Accept defeat and leave.",
             "flow": "close_encounter",
-            "responseText": "You bow awkwardly and exit the stage, perhaps a little wiser about impromptu karaoke."
+            "responseText": "Well, at least a Bandit wasn't swiping at me with a sword. I guess it wasn't all bad."
           }
         ]
       }
