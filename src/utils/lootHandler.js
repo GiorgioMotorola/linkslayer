@@ -9,6 +9,8 @@ export function handleLootDrop({ playerState, utilityFunctions }) {
     weaponBonus,
     shieldBonus,
     playerGold,
+    inventory,
+    effectiveMaxHP,
   } = playerState;
   const { log } = utilityFunctions;
 
@@ -26,9 +28,7 @@ export function handleLootDrop({ playerState, utilityFunctions }) {
     case "health": {
       const amount = 10;
 
-      playerHP.value = Math.min(
-        playerHP.value + amount,
-      );
+      playerHP.value = Math.min(playerHP.value + amount, effectiveMaxHP);
       log(
         `🍎 <span class="player-name">${playerName.value}</span> loots +${amount} HP.`
       );
