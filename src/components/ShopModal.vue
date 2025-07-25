@@ -51,6 +51,13 @@
               <span v-else-if="item.details === 'stickItem'">
                 Doesn't do much. It's just a cool stick that I found.
               </span>
+              <span v-else-if="item.details === 'barkTea'">
+                A bitter tea that restores {{ item.amount }} HP.
+              </span>
+              <span v-else-if="item.details === 'frenchOnionSoup'">
+                A hearty soup that restores {{ item.healAmount }} HP and
+                {{ item.specialAmount }} special use.
+              </span>
             </span>
             <span v-else-if="item.effect === 'blurCure'">
               Sober up instantly, clearing blur effects.

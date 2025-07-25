@@ -24,6 +24,12 @@
           <button class="use-button" @click="useItem('turkeyLeg')">Use</button>
         </div>
 
+        <div v-if="inventory.barkTeas > 0" class="item-slot">
+          <span class="item-name">Bark Tea</span>
+          <span class="item-quantity">x{{ inventory.barkTeas }}</span>
+          <button class="use-button" @click="useItem('barkTea')">Use</button>
+        </div>
+
         <div v-if="inventory.herbalPoultices > 0" class="item-slot">
           <span class="item-name">Herbal Poultice</span>
           <span class="item-quantity">x{{ inventory.herbalPoultices }}</span>
@@ -33,6 +39,14 @@
             :disabled="isHealthRegenActive"
           >
             {{ isHealthRegenActive ? "Regen Active" : "Use" }}
+          </button>
+        </div>
+
+        <div v-if="inventory.frenchOnionSoups > 0" class="item-slot">
+          <span class="item-name">French Onion Soup</span>
+          <span class="item-quantity">x{{ inventory.frenchOnionSoups }}</span>
+          <button class="use-button" @click="useItem('frenchOnionSoup')">
+            Use
           </button>
         </div>
 
@@ -61,7 +75,9 @@
             inventory.turkeyLegs === 0 &&
             inventory.invisibilityCloaks === 0 &&
             inventory.stickItem === 0 &&
-            inventory.herbalPoultices === 0
+            inventory.herbalPoultices === 0 &&
+            inventory.barkTeas &&
+            inventory.frenchOnionSoups === 0
           "
           class="item-slot no-items-game-style"
         >

@@ -151,17 +151,22 @@ function applyOptionEffects({
       if (option.id === "health_potion_consumable") {
         inventory.value.healthPotions++;
         log(
-          `➕ <span class="player-name">${playerName.value}</span> found a Health Potion!`
+          `➕ <span class="player-name">${playerName.value}</span> found a Health Potion.`
         );
       } else if (option.id === "arcane_compass") {
         inventory.value.compass++;
         log(
-          `🧭 <span class="player-name">${playerName.value}</span> found an Arcane Compass!`
+          `🧭 <span class="player-name">${playerName.value}</span> found an Arcane Compass.`
         );
       } else if (option.id === "turkey_leg_consumable") {
         inventory.value.turkeyLegs++;
         log(
-          `🍖 <span class="player-name">${playerName.value}</span> found a Turkey Leg!`
+          `🍖 <span class="player-name">${playerName.value}</span> found a Turkey Leg.`
+        );
+      } else if (option.id === "bark_tea_consumable"){
+        inventory.value.barkTeas++;
+                log(
+          `☕ <span class="player-name">${playerName.value}</span> found Bark Tea.`
         );
       }
       break;

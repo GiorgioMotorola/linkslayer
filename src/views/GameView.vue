@@ -167,6 +167,8 @@ import {
   useTurkeyLeg as externalUseTurkeyLeg,
   useInvisibilityCloak as externalUseInvisibilityCloak,
   useHerbalPoultice as externalUseHerbalPoultice,
+  useBarkTea as externalUseBarkTea,
+  useFrenchOnionSoup as externalUseFrenchOnionSoup,
 } from "@/utils/itemHandlers";
 
 const journeyLength = ref(3);
@@ -220,6 +222,9 @@ const poisonedClicksLeft = ref(0);
 const poisonDamagePerClick = ref(0);
 const HEALTH_POTION_HEAL_AMOUNT = 30;
 const TURKEY_LEG_HEAL_AMOUNT = 6;
+const BARK_TEA_HEAL_AMOUNT = 8;
+const FRENCH_ONION_SOUP_HEAL_AMOUNT = 10;
+const FRENCH_ONION_SOUP_SPECIAL_AMOUNT = 1;
 const isCloakActive = ref(false);
 const CLOAK_DURATION = 10;
 const cloakClicksRemaining = ref(0);
@@ -235,6 +240,8 @@ const inventory = ref({
   invisibilityCloaks: 0,
   stickItem: 0,
   herbalPoultices: 0,
+  barkTea: 0,
+  frenchOnionSoups: 0,
 });
 
 const isInventoryModalOpen = ref(false);
@@ -795,7 +802,6 @@ const useHealthPotion = () => {
     },
     {
       log,
-      closeInventoryModal,
     },
     {
       HEALTH_POTION_HEAL_AMOUNT,
@@ -815,6 +821,40 @@ const useTurkeyLeg = () => {
     },
     {
       TURKEY_LEG_HEAL_AMOUNT,
+    }
+  );
+};
+
+const useBarkTea = () => {
+  externalUseBarkTea(
+    {
+      inventory,
+      playerHP,
+      effectiveMaxHP,
+    },
+    {
+      log,
+    },
+    {
+      BARK_TEA_HEAL_AMOUNT,
+    }
+  );
+};
+
+const useFrenchOnionSoup = () => {
+  externalUseFrenchOnionSoup(
+    {
+      inventory,
+      playerHP,
+      specialUsesLeft,
+      effectiveMaxHP,
+    },
+    {
+      log,
+    },
+    {
+      FRENCH_ONION_SOUP_HEAL_AMOUNT,
+      FRENCH_ONION_SOUP_SPECIAL_AMOUNT,
     }
   );
 };
@@ -847,7 +887,6 @@ const useHerbalPoultice = () => {
     },
     {
       log,
-      closeInventoryModal,
     }
   );
 };
@@ -880,6 +919,10 @@ function handleUseInventoryItem(itemType) {
     useInvisibilityCloak();
   } else if (itemType === "herbalPoultice") {
     useHerbalPoultice();
+  } else if (itemType === "barkTea") {
+    useBarkTea();
+  } else if (itemType === "frenchOnionSoup") {
+    useFrenchOnionSoup();
   }
 }
 

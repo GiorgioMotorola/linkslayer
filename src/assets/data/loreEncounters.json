@@ -431,14 +431,14 @@
         "responseText": "You feel more confident that you will win this fight.",
         "result": "special",
         "details": "recover",
-        "amount": 1
+        "amount": 2
       },
       {
         "text": "Put on the R mask.",
         "responseText": "You feel richer than ever.",
         "result": "item",
         "details": "gold",
-        "amount": 20
+        "amount": 30
       },
       {
         "text": "Put on the C mask.",

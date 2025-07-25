@@ -82,6 +82,12 @@ export function handleShopPurchase(
           utilityFunctions.log(
             `🍗 ${gameData.playerName.value} acquired a Turkey Leg.`
           );
+        } else if (item.details === "barkTea") {
+          playerState.inventory.value.barkTeas =
+            Number(playerState.inventory.value.barkTeas || 0) + 1;
+          utilityFunctions.log(
+            `☕ ${gameData.playerName.value} acquired Bark Tea.`
+          );
         } else if (item.details === "invisibilityCloak") {
           playerState.inventory.value.invisibilityCloaks++;
           utilityFunctions.log(
@@ -100,6 +106,12 @@ export function handleShopPurchase(
           playerState.inventory.value.herbalPoultices++;
           utilityFunctions.log(
             `🌿 ${gameData.playerName.value} acquired a Herbal Poultice.`
+          );
+        } else if (item.details === "frenchOnionSoup") {
+          playerState.inventory.value.frenchOnionSoups =
+            Number(playerState.inventory.value.frenchOnionSoups || 0) + 1;
+          utilityFunctions.log(
+            `🥣 ${gameData.playerName.value} acquired French Onion Soup.`
           );
         }
         break;
@@ -138,7 +150,6 @@ export function useCompass(
     console.warn(
       "useCompass: Attempted to use compass when fullChain is undefined or empty."
     );
-    utilityFunctions.closeInventoryModal();
     return;
   }
 
@@ -216,7 +227,6 @@ export const useHealthPotion = (
     utilityFunctions.log(
       `You consumed a Health Potion and recovered ${itemConstants.HEALTH_POTION_HEAL_AMOUNT} HP! Your HP is now ${playerState.playerHP.value}.`
     );
-    utilityFunctions.closeInventoryModal();
   } else {
     utilityFunctions.log("You don't have any Health Potions to use.");
   }
@@ -234,6 +244,47 @@ export const useTurkeyLeg = (playerState, utilityFunctions, itemConstants) => {
     );
   } else {
     utilityFunctions.log("You don't have any Turkey Legs to use.");
+  }
+};
+
+export const useBarkTea = (playerState, utilityFunctions, itemConstants) => {
+  if (playerState.inventory.value.barkTeas > 0) {
+    playerState.inventory.value.barkTeas--;
+    playerState.playerHP.value = Math.min(
+      playerState.playerHP.value + itemConstants.BARK_TEA_HEAL_AMOUNT,
+      playerState.effectiveMaxHP.value
+    );
+    utilityFunctions.log(
+      `☕ You drank Bark Team and recovered ${itemConstants.BARK_TEA_HEAL_AMOUNT} HP! Your HP is now ${playerState.playerHP.value}.`
+    );
+  } else {
+    utilityFunctions.log("You don't have any Bark Tea to use.");
+  }
+};
+
+export const useFrenchOnionSoup = (
+  playerState,
+  utilityFunctions,
+  itemConstants
+) => {
+  if (playerState.inventory.value.frenchOnionSoups > 0) {
+    playerState.inventory.value.frenchOnionSoups =
+      Number(playerState.inventory.value.frenchOnionSoups || 0) - 1;
+
+    const healedAmount = itemConstants.FRENCH_ONION_SOUP_HEAL_AMOUNT;
+    playerState.playerHP.value = Math.min(
+      playerState.playerHP.value + healedAmount,
+      playerState.effectiveMaxHP.value
+    );
+
+    const specialRestored = itemConstants.FRENCH_ONION_SOUP_SPECIAL_AMOUNT;
+    playerState.specialUsesLeft.value += specialRestored;
+
+    utilityFunctions.log(
+      `🥣 You consumed French Onion Soup and recovered ${healedAmount} HP and ${specialRestored} special use! Your HP is now ${playerState.playerHP.value}.`
+    );
+  } else {
+    utilityFunctions.log("You don't have any French Onion Soup to use.");
   }
 };
 
@@ -279,7 +330,6 @@ export const useHerbalPoultice = (playerState, utilityFunctions) => {
       utilityFunctions.log(
         `🌿 You applied a Herbal Poultice! Health will regenerate for ${poulticeDetails.durationClicks} clicks.`
       );
-      utilityFunctions.closeInventoryModal();
     } else {
       utilityFunctions.log(`Error: Herbal Poultice details not found.`);
       playerState.inventory.value.herbalPoultices++;

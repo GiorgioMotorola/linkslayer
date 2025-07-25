@@ -69,7 +69,14 @@ export function handleLootDrop({ playerState, utilityFunctions }) {
     case "turkeyLeg": {
       inventory.value.turkeyLegs++;
       log(
-        `🍖 <span class="player-name">${playerName.value}</span> loots a delicious Turkey Leg!`
+        `🍖 <span class="player-name">${playerName.value}</span> loots a Turkey Leg.`
+      );
+      break;
+    }
+        case "barkTea": {
+      inventory.value.barkTeas++;
+      log(
+        `🍖 <span class="player-name">${playerName.value}</span> loots Bark Tea.`
       );
       break;
     }

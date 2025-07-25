@@ -271,6 +271,7 @@
       },
       {
         "text": "'I could kill her for you.'",
+        "result": "item",
         "details": "weapon",
         "responseText": "RON VON ZAROVICH: You could try. Here is some help. You'll end up vampire food, I fear. Good luck."
       },
