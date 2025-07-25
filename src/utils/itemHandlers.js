@@ -113,6 +113,24 @@ export function handleShopPurchase(
           utilityFunctions.log(
             `🥣 ${gameData.playerName.value} acquired French Onion Soup.`
           );
+        } else if (item.details === "smokeBomb") {
+          playerState.inventory.value.smokeBombs =
+            Number(playerState.inventory.value.smokeBombs || 0) + 1;
+          utilityFunctions.log(
+            `💨 ${gameData.playerName.value} acquired a Smoke Bomb.`
+          );
+        } else if (item.details === "antidote") {
+          playerState.inventory.value.antidotes =
+            Number(playerState.inventory.value.antidotes || 0) + 1;
+          utilityFunctions.log(
+            `🧪 ${gameData.playerName.value} acquired an Antidote.`
+          );
+        } else if (item.details === "adventurersRations") {
+          playerState.inventory.value.adventurersRations =
+            Number(playerState.inventory.value.adventurersRations || 0) + 1;
+          utilityFunctions.log(
+            `🍞 ${gameData.playerName.value} acquired Adventurer's Rations.`
+          );
         }
         break;
 
@@ -288,6 +306,27 @@ export const useFrenchOnionSoup = (
   }
 };
 
+export const useAntidote = (playerState, utilityFunctions) => {
+  if (playerState.inventory.value.antidotes > 0) {
+    if (playerState.poisonedClicksLeft.value > 0) {
+      playerState.inventory.value.antidotes =
+        Number(playerState.inventory.value.antidotes || 0) - 1;
+      playerState.poisonedClicksLeft.value = 0;
+      playerState.poisonDamagePerClick.value = 0;
+      utilityFunctions.log(
+        `✅ You consumed an Antidote. The poison has been neutralized!`
+      );
+      utilityFunctions.closeInventoryModal();
+    } else {
+      utilityFunctions.log(
+        `🚫 You are not poisoned. You don't need to use an Antidote.`
+      );
+    }
+  } else {
+    utilityFunctions.log("You don't have any Antidotes to use.");
+  }
+};
+
 export const useInvisibilityCloak = (
   playerState,
   utilityFunctions,
@@ -336,5 +375,70 @@ export const useHerbalPoultice = (playerState, utilityFunctions) => {
     }
   } else {
     utilityFunctions.log("You don't have any Herbal Poultices to use.");
+  }
+};
+
+export const useSmokeBomb = (
+  playerState,
+  utilityFunctions,
+  combatData,
+  modalState
+) => {
+  if (playerState.inventory.value.smokeBombs > 0) {
+    if (
+      combatData.encounter.value &&
+      combatData.encounter.value.type === "combat"
+    ) {
+      if (utilityFunctions.isBoss(combatData.encounter.value.enemy)) {
+        utilityFunctions.log(
+          `🚫 You cannot use a Smoke Bomb during a boss battle!`
+        );
+        return;
+      }
+
+      playerState.inventory.value.smokeBombs =
+        Number(playerState.inventory.value.smokeBombs || 0) - 1;
+      utilityFunctions.log(
+        `💨 You throw a Smoke Bomb! You swiftly escape the combat!`
+      );
+      combatData.encounter.value = null;
+      modalState.bossOverlay.value = false;
+      utilityFunctions.closeInventoryModal();
+    } else {
+      utilityFunctions.log(`🚫 You can only use a Smoke Bomb during combat.`);
+    }
+  } else {
+    utilityFunctions.log("You don't have any Smoke Bombs to use.");
+  }
+};
+
+export const useAdventurersRations = (
+  playerState,
+  utilityFunctions,
+  itemConstants
+) => {
+  if (playerState.inventory.value.adventurersRations > 0) {
+    playerState.inventory.value.adventurersRations =
+      Number(playerState.inventory.value.adventurersRations || 0) - 1;
+
+    // Heal HP
+    const healedAmount = itemConstants.ADVENTURERS_RATIONS_HEAL_AMOUNT;
+    playerState.playerHP.value = Math.min(
+      playerState.playerHP.value + healedAmount,
+      playerState.effectiveMaxHP.value
+    );
+
+    // Cure blur
+    if (playerState.blurClicksLeft.value > 0) {
+      playerState.blurClicksLeft.value = 0;
+      utilityFunctions.log(`✨ Your vision clears!`);
+    }
+
+    utilityFunctions.log(
+      `🍞 You consumed Adventurer's Rations and recovered ${healedAmount} HP.`
+    );
+    utilityFunctions.closeInventoryModal();
+  } else {
+    utilityFunctions.log("You don't have any Adventurer's Rations to use.");
   }
 };

@@ -67,7 +67,6 @@ export const shopItems = [
     amount: 1,
     durationClicks: 30,
     maxHeal: 30,
-    description: "A hearty soup that restores 10 HP and 1 special use.",
   },
   {
     id: "bark_tea_consumable",
@@ -76,16 +75,43 @@ export const shopItems = [
     effect: "inventoryItem",
     details: "barkTea",
     amount: 8,
-    description: "A hearty soup that restores 10 HP and 1 special use.",
   },
-    {
+  {
     id: "french_onion_soup_consumable",
     name: "French Onion Soup",
     cost: 25,
     effect: "inventoryItem",
     details: "frenchOnionSoup",
     healAmount: 10,
-    specialAmount: 1, 
-    description: "A hearty soup that restores 10 HP and 1 special use.",
+    specialAmount: 1,
+  },
+  {
+    id: "antidote_consumable",
+    name: "Antidote",
+    cost: 10,
+    effect: "inventoryItem",
+    details: "antidote",
+    description:
+      "A potent concoction that cleanses the body of toxins, removing all poison effects.",
+  },
+  {
+    id: "smoke_bomb_consumable",
+    name: "Smoke Bomb",
+    cost: 30,
+    effect: "inventoryItem",
+    details: "smokeBomb",
+    description:
+      "Creates a thick cloud, allowing you to escape from non-boss combat.",
+  },
+  {
+    id: "adventurers_rations_consumable",
+    name: "Adventurer's Rations",
+    cost: 8,
+    effect: "inventoryItem",
+    details: "adventurersRations",
+    healAmount: 7,
+    blurCure: true,
+    description:
+      "Simple, wholesome provisions that restore a little health and clear the mind.",
   },
 ];

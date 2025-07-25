@@ -30,6 +30,55 @@
           <button class="use-button" @click="useItem('barkTea')">Use</button>
         </div>
 
+        <div v-if="inventory.frenchOnionSoups > 0" class="item-slot">
+          <span class="item-name">French Onion Soup</span>
+          <span class="item-quantity">x{{ inventory.frenchOnionSoups }}</span>
+          <button class="use-button" @click="useItem('frenchOnionSoup')">
+            Use
+          </button>
+        </div>
+
+        <div v-if="inventory.antidotes > 0" class="item-slot">
+          <span class="item-name">Antidote</span>
+          <span class="item-quantity">x{{ inventory.antidotes }}</span>
+          <button
+            class="use-button"
+            @click="useItem('antidote')"
+            :disabled="!isPoisoned"
+          >
+            {{ isPoisoned ? "Use" : "Not Poisoned" }}
+          </button>
+        </div>
+
+        <div v-if="inventory.smokeBombs > 0" class="item-slot">
+          <span class="item-name">Smoke Bomb</span>
+          <span class="item-quantity">x{{ inventory.smokeBombs }}</span>
+          <button
+            class="use-button"
+            @click="useItem('smokeBomb')"
+            :disabled="!isInCombat || isBossEncounter"
+          >
+            {{
+              !isInCombat
+                ? "Not in Combat"
+                : isBossEncounter
+                ? "Boss Combat"
+                : "Use"
+            }}
+          </button>
+        </div>
+
+        <div v-if="inventory.adventurersRations > 0" class="item-slot">
+          <span class="item-name">Adventurer's Rations</span>
+          <span class="item-quantity">x{{ inventory.adventurersRations }}</span>
+          <button
+            class="use-button"
+            @click="useItem('adventurersRations')"
+          >
+            Use
+          </button>
+        </div>
+
         <div v-if="inventory.herbalPoultices > 0" class="item-slot">
           <span class="item-name">Herbal Poultice</span>
           <span class="item-quantity">x{{ inventory.herbalPoultices }}</span>
@@ -39,14 +88,6 @@
             :disabled="isHealthRegenActive"
           >
             {{ isHealthRegenActive ? "Regen Active" : "Use" }}
-          </button>
-        </div>
-
-        <div v-if="inventory.frenchOnionSoups > 0" class="item-slot">
-          <span class="item-name">French Onion Soup</span>
-          <span class="item-quantity">x{{ inventory.frenchOnionSoups }}</span>
-          <button class="use-button" @click="useItem('frenchOnionSoup')">
-            Use
           </button>
         </div>
 
@@ -76,8 +117,11 @@
             inventory.invisibilityCloaks === 0 &&
             inventory.stickItem === 0 &&
             inventory.herbalPoultices === 0 &&
-            inventory.barkTeas &&
-            inventory.frenchOnionSoups === 0
+            inventory.barkTeas === 0 &&
+            inventory.frenchOnionSoups === 0 &&
+            inventory.antidotes === 0 &&
+            inventory.smokeBombs === 0 &&
+            inventory.adventurersRations === 0
           "
           class="item-slot no-items-game-style"
         >
@@ -91,7 +135,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, watch } from "vue";
+import { defineProps, defineEmits, watch, computed } from "vue";
 
 const props = defineProps({
   inventory: {
@@ -110,7 +154,32 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isPoisoned: {
+    type: Boolean,
+    default: false,
+  },
+  isInCombat: {
+    type: Boolean,
+    default: false,
+  },
+  isBossEncounter: {
+    type: Boolean,
+    default: false,
+  },
+  playerHP: {
+    type: Number,
+    required: true,
+  },
+  effectiveMaxHP: {
+    type: Number,
+    required: true,
+  },
+  isBlurred: {
+    type: Boolean,
+    default: false,
+  },
 });
+
 
 watch(
   () => props.inventory,

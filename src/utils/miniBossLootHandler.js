@@ -30,14 +30,14 @@ export function handleMiniBossLootDrop({ playerState, utilityFunctions }) {
     miniBossLootOptions[Math.floor(Math.random() * miniBossLootOptions.length)];
 
   switch (selectedLoot.type) {
-    case "health": {
-      const amount = selectedLoot.amount;
-      playerHP.value = Math.min(playerHP.value + amount, effectiveMaxHP);
-      log(
-        `💖 <span class="player-name">${playerName.value}</span> loots a rare potion, gaining +${amount} HP!`
-      );
-      break;
-    }
+    // case "health": {
+    //   const amount = selectedLoot.amount;
+    //   playerHP.value = Math.min(playerHP.value + amount, effectiveMaxHP);
+    //   log(
+    //     `💖 <span class="player-name">${playerName.value}</span> loots a rare potion, gaining +${amount} HP!`
+    //   );
+    //   break;
+    // }
     case "weapon": {
       weaponBonus.value += selectedLoot.amount;
       log(

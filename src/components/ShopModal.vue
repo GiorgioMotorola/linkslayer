@@ -3,9 +3,9 @@
     <div class="shop-modal">
       <div class="shop-desc">
         {{ shopkeeperGreeting }}
+                <div class="player-gold">You have {{ playerGold }} Gold</div>
       </div>
       <div class="shop-items">
-        <div class="player-gold">You have {{ playerGold }} Gold</div>
         <button
           v-for="item in props.shopItems"
           :key="item.id"
@@ -57,6 +57,15 @@
               <span v-else-if="item.details === 'frenchOnionSoup'">
                 A hearty soup that restores {{ item.healAmount }} HP and
                 {{ item.specialAmount }} special use.
+              </span>
+              <span v-else-if="item.details === 'antidote'">
+                {{ item.description }}
+              </span>
+              <span v-else-if="item.details === 'smokeBomb'">
+                {{ item.description }}
+              </span>
+              <span v-else-if="item.details === 'adventurersRations'">
+                {{ item.description }}
               </span>
             </span>
             <span v-else-if="item.effect === 'blurCure'">
@@ -174,8 +183,8 @@ function showToast(message, isError = false) {
   background-color: rgb(197, 193, 193);
   padding: 2rem;
   border-radius: 12px;
-  text-align: start;
-  max-width: 650px;
+  text-align: center;
+  max-width: 900px;
   width: 90%;
   box-shadow: 0 8px 24px rgba(37, 37, 37, 0.671);
   animation: pop-in 0.3s ease;
@@ -207,6 +216,12 @@ function showToast(message, isError = false) {
 .shop-items {
   display: flex;
   flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+button {
   gap: 0.5rem;
 }
 
@@ -219,7 +234,7 @@ button {
   border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #c5c1c1;
-  padding: 0.8rem 1rem;
+  padding: 8px 12px;
   font-size: 17px;
   color: #303030;
   font-weight: 400;
@@ -259,7 +274,7 @@ button:disabled:hover {
 .item-name {
   font-weight: 600;
   color: #000;
-  font-size: 1.1em;
+  font-size: 1em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

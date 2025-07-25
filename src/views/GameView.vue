@@ -124,6 +124,12 @@
         :is-cloak-active="isCloakActive"
         :cloak-clicks-remaining="cloakClicksRemaining"
         :is-health-regen-active="healthRegenActive"
+        :is-poisoned="isPlayerPoisoned"
+        :is-in-combat="isInCombat"
+        :is-boss-encounter="isBossEncounter"
+        :playerHP="playerHP"
+        :effectiveMaxHP="effectiveMaxHP"
+        :is-blurred="isBlurred"
       />
     </div>
   </div>
@@ -169,6 +175,9 @@ import {
   useHerbalPoultice as externalUseHerbalPoultice,
   useBarkTea as externalUseBarkTea,
   useFrenchOnionSoup as externalUseFrenchOnionSoup,
+  useAntidote as externalUseAntidote,
+  useSmokeBomb as externalUseSmokeBomb,
+  useAdventurersRations as externalUseAdventurersRations,
 } from "@/utils/itemHandlers";
 
 const journeyLength = ref(3);
@@ -178,6 +187,15 @@ const formattedStart = computed(() => chain[0]?.replaceAll("_", " ") ?? "");
 const formattedTitle = computed(
   () => current.value?.replaceAll("_", " ") ?? ""
 );
+const isPlayerPoisoned = computed(() => poisonedClicksLeft.value > 0);
+const isInCombat = computed(
+  () => encounter.value && encounter.value.type === "combat"
+);
+const isBossEncounter = computed(
+  () => isInCombat.value && isBoss(encounter.value.enemy)
+);
+
+const isBlurred = computed(() => blurClicksLeft.value > 0);
 
 const defeated = ref(false);
 const currentTargetIndex = ref(0);
@@ -225,6 +243,7 @@ const TURKEY_LEG_HEAL_AMOUNT = 6;
 const BARK_TEA_HEAL_AMOUNT = 8;
 const FRENCH_ONION_SOUP_HEAL_AMOUNT = 10;
 const FRENCH_ONION_SOUP_SPECIAL_AMOUNT = 1;
+const ADVENTURERS_RATIONS_HEAL_AMOUNT = 7;
 const isCloakActive = ref(false);
 const CLOAK_DURATION = 10;
 const cloakClicksRemaining = ref(0);
@@ -242,6 +261,9 @@ const inventory = ref({
   herbalPoultices: 0,
   barkTea: 0,
   frenchOnionSoups: 0,
+  antidotes: 0,
+  smokeBombs: 0,
+  adventurersRations: 0,
 });
 
 const isInventoryModalOpen = ref(false);
@@ -859,6 +881,20 @@ const useFrenchOnionSoup = () => {
   );
 };
 
+const useAntidote = () => {
+  externalUseAntidote(
+    {
+      inventory,
+      poisonedClicksLeft,
+      poisonDamagePerClick,
+    },
+    {
+      log,
+      closeInventoryModal,
+    }
+  );
+};
+
 const useInvisibilityCloak = () => {
   externalUseInvisibilityCloak(
     {
@@ -887,6 +923,43 @@ const useHerbalPoultice = () => {
     },
     {
       log,
+    }
+  );
+};
+
+const useSmokeBomb = () => {
+  externalUseSmokeBomb(
+    {
+      inventory,
+    },
+    {
+      log,
+      isBoss,
+      closeInventoryModal,
+    },
+    {
+      encounter,
+    },
+    {
+      bossOverlay,
+    }
+  );
+};
+
+const useAdventurersRations = () => {
+  externalUseAdventurersRations(
+    {
+      inventory,
+      playerHP,
+      blurClicksLeft,
+      effectiveMaxHP,
+    },
+    {
+      log,
+      closeInventoryModal,
+    },
+    {
+      ADVENTURERS_RATIONS_HEAL_AMOUNT,
     }
   );
 };
@@ -923,6 +996,12 @@ function handleUseInventoryItem(itemType) {
     useBarkTea();
   } else if (itemType === "frenchOnionSoup") {
     useFrenchOnionSoup();
+  } else if (itemType === "antidote") {
+    useAntidote();
+  } else if (itemType === "smokeBomb") {
+    useSmokeBomb();
+  } else if (itemType === "adventurersRations") {
+    useAdventurersRations();
   }
 }
 

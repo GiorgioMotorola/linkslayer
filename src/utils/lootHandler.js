@@ -25,15 +25,15 @@ export function handleLootDrop({ playerState, utilityFunctions }) {
     lootOptions[Math.floor(Math.random() * lootOptions.length)];
 
   switch (selectedLoot) {
-    case "health": {
-      const amount = 10;
+    // case "health": {
+    //   const amount = 10;
 
-      playerHP.value = Math.min(playerHP.value + amount, effectiveMaxHP);
-      log(
-        `🍎 <span class="player-name">${playerName.value}</span> loots +${amount} HP.`
-      );
-      break;
-    }
+    //   playerHP.value = Math.min(playerHP.value + amount, effectiveMaxHP);
+    //   log(
+    //     `🍎 <span class="player-name">${playerName.value}</span> loots +${amount} HP.`
+    //   );
+    //   break;
+    // }
 
     case "weapon": {
       weaponBonus.value += 1;
