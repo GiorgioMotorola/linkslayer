@@ -3,17 +3,25 @@
 export const shopItems = [
   {
     id: "health_potion_consumable",
-    name: "Health Potion",
-    cost: 15,
+    name: "Major Health Potion",
+    cost: 1,
     effect: "inventoryItem",
     details: "healthPotion",
-    amount: 30,
-    description: "Consumable. Recovers 30 HP when used from inventory.",
+    amount: 25,
+    description: "Consumable. Recovers 25 HP when used from inventory.",
+  },
+    {
+    name: "Minor Health Potion", 
+    cost: 1,
+    effect: "inventoryItem",
+    amount: 10,
+    details: "minorHealthPotion",
+    description: "Restores 10 HP.",
   },
   {
     id: "whetstone",
     name: "Whetstone",
-    cost: 20,
+    cost: 1,
     effect: "weapon",
     amount: 1,
     description: "Permanently increases your Weapon Damage by 1.",
@@ -21,7 +29,7 @@ export const shopItems = [
   {
     id: "sturdy_buckler",
     name: "Sturdy Buckler",
-    cost: 20,
+    cost: 1,
     effect: "shield",
     amount: 1,
     description: "Permanently increases your Defense Bonus by 1.",
@@ -29,7 +37,7 @@ export const shopItems = [
   {
     id: "tome_knowledge",
     name: "Tome of Knowledge",
-    cost: 15,
+    cost: 1,
     effect: "special",
     amount: 1,
     description: "Grants +1 Class Ability Charge.",
@@ -37,7 +45,7 @@ export const shopItems = [
   {
     id: "arcane_compass",
     name: "Arcane Compass",
-    cost: 25,
+    cost: 1,
     effect: "inventoryItem",
     details: "compass",
     description: "Skips you to a random non-start/end article. Consumable.",
@@ -74,12 +82,12 @@ export const shopItems = [
     cost: 1,
     effect: "inventoryItem",
     details: "barkTea",
-    amount: 8,
+    amount: 10,
   },
   {
     id: "french_onion_soup_consumable",
     name: "French Onion Soup",
-    cost: 25,
+    cost: 1,
     effect: "inventoryItem",
     details: "frenchOnionSoup",
     healAmount: 10,
@@ -88,7 +96,7 @@ export const shopItems = [
   {
     id: "antidote_consumable",
     name: "Antidote",
-    cost: 10,
+    cost: 1,
     effect: "inventoryItem",
     details: "antidote",
     description:
@@ -97,7 +105,7 @@ export const shopItems = [
   {
     id: "smoke_bomb_consumable",
     name: "Smoke Bomb",
-    cost: 30,
+    cost: 1,
     effect: "inventoryItem",
     details: "smokeBomb",
     description:
@@ -106,7 +114,7 @@ export const shopItems = [
   {
     id: "adventurers_rations_consumable",
     name: "Adventurer's Rations",
-    cost: 8,
+    cost: 1,
     effect: "inventoryItem",
     details: "adventurersRations",
     healAmount: 7,

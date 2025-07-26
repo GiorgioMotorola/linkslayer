@@ -154,6 +154,12 @@ export function handleShopPurchase(
           utilityFunctions.log(
             `💔 ${gameData.playerName.value} acquired an Amulet of Shared Suffering.`
           );
+        } else if (item.details === "minorHealthPotion") {
+          playerState.inventory.value.minorHealthPotions =
+            Number(playerState.inventory.value.minorHealthPotions || 0) + 1;
+          utilityFunctions.log(
+            `➕ ${gameData.playerName.value} acquired a Potion of Minor Health.`
+          );
         }
         break;
 
@@ -542,4 +548,24 @@ export const useAmuletOfSharedSuffering = (
   }
 
   utilityFunctions.closeInventoryModal();
+};
+
+export const useMinorHealthPotion = (
+  playerState,
+  utilityFunctions,
+  itemConstants
+) => {
+  if (playerState.inventory.value.minorHealthPotions > 0) {
+    playerState.inventory.value.minorHealthPotions--;
+    playerState.playerHP.value = Math.min(
+      playerState.playerHP.value +
+        itemConstants.MINOR_HEALTH_POTION_HEAL_AMOUNT,
+      playerState.effectiveMaxHP.value
+    );
+    utilityFunctions.log(
+      `You consumed a Potion of Minor Health and recovered ${itemConstants.MINOR_HEALTH_POTION_HEAL_AMOUNT} HP! Your HP is now ${playerState.playerHP.value}.`
+    );
+  } else {
+    utilityFunctions.log("You don't have any Potions of Minor Health to use.");
+  }
 };

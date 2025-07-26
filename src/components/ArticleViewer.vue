@@ -23,10 +23,16 @@
   <div class="article" :class="{ 'blurred-content': isBlurred }">
     <div v-if="inEncounter" class="overlay"></div>
     <div class="title">{{ formattedTitle }}</div>
+    <div v-if="isLoading" class="loader-overlay">
+      <div class="loader-content">
+        <div class="spinner"></div>
+        <p>Loading article...</p>
+      </div>
+    </div>
     <div
       v-html="articleHtml"
       @click.prevent="handleLinkClick"
-      :style="{ pointerEvents: inEncounter ? 'none' : 'auto' }"
+      :style="{ pointerEvents: inEncounter || isLoading ? 'none' : 'auto' }"
     ></div>
   </div>
 </template>
@@ -53,6 +59,7 @@ const errorMessage = ref("");
 const isFadingOut = ref(false);
 const clearErrorTimeout = ref(null);
 const hideElementTimeout = ref(null);
+const isLoading = ref(false);
 
 const formattedTitle = computed(() => props.articleTitle.replaceAll("_", " "));
 
@@ -111,16 +118,18 @@ const showAndClearError = (
 
 const load = async () => {
   showAndClearError("");
+  isLoading.value = true;
 
   if (!props.articleTitle || props.articleTitle.trim() === "") {
     console.warn("ArticleViewer tried to fetch an empty title.");
     showAndClearError("Invalid article title provided.", 4000);
-
     articleHtml.value = "";
+    isLoading.value = false;
     return;
   }
 
   const articleContent = await fetchWikipediaArticle(props.articleTitle);
+  await new Promise(resolve => setTimeout(resolve, 100));
 
   if (articleContent === null) {
     console.error(
@@ -134,10 +143,38 @@ const load = async () => {
     return;
   }
 
-  articleHtml.value = articleContent;
+  try {
+    const articleContent = await fetchWikipediaArticle(props.articleTitle);
+
+    if (articleContent === null) {
+      console.error(
+        `🛑 Failed to load article: ${props.articleTitle}. Keeping previous content.`
+      );
+      showAndClearError(
+        `Failed to load "${props.articleTitle}". Please try another link.`,
+        4000
+      );
+      articleHtml.value = "";
+      return;
+    }
+
+    articleHtml.value = articleContent;
+  } catch (error) {
+    console.error("Error fetching Wikipedia article:", error);
+    showAndClearError(
+      `An unexpected error occurred while loading "${props.articleTitle}".`,
+      4000
+    );
+    articleHtml.value = "";
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 const handleLinkClick = (event) => {
+  if (props.inEncounter || isLoading.value) {
+    return;
+  }
   if (props.inEncounter) {
     return;
   }
@@ -188,7 +225,6 @@ onMounted(load);
 }
 .article {
   position: relative;
-  /* border: solid 1px black; */
   border-radius: 5px;
   padding: 1.5rem;
   background-color: #ffffff;
@@ -270,6 +306,37 @@ onMounted(load);
 .blurred-content {
   filter: blur(5px);
 }
+
+.loader-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.3); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50; 
+  flex-direction: column;
+}
+
+.loader-content {
+  text-align: center;
+  color: #333;
+  font-size: 1.2em;
+}
+
+/* .spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #02e437;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 10px auto;
+  z-index: 9000;
+} */
 
 @media screen and (max-width: 600px) {
   .article {

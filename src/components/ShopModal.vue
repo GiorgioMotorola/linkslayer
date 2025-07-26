@@ -1,81 +1,85 @@
 <template>
-  <div class="shop-overlay">
-    <div class="shop-modal">
-      <div class="shop-desc">
-        {{ shopkeeperGreeting }}
-                <div class="player-gold">You have {{ playerGold }} Gold</div>
-      </div>
-      <div class="shop-items">
-        <button
-          v-for="item in props.shopItems"
-          :key="item.id"
-          @click="buyItem(item)"
-          :disabled="props.playerGold < item.cost"
-        >
-          <div class="item-header">
-            <span class="item-name">{{ item.name }}</span>
-            <span class="item-cost">({{ item.cost }} Gold)</span>
-          </div>
+  <div class="shop-overlay" @click.self="$emit('close')">
+    <div class="shop-content-game-style">
+      <div class="shop-title">Shop</div>
 
-          <div class="item-description">
-            <span v-if="item.effect === 'health'"
-              >Restores {{ item.amount }} Health.</span
-            >
-            <span v-else-if="item.effect === 'weapon'">
-              Increases Weapon Damage by {{ item.amount }} (You have
-              <strong>+{{ weaponBonus }}</strong> Weapon Bonus).
-            </span>
-            <span v-else-if="item.effect === 'shield'">
-              Adds {{ item.amount }} Defense (You have
-              <strong>+{{ shieldBonus }}</strong> Defense Bonus).
-            </span>
-            <span v-else-if="item.effect === 'special'">
-              Grants {{ item.amount }} Class Ability Charge (You have
-              <strong>{{ specialUsesLeft }}</strong> Charges Left).
-            </span>
-            <span v-else-if="item.effect === 'inventoryItem'">
-              <span v-if="item.details === 'compass'">
-                Allows skipping to a random non-start/end article.
-              </span>
-              <span v-else-if="item.details === 'healthPotion'">
-                A consumable potion that restores health.
-              </span>
-              <span v-else-if="item.details === 'herbalPoultice'">
-                A potent herbal remedy that heals {{ item.amount }} Health per
-                click for {{ item.durationClicks }} clicks (Total of
-                {{ item.maxHeal }} Health).
-              </span>
-              <span v-else-if="item.details === 'invisibilityCloak'">
-                Avoids non-boss encounters for 10 clicks.
-              </span>
-              <span v-else-if="item.details === 'stickItem'">
-                Doesn't do much. It's just a cool stick that I found.
-              </span>
-              <span v-else-if="item.details === 'barkTea'">
-                A bitter tea that restores {{ item.amount }} HP.
-              </span>
-              <span v-else-if="item.details === 'frenchOnionSoup'">
-                A hearty soup that restores {{ item.healAmount }} HP and
-                {{ item.specialAmount }} special use.
-              </span>
-              <span v-else-if="item.details === 'antidote'">
-                {{ item.description }}
-              </span>
-              <span v-else-if="item.details === 'smokeBomb'">
-                {{ item.description }}
-              </span>
-              <span v-else-if="item.details === 'adventurersRations'">
-                {{ item.description }}
-              </span>
-            </span>
-            <span v-else-if="item.effect === 'blurCure'">
-              Sober up instantly, clearing blur effects.
-            </span>
-            <span v-else>No description available.</span>
-          </div>
-        </button>
+      <div class="shop-header">
+        <div class="shopkeeper-greeting">{{ shopkeeperGreeting }}</div>
+        <div class="player-gold">You have {{ playerGold }} Gold</div>
       </div>
-      <button @click="$emit('close')">> Done Shopping</button>
+
+      <div class="shop-main-layout">
+        <div class="shop-list-panel">
+          <div class="shop-items-container">
+            <div
+              v-for="item in props.shopItems"
+              :key="item.id"
+              class="item-slot"
+              :class="{
+                'selected-item': selectedItem && selectedItem.id === item.id,
+              }"
+              @click="selectItem(item)"
+            >
+              <div class="item-name">{{ item.name }}</div>
+              <div class="item-cost">{{ item.cost }} Gold</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="item-details-panel">
+          <div class="details-title">Item Details</div>
+          <div class="details-content">
+            <template v-if="selectedItemDetails">
+              <div class="selected-item-name">
+                {{ selectedItemDetails.name }}
+              </div>
+              <div class="selected-item-cost">
+                Cost: {{ selectedItemDetails.cost }} Gold
+              </div>
+              <div class="selected-item-description">
+                {{ selectedItemDetails.description }}
+                <span v-if="selectedItemDetails.effect === 'weapon'">
+                  (You have <strong>+{{ weaponBonus }}</strong> Weapon Bonus).
+                </span>
+                <span v-else-if="selectedItemDetails.effect === 'shield'">
+                  (You have <strong>+{{ shieldBonus }}</strong> Defense Bonus).
+                </span>
+                <span v-else-if="selectedItemDetails.effect === 'special'">
+                  (You have <strong>{{ specialUsesLeft }}</strong> Charges
+                  Left).
+                </span>
+                <span
+                  v-else-if="selectedItemDetails.details === 'herbalPoultice'"
+                >
+                  (Heals {{ selectedItemDetails.amount }} HP per click for
+                  {{ selectedItemDetails.durationClicks }} clicks, Total of
+                  {{ selectedItemDetails.maxHeal }} HP).
+                </span>
+                <span
+                  v-else-if="selectedItemDetails.details === 'frenchOnionSoup'"
+                >
+                  (Restores {{ selectedItemDetails.amount }} HP and
+                  {{ selectedItemDetails.specialAmount }} special use).
+                </span>
+              </div>
+              <button
+                class="buy-button-details"
+                @click="buyItem(selectedItem)"
+                :disabled="!canBuySelectedItem"
+              >
+                {{ buyButtonText }}
+              </button>
+            </template>
+            <div v-else class="no-selection-message">
+              Select an item to view its details.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button @click="$emit('close')" class="close-button-game-style">
+        > Done Shopping
+      </button>
 
       <transition name="toast-fade">
         <div
@@ -91,7 +95,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { getRandomShopPhrase } from "@/utils/shopKeeperPhrases";
 
 const props = defineProps({
@@ -109,14 +113,46 @@ const isToastError = ref(false);
 let toastTimeout = null;
 const shopkeeperGreeting = ref("");
 
+const selectedItem = ref(null);
+const selectedItemDetails = ref(null);
+
 onMounted(() => {
   shopkeeperGreeting.value = getRandomShopPhrase();
 });
+
+const canBuySelectedItem = computed(() => {
+  return selectedItem.value && props.playerGold >= selectedItem.value.cost;
+});
+
+const buyButtonText = computed(() => {
+  if (!selectedItem.value) {
+    return "Select an Item";
+  } else if (selectedItem.value.isSpecialLoot) {
+    return "Already Acquired";
+  } else if (props.playerGold < selectedItem.value.cost) {
+    return `Not enough Gold (${selectedItem.value.cost} Gold)`;
+  } else {
+    return `Buy ${selectedItem.value.name}`;
+  }
+});
+
+watch(
+  () => props.playerGold,
+  () => {
+    if (selectedItem.value) {
+    }
+  }
+);
 
 const buyItem = (item) => {
   if (!item) {
     console.error("Attempted to buy an undefined item:", item);
     showToast("Error: Unknown item!", true);
+    return;
+  }
+
+  if (item.isSpecialLoot) {
+    showToast(`You already acquired ${item.name}!`, true);
     return;
   }
 
@@ -142,187 +178,314 @@ function showToast(message, isError = false) {
     toastTimeout = null;
   }, 3000);
 }
+
+function selectItem(item) {
+  console.log("Item clicked:", item);
+  selectedItem.value = item;
+  console.log("selectedItem after click (by ID):", selectedItem.value);
+  selectedItemDetails.value = { ...item };
+
+  if (item.details === "herbalPoultice") {
+    selectedItemDetails.value.description = `A potent herbal remedy that heals ${item.amount} Health per click for ${item.durationClicks} clicks (Total of ${item.maxHeal} Health).`;
+  } else if (item.details === "frenchOnionSoup") {
+    selectedItemDetails.value.description = `A hearty soup that restores ${item.amount} HP and ${item.specialAmount} special use.`;
+  } else if (item.details === "sharedSufferingAmulet") {
+    selectedItemDetails.value.description = `Deals ${item.amount} damage to enemy, 25 to player. Ends combat if enemy defeated.`;
+  } else if (item.description) {
+    selectedItemDetails.value.description = item.description;
+  } else {
+    selectedItemDetails.value.description = "No description available.";
+  }
+}
 </script>
 
 <style scoped>
-* {
-  font-family: "IBM Plex Sans", sans-serif;
-  font-optical-sizing: auto;
-}
-
-@keyframes fade-in-overlay {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 .shop-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 999;
+  background: rgba(0, 0, 0, 0.829);
   display: flex;
-  align-items: center;
   justify-content: center;
-  pointer-events: auto;
-  animation: fade-in-overlay 0.75s ease-out forwards;
-  background-color: #545b63a6;
-  background-image: linear-gradient(
-    to bottom,
-    rgba(8, 12, 17, 0.9),
-    rgba(17, 27, 37, 0.9),
-    rgba(13, 19, 26, 0.6)
-  );
-}
-.shop-modal {
-  background-color: rgb(197, 193, 193);
-  padding: 2rem;
-  border-radius: 12px;
-  text-align: center;
-  max-width: 900px;
-  width: 90%;
-  box-shadow: 0 8px 24px rgba(37, 37, 37, 0.671);
-  animation: pop-in 0.3s ease;
+  align-items: start;
   z-index: 1000;
+  border-radius: 8px;
+}
+
+.shop-content-game-style {
+  padding: 15px;
+  text-align: center;
+  width: 80%;
+  max-width: 1100px;
+  height: 100%;
+  max-height: 450px;
+  position: relative;
+  font-size: 13px;
+  color: #d0d0d0;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  position: relative;
+  font-family: "IBM Plex Sans", sans-serif;
+}
+
+.shop-title {
+  margin-top: 0;
+  color: #b0b0b0;
+  font-size: 20px;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px #000;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-family: "IBM Plex Sans", sans-serif;
+  display: block;
+}
+
+.shop-header {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid #3a3a3a;
+  border-radius: 4px;
+  padding: 5px 10px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.shopkeeper-greeting {
+  font-style: italic;
+  color: #c0c0c0;
+  margin-bottom: 5px;
+  display: block;
+  font-size: 17px;
 }
 
 .player-gold {
-  font-size: 14px;
-  padding: 0.5rem;
-  color: #000000;
-  font-weight: 300;
-  margin-bottom: 0.3rem;
+  font-weight: bold;
+  color: #ffd700;
+  font-size: 1.1em;
+  display: block;
 }
 
-.shop-desc {
-  text-align: center;
-  font-size: 18px;
-  animation: npc-drop 0.5s ease-out forwards;
-  color: rgb(7, 7, 7);
-  border-bottom: 1px solid rgb(155, 152, 152);
-  padding-bottom: 15px;
-  background-color: rgb(197, 193, 193);
+.shop-main-layout {
+  display: flex;
+  flex-grow: 1;
+  gap: 50px;
+  margin-bottom: 0px;
 }
 
-.shop-items {
+.shop-list-panel {
+  flex: 2;
+  border: 1px solid #3a3a3a;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1rem;
+  height: 100%;
+  min-height: 0;
 }
 
-button {
-  gap: 0.5rem;
+.shop-items-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 10px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-button {
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  align-items: flex-start;
-  text-align: start;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #c5c1c1;
-  padding: 8px 12px;
-  font-size: 17px;
-  color: #303030;
-  font-weight: 400;
-  cursor: pointer;
-  transition: all 0.1s ease-in-out;
+.shop-items-container::-webkit-scrollbar {
+  display: none;
 }
 
-button:hover {
-  background-color: #e0e0e0;
-  border-color: #999;
-  color: rgb(28, 128, 158);
-}
-
-button:disabled {
-  text-decoration: none;
-  opacity: 0.6;
-  cursor: not-allowed;
-  background-color: #c5c1c1;
-  color: #777;
-  border-color: #ddd;
-}
-
-button:disabled:hover {
-  color: #0e0d0d;
-  cursor: not-allowed;
-  background-color: #eee;
-}
-
-.item-header {
+.item-slot {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  margin-bottom: 5px;
-}
-
-.item-name {
-  font-weight: 600;
-  color: #000;
+  padding: 10px 15px;
+  margin-bottom: 2px;
+  background: rgba(26, 26, 26, 0.6);
+  border: 1px solid #3a3a3a;
+  border-radius: 3px;
   font-size: 1em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex-grow: 1;
-}
-
-.item-cost {
-  font-size: 0.9em;
-  color: #000000;
-  white-space: nowrap;
-  margin-left: 10px;
+  color: #e0e0e0;
+  cursor: pointer;
   flex-shrink: 0;
 }
 
-.item-description {
-  font-size: 0.9em;
-  color: #666;
-  text-align: start;
-  line-height: 1.4;
-  width: 100%;
+.item-slot:hover:not(.selected-item) {
+  background-color: rgba(58, 58, 58, 0.7);
+  border-color: #6a6a6a;
+  filter: none;
 }
 
-button:hover {
-  color: rgb(28, 128, 158);
+.item-slot.selected-item {
+  background-color: rgba(74, 74, 74, 0.8) !important;
+  border-color: #808080 !important;
+  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.1) !important;
+  color: #e0e0e0 !important;
+  transform: scale(1) !important;
+  will-change: background-color, border-color, box-shadow;
+}
+
+.item-slot.selected-item:hover {
+  background-color: rgba(74, 74, 74, 0.8) !important;
+  border-color: #808080 !important;
+  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.1) !important;
+  transform: none !important;
+}
+
+.item-slot:active {
+  background-color: rgba(90, 90, 90, 0.9) !important;
+  border-color: #a0a0a0 !important;
+  transform: translateY(1px) !important;
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5) !important;
+}
+
+.item-name {
+  flex-grow: 1;
+  text-align: left;
+  color: #c0c0c0;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: bold;
+  display: block;
+}
+
+.item-cost {
+  font-weight: normal;
+  color: #ffd700;
+  margin-left: 10px;
+  white-space: nowrap;
+  display: block;
+}
+
+.item-details-panel {
+  flex: 1;
+  border: 1px solid #3a3a3a;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.details-title {
+  color: #b0b0b0;
+  font-size: 1.4em;
+  margin-top: 0;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #3a3a3a;
+  padding-bottom: 5px;
+  font-family: "IBM Plex Sans", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: block;
+}
+
+.details-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  color: #c0c0c0;
+  font-size: 0.95em;
+  line-height: 1.5;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.details-content::-webkit-scrollbar {
+  display: none;
+}
+
+.selected-item-name {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #e0e0e0;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.selected-item-cost {
+  font-size: 1em;
+  color: #ffd700;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.selected-item-description {
+  flex-grow: 1;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.no-selection-message {
+  font-style: italic;
+  color: #888;
+  text-align: center;
+  margin-top: 20px;
+  display: block;
+}
+
+.buy-button-details {
+  background-color: #4a4a4a;
+  color: #e0e0e0;
+  padding: 10px 15px;
+  border: 1px solid #6a6a6a;
+  border-radius: 3px;
   cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+  text-transform: uppercase;
+  font-family: "IBM Plex Sans", sans-serif;
+  box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  margin-top: auto;
 }
 
-button:disabled {
-  text-decoration: line-through;
-  opacity: 0.5;
-  cursor: not-allowed;
+.buy-button-details:hover {
+  background-color: #5a5a5a;
+  transform: translateY(-1px);
+}
+
+.buy-button-details:active {
+  background-color: #3a3a3a;
+  transform: translateY(1px);
+  box-shadow: 0 0 0px rgba(0, 0, 0, 0.4);
+}
+
+.buy-button-details:disabled {
+  background-color: #333;
   color: #777;
-}
-
-button:disabled:hover {
-  color: #777;
+  border-color: #555;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
-@keyframes pop-in {
-  from {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+.close-button-game-style {
+  background-color: #3a3a3a;
+  color: #e0e0e0;
+  padding: 12px 25px;
+  border: 2px solid #6a6a6a;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1em;
+  margin-top: 25px;
+  transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+  text-transform: uppercase;
+  font-family: "IBM Plex Sans", sans-serif;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.5);
+}
+
+.close-button-game-style:hover {
+  background-color: #5a5a5a;
+  transform: translateY(-2px);
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.6);
+}
+
+.close-button-game-style:active {
+  background-color: #2a2a2a;
+  transform: translateY(2px);
+  box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
 }
 
 .toast-notification {
@@ -358,14 +521,58 @@ button:disabled:hover {
   transform: translateX(-50%) translateY(-10px);
 }
 
-.shop-items button {
-  padding: 8px 12px;
-}
-.item-name {
-  font-size: 1em;
-}
-.item-cost,
-.item-description {
-  font-size: 0.85em;
+@media (max-width: 768px) {
+  .shop-content-game-style {
+    width: 95%;
+    height: 90%;
+    max-height: unset;
+    padding: 15px;
+  }
+
+  .shop-main-layout {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .shop-list-panel,
+  .item-details-panel {
+    flex: none;
+    width: 100%;
+    height: 50%;
+  }
+
+  .shop-list-panel {
+    height: 60%;
+  }
+
+  .item-details-panel {
+    height: 40%;
+  }
+
+  .shop-items-container {
+    padding: 0;
+  }
+
+  .item-slot {
+    font-size: 0.9em;
+    padding: 8px 10px;
+  }
+
+  .buy-button-details {
+    font-size: 0.9em;
+    padding: 8px 15px;
+  }
+
+  .details-title {
+    font-size: 1.2em;
+  }
+
+  .details-content {
+    font-size: 0.9em;
+  }
+
+  .shop-title {
+    font-size: 1.8em;
+  }
 }
 </style>

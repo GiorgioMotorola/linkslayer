@@ -7,7 +7,7 @@ import { ENEMY_TYPES } from "@/utils/enemies";
 export function rollEncounter() {
   const roll = Math.floor(Math.random() * 20) + 1;
 
-  if (roll <= 0) {
+  if (roll <= 8) {
     // Lore encounter
     const lore = loreData[Math.floor(Math.random() * loreData.length)];
     return {
@@ -19,7 +19,7 @@ export function rollEncounter() {
     };
   }
 
-  if (roll <= 20) {
+  if (roll <= 15) {
     // Friendly NPC encounter
     const npc = npcData[Math.floor(Math.random() * npcData.length)];
     return {

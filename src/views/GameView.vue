@@ -132,6 +132,7 @@
         :is-blurred="isBlurred"
         :enlightenment-fish-hp="enlightenmentFishAccumulatedHP"
         :amulet-of-shared-suffering-damage="AMULET_ENEMY_DAMAGE"
+        :health-regen-clicks-remaining="healthRegenClicksRemaining"
       />
     </div>
   </div>
@@ -182,6 +183,7 @@ import {
   useAdventurersRations as externalUseAdventurersRations,
   useEnlightenmentFish as externalUseEnlightenmentFish,
   useAmuletOfSharedSuffering as externalUseAmuletOfSharedSuffering,
+  useMinorHealthPotion as externalUseMinorHealthPotion,
 } from "@/utils/itemHandlers";
 
 const journeyLength = ref(3);
@@ -249,6 +251,7 @@ const FRENCH_ONION_SOUP_HEAL_AMOUNT = 10;
 const FRENCH_ONION_SOUP_SPECIAL_AMOUNT = 1;
 const ADVENTURERS_RATIONS_HEAL_AMOUNT = 7;
 const enlightenmentFishAccumulatedHP = ref(0);
+const MINOR_HEALTH_POTION_HEAL_AMOUNT = 5;
 const AMULET_ENEMY_DAMAGE = 50;
 const AMULET_PLAYER_DAMAGE = 25;
 const isCloakActive = ref(false);
@@ -273,6 +276,7 @@ const inventory = ref({
   adventurersRations: 0,
   enlightenmentFish: 0,
   sharedSufferingAmulets: 0,
+  minorHealthPotions: 0,
 });
 
 const isInventoryModalOpen = ref(false);
@@ -1051,6 +1055,22 @@ const useAmuletOfSharedSuffering = () => {
   );
 };
 
+const useMinorHealthPotion = () => {
+  externalUseMinorHealthPotion(
+    {
+      inventory,
+      playerHP,
+      effectiveMaxHP,
+    },
+    {
+      log,
+    },
+    {
+      MINOR_HEALTH_POTION_HEAL_AMOUNT,
+    }
+  );
+};
+
 function markBossDefeated() {
   bossDefeated.value = true;
   current.value = chain[journeyLength.value - 1];
@@ -1093,6 +1113,8 @@ function handleUseInventoryItem(itemType) {
     useEnlightenmentFish();
   } else if (itemType === "sharedSufferingAmulet") {
     useAmuletOfSharedSuffering();
+  } else if (itemType === "minorHealthPotion") {
+    useMinorHealthPotion();
   }
 }
 
