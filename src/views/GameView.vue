@@ -130,6 +130,7 @@
         :playerHP="playerHP"
         :effectiveMaxHP="effectiveMaxHP"
         :is-blurred="isBlurred"
+        :enlightenment-fish-hp="enlightenmentFishAccumulatedHP"
       />
     </div>
   </div>
@@ -178,6 +179,7 @@ import {
   useAntidote as externalUseAntidote,
   useSmokeBomb as externalUseSmokeBomb,
   useAdventurersRations as externalUseAdventurersRations,
+  useEnlightenmentFish as externalUseEnlightenmentFish,
 } from "@/utils/itemHandlers";
 
 const journeyLength = ref(3);
@@ -244,6 +246,7 @@ const BARK_TEA_HEAL_AMOUNT = 8;
 const FRENCH_ONION_SOUP_HEAL_AMOUNT = 10;
 const FRENCH_ONION_SOUP_SPECIAL_AMOUNT = 1;
 const ADVENTURERS_RATIONS_HEAL_AMOUNT = 7;
+const enlightenmentFishAccumulatedHP = ref(0);
 const isCloakActive = ref(false);
 const CLOAK_DURATION = 10;
 const cloakClicksRemaining = ref(0);
@@ -264,6 +267,7 @@ const inventory = ref({
   antidotes: 0,
   smokeBombs: 0,
   adventurersRations: 0,
+  enlightenmentFish: 0,
 });
 
 const isInventoryModalOpen = ref(false);
@@ -416,6 +420,13 @@ watch(clickCount, (newClicks) => {
     blurClicksLeft.value--;
     log(
       `🍺 You are still drunk. ${blurClicksLeft.value} clicks left til you sober up.`
+    );
+  }
+
+  if (inventory.value.enlightenmentFish > 0) {
+    enlightenmentFishAccumulatedHP.value++;
+    log(
+      `🐟 The Fish of Eternal Enlightenment shimmers, gaining 1 HP. (Total: ${enlightenmentFishAccumulatedHP.value} HP)`
     );
   }
 });
@@ -964,6 +975,22 @@ const useAdventurersRations = () => {
   );
 };
 
+const useEnlightenmentFish = () => {
+  externalUseEnlightenmentFish(
+    {
+      inventory,
+      playerHP,
+      effectiveMaxHP,
+    },
+    {
+      log,
+    },
+    {
+      enlightenmentFishAccumulatedHP,
+    }
+  );
+};
+
 function markBossDefeated() {
   bossDefeated.value = true;
   current.value = chain[journeyLength.value - 1];
@@ -1002,6 +1029,8 @@ function handleUseInventoryItem(itemType) {
     useSmokeBomb();
   } else if (itemType === "adventurersRations") {
     useAdventurersRations();
+  } else if (itemType === "enlightenmentFish") {
+    useEnlightenmentFish();
   }
 }
 

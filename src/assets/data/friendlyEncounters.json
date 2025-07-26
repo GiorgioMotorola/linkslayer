@@ -981,5 +981,332 @@
         ]
       }
     }
+  },
+  {
+    "id": "npc_020_fishing_lesson",
+    "name": "Old Man Francis",
+    "greeting": "Ahoy there. I'm Man Francis. Some people call me Old Man Francis. Kind of Rude if you ask me but if the Pince-nez fits! I don't really wear glasses but, anyway, How is your day?",
+    "type": "npc",
+    "dialogueNodes": {
+      "start": {
+        "text": "Ahoy there. I'm Man Francis. Some people call me Old Man Francis. Kind of Rude if you ask me but if the Pince-nez fits! I don't really wear glasses but, anyway, How is your day?",
+        "options": [
+          {
+            "text": "Teach me how to fish, please.",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_1"
+          },
+          {
+            "text": "Can you just give me a fish for the day?",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis sighs. 'I haven't caught anything for the day. Here is some bark tea instead.'",
+            "effect": "inventoryItem",
+            "details": "barkTea"
+          },
+          {
+            "text": "Sorry, I didn't mean to engage in this conversation. I have a world to save.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis shrugs and turns back to the sea."
+          }
+        ]
+      },
+      "lesson_1": {
+        "text": "'Oh yeah I can do that. First, you need a good spot. Not too deep, not too shallow. Got it?'",
+        "options": [
+          {
+            "text": "Got it.",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_2"
+          },
+          {
+            "text": "This is too complicated. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis sighs. 'Some folks just ain't cut out for it.'"
+          }
+        ]
+      },
+      "lesson_2": {
+        "text": "'Next, the bait. Worms, crickets, maybe a shiny lure. Maybe even some goblin slime. Depends on what yer after. Understand?'",
+        "options": [
+          {
+            "text": "Understood.",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_3"
+          },
+          {
+            "text": "I'm losing patience. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis shakes his head. 'Patience is key, patience is key.'"
+          }
+        ]
+      },
+      "lesson_3": {
+        "text": "'Then, the cast. A smooth, gentle flick of the wrist. Not too hard, not too soft. But not too not not hard or soft. Basically in the middle. Think you can do it?'",
+        "options": [
+          {
+            "text": "I think so.",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_4"
+          },
+          {
+            "text": "This is harder than it looks. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis chuckles. 'Practice makes perfect. Or in this case, practice makes a person give up.'"
+          }
+        ]
+      },
+      "lesson_4": {
+        "text": "'Now, the waiting game. That's where most folks fail. Just watch for any action on the line or the bobber. Got the patience for it?'",
+        "options": [
+          {
+            "text": "I can wait, I guess.",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_5"
+          },
+          {
+            "text": "This is boring. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis yawns. 'Not everyone's built for the quiet life.'"
+          }
+        ]
+      },
+      "lesson_5": {
+        "text": "'If you get a bite, you'll reel that son of a gun in confidently but with caution. Are you ready?'",
+        "options": [
+          {
+            "text": "I am not sure I am rea-",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_6"
+          },
+          {
+            "text": "This is a lot of pressure. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis sighs. 'The big ones always get away from the faint of heart.'"
+          }
+        ]
+      },
+      "lesson_6": {
+        "text": "'The current, now. She's a tricky beast. Learn to cast with it, not against it. It'll take your bait right where the fish are hiding. Understand the flow?'",
+        "options": [
+          {
+            "text": "I'm not sure I am following your logi-'",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_7"
+          },
+          {
+            "text": "This is getting too deep. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis shakes his head. 'The river don't wait for no one.'"
+          }
+        ]
+      },
+      "lesson_7": {
+        "text": "'Weather signs. A storm brewin', fish go deep. A gentle drizzle, they might come up. Look to the sky, and listen to the air. What do you see?'",
+        "options": [
+          {
+            "text": "I see a lot of water and some clouds in the sky. I see you. I smell you, too.",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_8"
+          },
+          {
+            "text": "I'm not a weather wizard. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis shrugs. 'Then ye'll be fishin' in the wrong storms.'"
+          }
+        ]
+      },
+      "lesson_8": {
+        "text": "'The art of chumming. A little bit of food, scattered just so, can bring 'em right to you. Don't overdo it, though, or they'll be full! Got the knack?'",
+        "options": [
+          {
+            "text": "The knack?",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_9"
+          },
+          {
+            "text": "I don't want to waste bait. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis sighs. 'Sometimes you gotta give a little to get a lot.'"
+          }
+        ]
+      },
+      "lesson_9": {
+        "text": "'Reading the water's surface. Ripples from a rising fish, bugs skittering... it all tells a story. Are you reading the water yet?'",
+        "options": [
+          {
+            "text": "I don't much care for reading.",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_10"
+          },
+          {
+            "text": "It all looks the same to me. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis nods. 'Not everyone sees the hidden tales.'"
+          }
+        ]
+      },
+      "lesson_10": {
+        "text": "'It's important to understand the yank of the fish. Sometimes the fish will be a big ol' goofball and that means you have to put in what the fish is hitting you with. You have to feel it.",
+        "options": [
+          {
+            "text": "I'll focus on the feel. Do you have any beer to go with this?",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_11"
+          },
+          {
+            "text": "My hands are numb. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis chuckles. 'Then ye'll miss the subtle whispers.'"
+          }
+        ]
+      },
+      "lesson_11": {
+        "text": "'I don't drink. Choosing your hook size. Too big, they won't bite. Too small, they'll get away. It's a delicate balance. Think you can pick the right one?'",
+        "options": [
+          {
+            "text": "I'll pick carefully.",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_12"
+          },
+          {
+            "text": "This is too much detail. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis shrugs. 'The details make the difference.'"
+          }
+        ]
+      },
+      "lesson_12": {
+        "text": "'The art of the retrieve. Slow, steady, or wobbling? Depends on the fish, depends on the lure. Every retrieve tells a story. What's your story?'",
+        "options": [
+          {
+            "text": "I'm on an adventure. What is your story?",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_13"
+          },
+          {
+            "text": "I'm just reeling. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francisr sighs. 'Then ye'll only catch the lazy ones.'"
+          }
+        ]
+      },
+      "lesson_13": {
+        "text": "'I am a fisherman.'",
+        "options": [
+          {
+            "text": "Oh, that's nice.",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_14"
+          },
+          {
+            "text": "I'm done. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis nods. 'Some lessons are learned only through waiting and getting to know your fellow fisherman.'"
+          }
+        ]
+      },
+      "lesson_14": {
+        "text": "'Anyway, the moon's phases. Some say a full moon brings the fish out, others say it drives 'em deep. It's a mystery, but one worth pondering. What do you think?'",
+        "options": [
+          {
+            "text": "I could see a full moon doing something to a fish, I suppose.",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_15"
+          },
+          {
+            "text": "I'm not an astrologer. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis chuckles. 'The sky holds many secrets, not just for fish.'"
+          }
+        ]
+      },
+      "lesson_15": {
+        "text": "'Understanding the fish's natural habitat. Rocks, weeds, sunken logs... they all provide cover. Cast near 'em, but not in 'em.'",
+        "options": [
+          {
+            "text": "You sure you don't drink?",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_16"
+          },
+          {
+            "text": "I keep getting snagged. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis sighs. 'The best spots are often the trickiest.'"
+          }
+        ]
+      },
+      "lesson_16": {
+        "text": "'Yes, I am sure. The sound of the water. A gentle lapping, a rushing stream... different sounds mean different things. Listen closely. What do you hear?'",
+        "options": [
+          {
+            "text": "I hear you, to be quite honest.",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_17"
+          },
+          {
+            "text": "It's just noise to me. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis shakes his head. 'The sea sings a song, if you listen.'"
+          }
+        ]
+      },
+      "lesson_17": {
+        "text": "'The importance of camouflage. Your shadow, your bright clothes... they can spook the fish. Blend in with nature.'",
+        "options": [
+          {
+            "text": "Got it. I won't wear my neon colored scarf while fishing.",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_18"
+          },
+          {
+            "text": "I like my bright clothes. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis shrugs. 'Then you'll be seen, and the fish will flee.'"
+          }
+        ]
+      },
+      "lesson_18": {
+        "text": "'Not to get too philosophic but this is what it's all about. The wash of the waves, the peaceful breeze, the potential fish to be caught, eating the bait when no one is looking...'",
+        "options": [
+          {
+            "text": "Yeah, I get that.",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_19"
+          },
+          {
+            "text": "Eating bait is pretty gross. I give up.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis sighs. 'Suit yourself.'"
+          }
+        ]
+      },
+      "lesson_19": {
+        "text": "'Wait... I think you have something. I think you have something!'",
+        "options": [
+          {
+            "text": "Reel in the fish using the lessons you have learned.",
+            "flow": "dialogue_branch",
+            "next_node_id": "lesson_20"
+          },
+          {
+            "text": "Throw your fishing pole into the sea.",
+            "flow": "close_encounter",
+            "responseText": "Old Man Francis smiles sadly. 'Why did you do that?'"
+          }
+        ]
+      },
+      "lesson_20": {
+        "text": "'You got it! Thats the biggest fish I have seen in a long while! I bet that fish ages well with age.'",
+        "options": [
+          {
+            "text": "Receive the Fish of Eternal Enlightenment",
+            "flow": "close_encounter",
+            "effect": "inventoryItem",
+            "details": "enlightenmentFish",
+            "responseText": "You receive The Fish of Eternal Enlightenment. It shimmers with ancient power."
+          }
+        ]
+      }
+    }
   }
 ]

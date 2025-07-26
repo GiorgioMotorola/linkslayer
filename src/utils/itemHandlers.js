@@ -8,13 +8,25 @@ export function handleShopPurchase(
   utilityFunctions
 ) {
   let purchased = false;
-  if (playerState.playerGold.value >= item.cost) {
+  if (item.isSpecialLoot) {
+    purchased = true;
+    utilityFunctions.log(
+      `✨ <span class="player-name">${gameData.playerName.value}</span> obtained ${item.name}!`
+    );
+  } else if (playerState.playerGold.value >= item.cost) {
     playerState.playerGold.value -= item.cost;
     purchased = true;
     utilityFunctions.log(
       `💸 <span class="player-name">${gameData.playerName.value}</span> purchased ${item.name} for ${item.cost} Gold.`
     );
+  } else {
+    utilityFunctions.log(
+      `❌ Not enough Gold for ${item.name}. (Cost: ${item.cost}, You have: ${playerState.playerGold.value})`
+    );
+    return;
+  }
 
+  if (purchased) {
     switch (item.effect) {
       case "health":
         playerState.playerHP.value = Math.min(
@@ -131,16 +143,19 @@ export function handleShopPurchase(
           utilityFunctions.log(
             `🍞 ${gameData.playerName.value} acquired Adventurer's Rations.`
           );
+        } else if (item.details === "enlightenmentFish") {
+          // NEW: Handle the fish acquisition
+          playerState.inventory.value.enlightenmentFish = 1; // Assume only one fish can be held
+          // The accumulated HP is managed in App.vue's clickCount watcher
+          utilityFunctions.log(
+            `🐟 ${gameData.playerName.value} acquired The Fish of Eternal Enlightenment!`
+          );
         }
         break;
 
       default:
         break;
     }
-  } else {
-    utilityFunctions.log(
-      `❌ Not enough Gold for ${item.name}. (Cost: ${item.cost}, You have: ${playerState.playerGold.value})`
-    );
   }
 }
 
@@ -440,5 +455,34 @@ export const useAdventurersRations = (
     utilityFunctions.closeInventoryModal();
   } else {
     utilityFunctions.log("You don't have any Adventurer's Rations to use.");
+  }
+};
+
+export const useEnlightenmentFish = (
+  playerState,
+  utilityFunctions,
+  fishHPState
+) => {
+  if (playerState.inventory.value.enlightenmentFish > 0) {
+    const healedAmount = fishHPState.enlightenmentFishAccumulatedHP.value;
+    if (healedAmount <= 0) {
+      utilityFunctions.log(
+        `🐟 The Fish of Eternal Enlightenment has no HP accumulated yet!`
+      );
+      return;
+    }
+
+    playerState.playerHP.value = Math.min(
+      playerState.playerHP.value + healedAmount,
+      playerState.effectiveMaxHP.value
+    );
+    playerState.inventory.value.enlightenmentFish--;
+    fishHPState.enlightenmentFishAccumulatedHP.value = 0;
+
+    utilityFunctions.log(
+      `🐟 You consumed The Fish of Eternal Enlightenment and recovered ${healedAmount} HP! Your HP is now ${playerState.playerHP.value}.`
+    );
+  } else {
+    utilityFunctions.log("You don't have The Fish of Eternal Enlightenment.");
   }
 };

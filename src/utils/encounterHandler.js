@@ -163,13 +163,19 @@ function applyOptionEffects({
         log(
           `🍖 <span class="player-name">${playerName.value}</span> found a Turkey Leg.`
         );
-      } else if (option.id === "bark_tea_consumable"){
+      } else if (option.id === "bark_tea_consumable") {
         inventory.value.barkTeas++;
-                log(
+        log(
           `☕ <span class="player-name">${playerName.value}</span> found Bark Tea.`
+        );
+      } else if (option.details === "enlightenmentFish") {
+        inventory.value.enlightenmentFish = 1;
+        log(
+          `🐟 <span class="player-name">${playerName.value}</span> acquired The Fish of Eternal Enlightenment!`
         );
       }
       break;
+
     case "damage":
       playerHP.value = Math.max(
         Number(playerHP.value || 0) - (option.amount || 5),

@@ -71,10 +71,7 @@
         <div v-if="inventory.adventurersRations > 0" class="item-slot">
           <span class="item-name">Adventurer's Rations</span>
           <span class="item-quantity">x{{ inventory.adventurersRations }}</span>
-          <button
-            class="use-button"
-            @click="useItem('adventurersRations')"
-          >
+          <button class="use-button" @click="useItem('adventurersRations')">
             Use
           </button>
         </div>
@@ -102,11 +99,27 @@
             {{ isCloakActive ? `Active (${cloakClicksRemaining})` : "Use" }}
           </button>
         </div>
+
         <div v-if="inventory.stickItem > 0" class="item-slot">
           <span class="item-name"
             >A Cool Stick (hangs out in your inventory)</span
           >
           <span class="item-quantity">x{{ inventory.stickItem }}</span>
+        </div>
+
+        <div v-if="inventory.enlightenmentFish > 0" class="item-slot">
+          <span class="item-name">The Fish of Eternal Enlightenment</span>
+          <span class="item-quantity"
+            >x{{ inventory.enlightenmentFish }} (Heals
+            {{ enlightenmentFishHp }} HP)</span
+          >
+          <button
+            class="use-button"
+            @click="useItem('enlightenmentFish')"
+            :disabled="enlightenmentFishHp <= 0"
+          >
+            {{ enlightenmentFishHp <= 0 ? "No HP Accumulated" : "Use" }}
+          </button>
         </div>
 
         <div
@@ -121,7 +134,8 @@
             inventory.frenchOnionSoups === 0 &&
             inventory.antidotes === 0 &&
             inventory.smokeBombs === 0 &&
-            inventory.adventurersRations === 0
+            inventory.adventurersRations === 0 &&
+            inventory.enlightenmentFish === 0
           "
           class="item-slot no-items-game-style"
         >
@@ -178,8 +192,11 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  enlightenmentFishHp: {
+    type: Number,
+    default: 0,
+  },
 });
-
 
 watch(
   () => props.inventory,
