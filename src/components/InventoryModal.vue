@@ -122,6 +122,31 @@
           </button>
         </div>
 
+        <div v-if="inventory.sharedSufferingAmulets > 0" class="item-slot">
+          <span class="item-name">Amulet of Shared Suffering</span>
+          <span class="item-quantity"
+            >x{{ inventory.sharedSufferingAmulets }} (Deals
+            {{ amuletOfSharedSufferingDamage }} Enemy Damage)</span
+          >
+          <button
+            class="use-button"
+            @click="useItem('sharedSufferingAmulet')"
+            :disabled="!isInCombat"
+          >
+            {{ !isInCombat ? "Not in Combat" : "Use" }}
+          </button>
+        </div>
+
+        <div
+          v-if="
+            inventory.enlightenmentFish === 0 &&
+            inventory.sharedSufferingAmulets === 0
+          "
+          class="item-slot no-items-game-style"
+        >
+          <span>Nothing in inventory.</span>
+        </div>
+
         <div
           v-if="
             inventory.compass === 0 &&
@@ -193,6 +218,10 @@ const props = defineProps({
     default: false,
   },
   enlightenmentFishHp: {
+    type: Number,
+    default: 0,
+  },
+  amuletOfSharedSufferingDamage: {
     type: Number,
     default: 0,
   },

@@ -144,11 +144,15 @@ export function handleShopPurchase(
             `🍞 ${gameData.playerName.value} acquired Adventurer's Rations.`
           );
         } else if (item.details === "enlightenmentFish") {
-          // NEW: Handle the fish acquisition
-          playerState.inventory.value.enlightenmentFish = 1; // Assume only one fish can be held
-          // The accumulated HP is managed in App.vue's clickCount watcher
+          playerState.inventory.value.enlightenmentFish = 1;
           utilityFunctions.log(
             `🐟 ${gameData.playerName.value} acquired The Fish of Eternal Enlightenment!`
+          );
+        } else if (item.details === "sharedSufferingAmulet") {
+          playerState.inventory.value.sharedSufferingAmulets =
+            Number(playerState.inventory.value.sharedSufferingAmulets || 0) + 1;
+          utilityFunctions.log(
+            `💔 ${gameData.playerName.value} acquired an Amulet of Shared Suffering.`
           );
         }
         break;
@@ -436,14 +440,12 @@ export const useAdventurersRations = (
     playerState.inventory.value.adventurersRations =
       Number(playerState.inventory.value.adventurersRations || 0) - 1;
 
-    // Heal HP
     const healedAmount = itemConstants.ADVENTURERS_RATIONS_HEAL_AMOUNT;
     playerState.playerHP.value = Math.min(
       playerState.playerHP.value + healedAmount,
       playerState.effectiveMaxHP.value
     );
 
-    // Cure blur
     if (playerState.blurClicksLeft.value > 0) {
       playerState.blurClicksLeft.value = 0;
       utilityFunctions.log(`✨ Your vision clears!`);
@@ -485,4 +487,59 @@ export const useEnlightenmentFish = (
   } else {
     utilityFunctions.log("You don't have The Fish of Eternal Enlightenment.");
   }
+};
+
+export const useAmuletOfSharedSuffering = (
+  playerState,
+  utilityFunctions,
+  combatData,
+  itemConstants
+) => {
+  if (playerState.inventory.value.sharedSufferingAmulets <= 0) {
+    utilityFunctions.log(
+      `💔 You don't have an Amulet of Shared Suffering to use!`
+    );
+    return;
+  }
+
+  const isInCombat =
+    combatData.encounter.value && combatData.encounter.value.type === "combat";
+
+  if (!isInCombat) {
+    utilityFunctions.log(
+      `🚫 The Amulet of Shared Suffering can only be used in combat!`
+    );
+    return;
+  }
+
+  const enemyDamage = itemConstants.AMULET_ENEMY_DAMAGE;
+  const playerDamage = itemConstants.AMULET_PLAYER_DAMAGE;
+
+  playerState.inventory.value.sharedSufferingAmulets--;
+
+  combatData.enemyHP.value = Math.max(
+    0,
+    combatData.enemyHP.value - enemyDamage
+  );
+  utilityFunctions.log(
+    `💔 You activate the Amulet of Shared Suffering! The enemy takes ${enemyDamage} damage!`
+  );
+
+  playerState.playerHP.value = Math.max(
+    0,
+    playerState.playerHP.value - playerDamage
+  );
+  utilityFunctions.log(
+    `💔 You also feel the pain, taking ${playerDamage} damage.`
+  );
+
+  if (combatData.enemyHP.value <= 0) {
+    utilityFunctions.log(`💥 The enemy was defeated by the amulet's power!`);
+    utilityFunctions.handleLootDrop(combatData.encounter.value.enemy);
+    utilityFunctions.handleCloseEncounter();
+  } else {
+    utilityFunctions.log(`Enemy HP: ${combatData.enemyHP.value}`);
+  }
+
+  utilityFunctions.closeInventoryModal();
 };

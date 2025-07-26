@@ -131,6 +131,7 @@
         :effectiveMaxHP="effectiveMaxHP"
         :is-blurred="isBlurred"
         :enlightenment-fish-hp="enlightenmentFishAccumulatedHP"
+        :amulet-of-shared-suffering-damage="AMULET_ENEMY_DAMAGE"
       />
     </div>
   </div>
@@ -180,6 +181,7 @@ import {
   useSmokeBomb as externalUseSmokeBomb,
   useAdventurersRations as externalUseAdventurersRations,
   useEnlightenmentFish as externalUseEnlightenmentFish,
+  useAmuletOfSharedSuffering as externalUseAmuletOfSharedSuffering,
 } from "@/utils/itemHandlers";
 
 const journeyLength = ref(3);
@@ -247,6 +249,8 @@ const FRENCH_ONION_SOUP_HEAL_AMOUNT = 10;
 const FRENCH_ONION_SOUP_SPECIAL_AMOUNT = 1;
 const ADVENTURERS_RATIONS_HEAL_AMOUNT = 7;
 const enlightenmentFishAccumulatedHP = ref(0);
+const AMULET_ENEMY_DAMAGE = 50;
+const AMULET_PLAYER_DAMAGE = 25;
 const isCloakActive = ref(false);
 const CLOAK_DURATION = 10;
 const cloakClicksRemaining = ref(0);
@@ -268,6 +272,7 @@ const inventory = ref({
   smokeBombs: 0,
   adventurersRations: 0,
   enlightenmentFish: 0,
+  sharedSufferingAmulets: 0,
 });
 
 const isInventoryModalOpen = ref(false);
@@ -518,6 +523,36 @@ function callHandleRest(choice) {
     },
   });
 }
+const handleLoot = (defeatedEnemyData) => {
+  const lootHandlerArgs = {
+    playerState: {
+      playerHP,
+      playerName,
+      playerClass,
+      specialUsesLeft,
+      weaponBonus,
+      shieldBonus,
+      playerGold,
+      effectiveMaxHP: effectiveMaxHP.value,
+      inventory,
+    },
+    utilityFunctions: {
+      log,
+    },
+  };
+
+  if (isBoss(defeatedEnemyData)) {
+    log(
+      `✨ The ${defeatedEnemyData.name} dissipates, leaving no worldly possessions behind.`
+    );
+    markBossDefeated();
+  } else if (defeatedEnemyData.isMiniBoss) {
+    handleMiniBossLootDrop(lootHandlerArgs);
+  } else {
+    externalHandleLootDrop(lootHandlerArgs);
+  }
+};
+
 function handleCombatActionWrapper(playerAction) {
   const handleLoot = (defeatedEnemyData) => {
     const lootHandlerArgs = {
@@ -991,6 +1026,31 @@ const useEnlightenmentFish = () => {
   );
 };
 
+const useAmuletOfSharedSuffering = () => {
+  externalUseAmuletOfSharedSuffering(
+    {
+      inventory,
+      playerHP,
+      effectiveMaxHP,
+    },
+    {
+      log,
+      closeInventoryModal,
+      handleLootDrop: handleLoot,
+      handleCloseEncounter,
+      isBoss,
+    },
+    {
+      encounter,
+      enemyHP,
+    },
+    {
+      AMULET_ENEMY_DAMAGE,
+      AMULET_PLAYER_DAMAGE,
+    }
+  );
+};
+
 function markBossDefeated() {
   bossDefeated.value = true;
   current.value = chain[journeyLength.value - 1];
@@ -1031,6 +1091,8 @@ function handleUseInventoryItem(itemType) {
     useAdventurersRations();
   } else if (itemType === "enlightenmentFish") {
     useEnlightenmentFish();
+  } else if (itemType === "sharedSufferingAmulet") {
+    useAmuletOfSharedSuffering();
   }
 }
 

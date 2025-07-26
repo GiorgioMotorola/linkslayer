@@ -244,10 +244,10 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       hpCapBonus.value += 10;
 
       log(
-        `🎉 You have gained experience from defeating the evil in this land and your maximum HP increased by <strong>10</strong>. New max HP: ${effectiveMaxHP.value}` // Access its value here
+        `🎉 You have gained experience from defeating the evil in this land and your maximum HP increased by <strong>10</strong>. New max HP: ${effectiveMaxHP.value}`
       );
       combatWinsSinceLastCapIncrease.value = 0;
-      playerHP.value = Math.min(playerHP.value, effectiveMaxHP.value); // Access its value here
+      playerHP.value = Math.min(playerHP.value, effectiveMaxHP.value);
     }
     return;
   }
@@ -267,7 +267,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
         );
 
         if (playerDefendedThisTurn) {
-          damageToPlayer = Math.max(0, Math.floor(damageToPlayer * 0.7));
+          damageToPlayer = Math.max(0, Math.floor(damageToPlayer * 0.9));
           log(
             `🛡️ <span class="player-name">${playerName.value}</span> defended the attack, taking ${damageToPlayer} damage.`
           );

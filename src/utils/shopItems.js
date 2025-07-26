@@ -114,4 +114,16 @@ export const shopItems = [
     description:
       "Simple, wholesome provisions that restore a little health and clear the mind.",
   },
+  {
+    id: "amulet_of_shared_suffering",
+    name: "Amulet of Shared Suffering",
+    cost: 1,
+    effect: "inventoryItem",
+    details: "sharedSufferingAmulet",
+    description:
+      "Combat only. Deals 50 damage to the enemy and 25 damage to you. Consumed upon use.",
+    enemyDamage: 50,
+    playerDamage: 25,
+    combatOnly: true,
+  },
 ];
