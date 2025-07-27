@@ -12,12 +12,6 @@ export function handleMiniBossLootDrop({ playerState, utilityFunctions }) {
   } = playerState;
   const { log } = utilityFunctions;
 
-  const lootChance = Math.random();
-  if (lootChance < 0.1) {
-    log(`❌ The defeated mini-boss yields no special loot.`);
-    return;
-  }
-
   const miniBossLootOptions = [
     { type: "weapon", amount: 1 },
     { type: "special", amount: 2 },

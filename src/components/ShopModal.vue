@@ -62,9 +62,9 @@
                   {{ selectedItemDetails.specialAmount }} special use).
                 </span>
                 <div class="haiku-container">
-                <div>" {{ selectedItemDetails.haikuOne }}</div>
-                <div>{{ selectedItemDetails.haikuTwo }}</div>
-                <div>{{ selectedItemDetails.haikuThree }} "</div>
+                  <div>" {{ selectedItemDetails.haikuOne }}</div>
+                  <div>{{ selectedItemDetails.haikuTwo }}</div>
+                  <div>{{ selectedItemDetails.haikuThree }} "</div>
                 </div>
               </div>
               <button
@@ -82,9 +82,17 @@
         </div>
       </div>
 
-      <button @click="$emit('close')" class="close-button-game-style">
-        Done Shopping
-      </button>
+      <div class="shop-footer-buttons">
+        <button
+          @click="$emit('open-backpack')"
+          class="close-button-game-style backpack-button"
+        >
+          Backpack
+        </button>
+        <button @click="$emit('close')" class="close-button-game-style">
+          Done Shopping
+        </button>
+      </div>
 
       <transition name="toast-fade">
         <div
@@ -111,7 +119,7 @@ const props = defineProps({
   specialUsesLeft: Number,
 });
 
-const emit = defineEmits(["buy", "close"]);
+const emit = defineEmits(["buy", "close", "open-backpack"]);
 
 const toastMessage = ref(null);
 const isToastError = ref(false);
@@ -466,6 +474,14 @@ function selectItem(item) {
   box-shadow: none;
 }
 
+.shop-footer-buttons {
+  display: flex; /* Use flexbox to arrange buttons */
+  justify-content: center; /* Center the buttons horizontally */
+  gap: 20px; /* Space between the buttons */
+  margin-top: 25px; /* Adjust margin as needed */
+  width: 100%; /* Ensure it takes full width if needed */
+}
+
 .close-button-game-style {
   background-color: #3a3a3a;
   color: #e0e0e0;
@@ -474,7 +490,7 @@ function selectItem(item) {
   border-radius: 5px;
   cursor: pointer;
   font-size: 1.1em;
-  margin-top: 25px;
+  /* margin-top: 25px; REMOVE THIS, it's now handled by .shop-footer-buttons */
   transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
   text-transform: uppercase;
   font-family: "IBM Plex Sans", sans-serif;
@@ -586,6 +602,17 @@ function selectItem(item) {
 
   .shop-title {
     font-size: 1.8em;
+  }
+
+  .shop-footer-buttons {
+    flex-direction: column; /* Stack buttons vertically on small screens */
+    gap: 10px; /* Adjust gap for vertical stacking */
+  }
+
+  .close-button-game-style {
+    width: 100%; /* Make buttons full width on small screens */
+    padding: 10px 15px; /* Adjust padding for smaller buttons */
+    font-size: 1em; /* Adjust font size */
   }
 }
 </style>

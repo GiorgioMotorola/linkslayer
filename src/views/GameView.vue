@@ -122,6 +122,8 @@
         :weaponBonus="weaponBonus"
         :shieldBonus="shieldBonus"
         :specialUsesLeft="specialUsesLeft"
+        @open-backpack="openInventoryModal"
+      />
       />
 
       <InventoryModal

@@ -14,19 +14,12 @@ export function handleLootDrop({ playerState, utilityFunctions }) {
   } = playerState;
   const { log } = utilityFunctions;
 
-  const lootChance = Math.random();
-  if (lootChance > 1) {
-    log(`❌ Enemy has no loot to drop.`);
-    return;
-  }
-
   const lootOptions = [
     "weaponPiece",
     "special",
     "defensePiece",
     "gold",
     "turkeyLeg",
-    "barkTea",
   ];
   const selectedLoot =
     lootOptions[Math.floor(Math.random() * lootOptions.length)];
@@ -67,13 +60,6 @@ export function handleLootDrop({ playerState, utilityFunctions }) {
       inventory.value.turkeyLegs++;
       log(
         `🍖 <span class="player-name">${playerName.value}</span> loots a Turkey Leg.`
-      );
-      break;
-    }
-    case "barkTea": {
-      inventory.value.barkTeas++;
-      log(
-        `🍖 <span class="player-name">${playerName.value}</span> loots Bark Tea.`
       );
       break;
     }
