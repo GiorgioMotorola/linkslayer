@@ -1,3 +1,5 @@
+// combat.js
+
 import { isBoss } from "./bossGenerator.js";
 
 export function handleCombatAction({ player, enemy, state, utils }) {

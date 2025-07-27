@@ -681,7 +681,8 @@
           {
             "text": "Touch the alter.",
             "result": "mini_boss_combat",
-            "responseText": "'You'll learn to regret touching my altar!'"
+            "miniBossType": "Mind Flayer Spawn",
+            "responseText": "'You'll learn to regret touching my altar.'"
           },
           {
             "text": "'I don't want any part of this. I am outta here.'",

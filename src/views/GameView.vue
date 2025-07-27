@@ -556,6 +556,7 @@ const handleLoot = (defeatedEnemyData) => {
     utilityFunctions: {
       log,
     },
+    defeatedEnemyData: defeatedEnemyData,
   };
 
   if (isBoss(defeatedEnemyData)) {
@@ -587,6 +588,7 @@ function handleCombatActionWrapper(playerAction) {
       utilityFunctions: {
         log,
       },
+      defeatedEnemyData: defeatedEnemyData,
     };
 
     if (isBoss(defeatedEnemyData)) {

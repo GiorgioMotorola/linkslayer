@@ -361,9 +361,11 @@ export function handleEncounterOption({
   }
 
   if (option.result === "mini_boss_combat") {
-    const miniBoss = generateMiniBoss();
+    const miniBoss = generateMiniBoss(option.miniBossType);
     if (!miniBoss) {
-      console.warn("Could not generate mini-boss, skipping combat.");
+      console.warn(
+        `Could not generate specific mini-boss for type "${option.miniBossType}", skipping combat.`
+      );
       enemyState.encounter.value = null;
       modalState.bossOverlay.value = false;
       return;

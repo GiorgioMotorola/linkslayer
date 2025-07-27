@@ -1,58 +1,32 @@
 // src/utils/miniBossLootHandler.js
 
-export function handleMiniBossLootDrop({ playerState, utilityFunctions }) {
-  const {
-    playerHP,
-    playerName,
-    specialUsesLeft,
-    weaponBonus,
-    shieldBonus,
-    playerGold,
-    effectiveMaxHP,
-  } = playerState;
+export function handleMiniBossLootDrop({
+  playerState,
+  utilityFunctions,
+  defeatedEnemyData,
+}) {
+  const { playerName, playerGold, weaponBonus, shieldBonus } = playerState;
   const { log } = utilityFunctions;
 
-  const miniBossLootOptions = [
-    { type: "weapon", amount: 1 },
-    { type: "special", amount: 2 },
-    { type: "shield", amount: 1 },
-    { type: "gold", min: 10, max: 40 },
-  ];
+  const goldAmount = defeatedEnemyData.goldReward || 0;
+  playerGold.value += goldAmount;
+  log(
+    `💰 <span class="player-name">${playerName.value}</span> finds ${goldAmount} Gold Pieces from defeating the ${defeatedEnemyData.name}.`
+  );
 
-  const selectedLoot =
-    miniBossLootOptions[Math.floor(Math.random() * miniBossLootOptions.length)];
+  const weaponAmount = defeatedEnemyData.weaponReward || 0;
+  if (weaponAmount > 0) {
+    weaponBonus.value += weaponAmount;
+    log(
+      `⚔️ <span class="player-name">${playerName.value}</span> gained a weapon upgrade! Weapon damage +${weaponAmount} (Total: +${weaponBonus.value})`
+    );
+  }
 
-  switch (selectedLoot.type) {
-    case "weapon": {
-      weaponBonus.value += selectedLoot.amount;
-      log(
-        `✨ <span class="player-name">${playerName.value}</span> finds a masterwork weapon. Weapon damage +${selectedLoot.amount} (Total: +${weaponBonus.value})`
-      );
-      break;
-    }
-    case "special": {
-      specialUsesLeft.value += selectedLoot.amount;
-      log(
-        `🌟 <span class="player-name">${playerName.value}</span> feels empowered, regaining +${selectedLoot.amount} Class Ability charges. (Total: ${specialUsesLeft.value})`
-      );
-      break;
-    }
-    case "shield": {
-      shieldBonus.value += selectedLoot.amount;
-      log(
-        `🛡️ <span class="player-name">${playerName.value}</span> discovers reinforced armor. Defense +${selectedLoot.amount} (Total: +${shieldBonus.value})`
-      );
-      break;
-    }
-    case "gold": {
-      const amount =
-        Math.floor(Math.random() * (selectedLoot.max - selectedLoot.min + 1)) +
-        selectedLoot.min;
-      playerGold.value += amount;
-      log(
-        `💰 <span class="player-name">${playerName.value}</span> finds a hidden stash of ${amount} Gold Pieces.`
-      );
-      break;
-    }
+  const defenseAmount = defeatedEnemyData.defenseReward || 0;
+  if (defenseAmount > 0) {
+    shieldBonus.value += defenseAmount;
+    log(
+      `🛡️ <span class="player-name">${playerName.value}</span> found reinforced armor! Defense +${defenseAmount} (Total: +${shieldBonus.value})`
+    );
   }
 }
