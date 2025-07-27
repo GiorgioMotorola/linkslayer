@@ -90,7 +90,7 @@ export const shopItems = [
     cost: 1,
     effect: "inventoryItem",
     details: "frenchOnionSoup",
-    healAmount: 10,
+    healAmount: 15,
     specialAmount: 1,
   },
   {

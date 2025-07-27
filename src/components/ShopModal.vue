@@ -78,7 +78,7 @@
       </div>
 
       <button @click="$emit('close')" class="close-button-game-style">
-        > Done Shopping
+        Done Shopping
       </button>
 
       <transition name="toast-fade">

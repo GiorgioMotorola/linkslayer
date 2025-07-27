@@ -1,7 +1,7 @@
 <template>
   <div class="inventory-overlay" @click.self="closeModal">
     <div class="inventory-content-game-style">
-      <h2 class="inventory-title">Inventory</h2>
+      <h2 class="inventory-title">Backpack</h2>
 
       <div class="inventory-items-container">
         <div v-if="inventory.minorHealthPotions > 0" class="item-slot-wrapper">
@@ -306,7 +306,7 @@
           class="item-slot-wrapper no-items-message-wrapper"
         >
           <div class="no-items-message">
-            <span>Your inventory is empty.</span>
+            <span>Your Backpack is empty.</span>
           </div>
         </div>
       </div>
@@ -609,10 +609,10 @@ function useItem(itemType) {
 }
 
 .close-button-game-style {
-  background-color: #3a3a3a;
-  color: #e0e0e0;
+  background-color: transparent;
+  color: #f3f3f3;
   padding: 12px 25px;
-  border: 2px solid #6a6a6a;
+  border: 1px solid #6a6a6a;
   border-radius: 5px;
   cursor: pointer;
   font-size: 1.1em;

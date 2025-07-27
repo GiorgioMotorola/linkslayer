@@ -5,15 +5,13 @@
         {{ restGreeting }}
       </div>
       <button @click="$emit('rest', 'short')" :disabled="shortRestsUsed >= 4">
-        > You find a good leaning tree, eat an apple and take a load off for a
-        bit before continuing on (gain +5 HP)
+        Take A Short Rest (+5 HP)
       </button>
       <button @click="$emit('rest', 'long')" :disabled="longRestsUsed >= 2">
-        > You build a fire, set up your tent and watch the chicken leg drip into
-        the fire before a proper rest. (gain +10 HP)
+        Take A Long Rest (+10 HP)
       </button>
       <button @click="$emit('rest', 'continue')">
-        > There is far too much ground to cover. I must continue on. (0 HP)
+        There is far too much ground to cover. I must continue on. (+0 HP)
       </button>
     </div>
   </div>
@@ -28,7 +26,6 @@ const restGreeting = ref("");
 onMounted(() => {
   restGreeting.value = getRandomRestPhrase();
 });
-
 
 defineProps(["shortRestsUsed", "longRestsUsed"]);
 defineEmits(["rest"]);
@@ -69,7 +66,7 @@ defineEmits(["rest"]);
   );
 }
 .rest-modal {
-  background-color: rgb(197, 193, 193);
+  background: rgba(0, 0, 0, 0.342);
   padding: 2rem;
   border-radius: 12px;
   text-align: start;
@@ -82,19 +79,21 @@ defineEmits(["rest"]);
   flex-direction: column;
   gap: 1rem;
   position: relative;
+  border: #616060 1px solid;
 }
 
 .rest-desc {
   text-align: center;
   margin-bottom: 0rem;
-  font-size: 18px;
+  font-size: 22px;
   animation: npc-drop 0.5s ease-out forwards;
   color: rgb(7, 7, 7);
   border-bottom: 1px solid rgb(155, 152, 152);
-  padding-bottom: 15px;
   margin-left: 0px;
   margin-right: 0px;
-  background-color: rgb(197, 193, 193);
+  background: rgba(0, 0, 0, 0);
+  color: rgb(214, 215, 216);
+  padding-bottom: 2rem;
 }
 
 button {
@@ -105,21 +104,23 @@ button {
   text-align: start;
   border: 1px solid #616060;
   border-radius: 8px;
-  background-color: #c5c1c1;
+  background: rgba(0, 0, 0, 0.342);
   padding: 0.8rem 1rem;
   font-size: 17px;
   color: #303030;
   font-weight: 400;
   cursor: pointer;
   transition: all 0.1s ease-in-out;
+  color: rgb(214, 215, 216);
 }
 
 button:hover {
   text-decoration: none;
   opacity: 0.6;
-  background-color: #c5c1c1;
-  color: #777;
+  background-color: #c5c1c144;
+  color: #000000;
   border-color: #6e6e6e;
+  font-weight: 500;
 }
 
 button:disabled {

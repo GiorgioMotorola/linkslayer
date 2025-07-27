@@ -82,11 +82,17 @@
     </transition>
 
     <div class="player-stats-container">
-      <div class="player-name-line">
-        {{ props.playerName || "Unnamed" }}
-        <span style="font-weight: 600; color: #02204d"
-          >({{ playerClass?.name || `none` }})</span
-        >
+      <div class="player-header">
+        <div class="player-name-line">
+          {{ props.playerName || "Unnamed" }}
+          <span style="font-weight: 400; color: #02204d"
+            >({{ playerClass?.name || `none` }})</span
+          >
+        </div>
+
+        <button @click="emit('open-inventory-modal')" class="inventory-button">
+          View Backpack
+        </button>
       </div>
 
       <div class="all-stats-row-box">
@@ -178,12 +184,6 @@
           <TipsModal v-if="isModalOpen" @close="closeModal" />
         </div>
       </div>
-    </div>
-
-    <div class="footer-buttons">
-      <button @click="emit('open-inventory-modal')" class="inventory-button">
-        INVENTORY &#x2694;
-      </button>
     </div>
   </header>
 </template>
@@ -782,10 +782,46 @@ header {
   font-optical-sizing: auto;
   font-size: 24px;
   color: rgb(29, 29, 29);
-  font-weight: 600;
-  text-align: center;
-  margin-top: 0.5rem;
-  margin-bottom: 0.8rem;
+  font-weight: 400;
+  margin-top: 0;
+  margin-bottom: 0;
+
+  white-space: nowrap;
+}
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 0 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.backpack-button {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  padding: 8px 15px;
+  border: 1px solid #302f2f;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+  box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.backpack-button:hover {
+  background-color: #5a5a5a;
+  transform: translateY(-1px);
+}
+
+.backpack-button:active {
+  background-color: #3a3a3a;
+  transform: translateY(1px);
+  box-shadow: 0 0 0px rgba(0, 0, 0, 0.4);
 }
 
 .all-stats-row-box {
@@ -825,7 +861,7 @@ header {
 
 .stat-label {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   margin-bottom: 0.2rem;
   letter-spacing: 1px;
   color: #000;
@@ -833,7 +869,7 @@ header {
 
 .stat-value {
   font-size: 28px;
-  font-weight: 700;
+  font-weight: 400;
   color: #374147;
   display: inline-block;
   will-change: transform, color, text-shadow;
@@ -847,15 +883,31 @@ header {
 
 .inventory-button {
   background-color: transparent;
-  color: rgb(185, 17, 17);
-  border: none;
+  color: #2c3e50;
+  border: 2px solid #2c3e50;
+  border-radius: 0.3rem;
+  padding: 0.6rem 1.3rem;
   cursor: pointer;
-  font-size: 25px;
-  font-weight: 900;
+  font-size: 20px;
+  font-weight: 600;
+  transition: all 0.25s ease-out;
+  box-shadow: none;
+  letter-spacing: 0.5px;
 }
 .inventory-button:hover {
-  box-shadow: rgba(179, 177, 177, 0.35) 0px 5px 15px;
+  background-color: rgba(44, 62, 80, 0.08);
+  color: #1a2b3b;
+  border-color: #34495e;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
+
+.inventory-button:active {
+  background-color: rgba(44, 62, 80, 0.15);
+  transform: translateY(0px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
 .current-path {
   margin-top: 0.1rem;
   margin-bottom: 1rem;

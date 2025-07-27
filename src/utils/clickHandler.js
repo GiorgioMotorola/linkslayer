@@ -92,7 +92,7 @@ export async function handleClick({
 
   if (
     playerState.clickCount.value > 0 &&
-    playerState.clickCount.value % 11 === 0 &&
+    playerState.clickCount.value % 15 === 0 &&
     !encounterPreventedByCloak
   ) {
     modalState.showRestModal.value = true;
@@ -100,7 +100,7 @@ export async function handleClick({
   }
   if (
     playerState.clickCount.value > 0 &&
-    playerState.clickCount.value % 15 === 0 &&
+    playerState.clickCount.value % 12 === 0 &&
     !modalState.showRestModal.value &&
     !encounterPreventedByCloak
   ) {

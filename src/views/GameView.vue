@@ -244,14 +244,14 @@ const showShopModal = ref(false);
 const showTipsModal = ref(false);
 const poisonedClicksLeft = ref(0);
 const poisonDamagePerClick = ref(0);
-const HEALTH_POTION_HEAL_AMOUNT = 30;
+const HEALTH_POTION_HEAL_AMOUNT = 25;
 const TURKEY_LEG_HEAL_AMOUNT = 6;
-const BARK_TEA_HEAL_AMOUNT = 8;
-const FRENCH_ONION_SOUP_HEAL_AMOUNT = 10;
+const BARK_TEA_HEAL_AMOUNT = 10;
+const FRENCH_ONION_SOUP_HEAL_AMOUNT = 15;
 const FRENCH_ONION_SOUP_SPECIAL_AMOUNT = 1;
 const ADVENTURERS_RATIONS_HEAL_AMOUNT = 7;
 const enlightenmentFishAccumulatedHP = ref(0);
-const MINOR_HEALTH_POTION_HEAL_AMOUNT = 5;
+const MINOR_HEALTH_POTION_HEAL_AMOUNT = 10;
 const AMULET_ENEMY_DAMAGE = 50;
 const AMULET_PLAYER_DAMAGE = 25;
 const isCloakActive = ref(false);
@@ -320,10 +320,10 @@ watch(playerHP, (newVal) => {
 });
 
 watch(clickCount, (newClicks) => {
-  if (newClicks > 0 && newClicks % 11 === 0) {
+  if (newClicks > 0 && newClicks % 15 === 0) {
     showRestModal.value = true;
   }
-  if (newClicks > 0 && newClicks % 15 === 0 && !showRestModal.value) {
+  if (newClicks > 0 && newClicks % 12 === 0 && !showRestModal.value) {
     showShopModal.value = true;
   }
 
