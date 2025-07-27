@@ -1,7 +1,5 @@
 // combat.js
 
-import { isBoss } from "./bossGenerator.js";
-
 export function handleCombatAction({ player, enemy, state, utils }) {
   const {
     playerHP,
@@ -88,6 +86,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     const specialName = playerClass.value.special;
 
     let baseSpecialDamage = 0;
+    let effect;
 
     if (cls === "Fighter") {
       baseSpecialDamage = 8;
@@ -96,10 +95,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
         `⚔️ <span class="player-name">${playerName.value}</span> unleashes **${specialName}** for ${baseSpecialDamage} damage.`
       );
     } else if (cls === "Wizard") {
-      const effect = playerClass.value.specialEffect(
-        enemyHP.value,
-        playerHP.value
-      );
+      effect = playerClass.value.specialEffect(enemyHP.value, playerHP.value);
       baseSpecialDamage = effect.wizardDamage;
       damageToEnemy = baseSpecialDamage;
       log(
@@ -115,10 +111,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
         skipEnemyCurrentTurn = true;
       }
     } else if (cls === "Rogue") {
-      const effect = playerClass.value.specialEffect(
-        enemyHP.value,
-        DEFAULT_ENEMY_HP
-      );
+      effect = playerClass.value.specialEffect(enemyHP.value, DEFAULT_ENEMY_HP);
       baseSpecialDamage = effect.rogueDamage;
       damageToEnemy = baseSpecialDamage;
       damageToPlayer = 0;
@@ -131,11 +124,12 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       baseSpecialDamage = 5;
       damageToEnemy = baseSpecialDamage;
 
-      playerClass.value.specialEffect(
+      effect = playerClass.value.specialEffect(
         enemyHP.value,
-        playerHP,
-        currentEffectiveMaxHP
+        playerHP.value,
+        effectiveMaxHP.value
       );
+      playerHP.value = effect.playerHP;
 
       log(
         `✨ <span class="player-name">${playerName.value}</span> calls upon **${specialName}**, dealing ${baseSpecialDamage} damage and restoring HP.`
@@ -143,11 +137,12 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     } else if (cls === "Cleric") {
       baseSpecialDamage = 6;
       damageToEnemy = baseSpecialDamage;
-      playerClass.value.specialEffect(
+      effect = playerClass.value.specialEffect(
         enemyHP.value,
-        playerHP,
-        currentEffectiveMaxHP
+        playerHP.value,
+        effectiveMaxHP.value
       );
+      playerHP.value = effect.playerHP;
 
       log(
         `🙏 <span class="player-name">${playerName.value}</span> invokes **${specialName}**, healing 5 HP and dealing ${baseSpecialDamage} damage.`
@@ -155,10 +150,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     } else if (cls === "Sorcerer") {
       baseSpecialDamage = 12;
       damageToEnemy = baseSpecialDamage;
-      const effect = playerClass.value.specialEffect(
-        enemyHP.value,
-        playerHP.value
-      );
+      effect = playerClass.value.specialEffect(enemyHP.value, playerHP.value);
 
       playerHP.value = effect.playerHP;
 
@@ -170,7 +162,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
         `<span class="player-name">${playerName.value}</span> uses ${specialName}.`
       );
       if (playerClass.value.specialEffect) {
-        const effect = playerClass.value.specialEffect(
+        effect = playerClass.value.specialEffect(
           enemyHP.value,
           playerHP.value,
           effectiveMaxHP.value
@@ -185,6 +177,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
           if (effect.stunned) {
             enemyIsStunned.value = true;
             enemyNextAction.value = null;
+            skipEnemyCurrentTurn = true;
           }
           if (effect.skipEnemyTurn) {
             skipEnemyCurrentTurn = true;
