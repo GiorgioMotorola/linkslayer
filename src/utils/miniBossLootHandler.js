@@ -19,25 +19,16 @@ export function handleMiniBossLootDrop({ playerState, utilityFunctions }) {
   }
 
   const miniBossLootOptions = [
-    { type: "health", amount: 15 },
-    { type: "weapon", amount: 2 },
+    { type: "weapon", amount: 1 },
     { type: "special", amount: 2 },
-    { type: "shield", amount: 2 },
-    { type: "gold", min: 10, max: 30 },
+    { type: "shield", amount: 1 },
+    { type: "gold", min: 10, max: 40 },
   ];
 
   const selectedLoot =
     miniBossLootOptions[Math.floor(Math.random() * miniBossLootOptions.length)];
 
   switch (selectedLoot.type) {
-    // case "health": {
-    //   const amount = selectedLoot.amount;
-    //   playerHP.value = Math.min(playerHP.value + amount, effectiveMaxHP);
-    //   log(
-    //     `💖 <span class="player-name">${playerName.value}</span> loots a rare potion, gaining +${amount} HP!`
-    //   );
-    //   break;
-    // }
     case "weapon": {
       weaponBonus.value += selectedLoot.amount;
       log(
@@ -48,7 +39,7 @@ export function handleMiniBossLootDrop({ playerState, utilityFunctions }) {
     case "special": {
       specialUsesLeft.value += selectedLoot.amount;
       log(
-        `🌟 <span class="player-name">${playerName.value}</span> feels empowered, regaining +${selectedLoot.amount} Class Ability charges! (Total: ${specialUsesLeft.value})`
+        `🌟 <span class="player-name">${playerName.value}</span> feels empowered, regaining +${selectedLoot.amount} Class Ability charges. (Total: ${specialUsesLeft.value})`
       );
       break;
     }
@@ -65,7 +56,7 @@ export function handleMiniBossLootDrop({ playerState, utilityFunctions }) {
         selectedLoot.min;
       playerGold.value += amount;
       log(
-        `💰 <span class="player-name">${playerName.value}</span> finds a hidden stash of ${amount} Gold Pieces!`
+        `💰 <span class="player-name">${playerName.value}</span> finds a hidden stash of ${amount} Gold Pieces.`
       );
       break;
     }

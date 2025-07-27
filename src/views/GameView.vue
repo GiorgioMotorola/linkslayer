@@ -38,6 +38,11 @@
   />
 
   <div class="main-content-wrapper">
+    <div v-if="isLoadingGame" class="game-loader-overlay">
+      <div class="loader-content">
+        <div class="spinner"></div>
+      </div>
+    </div>
     <ClassSelect
       v-if="!playerClass"
       @select="handleClassSelection"
@@ -99,10 +104,13 @@
       />
 
       <RestModal
-        v-show="showRestModal"
+        :showRestModal="showRestModal"
         :shortRestsUsed="shortRestsUsed"
         :longRestsUsed="longRestsUsed"
+        :weaponPieces="inventory.weaponPieces"
+        :defensePieces="inventory.defensePieces"
         @rest="callHandleRest"
+        @assemble-upgrade="handleAssembleUpgradeWrapper"
       />
 
       <ShopModal
@@ -262,6 +270,7 @@ const healthRegenAmount = ref(0);
 const healthRegenClicksRemaining = ref(0);
 const healthRegenMaxHeal = ref(0);
 const healthRegenHealedCount = ref(0);
+const isLoadingGame = ref(false);
 const inventory = ref({
   compass: 0,
   healthPotions: 0,
@@ -277,6 +286,8 @@ const inventory = ref({
   enlightenmentFish: 0,
   sharedSufferingAmulets: 0,
   minorHealthPotions: 0,
+  weaponPieces: 0,
+  defensePieces: 0,
 });
 
 const isInventoryModalOpen = ref(false);
@@ -767,7 +778,56 @@ function handleClassSelection({ classKey, name, journeyLength: selectedLen }) {
   log(`Journey length: ${journeyLength.value} articles.`);
 }
 
-//playerGold.value = 0;
+function handleAssembleUpgrade({
+  inventory,
+  playerName,
+  weaponBonus,
+  shieldBonus,
+  upgradeType,
+  utilityFunctions,
+}) {
+  const { log } = utilityFunctions;
+
+  console.log(`Attempting to assemble ${upgradeType} upgrade.`);
+  console.log(
+    `Current Weapon Pieces (Type: ${typeof inventory.value.weaponPieces}):`,
+    inventory.value.weaponPieces
+  );
+  console.log(
+    `Current Defense Pieces (Type: ${typeof inventory.value.defensePieces}):`,
+    inventory.value.defensePieces
+  );
+
+  if (upgradeType === "weapon") {
+    if (inventory.value.weaponPieces >= 2) {
+      inventory.value.weaponPieces -= 2;
+      weaponBonus.value += 1;
+      log(
+        `⚔️ <span class="player-name">${playerName.value}</span> crafted a Weapon Upgrade (+1 Weapon Bonus)`
+      );
+      log(
+        `Weapon Pieces: ${inventory.value.weaponPieces}, Weapon Bonus: ${weaponBonus.value}`
+      );
+    } else {
+      log(`⛔ Not enough Weapon Pieces to craft an upgrade. You need 2.`);
+    }
+  } else if (upgradeType === "defense") {
+    if (inventory.value.defensePieces >= 2) {
+      inventory.value.defensePieces -= 2;
+      shieldBonus.value += 1;
+      log(
+        `🛡️ <span class="player-name">${playerName.value}</span> crafted a Defense Upgrade. (+1 Defense Bonus)`
+      );
+      log(
+        `Defense Pieces: ${inventory.value.defensePieces}, Defense Bonus: ${shieldBonus.value}`
+      );
+    } else {
+      log(`⛔ Not enough Defense Pieces to craft an upgrade. You need 2.`);
+    }
+  } else {
+    log(`Unknown upgrade type: ${upgradeType}`);
+  }
+}
 
 async function callHandleEncounterOption(option) {
   await externalHandleEncounterOption({
@@ -1071,6 +1131,20 @@ const useMinorHealthPotion = () => {
   );
 };
 
+function handleAssembleUpgradeWrapper(upgradeType) {
+  handleAssembleUpgrade({
+    inventory: inventory,
+    playerName,
+    weaponBonus,
+    shieldBonus,
+    upgradeType,
+    utilityFunctions: {
+      log,
+    },
+  });
+  showRestModal.value = false;
+}
+
 function markBossDefeated() {
   bossDefeated.value = true;
   current.value = chain[journeyLength.value - 1];
@@ -1119,6 +1193,7 @@ function handleUseInventoryItem(itemType) {
 }
 
 function resetGame() {
+  isLoadingGame.value = true;
   location.reload();
 }
 
@@ -1160,6 +1235,45 @@ onBeforeUnmount(() => {
 .dim-overlay.active-overlay {
   background-color: rgba(0, 0, 0, 0.6);
   pointer-events: auto;
+}
+
+.game-loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  color: white;
+  font-size: 1.5rem;
+  flex-direction: column;
+}
+
+.loader-content {
+  text-align: center;
+}
+
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid #fff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @media screen and (max-width: 600px) {

@@ -129,29 +129,23 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       baseSpecialDamage = 5;
       damageToEnemy = baseSpecialDamage;
 
-      const oldPlayerHP = playerHP.value;
-
-      const effect = playerClass.value.specialEffect(
+      playerClass.value.specialEffect(
         enemyHP.value,
-        playerHP.value,
+        playerHP,
         currentEffectiveMaxHP
       );
-      playerHP.value = effect.playerHP;
-
-      const hpRestored = playerHP.value - oldPlayerHP;
 
       log(
-        `✨ <span class="player-name">${playerName.value}</span> calls upon **${specialName}**, dealing ${baseSpecialDamage} damage and restoring ${hpRestored} HP.`
+        `✨ <span class="player-name">${playerName.value}</span> calls upon **${specialName}**, dealing ${baseSpecialDamage} damage and restoring HP.`
       );
     } else if (cls === "Cleric") {
       baseSpecialDamage = 6;
       damageToEnemy = baseSpecialDamage;
-      const effect = playerClass.value.specialEffect(
+      playerClass.value.specialEffect(
         enemyHP.value,
-        playerHP.value,
+        playerHP,
         currentEffectiveMaxHP
       );
-      playerHP.value = effect.playerHP;
 
       log(
         `🙏 <span class="player-name">${playerName.value}</span> invokes **${specialName}**, healing 5 HP and dealing ${baseSpecialDamage} damage.`

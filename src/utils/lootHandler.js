@@ -15,34 +15,23 @@ export function handleLootDrop({ playerState, utilityFunctions }) {
   const { log } = utilityFunctions;
 
   const lootChance = Math.random();
-  if (lootChance > 0.7) {
+  if (lootChance > 1) {
     log(`❌ Enemy has no loot to drop.`);
     return;
   }
 
-  const lootOptions = ["health", "weapon", "special", "shield", "gold"];
+  const lootOptions = [
+    "weaponPiece",
+    "special",
+    "defensePiece",
+    "gold",
+    "turkeyLeg",
+    "barkTea",
+  ];
   const selectedLoot =
     lootOptions[Math.floor(Math.random() * lootOptions.length)];
 
   switch (selectedLoot) {
-    // case "health": {
-    //   const amount = 10;
-
-    //   playerHP.value = Math.min(playerHP.value + amount, effectiveMaxHP);
-    //   log(
-    //     `🍎 <span class="player-name">${playerName.value}</span> loots +${amount} HP.`
-    //   );
-    //   break;
-    // }
-
-    case "weapon": {
-      weaponBonus.value += 1;
-      log(
-        `🗡️ <span class="player-name">${playerName.value}</span> loots a sharper weapon. Weapon damage +1 (Base Damage Total: +${weaponBonus.value})`
-      );
-      break;
-    }
-
     case "special": {
       specialUsesLeft.value += 1;
       log(
@@ -50,14 +39,22 @@ export function handleLootDrop({ playerState, utilityFunctions }) {
       );
       break;
     }
-
-    case "shield": {
-      shieldBonus.value += 1;
+    case "weaponPiece": {
+      inventory.value.weaponPieces = (inventory.value.weaponPieces || 0) + 1;
       log(
-        `🛡️<span class="player-name">${playerName.value}</span> loots stronger Chainmail. Defense +1 (Base Defense Total: +${shieldBonus.value})`
+        `🛠️ <span class="player-name">${playerName.value}</span> loots a Weapon Piece.`
       );
       break;
     }
+
+    case "defensePiece": {
+      inventory.value.defensePieces = (inventory.value.defensePieces || 0) + 1;
+      log(
+        `🛡️ <span class="player-name">${playerName.value}</span> loots a Defense Piece.`
+      );
+      break;
+    }
+
     case "gold": {
       const amount = Math.floor(Math.random() * 16) + 5;
       playerGold.value += amount;
@@ -73,7 +70,7 @@ export function handleLootDrop({ playerState, utilityFunctions }) {
       );
       break;
     }
-        case "barkTea": {
+    case "barkTea": {
       inventory.value.barkTeas++;
       log(
         `🍖 <span class="player-name">${playerName.value}</span> loots Bark Tea.`

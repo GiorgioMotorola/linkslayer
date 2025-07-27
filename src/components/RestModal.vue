@@ -1,34 +1,74 @@
 <template>
-  <div class="rest-overlay">
+  <div class="rest-overlay" v-if="props.showRestModal">
     <div class="rest-modal">
-      <div class="rest-desc">
-        {{ restGreeting }}
+      <div class="rest-modal-phrase">{{ currentRestPhrase }}</div>
+
+      <div class="rest-options">
+        <button
+          @click="handleRestChoice('short')"
+          :disabled="props.shortRestsUsed >= 4"
+        >
+          Short Rest (+5 HP) ({{ 4 - props.shortRestsUsed }} left)
+        </button>
+        <button
+          @click="handleRestChoice('long')"
+          :disabled="props.longRestsUsed >= 2"
+        >
+          Long Rest (+10 HP, +1 Special) ({{ 2 - props.longRestsUsed }} left)
+        </button>
+        <button
+          @click="handleAssemble('weapon')"
+          :disabled="(props.weaponPieces || 0) < 2"
+        >
+          Assemble Weapon Upgrade (You have {{ props.weaponPieces || 0 }}. You
+          need at least 2 pieces to upgrade.)
+        </button>
+        <button
+          @click="handleAssemble('defense')"
+          :disabled="(props.defensePieces || 0) < 2"
+        >
+          Assemble Defense Upgrade (You have {{ props.defensePieces || 0 }}. You
+          need at least 2 pieces to upgrade.)
+        </button>
+        <button @click="handleRestChoice('continue')">Continue Journey</button>
       </div>
-      <button @click="$emit('rest', 'short')" :disabled="shortRestsUsed >= 4">
-        Take A Short Rest (+5 HP)
-      </button>
-      <button @click="$emit('rest', 'long')" :disabled="longRestsUsed >= 2">
-        Take A Long Rest (+10 HP)
-      </button>
-      <button @click="$emit('rest', 'continue')">
-        There is far too much ground to cover. I must continue on. (+0 HP)
-      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { getRandomRestPhrase } from "@/utils/restPhrases";
+import { defineProps, defineEmits, ref, watch } from "vue";
+import { getRandomRestPhrase } from "../utils/restPhrases.js";
 
-const restGreeting = ref("");
-
-onMounted(() => {
-  restGreeting.value = getRandomRestPhrase();
+const props = defineProps({
+  showRestModal: Boolean,
+  shortRestsUsed: Number,
+  longRestsUsed: Number,
+  weaponPieces: { type: Number, default: 0 },
+  defensePieces: { type: Number, default: 0 },
 });
 
-defineProps(["shortRestsUsed", "longRestsUsed"]);
-defineEmits(["rest"]);
+const currentRestPhrase = ref("");
+
+watch(
+  () => props.showRestModal,
+  (newValue) => {
+    if (newValue) {
+      currentRestPhrase.value = getRandomRestPhrase();
+    }
+  },
+  { immediate: true }
+);
+
+const emit = defineEmits(["rest", "assemble-upgrade"]);
+
+const handleRestChoice = (choice) => {
+  emit("rest", choice);
+};
+
+const handleAssemble = (type) => {
+  emit("assemble-upgrade", type);
+};
 </script>
 
 <style scoped>
@@ -70,7 +110,7 @@ defineEmits(["rest"]);
   padding: 2rem;
   border-radius: 12px;
   text-align: start;
-  max-width: 650px;
+  max-width: 700px;
   width: 90%;
   box-shadow: 0 8px 24px rgba(37, 37, 37, 0.671);
   animation: pop-in 0.3s ease;
@@ -82,7 +122,7 @@ defineEmits(["rest"]);
   border: #616060 1px solid;
 }
 
-.rest-desc {
+.rest-modal-phrase {
   text-align: center;
   margin-bottom: 0rem;
   font-size: 22px;
@@ -146,5 +186,64 @@ button:disabled:hover {
     transform: scale(1);
     opacity: 1;
   }
+}
+
+.rest-modal-description,
+.crafting-description {
+  color: rgb(214, 215, 216);
+  margin-bottom: 15px;
+  line-height: 1.5;
+  font-size: 17px;
+}
+
+.rest-options,
+.crafting-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 20px;
+}
+
+.rest-modal-divider {
+  border: 0;
+  height: 1px;
+  background-color: rgb(155, 152, 152);
+  margin: 25px 0;
+}
+
+.crafting-title {
+  color: rgb(214, 215, 216);
+  margin-bottom: 15px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.piece-count {
+  font-weight: 400;
+  color: #cacaca;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.crafting-buttons button {
+  background: rgba(0, 0, 0, 0.442);
+}
+
+.crafting-buttons button:hover {
+  background-color: #c5c1c155;
+}
+
+.crafting-buttons button:nth-child(1) {
+  background: rgba(75, 75, 75, 0.4);
+}
+.crafting-buttons button:nth-child(1):hover:not(:disabled) {
+  background: rgba(75, 75, 75, 0.4);
+}
+
+.crafting-buttons button:nth-child(2) {
+  background: rgba(75, 75, 75, 0.4);
+}
+.crafting-buttons button:nth-child(2):hover:not(:disabled) {
+  background: rgba(75, 75, 75, 0.4);
 }
 </style>

@@ -61,6 +61,11 @@
                   (Restores {{ selectedItemDetails.amount }} HP and
                   {{ selectedItemDetails.specialAmount }} special use).
                 </span>
+                <div class="haiku-container">
+                <div>" {{ selectedItemDetails.haikuOne }}</div>
+                <div>{{ selectedItemDetails.haikuTwo }}</div>
+                <div>{{ selectedItemDetails.haikuThree }} "</div>
+                </div>
               </div>
               <button
                 class="buy-button-details"
@@ -519,6 +524,14 @@ function selectItem(item) {
 .toast-fade-leave-to {
   opacity: 0;
   transform: translateX(-50%) translateY(-10px);
+}
+
+.haiku-container {
+  margin-top: 10rem;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 300;
+  font-style: italic;
 }
 
 @media (max-width: 768px) {

@@ -9,14 +9,20 @@ export const shopItems = [
     details: "healthPotion",
     amount: 25,
     description: "Consumable. Recovers 25 HP when used from inventory.",
+    haikuOne: "A Strong, Red Potion",
+    haikuTwo: "Used to regain heart and life",
+    haikuThree: "Life's flame burns anew.",
   },
-    {
-    name: "Minor Health Potion", 
+  {
+    name: "Minor Health Potion",
     cost: 1,
     effect: "inventoryItem",
     amount: 10,
     details: "minorHealthPotion",
     description: "Restores 10 HP.",
+    haikuOne: "Whisper of green light",
+    haikuTwo: "A fragile strength, briefly gained",
+    haikuThree: "Shadows then recede.",
   },
   {
     id: "whetstone",
@@ -25,6 +31,9 @@ export const shopItems = [
     effect: "weapon",
     amount: 1,
     description: "Permanently increases your Weapon Damage by 1.",
+    haikuOne: "Steel cries on the stone",
+    haikuTwo: "A hungry gleam now sharpens bright",
+    haikuThree: "Fate awaits the cut.",
   },
   {
     id: "sturdy_buckler",
@@ -33,6 +42,9 @@ export const shopItems = [
     effect: "shield",
     amount: 1,
     description: "Permanently increases your Defense Bonus by 1.",
+    haikuOne: "Oak and iron stand",
+    haikuTwo: "A defiant wall against blows",
+    haikuThree: "Safe behind the guard.",
   },
   {
     id: "tome_knowledge",
@@ -41,6 +53,9 @@ export const shopItems = [
     effect: "special",
     amount: 1,
     description: "Grants +1 Class Ability Charge.",
+    haikuOne: "Dusty pages turn",
+    haikuTwo: "Old secrets whisper, mind awakes",
+    haikuThree: "New paths now unfold.",
   },
   {
     id: "arcane_compass",
@@ -49,6 +64,9 @@ export const shopItems = [
     effect: "inventoryItem",
     details: "compass",
     description: "Skips you to a random non-start/end article. Consumable.",
+    haikuOne: "Glyphs on silver gleam",
+    haikuTwo: "Worlds unseen, a random twist",
+    haikuThree: "Fate's new road unfurled.",
   },
   {
     id: "invisibility_cloak",
@@ -57,6 +75,9 @@ export const shopItems = [
     effect: "inventoryItem",
     details: "invisibilityCloak",
     description: "Consumable. Avoids non-boss encounters for 10 clicks.",
+    haikuOne: "Flicker of false air",
+    haikuTwo: "Through enemy lines, unseen",
+    haikuThree: "Ghost steps softly glide.",
   },
   {
     id: "stick_item",
@@ -65,6 +86,9 @@ export const shopItems = [
     effect: "inventoryItem",
     details: "stickItem",
     description: "Doesn't do much. It's just a cool stick that I found.",
+    haikuOne: "Just a common branch",
+    haikuTwo: "Yet in its form, comfort found",
+    haikuThree: "A small, perfect thing.",
   },
   {
     id: "herbal_heal_item",
@@ -75,6 +99,9 @@ export const shopItems = [
     amount: 1,
     durationClicks: 30,
     maxHeal: 30,
+    haikuOne: "Green leaves softly press",
+    haikuTwo: "Life's slow balm, pain starts to fade",
+    haikuThree: "Whispers of new skin.",
   },
   {
     id: "bark_tea_consumable",
@@ -82,7 +109,11 @@ export const shopItems = [
     cost: 1,
     effect: "inventoryItem",
     details: "barkTea",
+    description: "A bitter brew with minor healing properties, restores 10 HP.",
     amount: 10,
+    haikuOne: "Wild roots steeped so dark",
+    haikuTwo: "A forest tang, small comfort",
+    haikuThree: "Faint warmth starts to bloom.",
   },
   {
     id: "french_onion_soup_consumable",
@@ -92,6 +123,9 @@ export const shopItems = [
     details: "frenchOnionSoup",
     healAmount: 15,
     specialAmount: 1,
+    haikuOne: "Golden broth, onions",
+    haikuTwo: "Richness warms the weary soul",
+    haikuThree: "Strength gently returns.",
   },
   {
     id: "antidote_consumable",
@@ -101,6 +135,9 @@ export const shopItems = [
     details: "antidote",
     description:
       "A potent concoction that cleanses the body of toxins, removing all poison effects.",
+    haikuOne: "Poison's cold embrace",
+    haikuTwo: "A burning sip, darkness yields",
+    haikuThree: "Clean blood flows anew.",
   },
   {
     id: "smoke_bomb_consumable",
@@ -110,6 +147,9 @@ export const shopItems = [
     details: "smokeBomb",
     description:
       "Creates a thick cloud, allowing you to escape from non-boss combat.",
+    haikuOne: "Sudden cloud expands",
+    haikuTwo: "Enemies lost, shadows call",
+    haikuThree: "Freedom takes swift flight.",
   },
   {
     id: "adventurers_rations_consumable",
@@ -121,6 +161,9 @@ export const shopItems = [
     blurCure: true,
     description:
       "Simple, wholesome provisions that restore a little health and clear the mind.",
+    haikuOne: "Dry bread, hard cheese, cured",
+    haikuTwo: "The journey's fuel, mind clears bright",
+    haikuThree: "New day, spirit keen.",
   },
   {
     id: "amulet_of_shared_suffering",
@@ -133,5 +176,8 @@ export const shopItems = [
     enemyDamage: 50,
     playerDamage: 25,
     combatOnly: true,
+    haikuOne: "Dark pact, shared anguish",
+    haikuTwo: "Wounds exchanged, a grim balance",
+    haikuThree: "Echoes of triumph.",
   },
 ];
