@@ -261,33 +261,129 @@
   {
     "id": "npc_010",
     "name": "Ron Von Zarovich",
-    "greeting": "RON VON ZAROVICH: Bobby Lasagna is not to be trusted. I would sooner trust Strahd Von Zarovich over Bobby L. She lives in a hut and she killed my friend who once turned into a T-Rex.",
-    "options": [
-      {
-        "text": "'I am sorry for your loss.'",
-        "result": "item",
-        "details": "health",
-        "responseText": "RON VON ZAROVICH: Wow... Is this loss?"
+    "greeting": "RON VON ZAROVICH: Bobby Lasagna is not to be trusted. I would sooner trust Strahd Von Zarovich over Bobby L. She lives in a hut and she killed my friend Bulgresh who once turned into a T-Rex.",
+    "dialogueNodes": {
+      "start": {
+        "text": "RON VON ZAROVICH: Bobby Lasagna is not to be trusted. I would sooner trust Strahd Von Zarovich over Bobby L. She lives in a hut and she killed my friend Bulgresh who once turned into a T-Rex.",
+        "options": [
+          {
+            "text": "'I am sorry for your loss.'",
+            "flow": "close_encounter",
+            "result": "item",
+            "details": "health",
+            "responseText": "RON VON ZAROVICH: Wow... Is this loss?"
+          },
+          {
+            "text": "'I could kill her for you.'",
+            "flow": "dialogue_branch",
+            "next_node_id": "kill_offer_confirmation"
+          },
+          {
+            "text": "'You shouldn't talk about your relations that way.'",
+            "flow": "close_encounter",
+            "result": "none",
+            "responseText": "RON VON ZAROVICH: You don't understand."
+          },
+          {
+            "text": "'Well, if you think you are going to die, then maybe I can have your gold.'",
+            "flow": "close_encounter",
+            "result": "item",
+            "details": "gold",
+            "amount": 15,
+            "responseText": "RON VON ZAROVICH: Sure. What does it matter? These are the end times."
+          }
+        ]
       },
-      {
-        "text": "'I could kill her for you.'",
-        "result": "item",
-        "details": "weapon",
-        "responseText": "RON VON ZAROVICH: You could try. Here is some help. You'll end up vampire food, I fear. Good luck."
+      "kill_offer_confirmation": {
+        "text": "RON VON ZAROVICH: Are you sure? She is pretty dangerous...",
+        "options": [
+          {
+            "text": "Yes. Bulgresh must be avenged. Tell me where she is and I will make her suffer.",
+            "flow": "dialogue_branch",
+            "next_node_id": "bobby_location"
+          },
+          {
+            "text": "Actually, never mind. She sounds scary if she killed a T-Rex.",
+            "flow": "close_encounter",
+            "responseText": "RON VON ZAROVICH: As you wish. Perhaps it's for the best."
+          }
+        ]
       },
-      {
-        "text": "'You shouldn't talk about your relations that way.'",
-        "result": "none",
-        "responseText": "RON VON ZAROVICH: You don't understand."
+      "bobby_location": {
+        "text": "RON VON ZAROVICH: She is through that pass, over where Berez used to stand, before it was flooded. Be careful, though... those lands are poisoned.",
+        "options": [
+          {
+            "text": "Walk toward the pass.",
+            "flow": "dialogue_branch",
+            "next_node_id": "approach_pass"
+          },
+          {
+            "text": "Actually, never mind.",
+            "flow": "close_encounter",
+            "responseText": "RON VON ZAROVICH: A wise choice. Perhaps some other time."
+          }
+        ]
       },
-      {
-        "text": "'Well, if you think you are going to die, then maybe I can have your gold.'",
-        "result": "item",
-        "details": "gold",
-        "amount": 15,
-        "responseText": "RON VON ZAROVICH: Sure. What does it matter? These are the end times."
+      "approach_pass": {
+        "text": "You approach the pass. You see a small, green-colored stream. Steam rises and bubbles. The air seems to wobble and your nostrils sting.",
+        "options": [
+          {
+            "text": "Walk through the stream.",
+            "flow": "dialogue_branch",
+            "effect": "damage-minor",
+            "amount": 10,
+            "responseText": "You wade through the sickly green stream, feeling a strange tingle as you lose 10 health points. The poisoned waters are already taking their toll.",
+            "next_node_id": "approach_hut"
+          },
+          {
+            "text": "Turn around and continue your adventure without facing Bobby Lasagna.",
+            "flow": "close_encounter",
+            "responseText": "You decide against braving the poisoned lands and turn back, seeking less perilous adventures."
+          }
+        ]
+      },
+      "approach_hut": {
+        "text": "You approach a hut after walking for some time. The hut looks old and gnarled. There appears to be large footsteps all around the hut.",
+        "options": [
+          {
+            "text": "Knock on the hut's door.",
+            "result": "mini_boss_combat",
+            "miniBossType": "Bobby Lasagna's Hut",
+            "responseText": "The hut groans, grows legs right before your eyes and begins to attack. You are now in combat with a living, breathing hut."
+          },
+          {
+            "text": "Search the area for Bobby.",
+            "flow": "dialogue_branch",
+            "effect": "damage-minor",
+            "amount": 10,
+            "responseText": "You meticulously search the overgrown surroundings, finding no immediate sign of Bobby. However, a hidden thorn bush snags your leg, dealing 10 damage.",
+            "next_node_id": "rustling_bushes"
+          },
+          {
+            "text": "Yell 'Hey Bobby! I'm ready to avenge Bulgresh!'",
+            "result": "mini_boss_combat",
+            "miniBossType": "Bobby Lasagna",
+            "responseText": "Your voice echoes through the silent woods. From the hut, a figure emerges. 'Bulgresh, you say? He had it coming! Prepare to join him!'"
+          }
+        ]
+      },
+      "rustling_bushes": {
+        "text": "You hear rustling in the bushes nearby...",
+        "options": [
+          {
+            "text": "Ready yourself for combat.",
+            "result": "mini_boss_combat",
+            "miniBossType": "Bobby Lasagna",
+            "responseText": "You brace yourself. Bobby Lasagna bursts from the foliage, her eyes alight with fury. 'So, you've come to meddle, have you?' Combat begins!"
+          },
+          {
+            "text": "Run!",
+            "flow": "close_encounter",
+            "responseText": "You decide discretion is the better part of valor and bolt, leaving the mysterious rustling and Bobby Lasagna's domain behind."
+          }
+        ]
       }
-    ]
+    }
   },
   {
     "id": "npc_011",

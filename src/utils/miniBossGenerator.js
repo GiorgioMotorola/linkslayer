@@ -127,6 +127,24 @@ export const MINI_BOSS_TYPES = [
     weaponReward: 1,
     defenseReward: 0,
   },
+  {
+    type: "Bobby Lasagna's Hut",
+    hp: 80,
+    minDamage: 5,
+    maxDamage: 9,
+    goldReward: 70,
+    weaponReward: 1,
+    defenseReward: 0,
+  },
+  {
+    type: "Bobby Lasagna",
+    hp: 150,
+    minDamage: 12,
+    maxDamage: 18,
+    goldReward: 140,
+    weaponReward: 1,
+    defenseReward: 2,
+  },
 ];
 
 export function generateMiniBoss(specificType) {

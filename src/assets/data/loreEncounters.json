@@ -908,5 +908,165 @@
         ]
       }
     }
+  },
+  {
+  "id": "lore_027_twin_trunked_oak",
+  "dialogueNodes": {
+    "start": {
+      "text": "You find yourself at a section of the Silent River, flowing gently. The air is fresh, and the sound of distant birds fills the quiet. You notice several prominent landmarks nearby.",
+      "options": [
+        {
+          "text": "Search west, against the current.",
+          "result": "none",
+          "responseText": "You walk for a while, but the landscape feels unpromising. Nothing stands out."
+        },
+        {
+          "text": "Head east along the riverbank.",
+          "flow": "dialogue_branch",
+          "next_node_id": "step_1_riverbank_east"
+        },
+        {
+          "text": "Cross the river to the opposite bank.",
+          "result": "damage-minor",
+          "responseText": "The current is stronger than it looks, and you slip on a wet stone, scraping your knee. You manage to cross, but there's nothing of note on the other side."
+        },
+        {
+          "text": "Look for signs of a recent campsite nearby.",
+          "result": "none",
+          "responseText": "You search for signs of recent activity, but this immediate area seems untouched."
+        },
+        {
+          "text": "Turn around and leave this area.",
+          "flow": "close_encounter",
+          "responseText": "Feeling unsure, you decide to leave the river behind for now."
+        }
+      ]
+    },
+    "step_1_riverbank_east": {
+      "text": "You follow the river east. After some time, a truly immense twin-trunked oak tree dominates the landscape on the eastern bank, just as a faded drawing might suggest. Its ancient roots sprawl, creating a network around its base.",
+      "options": [
+        {
+          "text": "Look for carvings on the tree trunks.",
+          "result": "none",
+          "responseText": "The bark is ancient and deeply grooved, but there are no discernible carvings."
+        },
+        {
+          "text": "Check the ground under the tree's canopy for anything hidden.",
+          "result": "item",
+          "details": "consumable",
+          "responseText": "You find a patch of wild berries. A small snack, but nothing related to your search."
+        },
+        {
+          "text": "Examine the roots at the base of the tree.",
+          "flow": "dialogue_branch",
+          "next_node_id": "step_2_examine_roots"
+        },
+        {
+          "text": "Walk around the tree to inspect it from all sides.",
+          "result": "none",
+          "responseText": "You circle the massive oak, admiring its scale, but find no obvious secrets."
+        },
+        {
+          "text": "Turn around and leave this area.",
+          "flow": "close_encounter",
+          "responseText": "Feeling unsure, you decide to leave the magnificent oak behind for now."
+        }
+      ]
+    },
+    "step_2_examine_roots": {
+      "text": "You meticulously examine the intricate root system at the base of the twin-trunked oak. After a few moments, your hand brushes against a section that feels hollow. With a gentle push, a camouflaged panel slides inward, revealing a dark, narrow passage leading down into the earth. The air immediately grows damp and cool.",
+      "options": [
+        {
+          "text": "Try to force the panel open further.",
+          "result": "damage-minor",
+          "responseText": "The panel grinds, and a shard of stone breaks off, cutting your hand. It's clear forcing it won't work."
+        },
+        {
+          "text": "Look for another way into the passage.",
+          "result": "none",
+          "responseText": "The passage seems to have only one, discreet entrance. You can't find another way in."
+        },
+        {
+          "text": "Descend into the dark passage.",
+          "flow": "route_event",
+          "routeTitle": "The_Sunken_Grotto_Entrance",
+          "responseText": "You begin your descent, leaving the sunlight behind. The echoes of dripping water grow louder as you step deeper into the Sunken Grotto."
+        },
+        {
+          "text": "Reconsider and return to the surface.",
+          "flow": "dialogue_branch",
+          "next_node_id": "step_1_riverbank_east"
+        },
+        {
+          "text": "Turn around and leave this area.",
+          "flow": "close_encounter",
+          "responseText": "The darkness of the passage seems too daunting. You decide to leave this area."
+        }
+      ]
+    },
+    "step_3_follow_water_flow": {
+      "text": "You are now within the initial cavern of the Sunken Grotto. The passage is dimly lit by a faint, ambient glow from the mosses. You can hear the constant sound of flowing water.",
+      "options": [
+        {
+          "text": "Explore a small, dry side tunnel.",
+          "result": "none",
+          "responseText": "The side tunnel leads to a dead end, filled with harmless cave spiders. Nothing of interest here."
+        },
+        {
+          "text": "Search for any glowing 'stone tears' (stalactites) mentioned in the journal.",
+          "result": "none",
+          "responseText": "You see many glistening stalactites, but none stand out as a unique clue for progression."
+        },
+        {
+          "text": "Attempt to climb up a slippery rock face.",
+          "result": "damage-minor",
+          "responseText": "You slip on the slick rock, taking a minor fall and hurting your pride."
+        },
+        {
+          "text": "Follow the main current of the water deeper into the grotto.",
+          "flow": "dialogue_branch",
+          "next_node_id": "step_4_main_chamber_approach"
+        },
+        {
+          "text": "Turn around and leave the grotto.",
+          "flow": "close_encounter",
+          "responseText": "The grotto feels too confusing. You decide to turn back."
+        }
+      ]
+    },
+    "step_4_main_chamber_approach": {
+      "text": "Following the water's gentle flow, you emerge into a vast, echoing cavern. The air here shimmers with an undeniable magical presence, and in the center, a magnificent stone pedestal stands, glowing softly. You are clearly in the main chamber of the Sunken Grotto.",
+      "options": [
+        {
+          "text": "Search the edges of the chamber.",
+          "result": "item",
+          "details": "gold",
+          "amount": 20,
+          "responseText": "You find a few forgotten coins scattered near the chamber wall, perhaps dropped by the prospector."
+        },
+        {
+          "text": "Examine the water in the chamber's pool.",
+          "result": "none",
+          "responseText": "The water is clear, reflecting the magical shimmer, but holds no secrets."
+        },
+        {
+          "text": "Try to find another exit from the chamber.",
+          "result": "none",
+          "responseText": "The chamber is a natural cul-de-sac, with no other obvious exits."
+        },
+        {
+          "text": "Approach the pedestal.",
+          "flow": "route_event",
+          "routeTitle": "The_Sunken_Grotto_Pedestal",
+          "responseText": "You step towards the pedestal, feeling the ancient magic hum around you. The final challenge awaits."
+        },
+        {
+          "text": "Turn around and leave the grotto.",
+          "flow": "close_encounter",
+          "responseText": "You've seen enough of the grotto for now. You turn to leave."
+        }
+      ]
+    }
   }
+}
 ]
