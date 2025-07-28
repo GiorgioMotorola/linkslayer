@@ -4,5 +4,5 @@
 
 ---
 
-<img src="public/d20.png" alt="D20 Icon" width="50"> A Wikipedia Article to Article game built on the foundation of Dungeons & Dragons.
+<img src="public/d20.png" alt="D20 Icon" width="20"> A Wikipedia Article to Article game built on the foundation of Dungeons & Dragons.
 
