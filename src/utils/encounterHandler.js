@@ -354,7 +354,7 @@ export function handleEncounterOption({
     playerState.combatEncountersFought.value++;
     utilityFunctions.log(
       `🗡️ Your choice has resulted in combat and you have been attacked by <strong>${
-        gameData.formattedTitle.value
+        gameData.formattedTitle
       }</strong> ${enemy.name ?? ""}. What do you do?`
     );
     return;
