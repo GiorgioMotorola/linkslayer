@@ -208,7 +208,7 @@ function hideNotification() {
 }
 
 .game-modal-content {
-  background-color: rgb(219, 216, 216);
+  background-color: rgba(32, 32, 32, 0.87);
   padding: 2rem;
   border-radius: 12px;
   text-align: start;
@@ -228,11 +228,11 @@ function hideNotification() {
   margin-bottom: 0rem;
   font-size: 28px;
   animation: npc-drop 0.5s ease-out forwards;
-  color: #2080c0;
+  color: #ffffff;
   border-bottom: 1px solid rgb(155, 152, 152);
   padding-bottom: 15px;
   width: 100%;
-  background-color: rgb(219, 216, 216);
+  background-color: rgba(32, 32, 32, 0);
 }
 
 .summary-details {
@@ -258,12 +258,12 @@ function hideNotification() {
 
 .label {
   font-weight: 600;
-  color: #0a0a0a;
+  color: #ffffff;
 }
 
 .value {
   color: #424242;
-  font-weight: 500;
+  color: #ffffff;
 }
 
 .modal-buttons {
@@ -280,10 +280,10 @@ function hideNotification() {
   justify-content: flex-start;
   text-align: start;
   border: none;
-  background-color: rgb(219, 216, 216);
+  background-color: rgba(32, 32, 32, 0);
   font-size: 17px;
   margin-bottom: 0.5rem;
-  color: #0a0a0a;
+  color: #ffffff;
   font-weight: 400;
   margin-top: 0.5rem;
   width: auto;

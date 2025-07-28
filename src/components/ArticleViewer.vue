@@ -129,7 +129,7 @@ const load = async () => {
   }
 
   const articleContent = await fetchWikipediaArticle(props.articleTitle);
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise(resolve => setTimeout(resolve, 10));
 
   if (articleContent === null) {
     console.error(
@@ -230,6 +230,7 @@ onMounted(load);
   background-color: #ffffff;
   max-width: 2000px;
   margin-bottom: 25rem;
+  margin-top: 1.25rem;
   z-index: 10;
 }
 
@@ -256,10 +257,11 @@ onMounted(load);
   font-size: 20px;
   text-align: center;
   margin-bottom: 0.5rem;
+    font-family: "Roboto", sans-serif;
 }
 
 .path-display {
-  font-size: 16px;
+  font-size: 15px;
   text-align: center;
   margin-bottom: 0.5rem;
   color: #555;
@@ -268,14 +270,15 @@ onMounted(load);
   left: 0;
   width: 100%;
   background-color: #ffffff;
-  padding: 10px 0;
+  padding: 5px 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   border-bottom: solid 1px black;
   z-index: 100;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 10px;
+   background: #E8ECEE;
 }
 
 .path-display .separator {

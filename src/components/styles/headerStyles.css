@@ -3,7 +3,7 @@ header {
   bottom: 0;
   left: 0;
   right: 0;
-  background: #e2e6e7;
+  background: #E8ECEE;
   z-index: 100;
   padding: 0.5rem;
   border-top: 1.5px solid #000000;
@@ -101,12 +101,11 @@ header {
 .player-name-line {
   font-family: "IBM Plex Sans", sans-serif;
   font-optical-sizing: auto;
-  font-size: 24px;
-  color: rgb(29, 29, 29);
+  font-size: 19px;
+  color: rgb(0, 0, 0);
   font-weight: 400;
   margin-top: 0;
   margin-bottom: 0;
-
   white-space: nowrap;
 }
 
@@ -114,7 +113,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   padding: 0 10px;
   width: 100%;
   box-sizing: border-box;
@@ -146,8 +145,8 @@ header {
 }
 
 .all-stats-row-box {
-  background-color: #d4dddd;
-  border: 1px solid #555;
+  background-color: #e3e6e6;
+    border: 3px solid #080808;
   border-radius: 8px;
   padding: 0.8rem 1rem;
   margin-left: auto;
@@ -205,12 +204,12 @@ header {
 .inventory-button {
   background-color: transparent;
   color: #2c3e50;
-  border: 2px solid #2c3e50;
+  border: 3px solid #2c3e50;
   border-radius: 0.3rem;
-  padding: 0.6rem 1.3rem;
+  padding: 0.3rem .5rem;
   cursor: pointer;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 19px;
+  font-weight: 400;
   transition: all 0.25s ease-out;
   box-shadow: none;
   letter-spacing: 0.5px;
@@ -240,14 +239,15 @@ header {
 .game-log {
   max-height: 200px;
   overflow-y: auto;
-  background-color: #3a3737;
+  background-color:  #1F2E4A;
   color: rgb(229, 231, 229);
   font-family: monospace;
   padding: 0.5rem;
   margin-top: 1rem;
-  border: 1px solid #333;
+  border: 3px solid #080808;
   border-radius: 8px;
   font-size: 14px;
+  font-family: "IBM Plex Sans", sans-serif;
 }
 
 .log {
@@ -260,7 +260,7 @@ header {
   display: flex;
   flex-direction: row;
   border: none;
-  background-color: #3a3737;
+  background-color:  #1F2E4A;
   font-size: 14px;
   margin-top: 0rem;
   color: rgb(229, 231, 229);
@@ -322,7 +322,7 @@ button {
   display: flex;
   flex-direction: column;
   border: none;
-  background: #e2e6e7;
+  background: transparent;
   font-size: 17px;
   margin-bottom: 0.3rem;
   color: #303030;
@@ -389,7 +389,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   border: none;
-  background: #e2e6e7;
+  background: transparent;
   font-size: 17px;
   margin-bottom: 0.3rem;
   color: #303030;
@@ -400,7 +400,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   border: none;
-  background: #e2e6e7;
+  background: transparent;
   font-size: 17px;
   margin-bottom: 0.3rem;
   color: #303030;

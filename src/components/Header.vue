@@ -100,7 +100,7 @@
           <div class="stat-label">HP</div>
           <div class="stat-value">
             <span :class="hpAnimClass">{{ playerHP }}</span
-            >/<span :class="maxHpAnimClass">{{ effectiveMaxHP }}</span>
+            >|<span :class="maxHpAnimClass">{{ effectiveMaxHP }}</span>
           </div>
         </div>
 
@@ -675,7 +675,7 @@ function copyLogToClipboard() {
 
 <style>
 body {
-  font-family: "IBM Plex Sans", sans-serif;
+    font-family: "Roboto", sans-serif;
   font-optical-sizing: auto;
 }
 

@@ -243,14 +243,14 @@ watch(
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 2vh;
+  padding-top: .5vh;
   z-index: 1000;
   background: #5e5e5e8e;
   backdrop-filter: blur(6px);
 }
 
 .class-select {
-  background: #e2e6e7;
+  background: #E8ECEE;
   padding: 1rem;
   border-radius: 3px;
   text-align: center;
@@ -289,12 +289,12 @@ watch(
 }
 
 .class-card {
-  background: #e2e6e7;
+  background: transparent;
   border-radius: 8px;
 }
 
 button {
-  background: #e2e6e7;
+  background: transparent;
   border: none;
   font-size: 25px;
   font-family: "MedievalSharp", cursive;
@@ -489,6 +489,7 @@ button:hover {
     font-size: 14px;
     margin-top: 1rem;
     padding: 0.5rem;
+    background: transparent;
   }
   .tips-button {
     font-size: 15px;
@@ -496,7 +497,7 @@ button:hover {
 }
 
 .journey-length-selection {
-  background-color: #e2e6e7;
+    background: transparent;
   padding: 0.5rem;
   margin-top: 1.5rem;
   text-align: center;

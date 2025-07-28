@@ -207,7 +207,7 @@ function hideNotification() {
 }
 
 .game-modal-content {
-  background-color: rgb(32, 32, 32);
+  background-color: rgba(32, 32, 32, 0.87);
   padding: 2rem;
   border-radius: 12px;
   text-align: start;
@@ -231,7 +231,7 @@ function hideNotification() {
   border-bottom: 1px solid rgb(155, 152, 152);
   padding-bottom: 15px;
   width: 100%;
-  background-color: rgb(32, 32, 32);
+  background-color: rgba(32, 32, 32, 0);
 }
 
 .summary-details {
@@ -257,11 +257,11 @@ function hideNotification() {
 
 .label {
   font-weight: 600;
-  color: #c7c6c6;
+  color: #f8f8f8;
 }
 
 .value {
-  color: #8d8d8d;
+  color: #f8f8f8;
   font-weight: 500;
 }
 
@@ -279,10 +279,10 @@ function hideNotification() {
   justify-content: flex-start;
   text-align: start;
   border: none;
-  background-color: rgb(32, 32, 32);
+  background-color: rgba(32, 32, 32, 0);
   font-size: 17px;
   margin-bottom: 0.5rem;
-  color: #c7c6c6;
+  color: #f8f8f8;
   font-weight: 400;
   margin-top: 0.5rem;
   width: auto;
