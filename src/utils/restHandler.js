@@ -9,12 +9,12 @@ export function handleRest({ player, state, utils }) {
   const choice = restChoice;
 
   if (choice === "short" && shortRestsUsed.value < 4) {
-    const healAmount = 5;
+    const healAmount = 10;
     playerHP.value = Math.min(playerHP.value + healAmount, effectiveMaxHP);
     log(`${playerName.value} feels rested and has gained +${healAmount}HP.`);
     shortRestsUsed.value++;
   } else if (choice === "long" && longRestsUsed.value < 2) {
-    const healAmount = 10;
+    const healAmount = 20;
     playerHP.value = Math.min(playerHP.value + healAmount, effectiveMaxHP);
     log(`${playerName.value} feels rested and has gained +${healAmount}HP.`);
     longRestsUsed.value++;

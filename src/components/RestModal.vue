@@ -8,13 +8,13 @@
           @click="handleRestChoice('short')"
           :disabled="props.shortRestsUsed >= 4"
         >
-          Short Rest (+5 HP) ({{ 4 - props.shortRestsUsed }} left)
+          Short Rest (+10 HP) ({{ 4 - props.shortRestsUsed }} left)
         </button>
         <button
           @click="handleRestChoice('long')"
           :disabled="props.longRestsUsed >= 2"
         >
-          Long Rest (+10 HP, +1 Special) ({{ 2 - props.longRestsUsed }} left)
+          Long Rest (+20 HP, +1 Special) ({{ 2 - props.longRestsUsed }} left)
         </button>
         <button
           @click="handleAssemble('weapon')"
