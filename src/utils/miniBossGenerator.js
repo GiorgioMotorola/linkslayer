@@ -145,6 +145,15 @@ export const MINI_BOSS_TYPES = [
     weaponReward: 1,
     defenseReward: 2,
   },
+    {
+    type: "Grotto Banshee",
+    hp: 80,
+    minDamage: 6,
+    maxDamage: 12,
+    goldReward: 0,
+    weaponReward: 1,
+    defenseReward: 0,
+  },
 ];
 
 export function generateMiniBoss(specificType) {

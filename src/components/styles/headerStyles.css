@@ -3,7 +3,7 @@ header {
   bottom: 0;
   left: 0;
   right: 0;
-  background: #E8ECEE;
+  background: #e8ecee;
   z-index: 100;
   padding: 0.5rem;
   border-top: 1.5px solid #000000;
@@ -119,6 +119,11 @@ header {
   box-sizing: border-box;
 }
 
+.player-buttons-right {
+  display: flex;
+  gap: 10px;
+}
+
 .backpack-button {
   background-color: #2a2a2a;
   color: #e0e0e0;
@@ -146,7 +151,7 @@ header {
 
 .all-stats-row-box {
   background-color: #e3e6e6;
-    border: 3px solid #080808;
+  border: 3px solid #080808;
   border-radius: 8px;
   padding: 0.8rem 1rem;
   margin-left: auto;
@@ -206,7 +211,7 @@ header {
   color: #2c3e50;
   border: 3px solid #2c3e50;
   border-radius: 0.3rem;
-  padding: 0.3rem .5rem;
+  padding: 0.3rem 0.5rem;
   cursor: pointer;
   font-size: 19px;
   font-weight: 400;
@@ -228,6 +233,34 @@ header {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.notes-button {
+  background-color: transparent;
+  color: #2c3e50;
+  border: 3px solid #2c3e50;
+  border-radius: 0.3rem;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  font-size: 19px;
+  font-weight: 400;
+  transition: all 0.25s ease-out;
+  box-shadow: none;
+  letter-spacing: 0.5px;
+}
+
+.notes-button:hover {
+  background-color: rgba(44, 62, 80, 0.08);
+  color: #1a2b3b;
+  border-color: #34495e;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.notes-button:active {
+  background-color: rgba(44, 62, 80, 0.15);
+  transform: translateY(0px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
 .current-path {
   margin-top: 0.1rem;
   margin-bottom: 1rem;
@@ -239,7 +272,7 @@ header {
 .game-log {
   max-height: 200px;
   overflow-y: auto;
-  background-color:  #1F2E4A;
+  background-color: #1f2e4a;
   color: rgb(229, 231, 229);
   font-family: monospace;
   padding: 0.5rem;
@@ -260,7 +293,7 @@ header {
   display: flex;
   flex-direction: row;
   border: none;
-  background-color:  #1F2E4A;
+  background-color: #1f2e4a;
   font-size: 14px;
   margin-top: 0rem;
   color: rgb(229, 231, 229);

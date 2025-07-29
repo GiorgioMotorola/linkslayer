@@ -636,10 +636,10 @@
         "options": [
           {
             "text": "Investigate the glimmer.",
-            "effect": "item",
+            "result": "item",
             "details": "gold",
-            "amount": 40,
-            "responseText": "You find a small pouch dropped by a previous visitor, containing 40 gold pieces. You continue on...",
+            "amount": 10,
+            "responseText": "You find a small pouch dropped by a previous visitor, containing 10 gold pieces. You continue on...",
             "flow": "dialogue_branch",
             "next_node_id": "foyer"
           },
@@ -696,8 +696,8 @@
         "options": [
           {
             "text": "Pick up the vial.",
-            "effect": "inventoryItem",
-            "id": "health_potion_consumable",
+            "result": "item",
+            "details": "health",
             "responseText": "You pick up the vial. It's a Health Potion. A lucky find. You continue on.",
             "flow": "dialogue_branch",
             "next_node_id": "dead_end_left"
@@ -755,7 +755,7 @@
         "options": [
           {
             "text": "Confront the pulsating orb.",
-             "result": "mini_boss_combat",
+            "result": "mini_boss_combat",
             "miniBossType": "Bog Hag (Wearing the skin of the Wizard)",
             "responseText": "The orb flares brightly, revealing its true, monstrous form."
           },
@@ -878,8 +878,8 @@
         "options": [
           {
             "text": "Turn left towards the soft glow.",
-            "result": "inventoryItem",
-            "id": "health_potion_consumable",
+            "result": "item",
+            "details": "health",
             "responseText": "You find a hidden alcove with a glowing moss that, when consumed, restores 10 HP. It tastes faintly of lemon and regret.",
             "flow": "dialogue_branch",
             "next_node_id": "exit_tunnel_safe"
@@ -910,163 +910,294 @@
     }
   },
   {
-  "id": "lore_027_twin_trunked_oak",
-  "dialogueNodes": {
-    "start": {
-      "text": "You find yourself at a section of the Silent River, flowing gently. The air is fresh, and the sound of distant birds fills the quiet. You notice several prominent landmarks nearby.",
-      "options": [
-        {
-          "text": "Search west, against the current.",
-          "result": "none",
-          "responseText": "You walk for a while, but the landscape feels unpromising. Nothing stands out."
-        },
-        {
-          "text": "Head east along the riverbank.",
-          "flow": "dialogue_branch",
-          "next_node_id": "step_1_riverbank_east"
-        },
-        {
-          "text": "Cross the river to the opposite bank.",
-          "result": "damage-minor",
-          "responseText": "The current is stronger than it looks, and you slip on a wet stone, scraping your knee. You manage to cross, but there's nothing of note on the other side."
-        },
-        {
-          "text": "Look for signs of a recent campsite nearby.",
-          "result": "none",
-          "responseText": "You search for signs of recent activity, but this immediate area seems untouched."
-        },
-        {
-          "text": "Turn around and leave this area.",
-          "flow": "close_encounter",
-          "responseText": "Feeling unsure, you decide to leave the river behind for now."
-        }
-      ]
-    },
-    "step_1_riverbank_east": {
-      "text": "You follow the river east. After some time, a truly immense twin-trunked oak tree dominates the landscape on the eastern bank, just as a faded drawing might suggest. Its ancient roots sprawl, creating a network around its base.",
-      "options": [
-        {
-          "text": "Look for carvings on the tree trunks.",
-          "result": "none",
-          "responseText": "The bark is ancient and deeply grooved, but there are no discernible carvings."
-        },
-        {
-          "text": "Check the ground under the tree's canopy for anything hidden.",
-          "result": "item",
-          "details": "consumable",
-          "responseText": "You find a patch of wild berries. A small snack, but nothing related to your search."
-        },
-        {
-          "text": "Examine the roots at the base of the tree.",
-          "flow": "dialogue_branch",
-          "next_node_id": "step_2_examine_roots"
-        },
-        {
-          "text": "Walk around the tree to inspect it from all sides.",
-          "result": "none",
-          "responseText": "You circle the massive oak, admiring its scale, but find no obvious secrets."
-        },
-        {
-          "text": "Turn around and leave this area.",
-          "flow": "close_encounter",
-          "responseText": "Feeling unsure, you decide to leave the magnificent oak behind for now."
-        }
-      ]
-    },
-    "step_2_examine_roots": {
-      "text": "You meticulously examine the intricate root system at the base of the twin-trunked oak. After a few moments, your hand brushes against a section that feels hollow. With a gentle push, a camouflaged panel slides inward, revealing a dark, narrow passage leading down into the earth. The air immediately grows damp and cool.",
-      "options": [
-        {
-          "text": "Try to force the panel open further.",
-          "result": "damage-minor",
-          "responseText": "The panel grinds, and a shard of stone breaks off, cutting your hand. It's clear forcing it won't work."
-        },
-        {
-          "text": "Look for another way into the passage.",
-          "result": "none",
-          "responseText": "The passage seems to have only one, discreet entrance. You can't find another way in."
-        },
-        {
-          "text": "Descend into the dark passage.",
-          "flow": "route_event",
-          "routeTitle": "The_Sunken_Grotto_Entrance",
-          "responseText": "You begin your descent, leaving the sunlight behind. The echoes of dripping water grow louder as you step deeper into the Sunken Grotto."
-        },
-        {
-          "text": "Reconsider and return to the surface.",
-          "flow": "dialogue_branch",
-          "next_node_id": "step_1_riverbank_east"
-        },
-        {
-          "text": "Turn around and leave this area.",
-          "flow": "close_encounter",
-          "responseText": "The darkness of the passage seems too daunting. You decide to leave this area."
-        }
-      ]
-    },
-    "step_3_follow_water_flow": {
-      "text": "You are now within the initial cavern of the Sunken Grotto. The passage is dimly lit by a faint, ambient glow from the mosses. You can hear the constant sound of flowing water.",
-      "options": [
-        {
-          "text": "Explore a small, dry side tunnel.",
-          "result": "none",
-          "responseText": "The side tunnel leads to a dead end, filled with harmless cave spiders. Nothing of interest here."
-        },
-        {
-          "text": "Search for any glowing 'stone tears' (stalactites) mentioned in the journal.",
-          "result": "none",
-          "responseText": "You see many glistening stalactites, but none stand out as a unique clue for progression."
-        },
-        {
-          "text": "Attempt to climb up a slippery rock face.",
-          "result": "damage-minor",
-          "responseText": "You slip on the slick rock, taking a minor fall and hurting your pride."
-        },
-        {
-          "text": "Follow the main current of the water deeper into the grotto.",
-          "flow": "dialogue_branch",
-          "next_node_id": "step_4_main_chamber_approach"
-        },
-        {
-          "text": "Turn around and leave the grotto.",
-          "flow": "close_encounter",
-          "responseText": "The grotto feels too confusing. You decide to turn back."
-        }
-      ]
-    },
-    "step_4_main_chamber_approach": {
-      "text": "Following the water's gentle flow, you emerge into a vast, echoing cavern. The air here shimmers with an undeniable magical presence, and in the center, a magnificent stone pedestal stands, glowing softly. You are clearly in the main chamber of the Sunken Grotto.",
-      "options": [
-        {
-          "text": "Search the edges of the chamber.",
-          "result": "item",
-          "details": "gold",
-          "amount": 20,
-          "responseText": "You find a few forgotten coins scattered near the chamber wall, perhaps dropped by the prospector."
-        },
-        {
-          "text": "Examine the water in the chamber's pool.",
-          "result": "none",
-          "responseText": "The water is clear, reflecting the magical shimmer, but holds no secrets."
-        },
-        {
-          "text": "Try to find another exit from the chamber.",
-          "result": "none",
-          "responseText": "The chamber is a natural cul-de-sac, with no other obvious exits."
-        },
-        {
-          "text": "Approach the pedestal.",
-          "flow": "route_event",
-          "routeTitle": "The_Sunken_Grotto_Pedestal",
-          "responseText": "You step towards the pedestal, feeling the ancient magic hum around you. The final challenge awaits."
-        },
-        {
-          "text": "Turn around and leave the grotto.",
-          "flow": "close_encounter",
-          "responseText": "You've seen enough of the grotto for now. You turn to leave."
-        }
-      ]
+    "id": "lore_027_twin_trunked_oak",
+    "dialogueNodes": {
+      "start": {
+        "text": "You find yourself at a section of the Silent River, flowing gently. The air is fresh, and the sound of distant birds fills the quiet. You notice several prominent landmarks nearby.",
+        "options": [
+          {
+            "text": "Search west, against the current.",
+            "result": "none",
+            "responseText": "You walk for a while, but the landscape feels unpromising. Nothing stands out."
+          },
+          {
+            "text": "Head east along the riverbank.",
+            "flow": "dialogue_branch",
+            "next_node_id": "step_1_riverbank_east"
+          },
+          {
+            "text": "Cross the river to the opposite bank.",
+            "result": "damage-minor",
+            "responseText": "The current is stronger than it looks, and you slip on a wet stone, scraping your knee. You manage to cross, but there's nothing of note on the other side. You give up."
+          },
+          {
+            "text": "Look for signs of a recent campsite nearby.",
+            "result": "none",
+            "responseText": "You search for signs of recent activity, but this immediate area seems untouched."
+          },
+          {
+            "text": "Turn around and leave this area.",
+            "flow": "close_encounter",
+            "responseText": "Feeling unsure, you decide to leave the river behind for now."
+          }
+        ]
+      },
+      "step_1_riverbank_east": {
+        "text": "You follow the river east. After some time, a truly immense twin-trunked oak tree dominates the landscape on the eastern bank, just as a faded drawing might suggest. Its ancient roots sprawl, creating a network around its base.",
+        "options": [
+          {
+            "text": "Look for carvings on the tree trunks.",
+            "result": "none",
+            "responseText": "The bark is ancient and deeply grooved, but there are no discernible carvings. This is a fool's errand. You give up."
+          },
+          {
+            "text": "Check the ground under the tree's canopy for anything hidden.",
+            "result": "item",
+            "details": "health",
+            "responseText": "You find a patch of wild berries. A small snack, but nothing more. This is a fool's errand. You give up."
+          },
+          {
+            "text": "Walk around the tree to inspect it from all sides.",
+            "result": "none",
+            "responseText": "You circle the massive oak, admiring its scale, but find no obvious secrets. You feel dizzy and decide to give up."
+          },
+          {
+            "text": "Examine the roots at the base of the tree.",
+            "flow": "dialogue_branch",
+            "next_node_id": "step_2_examine_roots"
+          },
+          {
+            "text": "Turn around and leave this area.",
+            "flow": "close_encounter",
+            "responseText": "Feeling unsure, you decide to leave the magnificent oak behind for now."
+          }
+        ]
+      },
+      "step_2_examine_roots": {
+        "text": "You meticulously examine the intricate root system at the base of the twin-trunked oak. After a few moments, your hand brushes against a section that feels hollow. With a gentle push, a camouflaged panel slides inward, revealing a dark, narrow passage leading down into the earth. The air immediately grows damp and cool.",
+        "options": [
+          {
+            "text": "Descend into the dark passage.",
+            "flow": "dialogue_branch",
+            "next_node_id": "step_3_follow_water_flow"
+          },
+          {
+            "text": "Try to force the panel open further.",
+            "result": "damage-minor",
+            "next_node_id": "step_2_examine_roots",
+            "responseText": "The panel grinds, and a shard of stone breaks off, cutting your hand. It's clear forcing it won't work."
+          },
+          {
+            "text": "Look for another way into the passage.",
+            "result": "none",
+            "next_node_id": "step_2_examine_roots",
+            "responseText": "The passage seems to have only one, discreet entrance. You can't find another way in."
+          },
+          {
+            "text": "Reconsider and return to the surface.",
+            "flow": "dialogue_branch",
+            "next_node_id": "step_1_riverbank_east"
+          },
+          {
+            "text": "Turn around and leave this area.",
+            "flow": "close_encounter",
+            "responseText": "The darkness of the passage seems too daunting. You decide to leave this area."
+          }
+        ]
+      },
+      "step_3_follow_water_flow": {
+        "text": "You are now within the initial cavern of the Sunken Grotto. The passage is dimly lit by a faint, ambient glow from the mosses. You can hear the constant sound of flowing water. The water leads to a large, unusually smooth boulder, distinct from the rough cavern walls. Four vertical lines are etched into its surface, numbered from left to right: 1st Line, 2nd Line, 3rd Line, 4th Line.",
+        "options": [
+          {
+            "text": "Press the 1st, 2nd, 3rd, 4th lines.",
+            "result": "mini_boss_combat",
+            "miniBossType": "Grotto Banshee",
+            "responseText": "You press the lines, but nothing happens. The boulder remains stubbornly in place. Suddenly, from the cracks of the boulder comes a mist that quickly forms into a Banshee. The Banshee screams..."
+          },
+          {
+            "text": "Press the 4th, 3rd, 2nd, 1st lines.",
+            "result": "mini_boss_combat",
+            "miniBossType": "Grotto Banshee",
+            "responseText": "You press the lines in reverse order, but the boulder doesn't budge. Suddenly, from the cracks of the boulder comes a mist that quickly forms into a Banshee. The Banshee screams..."
+          },
+          {
+            "text": "Press the 3rd, 1st, 4th, 2nd lines.",
+            "flow": "dialogue_branch",
+            "next_node_id": "step_4_door_open",
+            "responseText": "With a deep rumble, the massive boulder slowly grinds inward, revealing a new, dark passage beyond. The air stirs, carrying a scent of old earth and something metallic."
+          },
+          {
+            "text": "Attempt to force the boulder.",
+            "result": "mini_boss_combat",
+            "miniBossType": "Grotto Banshee",
+            "responseText": "You strain to open the boulder but it does not budge. Suddenly, from the cracks of the boulder comes a mist that quickly forms into a Banshee. The Banshee screams..."
+          },
+          {
+            "text": "Turn around and leave the grotto.",
+            "flow": "close_encounter",
+            "responseText": "The grotto feels too confusing. You decide to turn back."
+          }
+        ]
+      },
+      "step_4_door_open": {
+        "text": "The boulder has opened a new path. You find yourself in a dimly lit section of the grotto with two distinct tunnels leading deeper. One veers left, and the other goes right.",
+        "options": [
+          {
+            "text": "Take the left tunnel.",
+            "flow": "dialogue_branch",
+            "next_node_id": "step_5_left_tunnel_chest_puzzle"
+          },
+          {
+            "text": "Take the right tunnel.",
+            "flow": "close_encounter",
+            "responseText": "You follow the right tunnel. It opens into a larger, underground river, which quickly carries you out into the daylight, far from the grotto's mysteries."
+          },
+          {
+            "text": "Turn around and leave the grotto.",
+            "flow": "close_encounter",
+            "responseText": "The grotto feels too daunting. You decide to turn back."
+          }
+        ]
+      },
+      "step_5_left_tunnel_chest_puzzle": {
+        "text": "The left tunnel narrows then opens into a small, secluded chamber. In the center, a sturdy wooden **treasure chest** sits, bound with iron bands. A curious numerical lock adorns its front, requiring a single number as input.",
+        "options": [
+          {
+            "text": "Enter '5'.",
+            "result": "mini_boss_combat",
+            "miniBossType": "Grotto Banshee",
+            "responseText": "You enter the number, but the lock stays firmly closed. From the locks seams comes a mist that quickly forms into a Banshee. The Banshee screams..."
+          },
+          {
+            "text": "Enter '7'.",
+            "result": "mini_boss_combat",
+            "miniBossType": "Grotto Banshee",
+            "responseText": "You enter the number, but the lock stays firmly closed. From the locks seams comes a mist that quickly forms into a Banshee. The Banshee screams..."
+          },
+          {
+            "text": "Enter '10'.",
+            "result": "item",
+            "details": "gold",
+            "amount": 100,
+            "responseText": "With a satisfying click, the lock springs open! Inside, glimmers a cache of coins."
+          },
+          {
+            "text": "Enter '12'.",
+            "result": "mini_boss_combat",
+            "miniBossType": "Grotto Banshee",
+            "responseText": "You enter the number, but the lock stays firmly closed. From the locks seams comes a mist that quickly forms into a Banshee. The Banshee screams..."
+          },
+          {
+            "text": "Turn around and leave the grotto.",
+            "flow": "close_encounter",
+            "responseText": "The chest's puzzle is too perplexing. You decide to leave."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "lore_023_abandoned_campfire",
+    "dialogueNodes": {
+      "start": {
+        "text": "You find the remains of a recently abandoned campfire. Embers glow faintly beneath a pile of ash, and a worn leather journal lies beside a half-eaten, petrified meal. It looks like it was left in a hurry.",
+        "options": [
+          {
+            "text": "Read the journal.",
+            "flow": "dialogue_branch",
+            "next_node_id": "journal_entry_1"
+          },
+          {
+            "text": "Search the campsite thoroughly.",
+            "result": "item",
+            "details": "gold",
+            "amount": 5,
+            "responseText": "You sift through the ashes and find a few tarnished coins. Not much, but every piece counts.",
+            "flow": "dialogue_branch"
+          },
+          {
+            "text": "Put out the embers and move on.",
+            "result": "none",
+            "responseText": "You carefully douse the remaining embers. The wilderness can be unforgiving with unattended fires. You continue your journey."
+          }
+        ]
+      },
+      "journal_entry_1": {
+        "text": "The journal's first page is dated weeks ago and appears to be marked with a '⚲' as if it's marking some sort importance: 'Day 1: The cartographers maps spoke truth. The 'Missing Grotto' is real, just as the legends foretold. I'm camped near what they call the 'Quiet River Bend' now. Legend has it, this Grotto was a safe house for Pirates. There is a well known pirate shanty I sing to keep my spirits up: 'A pi-rates life is ne-ver through, three, then one, then four, then two' Next, I'll head ⚲ east along the riverbank. ⚲'",
+        "options": [
+          {
+            "text": "Turn to the next entry.",
+            "flow": "dialogue_branch",
+            "next_node_id": "journal_entry_2"
+          },
+          {
+            "text": "Close the journal for now.",
+            "flow": "close_encounter",
+            "responseText": "You close the dusty journal, the prospector's initial excitement lingering in your mind."
+          }
+        ]
+      },
+      "journal_entry_2": {
+        "text": "Day 4: Spent days upstream and down. Found the landmark. It's exactly as described: a colossal ⚲ twin-trunked oak tree ⚲ on the eastern bank. The entrance is cunningly disguised, marked right at its base. Clever. From here, I need to focus on the ⚲ roots at the base of the tree. ⚲'",
+        "options": [
+          {
+            "text": "Turn to the next entry.",
+            "flow": "dialogue_branch",
+            "next_node_id": "journal_entry_3"
+          },
+          {
+            "text": "Close the journal for now.",
+            "flow": "close_encounter",
+            "responseText": "You close the dusty journal, the prospector's excitement about the twin-trunked oak lingering in your mind."
+          }
+        ]
+      },
+      "journal_entry_3": {
+        "text": "Day 7: The grotto is breathtaking. The river truly weeps stone inside, stalactites shimmering like frozen tears. Reached the main chamber. Found an unusual boulder, with lines etched vertically. ⚲ I sing the Pirates Grotto Shanty.'",
+        "options": [
+          {
+            "text": "Turn to the next entry.",
+            "flow": "dialogue_branch",
+            "next_node_id": "journal_entry_4"
+          },
+          {
+            "text": "Close the journal for now.",
+            "flow": "close_encounter",
+            "responseText": "You close the dusty journal, envisioning the shimmering magic of the grotto and the mysterious boulder."
+          }
+        ]
+      },
+      "journal_entry_4": {
+        "text": "Day 10: Beyond the boulder, there are two tunnels. The right leads back to the bigger river. The left seems to lead to a chamber with a chest. I heard those who used this grotto often locked their treasures using existing secrets but ⚲ adding, subtracting, multiplying, and then adding again... ⚲ whatever that means.",
+        "options": [
+          {
+            "text": "Turn to the next entry.",
+            "flow": "dialogue_branch",
+            "next_node_id": "journal_entry_5"
+          },
+          {
+            "text": "Close the journal for now.",
+            "flow": "close_encounter",
+            "responseText": "You close the dusty journal, pondering the riddle of the chest."
+          }
+        ]
+      },
+      "journal_entry_5": {
+        "text": "Finders note: I found this journal floating down the river. I leave it here in case the original owner has kin who would like the keep it. It is for certain the original owner did not survive whatever did them in. Whoever finds this, please put out my campfire if it's still going.",
+        "options": [
+          {
+            "text": "Close the journal.",
+            "flow": "quest_start",
+            "quest_id": "the_hidden_cache",
+            "responseText": "You close the journal, the new prospector's words echoing in your mind. A complex grotto, a challenging chest, and a campfire to extinguish... your adventure truly begins now."
+          },
+          {
+            "text": "Go back to the first entry.",
+            "flow": "dialogue_branch",
+            "next_node_id": "journal_entry_1"
+          }
+        ]
+      }
     }
   }
-}
 ]

@@ -83,17 +83,21 @@
 
     <div class="player-stats-container">
       <div class="player-header">
-        <div class="player-name-line">
-          {{ props.playerName || "Unnamed" }}
-          <span style="font-weight: 400; color: #02204d"
-            >({{ playerClass?.name || `none` }})</span
-          >
+        <div class="player-info-left">
+          <div class="player-name-line">
+            {{ props.playerName || "Unnamed" }}
+            <span style="font-weight: 400; color: #02204d"
+              >({{ playerClass?.name || `none` }})</span
+            >
+          </div>
         </div>
-
-        <button @click="emit('open-inventory-modal')" class="inventory-button">
-          View Backpack
-        </button>
-      </div>
+        <div class="player-buttons-right">
+          <button @click="emit('open-inventory-modal')" class="inventory-button">
+            View Backpack
+          </button>
+          <button @click="openNotesModal" class="notes-button">Journal</button>
+        </div>
+        </div>
 
       <div class="all-stats-row-box">
         <div class="stat-column-hp">
@@ -185,13 +189,15 @@
         </div>
       </div>
     </div>
+    <NotesModal v-if="isNotesModalOpen" @close="closeNotesModal" />
   </header>
 </template>
 
 <script setup>
 import { ref, computed, watch, nextTick } from "vue";
 import TipsModal from "./TipsModal.vue";
-import './styles/headerStyles.css'; 
+import "./styles/headerStyles.css";
+import NotesModal from "./NotesModal.vue";
 
 const props = defineProps({
   start: String,
@@ -270,6 +276,15 @@ const openModal = () => {
 
 const closeModal = () => {
   isModalOpen.value = false;
+};
+const isNotesModalOpen = ref(false); // Controls the visibility of the NotesModal
+const openNotesModal = () => {
+  // Function to open the NotesModal
+  isNotesModalOpen.value = true;
+};
+const closeNotesModal = () => {
+  // Function to close the NotesModal
+  isNotesModalOpen.value = false;
 };
 
 const currentDialogue = computed(() => {
@@ -675,9 +690,9 @@ function copyLogToClipboard() {
 
 <style>
 body {
-    font-family: "Roboto", sans-serif;
+  font-family: "Roboto", sans-serif;
   font-optical-sizing: auto;
 }
 
-@import './styles/CombatAnimations.css'; 
+@import "./styles/CombatAnimations.css";
 </style>
