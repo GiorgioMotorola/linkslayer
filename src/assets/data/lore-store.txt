@@ -1,0 +1,930 @@
+Lore ID: lore_001
+Text: Etched into a cave wall: 'Beware the one-eyed owl who guards the dusk.'
+
+Options:
+- Text: Poke the owl in the eye
+  Result: Combat
+  Response: The owl's eye snaps open. There is a deep and gravelly growl coming from behind...
+
+- Text: Keep walking
+  Result: None
+  Response: The forest remains silent.
+
+- Text: Kick the owl in the eye
+  Result: Combat
+  Response: The owl's eye snaps open. There is a deep and gravelly growl coming from behind...
+
+- Text: Step away slowly
+  Result: None
+  Response: The forest remains silent, but you feel the eye glaring at you.
+
+  ---
+
+  Lore ID: lore_002
+Text: There is what looks like a deep, dark pit about 10 feet ahead of you. As you step closer, you can hear the sound of rustling.
+
+Options:
+- Text: Jump in the hole. Fortune favors the bold.
+  Result: Combat
+  Response: ...and the bold favor the afterlife.
+
+- Text: Step around the pit.
+  Result: None
+  Response: It's too risky. I better keep moving.
+
+- Text: Demonstrate how dexterous you are by leaping over the pit
+  Result: damage-minor
+  Response: You jump the gap but land on your ankle and hurt yourself.
+
+- Text: Throw a rock into the pit.
+  Result: Combat
+  Response: You hear the snarling intensify and see a creature climb up the pit. Before you know it, the creature is in front of you, looking deep into your eyes.
+
+---
+
+Lore ID: lore_003
+Text: There is a glowing herb sprouting from a crack in the rock.
+
+Options:
+- Text: Pick it out of the crack and use it for a glowing herb stew
+  Result: item
+  Details: health
+  Response: 'This is very good and VERY minty stew.'
+
+- Text: Eat it
+  Result: item
+  Details: health
+  Response: The herb tastes minty and you gain +5 HP.
+
+- Text: Leave it alone
+  Result: none
+  Response: Maybe someone else will need it more.
+
+- Text: Curse at the glowing herb
+  Result: none
+  Response: Nothing happens. Do you feel tough?
+
+---
+
+Lore ID: lore_004
+Text: You have reached a smooth rock overlooking the forest ahead.
+
+Options:
+- Text: Sit at the rock and contemplate your journey so far and plan for the journey ahead.
+  Result: special
+  Details: recover
+  Response: I wish I had a beer to crack and some Steely Dan to listen to, but this will do.
+
+- Text: Throw a middle finger at the rock
+  Result: none
+  Response: 'What an ugly rock.'
+
+- Text: Appreciate the rock for what it is and move on.
+  Result: none
+  Response: 'I must continue on.'
+
+- Text: Pray upon the rock and thank the Gods for safety and health
+  Result: item
+  Details: health
+  Response: The sky grants temporary shade from the sun and you feel comforted.
+
+---
+
+Lore ID: lore_005
+Text: There is a large clearing in the forest that leads to a small lake where the sun's light dances endlessly. There is a small glowing artifact sticking out of the rocks and sand. It seems to shake harder the closer it is to a weapon...
+
+Options:
+- Text: Pick it up and touch it to your weapon
+  Result: item
+  Details: weapon
+  Response: The shaking stops, the weapon feels sturdier. Damage base has been increased by 1.
+
+- Text: Kick the rock into the lake
+  Result: damage-minor
+  Response: The rock, still shaking, sails into the lake and disappears under the water. Your foot took damage.
+
+- Text: Eat the rock
+  Result: none
+  Response: Your stomach shakes and shakes, but nothing substantial happens.
+
+- Text: Leave it alone
+  Result: none
+  Response: 'I have no use for violently shaking rocks, to be quite honest.'
+
+---
+
+Lore ID: lore_006
+Text: You find a pile of steel, an anvil, and a kiln all under a lean-to. It appears to be an old blacksmithing site that has since been abandoned. Everything under the lean-to seems to still be in working order.
+
+Options:
+- Text: Use the things under the lean-to on your weapon.
+  Result: item
+  Details: weapon
+  Response: I should have been a blacksmith instead of an adventurer. Damage base has been increased by 1.
+
+- Text: Continue on.
+  Result: none
+  Response: There are probably bugs and spiders in that mess. No thank you.
+
+- Text: Start a new town, start a new life.
+  Result: none
+  Response: You hang up your weapons, your boots, and your armor. You begin chopping trees one by one, create a lean-to against the biggest, closest tree you can find. By day, you chop trees, burn debris, rearrange rocks, and build on existing structures to reinforce their strength. At dusk, you find local game to sustain on: fish, deer, squirrel, wild boar. At night, you contemplate your next move. Should you start building a church to pray to your Gods? Should you start building a more sustainable home to live in? I bet down the road, a library and a general store would bring in people to your town. What should you name your town? Should you start a farm to prevent the local wildlife from dying out? You should get some sleep. Sleep would be good. You wake up on the 5th day. You decide none of this is worth it and move on in your journey.
+
+- Text: Eat some of the steel.
+  Result: damage
+  Response: Why?
+
+---
+
+Lore ID: lore_007
+Text: You reach a vending machine with the branding 'Uncle Junior's Weapon Upgrades'. It appears it doesn't take any currency and just asks you to place your weapon on its shelf and press 'upgrade'.
+
+Options:
+- Text: Place your weapon on the shelf and press 'upgrade'.
+  Result: combat
+  Response: Cazzata, Malanga!
+
+- Text: Move forward without upgrading your weapon.
+  Result: none
+  Response: Nothing is free in this life. I'll pass.
+
+- Text: Check behind the vending machine for any other services it may or may not have.
+  Result: none
+  Response: There is nothing behind the vending machine.
+
+- Text: Press upgrade without placing your weapon on the shelf.
+  Result: item
+  Details: poison
+  Amount: 5
+  Damage: 2
+  Response: The vending machine fires on and violently spits out a glass vial full of a green liquid. It shatters on your face. It appears to be poison.
+
+---
+
+Lore ID: lore_008
+Text: You come across a treasure chest. The lock appears to be busted.
+
+Options:
+- Text: Open the chest
+  Response: There appears to be gold in that there chest.
+  Result: item
+  Details: gold
+  Amount: 50
+
+- Text: Walk beyond it and continue on.
+  Response: Doubtful there is anything in there if the lock is busted.
+  Result: none
+
+- Text: Admire the treasure chest from afar
+  Response: 'This is a nice treasure chest.'
+  Result: none
+
+- Text: Kick the treasure chest
+  Response: Your foot hurts now.
+  Result: damage-minor
+
+---
+
+Lore ID: lore_009
+Text: You see a very large statue in a clearing. It appears to be thousands of years old. It is surrounded by ruined rock and structures that have seen better days. The statue appears to be in decent shape and has not succumbed to the elements. Approaching the statue, you can see a plaque. Written on the plaque is the following: 'To our leader in laughter, Norm. What is green and has wheels?' The plaque appears to ask a question.
+
+Options:
+- Text: Respond with 'swords?'
+  Response: Nothing happens.
+  Result: none
+
+- Text: Respond with 'rocks?'
+  Response: Nothing happens.
+  Result: none
+
+- Text: Respond with 'clouds?'
+  Response: Nothing happens.
+  Result: none
+
+- Text: Respond with 'grass?'
+  Response: The statue slowly moves to the south, revealing an entryway to an underground path. Above the archway that leads into the path reads another plaque that says 'Grass. I lied about the wheels'. The path appears to be a shortcut through the forest.
+  Result: shortcut
+  Details: clicks
+  Amount: 6
+
+---
+
+Lore ID: lore_010
+Text: There is a sturdy bridge ahead of you. The bridge may be short, but it appears to be made up of squares. Each square a different color. The first four squares are colored Red, White, Green, and Blue. Each square has 'Currents murmur my name, the daylight wears my face, sorrow drapes itself in my hue, and I wait beneath your next footfall' written on them respectively.
+
+Options:
+- Text: Step on the Green square
+  Result: damage
+  Response: The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage.
+
+- Text: Step on the White square
+  Result: damage
+  Response: The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage.
+
+- Text: Step on the Blue square
+  Response: The Blue square lights up, then dims. Then all the squares turn blue. You walk across the bridge safely.
+  Result: shortcut
+  Details: clicks
+  Amount: 6
+
+- Text: Step on the Red square
+  Result: damage
+  Response: The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage.
+
+---
+
+Lore ID: lore_011
+Text: There is a sturdy bridge ahead of you. The bridge may be short, but it appears to be made up of squares. These squares have arrows pointing North, South, East, and West. The squares have written on them 'You’ll want warmth upon the road to me, The faithful star holds my name, The sky stretches on with my voice, And I lie just ahead, beneath your next step.'
+
+Options:
+- Text: Step on the North square
+  Response: The North square lights up, then all 4 squares light up. Then they slowly dim and suddenly change into one large arrow pointing toward the end of the bridge allowing you to cross it safely.
+  Result: shortcut
+  Details: clicks
+  Amount: 10
+
+- Text: Step on the South square
+  Result: damage
+  Response: The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage.
+
+- Text: Step on the East square
+  Result: damage
+  Response: The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage.
+
+- Text: Step on the West square
+  Result: damage
+  Response: The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage.
+
+---
+
+Lore ID: lore_012
+Text: There is a crate in front of you that appears to have a series of wires that loop around the outside and feed into the inside. A note sits beside the crate that says 'CAUTION: Do NOT cut the Red wire!'.
+
+Options:
+- Text: Cut the Red Wire
+  Response: The crate explodes and throws you back 50 feet. Following directions appears to be your weak suit.
+  Result: damage-major
+
+- Text: Cut the Green Wire
+  Result: item
+  Details: gold
+  Amount: 45
+  Response: The crate whirs a low tone and then immediately opens up, all 4 sides collapsing to the ground. A pile of gold is revealed.
+
+- Text: Cut All of the Wires
+  Result: damage-major
+  Response: You cut the Blue Wire and nothing happens. You cut the Green Wire and the crate starts emitting a loud whirring sound. You panic and cut the Red Wire and the crate explodes and throws you back 50 feet. Impatience isn't a virtue.
+
+- Text: Cut the Blue Wire
+  Result: none
+  Response: Nothing happens.
+
+---
+
+Lore ID: lore_013
+Text: You come across a bubbling swamp. The steam from the swamp is apparent and the smell is sulfuric and strong. There does appear to be a way around, but if you cut through the swamp, you might get hurt. However, you will save some time.
+
+Options:
+- Text: Walk carefully to the other side through the swamp.
+  Response: You make it across, saving time but also taking some damage as well.
+  Result: shortcut-damage
+  Details: recover
+
+- Text: Walk around the left side of the swamp
+  Result: combat
+  Response: There was an enemy waiting to ambush you on the left side.
+
+- Text: Walk around the right side of the swamp
+  Result: item
+  Details: gold
+  Amount: 30
+  Response: You make it safely to the other side of the putrid swamp. While walking, you find a bag with 30 gold pieces in it.
+
+- Text: Take off all of your clothes, wrap them in your travel blanket, tie the blanket to your ankle, and swim like a graceful dolphin through the swamp.
+  Result: damage-major
+  Response: That was painful.
+
+  ---
+
+  Lore ID: lore_014
+Text: After following a set of train tracks for 2 miles, you come across a train station heading to far away lands.
+
+Options:
+- Text: Blackstaff Tower
+  Route Title: College_Fjord
+
+- Text: The Forgotten Bard Tree
+  Route Title: The_Bund
+
+- Text: Duran's Cliff
+  Route Title: Rio_de_Janeiro
+
+- Text: Oceanside Caverns
+  Route Title: Great_Barrier_Reef
+
+- Text: No, thank you.
+  Result: none
+  Response: THE SCROLL DEALER: Be careful out there...
+
+---
+
+Lore ID: lore_015
+Text: You find a dusty old chest hidden beneath a gnarled tree root. It looks untouched for centuries.
+
+Options:
+- Text: Open the chest carefully.
+  Response: The chest creaks open, revealing a small pouch of gold.
+  Result: item
+  Details: gold
+  Amount: 15
+
+- Text: Open the chest in a fit of rage.
+  Response: The chest violently opens, revealing a small pouch of gold.
+  Result: item
+  Details: gold
+  Amount: 15
+
+- Text: Leave the chest, it might be cursed.
+  Response: You decide against opening the chest and move on.
+  Result: none
+
+- Text: Punch the chest
+  Result: damage
+  Response: You decide to punch the chest for some reason.
+
+---
+
+Lore ID: lore_016
+Text: You find a wooden box sitting in the mud. Inside the box, you find 6 masks. Outside of each mask, dawning a letter on the forehead, you notice the masks are otherwise featureless. Each mask has a different letter: F, P, W, R, C, and S.
+
+Options:
+- Text: Put on the F mask.
+  Result: item
+  Details: weapon
+  Response: You feel power flowing through your veins.
+
+- Text: Put on the P mask.
+  Result: item
+  Details: shield
+  Response: You feel safer and ready for any attack.
+
+- Text: Put on the W mask.
+  Response: You feel more confident that you will win this fight.
+  Result: special
+  Details: recover
+  Amount: 2
+
+- Text: Put on the R mask.
+  Response: You feel richer than ever.
+  Result: item
+  Details: gold
+  Amount: 30
+
+- Text: Put on the C mask.
+  Result: item
+  Details: health-major
+  Response: You feel healthier than ever.
+
+- Text: Put on the S mask.
+  Result: item
+  Details: health-major
+  Response: You feel healthier than ever.
+
+---
+
+Lore ID: lore_017
+Text: You come across a tavern that seems to be bustling with life. As you walk in, you see several patrons drinking and yelling in excitement. They appear to be surrounded by something called Tymora’s Spinner. You ask one patron what is going on and they say 'I have lost 10 times in a row on this stupid game. Here, have my last gold piece. See if your luck is better than mine.' You accept the gold piece. After watching a couple of rounds, it appears you can spend 1 gold piece to bet on a range of numbers and if the ball lands in that range, you win.
+
+Options:
+- Text: Bet the gold piece on range 1-10
+  Response: You lost.
+  Result: item
+  Details: gold
+  Amount: 0
+
+- Text: Bet the gold piece on range 11-20
+  Response: You lost.
+  Result: item
+  Details: gold
+  Amount: 0
+
+- Text: Bet the gold piece on range 21-30
+  Response: You lost.
+  Result: item
+  Details: gold
+  Amount: 0
+
+- Text: Bet the gold piece on range 31-40
+  Response: You lost.
+  Result: item
+  Details: gold
+  Amount: 0
+
+- Text: Bet the gold piece on range 41-50
+  Response: You lost.
+  Result: item
+  Details: gold
+  Amount: 0
+
+- Text: Bet the gold piece on range 51-60
+  Response: You win!
+  Result: item
+  Details: gold
+  Amount: 50
+
+- Text: Bet the gold piece on range 61-70
+  Response: You lost.
+  Result: item
+  Details: gold
+  Amount: 0
+
+- Text: Bet the gold piece on range 71-80
+  Response: You lost.
+  Result: item
+  Details: gold
+  Amount: 0
+
+- Text: Bet the gold piece on range 81-90
+  Response: You lost.
+  Result: item
+  Details: gold
+  Amount: 0
+
+- Text: Bet the gold piece on range 91-100
+  Response: You lost.
+  Result: item
+  Details: gold
+  Amount: 0
+
+- Text: Don't bet. Keep the gold piece and leave the tavern.
+  Response: 'I can't leave my life up to chance.'
+  Result: item
+  Details: gold
+  Amount: 1
+
+---
+
+Lore ID: lore_018
+Text: There appears to be a stone block with a hole carved into it. The hole appears to be worn away while the rest of the block seems to be smooth. While staring at the block, you hear the sound of a voice that shouts 'Halt, trespasser! If you come any closer, you better tell me how fast you want to die!'
+
+Options:
+- Text: Test the voice and take one small step forward.
+  Result: item
+  Details: poison
+  Amount: 10
+  Damage: 1
+  Response: The voice shouts 'I warned you!' and spits a small dose of poison from the hole in the stone block.
+
+- Text: Decide the voice is bluffing and start running toward the stone block with your weapon.
+  Result: item
+  Details: poison
+  Amount: 10
+  Damage: 2
+  Response: The voice shouts 'I warned you!' and spits a medium dose of poison from the hole in the stone block.
+
+- Text: 'Oh yeah? What are you going to do... spit a large dose of poison from that hole in the stone block?'
+  Result: item
+  Details: poison
+  Amount: 15
+  Damage: 2
+  Response: The voice spits a large dose of poison from the hole in the stone block.
+
+- Text: Turn around and walk away.
+  Result: none
+  Response: The voice yells 'Yeah, you better walk away!'
+
+---
+
+Lore ID: lore_020_wizards_tower
+Text: Before you stands an ominous wizard's tower, its stone weathered and ancient. Rumors whisper that the wizard who once lived here was slain, and now a monstrous entity inhabits its halls. The monster refuses to leave and the nearby town fears it.
+
+Dialogue Nodes:
+- Node ID: start
+  Text: Before you stands an ominous wizard's tower, its stone weathered and ancient. Rumors whisper that the wizard who once lived here was slain, and now a monstrous entity inhabits its halls. The monster refuses to leave and the nearby town fears it.
+  Options:
+  - Text: Open the main entrance.
+    Flow: dialogue_branch
+    Next Node ID: main_entrance
+  - Text: Search for a less obvious way in.
+    Flow: dialogue_branch
+    Next Node ID: hidden_entry_search
+  - Text: Decide it's too dangerous and leave.
+    Flow: close_encounter
+    Response: Maybe someone else can kill the monster...
+
+- Node ID: main_entrance
+  Text: The heavy oak doors are slightly ajar, revealing a dark, dusty foyer. A faint, metallic scent hangs in the air.
+  Options:
+  - Text: Step cautiously into the foyer, trying to make not even a footstep apparent.
+    Flow: dialogue_branch
+    Next Node ID: foyer
+  - Text: Push the doors wide open and announce your presence.
+    Result: mini_boss_combat
+    Mini Boss Type: Bog Hag (Wearing the skin of the Wizard)
+    Response: The monster announces their presence as well with a loud growl...
+  - Text: Reconsider and look for another way in.
+    Flow: dialogue_branch
+    Next Node ID: hidden_entry_search
+
+- Node ID: hidden_entry_search
+  Text: You circle the tower, examining its crumbling walls. Near the back, you find a small, overgrown service entrance, almost completely hidden by ivy. It looks less used, but potentially unstable.
+  Options:
+  - Text: Try the service entrance.
+    Flow: dialogue_branch
+    Next Node ID: service_entrance
+  - Text: Go back to the main entrance.
+    Flow: dialogue_branch
+    Next Node ID: main_entrance
+
+- Node ID: service_entrance
+  Text: The service door creaks open with surprising ease. Inside, a narrow, dimly lit corridor stretches before you. You notice a glimmer in a shadowy corner.
+  Options:
+  - Text: Investigate the glimmer.
+    Result: item
+    Details: gold
+    Amount: 10
+    Response: You find a small pouch dropped by a previous visitor, containing 10 gold pieces. You continue on...
+    Flow: dialogue_branch
+    Next Node ID: foyer
+  - Text: Proceed down the corridor.
+    Flow: dialogue_branch
+    Next Node ID: foyer
+
+- Node ID: foyer
+  Text: The foyer is grand but decaying. A majestic, spiraling staircase dominates the center, and two dark corridors lead off to the left and right.
+  Options:
+  - Text: Ascend the grand staircase.
+    Flow: dialogue_branch
+    Next Node ID: grand_staircase
+  - Text: Take the left corridor.
+    Flow: dialogue_branch
+    Next Node ID: left_corridor
+  - Text: Take the right corridor.
+    Flow: dialogue_branch
+    Next Node ID: right_corridor
+
+- Node ID: grand_staircase
+  Text: The stairs creak under your weight, echoing loudly. Halfway up, a trap unsprings and you see a dozen nails flying in your direction.
+  Options:
+  - Text: Quickly dodge the nail trap.
+    Effect: damage-minor
+    Amount: 3
+    Response: You manage to avoid the worst, but a nail grazes your arm. You take 3 damage. You continue on.
+    Flow: dialogue_branch
+    Next Node ID: top_of_tower
+  - Text: Tank the nail trap.
+    Flow: dialogue_branch
+    Effect: damage-minor
+    Amount: 10
+    Response: You tank the nails and a few get stuck in your skin. You take 10 damage. You continue on.
+    Next Node ID: top_of_tower
+
+- Node ID: left_corridor
+  Text: This corridor is lined with empty shelves and overturned furniture. It smells faintly of dust and something sweet. You spot a discarded vial on the floor.
+  Options:
+  - Text: Pick up the vial.
+    Result: item
+    Details: health
+    Response: You pick up the vial. It's a Health Potion. A lucky find. You continue on.
+    Flow: dialogue_branch
+    Next Node ID: dead_end_left
+  - Text: Continue to the end of the corridor.
+    Flow: dialogue_branch
+    Next Node ID: dead_end_left
+
+- Node ID: right_corridor
+  Text: This corridor is surprisingly well-maintained, adorned with faded tapestries. The air here is colder, and you hear a faint, guttural growl from deeper within.
+  Options:
+  - Text: Follow the growling sound.
+    Flow: dialogue_branch
+    Next Node ID: monster_lair_approach
+  - Text: Return to the foyer.
+    Flow: dialogue_branch
+    Next Node ID: foyer
+
+- Node ID: dead_end_left
+  Text: The corridor ends abruptly at a solid, unyielding wall. There's no way forward here.
+  Options:
+  - Text: Return to the foyer.
+    Flow: dialogue_branch
+    Next Node ID: foyer
+
+- Node ID: monster_lair_approach
+  Text: The growling grows louder, echoing from a large, ornate door at the end of the corridor.
+  Options:
+  - Text: Brace yourself and open the door.
+    Result: mini_boss_combat
+    Mini Boss Type: Bog Hag (Wearing the skin of the Wizard)
+    Response: The monster announces their presence by emitting an ear piercing growl.
+  - Text: Hesitate and return to the foyer.
+    Flow: dialogue_branch
+    Next Node ID: foyer
+
+- Node ID: top_of_tower
+  Text: You reach the top floor. The wizard's study is here, filled with arcane instruments and dusty tomes. A strange, pulsating orb floats in the center of the room.
+  Options:
+  - Text: Confront the pulsating orb.
+    Result: mini_boss_combat
+    Mini Boss Type: Bog Hag (Wearing the skin of the Wizard)
+    Response: The orb flares brightly, revealing its true, monstrous form.
+  - Text: Search the study for clues.
+    Effect: item
+    Details: gold
+    Amount: 30
+    Response: You quickly search the study, finding a hidden stash of gold beneath a loose floorboard.
+    Flow: dialogue_branch
+    Next Node ID: top_of_tower_search_outcome
+  - Text: Descend the stairs and leave the tower.
+    Flow: close_encounter
+    Response: You decide the top floor is too dangerous for now. You carefully descend and leave the tower.
+
+- Node ID: top_of_tower_search_outcome
+  Text: You've found some gold.
+  Options:
+  - Text: Confront the pulsating orb.
+    Result: mini_boss_combat
+    Mini Boss Type: Bog Hag (Wearing the skin of the Wizard)
+    Response: The orb flares brightly, revealing its true, monstrous form.
+  - Text: Descend the stairs and leave the tower.
+    Flow: close_encounter
+    Response: You decide the top floor is too dangerous for now. You carefully descend and leave the tower.
+
+    --
+
+    Lore ID: lore_021_whispering_well
+Text: You discover an ancient stone well, strangely overgrown with a gnarled, moss-covered tree that seems to sprout directly from its depths.
+
+Dialogue Nodes:
+- Node ID: start
+  Text: You discover an ancient stone well, strangely overgrown with a gnarled, moss-covered tree that seems to sprout directly from its depths.
+  Options:
+  - Text: Use the tree to climb down the well.
+    Flow: dialogue_branch
+    Next Node ID: well_bottom
+  - Text: Walk away. Some mysteries are best left alone.
+    Flow: close_encounter
+    Response: You decide the well holds more trouble than treasure and continue on your journey.
+
+- Node ID: well_bottom
+  Text: You touch down into shallow, cool water. The air is damp, and a faint light reveals a narrow tunnel leading away from the bottom of the well. The tunnel seems to lead towards a distant, flickering light and the faint sounds of voices.
+  Options:
+  - Text: Follow the tunnel cautiously towards the light.
+    Flow: dialogue_branch
+    Next Node ID: tunnel_fork
+  - Text: Walk through the tunnel yelling and screaming like a crazy person.
+    Result: mini_boss_combat
+    Mini Boss Type: Lich Apprentice
+    Response: Your shouts echo, and a monstrous growl answers. A hulking figure bursts from the shadows, ready for a fight.
+  - Text: Climb back out of the well.
+    Flow: close_encounter
+    Response: The well's depths are too unsettling. You carefully climb back to the surface and leave.
+
+- Node ID: tunnel_fork
+  Text: The tunnel opens into a small cavern. Ahead, the tunnel continues straight, but a smaller, darker passage branches off to your left. The sounds of the voices seem closer down the straight path.
+  Options:
+  - Text: Go left into the darker passage.
+    Flow: dialogue_branch
+    Next Node ID: ladder_to_camp
+  - Text: Go straight, deeper into the main tunnel.
+    Flow: dialogue_branch
+    Next Node ID: straight_path_fork
+  - Text: Turn around and climb out of the well. This is too risky.
+    Flow: close_encounter
+    Response: The thought of bandits makes you reconsider. You backtrack and climb out of the well.
+
+- Node ID: ladder_to_camp
+  Text: The dark passage leads to a rickety wooden ladder ascending into what sounds like a very active bandit camp. You hear boisterous laughter and the clinking of steel. Going up this ladder now would surely lead to immediate discovery and probably death.
+  Options:
+  - Text: Say 'screw it' and go up the ladder.
+    Result: mini_boss_combat
+    Mini Boss Type: Bandit Camp
+    Response: You bravely and foolishly ascend the ladder. You're immediately spotted.
+  - Text: Go back and take the straight path instead.
+    Flow: dialogue_branch
+    Next Node ID: straight_path_fork
+  - Text: Go back the way you came and leave the well.
+    Flow: close_encounter
+    Response: The bandit camp is too dangerous. You retreat and leave the well behind.
+
+- Node ID: straight_path_fork
+  Text: The straight tunnel continues, then forks again. To your left, you see a faint, soft glow. To your right, you hear a low, rhythmic thudding sound.
+  Options:
+  - Text: Turn left towards the soft glow.
+    Result: item
+    Details: health
+    Response: You find a hidden alcove with a glowing moss that, when consumed, restores 10 HP. It tastes faintly of lemon and regret.
+    Flow: dialogue_branch
+    Next Node ID: exit_tunnel_safe
+  - Text: Turn right towards the thudding sound.
+    Result: mini_boss_combat
+    Mini Boss Type: Lich Apprentice
+    Response: The thudding grows louder, revealing a crude training area where a hulking brute practices with a heavy club. It sees you!
+  - Text: Go back the way you came and leave the well.
+    Flow: close_encounter
+    Response: You've seen enough of this underground network. You retreat and leave the well.
+
+- Node ID: exit_tunnel_safe
+  Text: The tunnel continues for a short distance and opens into a secluded part of the forest, far from the bandit camp. You've found a safe exit.
+  Options:
+  - Text: Exit the tunnel and continue your journey.
+    Flow: close_encounter
+    Response: You emerge from the tunnel, blinking in the sunlight, ready for your next adventure.
+
+---
+
+Lore ID: lore_027_twin_trunked_oak
+Text: You find yourself at a section of the Silent River, flowing gently. The air is fresh, and the sound of distant birds fills the quiet. You notice several prominent landmarks nearby.
+
+Dialogue Nodes:
+- Node ID: start
+  Text: You find yourself at a section of the Silent River, flowing gently. The air is fresh, and the sound of distant birds fills the quiet. You notice several prominent landmarks nearby.
+  Options:
+  - Text: Search west, against the current.
+    Result: none
+    Response: You walk for a while, but the landscape feels unpromising. Nothing stands out.
+  - Text: Head east along the riverbank.
+    Flow: dialogue_branch
+    Next Node ID: step_1_riverbank_east
+  - Text: Cross the river to the opposite bank.
+    Result: damage-minor
+    Response: The current is stronger than it looks, and you slip on a wet stone, scraping your knee. You manage to cross, but there's nothing of note on the other side. You give up.
+  - Text: Look for signs of a recent campsite nearby.
+    Result: none
+    Response: You search for signs of recent activity, but this immediate area seems untouched.
+  - Text: Turn around and leave this area.
+    Flow: close_encounter
+    Response: Feeling unsure, you decide to leave the river behind for now.
+
+- Node ID: step_1_riverbank_east
+  Text: You follow the river east. After some time, a truly immense twin-trunked oak tree dominates the landscape on the eastern bank, just as a faded drawing might suggest. Its ancient roots sprawl, creating a network around its base.
+  Options:
+  - Text: Look for carvings on the tree trunks.
+    Result: none
+    Response: The bark is ancient and deeply grooved, but there are no discernible carvings. This is a fool's errand. You give up.
+  - Text: Check the ground under the tree's canopy for anything hidden.
+    Result: item
+    Details: health
+    Response: You find a patch of wild berries. A small snack, but nothing more. This is a fool's errand. You give up.
+  - Text: Walk around the tree to inspect it from all sides.
+    Result: none
+    Response: You circle the massive oak, admiring its scale, but find no obvious secrets. You feel dizzy and decide to give up.
+  - Text: Examine the roots at the base of the tree.
+    Flow: dialogue_branch
+    Next Node ID: step_2_examine_roots
+  - Text: Turn around and leave this area.
+    Flow: close_encounter
+    Response: Feeling unsure, you decide to leave the magnificent oak behind for now.
+
+- Node ID: step_2_examine_roots
+  Text: You meticulously examine the intricate root system at the base of the twin-trunked oak. After a few moments, your hand brushes against a section that feels hollow. With a gentle push, a camouflaged panel slides inward, revealing a dark, narrow passage leading down into the earth. The air immediately grows damp and cool.
+  Options:
+  - Text: Descend into the dark passage.
+    Flow: dialogue_branch
+    Next Node ID: step_3_follow_water_flow
+  - Text: Try to force the panel open further.
+    Result: damage-minor
+    Next Node ID: step_2_examine_roots
+    Response: The panel grinds, and a shard of stone breaks off, cutting your hand. It's clear forcing it won't work.
+  - Text: Look for another way into the passage.
+    Result: none
+    Next Node ID: step_2_examine_roots
+    Response: The passage seems to have only one, discreet entrance. You can't find another way in.
+  - Text: Reconsider and return to the surface.
+    Flow: dialogue_branch
+    Next Node ID: step_1_riverbank_east
+  - Text: Turn around and leave this area.
+    Flow: close_encounter
+    Response: The darkness of the passage seems too daunting. You decide to leave this area.
+
+- Node ID: step_3_follow_water_flow
+  Text: You are now within the initial cavern of the Sunken Grotto. The passage is dimly lit by a faint, ambient glow from the mosses. You can hear the constant sound of flowing water. The water leads to a large, unusually smooth boulder, distinct from the rough cavern walls. Four vertical lines are etched into its surface, numbered from left to right: 1st Line, 2nd Line, 3rd Line, 4th Line.
+  Options:
+  - Text: Press the 1st, 2nd, 3rd, 4th lines.
+    Result: mini_boss_combat
+    Mini Boss Type: Grotto Banshee
+    Response: You press the lines, but nothing happens. The boulder remains stubbornly in place. Suddenly, from the cracks of the boulder comes a mist that quickly forms into a Banshee. The Banshee screams...
+  - Text: Press the 4th, 3rd, 2nd, 1st lines.
+    Result: mini_boss_combat
+    Mini Boss Type: Grotto Banshee
+    Response: You press the lines in reverse order, but the boulder doesn't budge. Suddenly, from the cracks of the boulder comes a mist that quickly forms into a Banshee. The Banshee screams...
+  - Text: Press the 3rd, 1st, 4th, 2nd lines.
+    Flow: dialogue_branch
+    Next Node ID: step_4_door_open
+    Response: With a deep rumble, the massive boulder slowly grinds inward, revealing a new, dark passage beyond. The air stirs, carrying a scent of old earth and something metallic.
+  - Text: Attempt to force the boulder.
+    Result: mini_boss_combat
+    Mini Boss Type: Grotto Banshee
+    Response: You strain to open the boulder but it does not budge. Suddenly, from the cracks of the boulder comes a mist that quickly forms into a Banshee. The Banshee screams...
+  - Text: Turn around and leave the grotto.
+    Flow: close_encounter
+    Response: The grotto feels too confusing. You decide to turn back.
+
+- Node ID: step_4_door_open
+  Text: The boulder has opened a new path. You find yourself in a dimly lit section of the grotto with two distinct tunnels leading deeper. One veers left, and the other goes right.
+  Options:
+  - Text: Take the left tunnel.
+    Flow: dialogue_branch
+    Next Node ID: step_5_left_tunnel_chest_puzzle
+  - Text: Take the right tunnel.
+    Flow: close_encounter
+    Response: You follow the right tunnel. It opens into a larger, underground river, which quickly carries you out into the daylight, far from the grotto's mysteries.
+  - Text: Turn around and leave the grotto.
+    Flow: close_encounter
+    Response: The grotto feels too daunting. You decide to turn back.
+
+- Node ID: step_5_left_tunnel_chest_puzzle
+  Text: The left tunnel narrows then opens into a small, secluded chamber. In the center, a sturdy wooden **treasure chest** sits, bound with iron bands. A curious numerical lock adorns its front, requiring a single number as input.
+  Options:
+  - Text: Enter '5'.
+    Result: mini_boss_combat
+    Mini Boss Type: Grotto Banshee
+    Response: You enter the number, but the lock stays firmly closed. From the locks seams comes a mist that quickly forms into a Banshee. The Banshee screams...
+  - Text: Enter '7'.
+    Result: mini_boss_combat
+    Mini Boss Type: Grotto Banshee
+    Response: You enter the number, but the lock stays firmly closed. From the locks seams comes a mist that quickly forms into a Banshee. The Banshee screams...
+  - Text: Enter '10'.
+    Result: item
+    Details: gold
+    Amount: 100
+    Response: With a satisfying click, the lock springs open! Inside, glimmers a cache of coins.
+  - Text: Enter '12'.
+    Result: mini_boss_combat
+    Mini Boss Type: Grotto Banshee
+    Response: You enter the number, but the lock stays firmly closed. From the locks seams comes a mist that quickly forms into a Banshee. The Banshee screams...
+  - Text: Turn around and leave the grotto.
+    Flow: close_encounter
+    Response: The chest's puzzle is too perplexing. You decide to leave.
+
+---
+
+Lore ID: lore_023_abandoned_campfire
+Text: You find the remains of a recently abandoned campfire. Embers glow faintly beneath a pile of ash, and a worn leather journal lies beside a half-eaten, petrified meal. It looks like it was left in a hurry.
+
+Dialogue Nodes:
+- Node ID: start
+  Text: You find the remains of a recently abandoned campfire. Embers glow faintly beneath a pile of ash, and a worn leather journal lies beside a half-eaten, petrified meal. It looks like it was left in a hurry.
+  Options:
+  - Text: Read the journal.
+    Flow: dialogue_branch
+    Next Node ID: journal_entry_1
+  - Text: Search the campsite thoroughly.
+    Result: item
+    Details: gold
+    Amount: 5
+    Response: You sift through the ashes and find a few tarnished coins. Not much, but every piece counts.
+    Flow: dialogue_branch
+  - Text: Put out the embers and move on.
+    Result: none
+    Response: You carefully douse the remaining embers. The wilderness can be unforgiving with unattended fires. You continue your journey.
+
+- Node ID: journal_entry_1
+  Text: The journal's first page is dated weeks ago and appears to be marked with a '⚲' as if it's marking some sort importance: 'Day 1: The cartographers maps spoke truth. The 'Missing Grotto' is real, just as the legends foretold. I'm camped near what they call the 'Quiet River Bend' now. Legend has it, this Grotto was a safe house for Pirates. There is a well known pirate shanty I sing to keep my spirits up: 'A pi-rates life is ne-ver through, three, then one, then four, then two' Next, I'll head ⚲ east along the riverbank. ⚲
+  Options:
+  - Text: Turn to the next entry.
+    Flow: dialogue_branch
+    Next Node ID: journal_entry_2
+  - Text: Close the journal for now.
+    Flow: close_encounter
+    Response: You close the dusty journal, the prospector's initial excitement lingering in your mind.
+
+- Node ID: journal_entry_2
+  Text: Day 4: Spent days upstream and down. Found the landmark. It's exactly as described: a colossal ⚲ twin-trunked oak tree ⚲ on the eastern bank. The entrance is cunningly disguised, marked right at its base. Clever. From here, I need to focus on the ⚲ roots at the base of the tree. ⚲
+  Options:
+  - Text: Turn to the next entry.
+    Flow: dialogue_branch
+    Next Node ID: journal_entry_3
+  - Text: Close the journal for now.
+    Flow: close_encounter
+    Response: You close the dusty journal, the prospector's excitement about the twin-trunked oak lingering in your mind.
+
+- Node ID: journal_entry_3
+  Text: Day 7: The grotto is breathtaking. The river truly weeps stone inside, stalactites shimmering like frozen tears. Reached the main chamber. Found an unusual boulder, with lines etched vertically. ⚲ I sing the Pirates Grotto Shanty.'
+  Options:
+  - Text: Turn to the next entry.
+    Flow: dialogue_branch
+    Next Node ID: journal_entry_4
+  - Text: Close the journal for now.
+    Flow: close_encounter
+    Response: You close the dusty journal, envisioning the shimmering magic of the grotto and the mysterious boulder.
+
+- Node ID: journal_entry_4
+  Text: Day 10: Beyond the boulder, there are two tunnels. The right leads back to the bigger river. The left seems to lead to a chamber with a chest. I heard those who used this grotto often locked their treasures using existing secrets but ⚲ adding, subtracting, multiplying, and then adding again... ⚲ whatever that means.
+  Options:
+  - Text: Turn to the next entry.
+    Flow: dialogue_branch
+    Next Node ID: journal_entry_5
+  - Text: Close the journal for now.
+    Flow: close_encounter
+    Response: You close the dusty journal, pondering the riddle of the chest.
+
+- Node ID: journal_entry_5
+  Text: Finders note: I found this journal floating down the river. I leave it here in case the original owner has kin who would like the keep it. It is for certain the original owner did not survive whatever did them in. Whoever finds this, please put out my campfire if it's still going.
+  Options:
+  - Text: Close the journal.
+    Flow: quest_start
+    Quest ID: the_hidden_cache
+    Response: You close the journal, the new prospector's words echoing in your mind. A complex grotto, a challenging chest, and a campfire to extinguish... your adventure truly begins now.
+  - Text: Go back to the first entry.
+    Flow: dialogue_branch
+    Next Node ID: journal_entry_1

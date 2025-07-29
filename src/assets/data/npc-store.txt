@@ -1,0 +1,556 @@
+NPC ID: npc_001
+Name: Old Man Flynn
+Greeting: OLD MAN FLYNN: Did you know They Know?
+Options:
+- Text: 'Yes sir, I did.'
+  Result: item
+  Details: shield
+  Response: OLD MAN FLYNN: I knew it! I knew someone would know! That brace looks like it needs a fair polishing. Let me give it a fair polishing, my son.
+- Text: Ignore him and walk away
+  Result: none
+  Response: You nod politely and keep moving. They continue to know.
+- Text: 'What do you mean?'
+  Result: none
+  Response: OLD MAN FLYNN: You... don't know? Then I have nothing to discuss with you.
+- Text: 'From what I heard, they do NOT know, actually.'
+  Result: damage-minor
+  Response: Old Man Flynn uses his cane to bop you on the head. He then walks away.
+
+---
+
+NPC ID: npc_002
+Name: Smith the Blacksmith
+Greeting: SMITH THE BLACKSMITH: Hello.
+Options:
+- Text: 'Howdy'
+  Result: item
+  Details: shield
+  Response: SMITH THE BLACKSMITH: You can see me?! No one has talked to me or looked at me in 50 years. Oh heavens this is incredible. I spend my days and nights sleeping and tending to various pieces of armor. All day. All Night. You have given me hope. Here, take this bracer. Its my best yet.
+- Text: 'Hello?'
+  Result: none
+  Response: SMITH THE BLACKSMITH: Howdy.
+- Text: 'Hello.'
+  Result: none
+  Response: SMITH THE BLACKSMITH: Howdy.
+- Text: 'Hi.'
+  Result: none
+  Response: SMITH THE BLACKSMITH: Howdy.
+
+---
+
+NPC ID: npc_003
+Name: Old Guy Accardi
+Greeting: OLD GUY ACCARDI: Have you seen my dog? His name is Artie. Honestly, he’ll eat any food. He even eats the tops of strawberries. Also, he likes two clicks at the same time.
+Options:
+- Text: 'I have not seen him, but if I do, I'll run back here and let you know.'
+  Result: inventoryItem
+  ID: health_potion_consumable
+  Response: OLD GUY ACCARDI: That's what's up. Thanks for telling me. As a reward, here is a sealed Health Potion I found earlier.
+- Text: Ignore him and walk away
+  Result: none
+  Response: You nod politely and keep moving. You feel guilt because you DID in fact see Artie a few clicks ago. I hope you lose sleep.
+- Text: More like Fartie, heh.
+  Result: combat
+  Response: Old Guy Accardi's smile turns to a deep and angry scowl. He says, 'You're going to eat those words,' makes a ton of noise to attract unwanted attention, and then throws a smoke bomb at his feet. He is now gone and in his place is something ready to kill you.
+- Text: 'Yes. I saw him a few clicks back that way. Gave him a couple of pets on the noggin, I did.'
+  Result: item
+  Details: gold
+  Amount: 15
+  Response: OLD GUY ACCARDI: That's what's up. Thank you for looking out. Here is a finder's fee.
+
+---
+
+NPC ID: npc_004
+Name: TJ the Golden
+Greeting: TJ THE GOLDEN: Take a seat, will ya? I am cracking beers and listening to Steely Dan.
+Options:
+- Text: Take a seat, crack a beer, and listen to Steely Dan
+  Result: item
+  Details: beer-health
+  Response: Your mind and body are restored by a father's kindness and you gain +5 HP, and your vision is blurry from the delicious beer.
+- Text: 'No thanks, I only like to Imagine the Dragon I am going to fight later.'
+  Result: none
+  Response: TJ THE GOLDEN: Alright. Suit yourself, padre.
+- Text: 'No thanks, I have no time to learn the saxophone.'
+  Result: none
+  Response: TJ THE GOLDEN: They got a name for the winners in the world. I hope you have a name for when you lose.
+- Text: 'Hell yeah I'd have a beer.'
+  Result: item
+  Details: beer-health
+  Response: Your mind and body are restored by a father's kindness and you gain +5 HP, and your vision is blurry from the delicious beer.
+
+---
+
+NPC ID: npc_005
+Name: Fairwyn the Tongueless
+Greeting: FAIRWYN THE TONGUELESS: Oouu eeeahh ouu! Eerrr eh ah eehahee!!!
+Options:
+- Text: 'Did you say 'Look behind you, there is an enemy?'
+  Result: combat
+  Response: There was, in fact, an enemy behind you.
+- Text: 'Out of the way, peck!'
+  Result: damage
+  Response: You should have listened. An enemy appears, hits you with its claws, and runs away. You take damage.
+- Text: 'What?'
+  Result: damage
+  Response: You should have listened. An enemy appears, hits you with its claws, and runs away. You take damage.
+- Text: 'I believe you with all of my soul even if I didn't understand what you said.'
+  Result: item
+  Details: health
+  Response: You must have rested well last night because you knew what he meant before his tongueless mouth started flapping. You take your weapon and dig it into the enemy's skull, immediately dropping it back into the hell it came from, and you gain +5 HP.
+
+---
+
+NPC ID: npc_006
+Name: Evil Tom
+Greeting: EVIL TOM: My name is Evil Tom. I'm a really nice guy. 😃
+Options:
+- Text: 'I don't believe you, Evil Tom.'
+  Result: combat
+  Response: EVIL TOM: Well, I never!
+- Text: 'Right on.'
+  Result: damage
+  Response: Evil Tom sneezes and vanishes in a puff of smoke, leaving only a pair of old Crocs. The Crocs hurt to look at and deal 5 damage.
+- Text: 'For sure.'
+  Result: damage
+  Response: Evil Tom coughs so hard he accidentally punches you in the face and you take 5 damage.
+- Text: 'You should change your name to Nice Tom then.'
+  Result: item
+  Details: health
+  Response: EVIL TOM: Thank you. There is a lack of kindness in this world, and it's nice to meet someone who is counter to the culture. Here is some fresh bread.
+
+---
+
+NPC ID: npc_007
+Name: Suttree The Old Mage
+Greeting: SUTTREE THE OLD MAGE: You look tired, traveler. Care for some arcane tea?
+Options:
+- Text: Accept the tea
+  Response: You feel energy surging through your veins.
+  Result: special
+  Details: recover
+  Amount: 1
+- Text: Decline politely
+  Response: You nod respectfully and continue on your way.
+  Result: none
+- Text: Decline rudely
+  Response: You nod disrespectfully and continue on your way.
+  Result: none
+- Text: Out of distrust of the world you live in, punch the Old Mage in the face.
+  Result: damage-minor
+  Response: The Mage doesn't seem to move or appear affected by your attack. However, your fist now aches. You move on awkwardly, losing -1 damage.
+
+---
+
+NPC ID: npc_008
+Name: Daniel the Map Seller
+Greeting: DANIEL THE MAP GIVER: I give maps. Not much else.
+Options:
+- Text: Take a map from Daniel.
+  Response: It appears the map contains a shortcut through the upcoming brush. Your click count is reduced by 3.
+  Result: shortcut
+  Details: clicks
+  Amount: 3
+- Text: 'The only guidance I need is from the sun and the stars.'
+  Result: none
+  Response: DANIEL THE MAP SELLER: Cool.
+- Text: What about food?
+  Response: DANIEL THE MAP SELLER: Just maps.
+  Result: none
+- Text: Give me that compass or else I will make you pay!
+  Response: DANIEL THE MAP SELLER: Ok, geeze... Here you go, man. Relax.
+  Result: inventoryItem
+  ID: arcane_compass
+
+---
+
+NPC ID: npc_009
+Name: The Lost Bartender
+Greeting: THE LOST BARTENDER: Howdy, sir. How has your journey been? Never mind, forget I asked. Asking a man a question is the biggest true form of weakness, and I have been known to be a strong guy. Here, have a rip of this swill, won't you? I also have knives and guns and bullets you can drink if you want to.
+Options:
+- Text: Take a rip of the swill
+  Result: item
+  Details: health
+  Response: Goes down smooth. Rips ya up on the inside in a good way.
+- Text: Drink the guns, knives, and bullets.
+  Result: damage
+  Response: THE LOST BARTENDER: Honestly, what did you expect? That's on you.
+- Text: Take the guns, knives, and bullets and duct tape them to your chainmail gloves.
+  Result: item
+  Details: shield
+  Response: THE LOST BARTENDER: Very interesting.
+- Text: Politely decline.
+  Result: none
+  Response: THE LOST BARTENDER: Not even one knife? Okay then, pal.
+
+---
+
+NPC ID: npc_010
+Name: Ron Von Zarovich
+Greeting: RON VON ZAROVICH: Bobby Lasagna is not to be trusted. I would sooner trust Strahd Von Zarovich over Bobby L. She lives in a hut and she killed my friend Bulgresh who once turned into a T-Rex.
+Dialogue Nodes:
+- Node ID: start
+  Text: RON VON ZAROVICH: Bobby Lasagna is not to be trusted. I would sooner trust Strahd Von Zarovich over Bobby L. She lives in a hut and she killed my friend Bulgresh who once turned into a T-Rex.
+  Options:
+  - Text: 'I am sorry for your loss.'
+    Flow: close_encounter
+    Result: item
+    Details: health
+    Response: RON VON ZAROVICH: Wow... Is this loss?
+  - Text: 'I could kill her for you.'
+    Flow: dialogue_branch
+    Next Node ID: kill_offer_confirmation
+  - Text: 'You shouldn't talk about your relations that way.'
+    Flow: close_encounter
+    Result: none
+    Response: RON VON ZAROVICH: You don't understand.
+  - Text: 'Well, if you think you are going to die, then maybe I can have your gold.'
+    Flow: close_encounter
+    Result: item
+    Details: gold
+    Amount: 15
+    Response: RON VON ZAROVICH: Sure. What does it matter? These are the end times.
+- Node ID: kill_offer_confirmation
+  Text: RON VON ZAROVICH: Are you sure? She is pretty dangerous...
+  Options:
+  - Text: Yes. Bulgresh must be avenged. Tell me where she is and I will make her suffer.
+    Flow: dialogue_branch
+    Next Node ID: bobby_location
+  - Text: Actually, never mind. She sounds scary if she killed a T-Rex.
+    Flow: close_encounter
+    Response: RON VON ZAROVICH: As you wish. Perhaps it's for the best.
+- Node ID: bobby_location
+  Text: RON VON ZAROVICH: She is through that pass, over where Berez used to stand, before it was flooded. Be careful, though... those lands are poisoned.
+  Options:
+  - Text: Walk toward the pass.
+    Flow: dialogue_branch
+    Effect: damage-minor
+    Amount: 10
+    Response: You wade through the sickly green stream, feeling a strange tingle as you lose 10 health points. The poisoned waters are already taking their toll.
+    Next Node ID: approach_hut
+  - Text: Actually, never mind.
+    Flow: close_encounter
+    Response: RON VON ZAROVICH: A wise choice. Perhaps some other time.
+- Node ID: approach_pass
+  Text: You approach the pass. You see a small, green-colored stream. Steam rises and bubbles. The air seems to wobble and your nostrils sting.
+  Options:
+  - Text: Walk through the stream.
+    Flow: dialogue_branch
+    Effect: damage-minor
+    Amount: 10
+    Response: You wade through the sickly green stream, feeling a strange tingle as you lose 10 health points. The poisoned waters are already taking their toll.
+    Next Node ID: approach_hut
+  - Text: Turn around and continue your adventure without facing Bobby Lasagna.
+    Flow: close_encounter
+    Response: You decide against braving the poisoned lands and turn back, seeking less perilous adventures.
+- Node ID: approach_hut
+  Text: You approach a hut after walking for some time. The hut looks old and gnarled. There appears to be large footsteps all around the hut.
+  Options:
+  - Text: Knock on the hut's door.
+    Result: mini_boss_combat
+    Mini Boss Type: Bobby Lasagna's Hut
+    Response: The hut groans, grows legs right before your eyes and begins to attack. You are now in combat with a living, breathing hut.
+  - Text: Search the area for Bobby.
+    Flow: dialogue_branch
+    Effect: damage-minor
+    Amount: 10
+    Response: You meticulously search the overgrown surroundings, finding no immediate sign of Bobby. However, a hidden thorn bush snags your leg, dealing 10 damage.
+    Next Node ID: rustling_bushes
+  - Text: Yell 'Hey Bobby! I'm ready to avenge Bulgresh!'
+    Result: mini_boss_combat
+    Mini Boss Type: Bobby Lasagna
+    Response: Your voice echoes through the silent woods. From the hut, a figure emerges. 'Bulgresh, you say? He had it coming! Prepare to join him!'
+- Node ID: rustling_bushes
+  Text: You hear rustling in the bushes nearby...
+  Options:
+  - Text: Ready yourself for combat.
+    Result: mini_boss_combat
+    Mini Boss Type: Bobby Lasagna
+    Response: You brace yourself. Bobby Lasagna bursts from the foliage, her eyes alight with fury. 'So, you've come to meddle, have you?' Combat begins!
+  - Text: Run!
+    Flow: close_encounter
+    Response: You decide discretion is the better part of valor and bolt, leaving the mysterious rustling and Bobby Lasagna's domain behind.
+
+---
+
+NPC ID: npc_011
+Name: Miss Riddlesworth
+Greeting: MISS RIDDLESWORTH: You see me once in a minute, twice in a moment, but never in a thousand years. What am I?
+Options:
+- Text: 'A blink'
+  Result: none
+  Response: MISS RIDDLESWORTH: Wrong!
+- Text: 'The letter M'
+  Result: item
+  Details: health
+  Response: MISS RIDDLESWORTH: H- How did you guess?
+- Text: 'A memory'
+  Result: none
+  Response: MISS RIDDLESWORTH: Not a chance!
+- Text: 'The moon'
+  Result: none
+  Response: MISS RIDDLESWORTH: You could not be more incorrect.
+
+---
+
+NPC ID: npc_012
+Name: Mr Riddlesworth
+Greeting: MR RIDDLESWORTH: I build up castles, I tear down mountains. I make some men blind, I help others to see. What am I?
+Options:
+- Text: 'Time'
+  Result: none
+  Response: MR RIDDLESWORTH: Incorrect!
+- Text: 'Fire'
+  Result: none
+  Response: MR RIDDLESWORTH: Well, that's not the answer.
+- Text: 'Sand'
+  Result: item
+  Details: weapon
+  Response: MR RIDDLESWORTH: You got it!
+- Text: 'Gold'
+  Result: none
+  Response: MR RIDDLESWORTH: Wrong!
+
+  ---
+
+  NPC ID: npc_013
+Name: The Scroll Dealer
+Greeting: THE SCROLL DEALER: If you're tired of looking at the same rocks and trees, then I may have a scroll for you...
+Options:
+- Text: Lonesome Doug
+  Route Title: The_X-Files
+- Text: No! Country For Old Men!
+  Route Title: Response_to_sneezing
+- Text: The Da Vinki Code
+  Route Title: List_of_tautological_place_names
+- Text: Gullible's Travels
+  Route Title: Rabbit_Hash,_Kentucky
+- Text: 'No, thank you.'
+  Result: none
+  Response: THE SCROLL DEALER: Be careful out there...
+
+---
+
+NPC ID: npc_014
+Name: Lord Bruenor Battlehammer
+Greeting: LORD BRUENOR BATTLEHAMMER: Good sir, I am Lord Bruenor Battlehammer, Lord of these lands and heir of King Bort Battlehammer. I confess I am lost. I understand being lost and a Lord of this land seems like something a crazy beggar would say, but I implore you, I am telling the truth! You seem like you know these lands better than most. Please, tell me which direction would be Castle Battlehammer?
+Options:
+- Text: 'My Lord, go past those bushes over there and through the clearing. You will be able to see your castle in the distance.'
+  Result: inventoryItem
+  ID: turkey_leg_consumable
+  Response: LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Here is a Turkey Leg from my finest Turkey. Come by any time and we can dine on a full Turkey!
+- Text: 'This path will lead you there safely. You will just have to head the other direction, My Lord.'
+  Response: LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Come visit me anytime and I will show you how to harness the power of your highest ability!
+  Result: special
+  Details: recover
+  Amount: 1
+- Text: 'These things happen, My Lord. However, I seem to be just as lost as you are, sadly.'
+  Result: item
+  Details: weapon
+  Response: LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Come visit me anytime and we will improve that sword of yours!
+- Text: You distrust the raving madman. Why would a Lord of the lands be lost? You decide to attack the lunatic with your weapon.
+  Route Title: Prison
+  Response: It seems he was telling the truth. Off to jail you go, I suppose.
+
+---
+
+NPC ID: npc_015
+Name: The Lighthouse Tavern
+Greeting: Just ahead, you spot a one-story building with what looks like a tall structure built to the left. The structure resembles a lighthouse. There is a handmade sign attached to the structure that says 'The Lighthouse Tavern'. You infer the tall structure is where this place got its name. Walking into the bar, there are a few patrons: a farmhand, a dwarf, and a mysterious man sitting in the shadows. The barkeep smiles at you. The bartender appears to be selling Beer and Boiled Peanuts. As you approach the bar, the mysterious man appears to also have something for sale...
+Options:
+- Text: Buy a beer from the Barkeep (10 Gold)
+  Response: 'I'll take a Beer, please.'.
+  Result: item
+  Details: beer-cost-blur
+  Amount: 4
+  Gold Cost: 5
+  Health Amount: 10
+- Text: Buy Hardtack (5 Gold)
+  Response: I'll take a Hardtack, please.
+  Result: item
+  Details: health-gold-loss
+  Health Amount: 10
+  Gold Cost: 5
+- Text: Buy the mysterious item from the Mysterious Man
+  Response: The item looks like a normal compass, except it's glowing slightly. You walk outside with the compass, and without warning, you are transported to another area.
+  Result: inventoryItem
+  ID: arcane_compass
+- Text: Leave
+  Response: THE BARKEEP: Be careful of the goblins on this road, traveler.
+  Result: none
+
+---
+
+NPC ID: npc_016
+Name: A Cute Dog
+Greeting: 'woof'
+Options:
+- Text: 'Hey I think a guy is looking for you.'
+  Result: combat
+  Response: The dog doesn't appear to be a dog after all and morphs into a disgusting creature.
+- Text: 'Woof' back at ya.
+  Result: combat
+  Response: The dog doesn't appear to be a dog after all and morphs into a disgusting creature.
+- Text: More like Fartie, heh.
+  Result: combat
+  Response: The dog doesn't appear to be a dog after all and morphs into a disgusting creature.
+- Text: Attack the dog
+  Result: inventoryItem
+  ID: turkey_leg_consumable
+  Response: You must have smelled something fishy because the dog was an enemy in disguise. The 'dog' dies immediately and drops a Turkey Leg, for some reason.
+
+---
+
+NPC ID: npc_017
+Name: Dead Body
+Greeting: In front of you, there is a dead body. You recognize the person as Dr. Agula, a doctor from your village. Dr. Agula does not appear to have decayed much which indicates this may have happened recently. You hear about witches in this area and wonder if thats what did him in. The Doctor is out, it seems.
+Options:
+- Text: Take the Doctors Padded Armor
+  Result: item
+  Details: shield
+  Response: You take the dead man's Padded Armor
+- Text: Take the Doctors Gold
+  Result: item
+  Details: gold
+  Amount: 19
+  Response: You take the dead man's gold.
+- Text: Dig through some ditches and bury the Doctor. Say a prayer, swear you will burn through whatever witches did this to the Doctor and move on.
+  Result: none
+  Response: 'Rest in Peace, Rob Agula.'
+- Text: 'Hello'
+  Result: none
+  Response: Nothing Happens because its a dead body.
+
+---
+
+NPC ID: hanni_aebi
+Name: Hanni Aebi
+Greeting: New face in town, aren't you? My name's Hanni Aebi. Come, sit a spell, and tell me what brings you to our humble village.
+Dialogue Nodes:
+- Node ID: start
+  Text: New face in town, aren't you? My name's Hanni Aebi. Come, sit a spell, and tell me what brings you to our humble village.
+  Options:
+  - Text: Tell me about this village.
+    Flow: dialogue_branch
+    Next Node ID: village_backstory
+  - Text: I could use some healing.
+    Flow: dialogue_branch
+    Next Node ID: healing_offer
+  - Text: I'm fine, thank you. Just passing through.
+    Flow: close_encounter
+    Response: Hanni nods kindly. 'Safe travels then, dearie. May your path be clear.'
+- Node ID: village_backstory
+  Text: Oh, this village has seen many seasons. We're nestled right at the foot of the Whisperwind Peaks, you see. Long ago, they say ancient spirits dwelled there, protecting us from the creeping shadows of the Sunken City. It's quieter now, but the old ways linger. We will know the shadows are back if our young ones start disappearing. The shadows crave innocent minds. But so far, no missing children!
+  Options:
+  - Text: Thats... great for you...
+    Flow: dialogue_branch
+    Next Node ID: sunken_city_lore
+  - Text: That's enough history for now. Can you help me?
+    Flow: dialogue_branch
+    Next Node ID: healing_offer
+  - Text: Thank you for the stories. I should go.
+    Flow: close_encounter
+    Response: Hanni smiles warmly. 'Anytime, dearie. Come back if you need a warm word or a helping hand.'
+- Node ID: sunken_city_lore
+  Text: The Sunken City... a tragic tale. It was once a grand kingdom, swallowed by the earth and sea in a single night. Some say it was a curse, others, a forgotten magic. Best not to dwell on such things too long; they tend to draw unwanted attention.
+  Options:
+  - Text: That's enough history for now. Can you help me?
+    Flow: dialogue_branch
+    Next Node ID: village_backstory
+  - Text: I've heard enough. Goodbye.
+    Flow: close_encounter
+    Response: Hanni nods, her expression thoughtful. 'Indeed. Some stories are best left untold.'
+- Node ID: healing_offer
+  Text: Oh, you poor thing! You look a bit rough. I've got some remedies. What do you need?
+  Options:
+  - Text: A quick pick-me-up. (Free +5 HP)
+    Effect: item
+    Details: health
+    Health Amount: 5
+    Response: Hanni presses a warm poultice into your hand. 'There, that should help with the aches. No charge, dearie.'
+    Flow: close_encounter
+  - Text: Something stronger for 10 Gold. (+20 HP)
+    Effect: item
+    Details: health-gold-loss
+    Health Amount: 20
+    Gold Cost: 10
+    Response: Hanni produces a small, glowing vial. 'This special brew will set you right. Just 10 gold, for my troubles.'
+    Flow: close_encounter
+  - Text: Do you have any ale? (2 Gold, +15 HP)
+    Effect: item
+    Details: beer-cost-blur
+    Health Amount: 15
+    Gold Cost: 2
+    Amount: 4
+    Response: Hanni chuckles, pulling out a tankard. 'Always got some homebrew for a parched throat! Just 2 gold, but it's strong stuff!'
+    Flow: close_encounter
+  - Text: Never mind, I'm alright now.
+    Flow: dialogue_branch
+    Next Node ID: start
+
+---
+
+NPC ID: mysterious_cave
+Name: The Mysterious Cave
+Greeting: A narrow opening, almost hidden by thick vines, leads into a dark cave. A faint, earthy smell wafts from within, along with a whisper of cool air.
+Dialogue Nodes:
+- Node ID: start
+  Text: A narrow opening, almost hidden by thick vines, leads into a dark cave. A faint, earthy smell wafts from within, along with a whisper of cool air.
+  Options:
+  - Text: Venture inside cautiously.
+    Flow: dialogue_branch
+    Next Node ID: cave_entrance
+  - Text: Leave the cave undisturbed.
+    Flow: close_encounter
+    Response: You decide your journey is too important. You continue on.
+- Node ID: cave_entrance
+  Text: The darkness inside is absolute, broken only by the drip of water. You can barely make out two paths ahead: one narrow and winding, the other wider and leading deeper.
+  Options:
+  - Text: Take the narrow, winding path.
+    Flow: dialogue_branch
+    Next Node ID: narrow_path
+  - Text: Take the wider, deeper path.
+    Flow: dialogue_branch
+    Next Node ID: wide_path
+  - Text: This is too spooky. I'm leaving.
+    Flow: close_encounter
+    Response: The cave's eerie silence is too much. You carefully backtrack and exit the cave.
+- Node ID: narrow_path
+  Text: You squeeze through a tight passage. The passage seems to become more and more narrow as you go on.
+  Options:
+  - Text: Continue down the narrow passage.
+    Flow: dialogue_branch
+    Next Node ID: narrow_path_outcome
+  - Text: Give up and return to the entrance.
+    Flow: dialogue_branch
+    Next Node ID: cave_entrance
+- Node ID: narrow_path_outcome
+  Text: You manage to catch yourself and regroup.
+  Options:
+  - Text: Continue exploring the narrow path.
+    Flow: close_encounter
+    Response: You proceed further, finding nothing else of note at the moment. The path eventually leads you out of the cave.
+  - Text: Return to the main entrance.
+    Flow: dialogue_branch
+    Next Node ID: cave_entrance
+- Node ID: wide_path
+  Text: The wider path leads to a large cavern. In the center, a faint light flickers, revealing a strange altar.
+  Options:
+  - Text: Investigate the altar.
+    Flow: dialogue_branch
+    Next Node ID: wide_path_outcome
+  - Text: Decide it's too dangerous and turn back.
+    Flow: dialogue_branch
+    Next Node ID: cave_entrance
+- Node ID: wide_path_outcome
+  Text: The alter glows, shakes and emits a heat that plucks every pore on your skin.
+  Options:
+  - Text: Touch the alter.
+    Result: mini_boss_combat
+    Mini Boss Type: Mind Flayer Spawn
+    Response: 'You'll learn to regret touching my altar.'
+  - Text: 'I don't want any part of this. I am outta here.'
+    Flow: dialogue_branch
+    Next Node ID: cave_entrance
+
+    ---
