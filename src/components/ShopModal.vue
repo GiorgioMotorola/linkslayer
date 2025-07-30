@@ -201,7 +201,7 @@ function selectItem(item) {
   if (item.details === "herbalPoultice") {
     selectedItemDetails.value.description = `A potent herbal remedy that heals ${item.amount} Health per click for ${item.durationClicks} clicks (Total of ${item.maxHeal} Health).`;
   } else if (item.details === "frenchOnionSoup") {
-    selectedItemDetails.value.description = `A hearty soup that restores ${item.amount} HP and ${item.specialAmount} special use.`;
+    selectedItemDetails.value.description = `A hearty soup that restores 15 HP and ${item.specialAmount} special use.`;
   } else if (item.details === "sharedSufferingAmulet") {
     selectedItemDetails.value.description = `Deals ${item.amount} damage to enemy, 25 to player. Ends combat if enemy defeated.`;
   } else if (item.description) {
