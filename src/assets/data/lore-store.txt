@@ -909,7 +909,7 @@ Dialogue Nodes:
     Response: You close the dusty journal, envisioning the shimmering magic of the grotto and the mysterious boulder.
 
 - Node ID: journal_entry_4
-  Text: Day 10: Beyond the boulder, there are two tunnels. The right leads back to the bigger river. The left seems to lead to a chamber with a chest. I heard those who used this grotto often locked their treasures using existing secrets but ⚲ adding, subtracting, multiplying, and then adding again... ⚲ whatever that means.
+  Text: Day 10: Beyond the boulder, there are two tunnels. The right leads back to the bigger river. The ⚲ left ⚲ seems to lead to a chamber with a chest. I heard those who used this grotto often locked their treasures using existing secrets but ⚲ adding, subtracting, multiplying, and then adding again... ⚲ whatever that means.
   Options:
   - Text: Turn to the next entry.
     Flow: dialogue_branch
