@@ -103,8 +103,8 @@ export const MINI_BOSS_TYPES = [
   {
     type: "Hulking Brute",
     hp: 70,
-    minDamage: 6,
-    maxDamage: 10,
+    minDamage: 5,
+    maxDamage: 9,
     goldReward: 80,
     weaponReward: 1,
     defenseReward: 1,
@@ -112,8 +112,8 @@ export const MINI_BOSS_TYPES = [
   {
     type: "Bandit Camp",
     hp: 120,
-    minDamage: 8,
-    maxDamage: 12,
+    minDamage: 5,
+    maxDamage: 9,
     goldReward: 100,
     weaponReward: 2,
     defenseReward: 2,
@@ -139,8 +139,8 @@ export const MINI_BOSS_TYPES = [
   {
     type: "Bobby Lasagna",
     hp: 150,
-    minDamage: 12,
-    maxDamage: 18,
+    minDamage: 5,
+    maxDamage: 9,
     goldReward: 140,
     weaponReward: 1,
     defenseReward: 2,
@@ -148,8 +148,8 @@ export const MINI_BOSS_TYPES = [
     {
     type: "Grotto Banshee",
     hp: 80,
-    minDamage: 6,
-    maxDamage: 12,
+    minDamage: 5,
+    maxDamage: 9,
     goldReward: 0,
     weaponReward: 1,
     defenseReward: 0,
