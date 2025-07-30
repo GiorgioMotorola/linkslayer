@@ -1123,7 +1123,7 @@
         ]
       },
       "journal_entry_1": {
-        "text": "The journal's first page is dated weeks ago and appears to be marked with a '⚲' as if it's marking some sort importance: 'Day 1: The cartographers maps spoke truth. The 'Missing Grotto' is real, just as the legends foretold. I'm camped near what they call the 'Quiet River Bend' now. Legend has it, this Grotto was a safe house for Pirates. There is a well known pirate shanty I sing to keep my spirits up: 'A pi-rates life is ne-ver through, three, then one, then four, then two' Next, I'll head ⚲ east along the riverbank. ⚲'",
+        "text": "The journal's first page is dated weeks ago and appears to be marked with a '⚲' as if it's marking some sort importance: 'Day 1: The cartographers maps were right. The 'Missing Grotto' is real, just as the legends foretold. I'm camped near what they call the 'Quiet River Bend' now. Legend has it, this Grotto was a safe house for Pirates. There is a well known pirate shanty I sing to keep my spirits up: ⚲ 'A pi-rates life is ne-ver through, three, then one, then four, then two' ⚲ Next, I'll head ⚲ east along the riverbank. ⚲'",
         "options": [
           {
             "text": "Turn to the next entry.",
