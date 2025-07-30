@@ -78,7 +78,7 @@
       },
       {
         "text": "'Yes. I saw him a few clicks back that way. Gave him a couple of pets on the noggin, I did.'",
-        "result": "item",
+        "effect": "item",
         "details": "gold",
         "amount": 15,
         "responseText": "OLD GUY ACCARDI: That's what's up. Thank you for looking out. Here is a finder's fee."
@@ -287,7 +287,7 @@
           {
             "text": "'Well, if you think you are going to die, then maybe I can have your gold.'",
             "flow": "close_encounter",
-            "result": "item",
+            "effect": "item",
             "details": "gold",
             "amount": 15,
             "responseText": "RON VON ZAROVICH: Sure. What does it matter? These are the end times."
@@ -570,7 +570,7 @@
       },
       {
         "text": "Take the Doctors Gold",
-        "result": "item",
+        "effect": "item",
         "details": "gold",
         "amount": 19,
         "responseText": "You take the dead man's gold."

@@ -197,7 +197,7 @@
       {
         "text": "Open the chest",
         "responseText": "There appears to be gold in that there chest.",
-        "result": "item",
+        "effect": "item",
         "details": "gold",
         "amount": 50
       },
@@ -313,7 +313,7 @@
       },
       {
         "text": "Cut the Green Wire",
-        "result": "item",
+        "effect": "item",
         "details": "gold",
         "amount": 45,
         "responseText": "The crate whirs a low tone and then immediately opens up, all 4 sides collapsing to the ground. A pile of gold is revealed."
@@ -347,9 +347,9 @@
       },
       {
         "text": "Walk around the right side of the swamp",
-        "result": "item",
+        "effect": "item",
         "details": "gold",
-        "amount": 30,
+        "amount": 58,
         "responseText": "You make it safely to the other side of the putrid swamp. While walking, you find a bag with 30 gold pieces in it."
       },
       {
@@ -387,14 +387,14 @@
       {
         "text": "Open the chest carefully.",
         "responseText": "The chest creaks open, revealing a small pouch of gold.",
-        "result": "item",
+        "effect": "item",
         "details": "gold",
         "amount": 15
       },
       {
         "text": "Open the chest in a fit of rage.",
         "responseText": "The chest violently opens, revealing a small pouch of gold.",
-        "result": "item",
+        "effect": "item",
         "details": "gold",
         "amount": 15
       },
@@ -436,9 +436,9 @@
       {
         "text": "Put on the R mask.",
         "responseText": "You feel richer than ever.",
-        "result": "item",
+        "effect": "item",
         "details": "gold",
-        "amount": 30
+        "amount": 15
       },
       {
         "text": "Put on the C mask.",
@@ -496,7 +496,7 @@
       {
         "text": "Bet the gold piece on range 51-60",
         "responseText": "You win.",
-        "result": "item",
+        "effect": "item",
         "details": "gold",
         "amount": 50
       },
@@ -636,9 +636,9 @@
         "options": [
           {
             "text": "Investigate the glimmer.",
-            "result": "item",
+            "effect": "item",
             "details": "gold",
-            "amount": 10,
+            "amount": 25,
             "responseText": "You find a small pouch dropped by a previous visitor, containing 10 gold pieces. You continue on...",
             "flow": "dialogue_branch",
             "next_node_id": "foyer"
@@ -1076,7 +1076,7 @@
           },
           {
             "text": "Enter '10'.",
-            "result": "item",
+            "effect": "item",
             "details": "gold",
             "amount": 100,
             "responseText": "With a satisfying click, the lock springs open. Inside, glimmers a cache of coins."
@@ -1109,9 +1109,9 @@
           },
           {
             "text": "Search the campsite thoroughly.",
-            "result": "item",
+            "effect": "item",
             "details": "gold",
-            "amount": 5,
+            "amount": 10,
             "responseText": "You sift through the ashes and find a few tarnished coins. Not much, but every piece counts.",
             "flow": "dialogue_branch"
           },
