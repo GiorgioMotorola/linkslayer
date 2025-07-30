@@ -4,7 +4,7 @@ export const shopItems = [
   {
     id: "health_potion_consumable",
     name: "Major Health Potion",
-    cost: 1,
+    cost: 25,
     effect: "inventoryItem",
     details: "healthPotion",
     amount: 25,
@@ -15,7 +15,7 @@ export const shopItems = [
   },
   {
     name: "Minor Health Potion",
-    cost: 1,
+    cost: 10,
     effect: "inventoryItem",
     amount: 10,
     details: "minorHealthPotion",
@@ -27,7 +27,7 @@ export const shopItems = [
   {
     id: "whetstone",
     name: "Whetstone",
-    cost: 1,
+    cost: 50,
     effect: "weapon",
     amount: 1,
     description: "Permanently increases your Weapon Damage by 1.",
@@ -38,7 +38,7 @@ export const shopItems = [
   {
     id: "sturdy_buckler",
     name: "Sturdy Buckler",
-    cost: 1,
+    cost: 50,
     effect: "shield",
     amount: 1,
     description: "Permanently increases your Defense Bonus by 1.",
@@ -49,7 +49,7 @@ export const shopItems = [
   {
     id: "tome_knowledge",
     name: "Tome of Knowledge",
-    cost: 1,
+    cost: 35,
     effect: "special",
     amount: 1,
     description: "Grants +1 Class Ability Charge.",
@@ -60,7 +60,7 @@ export const shopItems = [
   {
     id: "arcane_compass",
     name: "Arcane Compass",
-    cost: 1,
+    cost: 100,
     effect: "inventoryItem",
     details: "compass",
     description: "Skips you to a random non-start/end article. Consumable.",
@@ -71,7 +71,7 @@ export const shopItems = [
   {
     id: "invisibility_cloak",
     name: "Cloak of Invisibility",
-    cost: 1,
+    cost: 80,
     effect: "inventoryItem",
     details: "invisibilityCloak",
     description: "Consumable. Avoids non-boss encounters for 10 clicks.",
@@ -82,7 +82,7 @@ export const shopItems = [
   {
     id: "stick_item",
     name: "A Cool Stick That I Found",
-    cost: 1,
+    cost: 3,
     effect: "inventoryItem",
     details: "stickItem",
     description: "Doesn't do much. It's just a cool stick that I found.",
@@ -93,7 +93,7 @@ export const shopItems = [
   {
     id: "herbal_heal_item",
     name: "Herbal Poultice",
-    cost: 1,
+    cost: 50,
     effect: "inventoryItem",
     details: "herbalPoultice",
     amount: 1,
@@ -106,7 +106,7 @@ export const shopItems = [
   {
     id: "bark_tea_consumable",
     name: "Bark Tea",
-    cost: 1,
+    cost: 10,
     effect: "inventoryItem",
     details: "barkTea",
     description: "A bitter brew with minor healing properties, restores 10 HP.",
@@ -118,7 +118,7 @@ export const shopItems = [
   {
     id: "french_onion_soup_consumable",
     name: "French Onion Soup",
-    cost: 1,
+    cost: 20,
     effect: "inventoryItem",
     details: "frenchOnionSoup",
     healAmount: 15,
@@ -130,7 +130,7 @@ export const shopItems = [
   {
     id: "antidote_consumable",
     name: "Antidote",
-    cost: 1,
+    cost: 30,
     effect: "inventoryItem",
     details: "antidote",
     description:
@@ -142,7 +142,7 @@ export const shopItems = [
   {
     id: "smoke_bomb_consumable",
     name: "Smoke Bomb",
-    cost: 1,
+    cost: 25,
     effect: "inventoryItem",
     details: "smokeBomb",
     description:
@@ -154,7 +154,7 @@ export const shopItems = [
   {
     id: "adventurers_rations_consumable",
     name: "Adventurer's Rations",
-    cost: 1,
+    cost: 10,
     effect: "inventoryItem",
     details: "adventurersRations",
     healAmount: 7,
@@ -168,7 +168,7 @@ export const shopItems = [
   {
     id: "amulet_of_shared_suffering",
     name: "Amulet of Shared Suffering",
-    cost: 1,
+    cost: 100,
     effect: "inventoryItem",
     details: "sharedSufferingAmulet",
     description:

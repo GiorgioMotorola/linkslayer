@@ -599,13 +599,12 @@ function useItem(itemType) {
 }
 .no-items-message {
   font-style: italic;
-  color: #888;
+  color: #a3a2a2;
   text-align: center;
   padding: 20px;
-  border: 1px dashed #4a4a4a;
-  background: rgba(0, 0, 0, 0.5);
   width: 100%;
   box-sizing: border-box;
+  font-size: 15px;
 }
 
 .close-button-game-style {
