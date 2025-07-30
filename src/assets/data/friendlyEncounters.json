@@ -8,7 +8,7 @@
         "text": "'Yes sir, I did.'",
         "result": "item",
         "details": "shield",
-        "responseText": "OLD MAN FLYNN: I knew it! I knew someone would know! That brace looks like it needs a fair polishing. Let me give it a fair polishing, my son."
+        "responseText": "OLD MAN FLYNN: I knew it. I knew someone would know. That brace looks like it needs a fair polishing. Let me give it a fair polishing, my son."
       },
       {
         "text": "Ignore him and walk away",
@@ -36,7 +36,7 @@
         "text": "'Howdy'",
         "result": "item",
         "details": "shield",
-        "responseText": "SMITH THE BLACKSMITH: You can see me?! No one has talked to me or looked at me in 50 years. Oh heavens this is incredible. I spend my days and nights sleeping and tending to various pieces of armor. All day. All Night. You have given me hope. Here, take this bracer. Its my best yet."
+        "responseText": "SMITH THE BLACKSMITH: You can see me?. No one has talked to me or looked at me in 50 years. Oh heavens this is incredible. I spend my days and nights sleeping and tending to various pieces of armor. All day. All Night. You have given me hope. Here, take this bracer. Its my best yet."
       },
       {
         "text": "'Hello?'",
@@ -117,7 +117,7 @@
   {
     "id": "npc_005",
     "name": "Fairwyn the Tongueless",
-    "greeting": "FAIRWYN THE TONGUELESS: Oouu eeeahh ouu! Eerrr eh ah eehahee!!!",
+    "greeting": "FAIRWYN THE TONGUELESS: Oouu eeeahh ouu. Eerrr eh ah eehahee...",
     "options": [
       {
         "text": "'Did you say 'Look behind you, there is an enemy?'",
@@ -125,7 +125,7 @@
         "responseText": "There was, in fact, an enemy behind you."
       },
       {
-        "text": "'Out of the way, peck!'",
+        "text": "'Out of the way, peck.'",
         "result": "damage",
         "responseText": "You should have listened. An enemy appears, hits you with its claws, and runs away. You take damage."
       },
@@ -150,7 +150,7 @@
       {
         "text": "'I don't believe you, Evil Tom.'",
         "result": "combat",
-        "responseText": "EVIL TOM: Well, I never!"
+        "responseText": "EVIL TOM: Well, I never."
       },
       {
         "text": "'Right on.'",
@@ -222,7 +222,7 @@
         "result": "none"
       },
       {
-        "text": "Give me that compass or else I will make you pay!",
+        "text": "Give me that compass or else I will make you pay.",
         "responseText": "DANIEL THE MAP SELLER: Ok, geeze... Here you go, man. Relax.",
         "result": "inventoryItem",
         "id": "arcane_compass"
@@ -360,10 +360,10 @@
             "next_node_id": "rustling_bushes"
           },
           {
-            "text": "Yell 'Hey Bobby! I'm ready to avenge Bulgresh!'",
+            "text": "Yell 'Hey Bobby. I'm ready to avenge Bulgresh.'",
             "result": "mini_boss_combat",
             "miniBossType": "Bobby Lasagna",
-            "responseText": "Your voice echoes through the silent woods. From the hut, a figure emerges. 'Bulgresh, you say? He had it coming! Prepare to join him!'"
+            "responseText": "Your voice echoes through the silent woods. From the hut, a figure emerges. 'Bulgresh, you say? He had it coming. Prepare to join him.'"
           }
         ]
       },
@@ -374,10 +374,10 @@
             "text": "Ready yourself for combat.",
             "result": "mini_boss_combat",
             "miniBossType": "Bobby Lasagna",
-            "responseText": "You brace yourself. Bobby Lasagna bursts from the foliage, her eyes alight with fury. 'So, you've come to meddle, have you?' Combat begins!"
+            "responseText": "You brace yourself. Bobby Lasagna bursts from the foliage, her eyes alight with fury. 'So, you've come to meddle, have you?' Combat begins."
           },
           {
-            "text": "Run!",
+            "text": "Run.",
             "flow": "close_encounter",
             "responseText": "You decide discretion is the better part of valor and bolt, leaving the mysterious rustling and Bobby Lasagna's domain behind."
           }
@@ -393,7 +393,7 @@
       {
         "text": "'A blink'",
         "result": "none",
-        "responseText": "MISS RIDDLESWORTH: Wrong!"
+        "responseText": "MISS RIDDLESWORTH: Wrong."
       },
       {
         "text": "'The letter M'",
@@ -404,7 +404,7 @@
       {
         "text": "'A memory'",
         "result": "none",
-        "responseText": "MISS RIDDLESWORTH: Not a chance!"
+        "responseText": "MISS RIDDLESWORTH: Not a chance."
       },
       {
         "text": "'The moon'",
@@ -421,7 +421,7 @@
       {
         "text": "'Time'",
         "result": "none",
-        "responseText": "MR RIDDLESWORTH: Incorrect!"
+        "responseText": "MR RIDDLESWORTH: Incorrect."
       },
       {
         "text": "'Fire'",
@@ -432,12 +432,12 @@
         "text": "'Sand'",
         "result": "item",
         "details": "weapon",
-        "responseText": "MR RIDDLESWORTH: You got it!"
+        "responseText": "MR RIDDLESWORTH: You got it."
       },
       {
         "text": "'Gold'",
         "result": "none",
-        "responseText": "MR RIDDLESWORTH: Wrong!"
+        "responseText": "MR RIDDLESWORTH: Wrong."
       }
     ]
   },
@@ -448,7 +448,7 @@
     "options": [
       { "text": "Lonesome Doug", "routeTitle": "The_X-Files" },
       {
-        "text": "No! Country For Old Men!",
+        "text": "No. Country For Old Men.",
         "routeTitle": "Response_to_sneezing"
       },
       {
@@ -466,17 +466,17 @@
   {
     "id": "npc_014",
     "name": "Lord Bruenor Battlehammer",
-    "greeting": "LORD BRUENOR BATTLEHAMMER: Good sir, I am Lord Bruenor Battlehammer, Lord of these lands and heir of King Bort Battlehammer. I confess I am lost. I understand being lost and a Lord of this land seems like something a crazy beggar would say, but I implore you, I am telling the truth! You seem like you know these lands better than most. Please, tell me which direction would be Castle Battlehammer?",
+    "greeting": "LORD BRUENOR BATTLEHAMMER: Good sir, I am Lord Bruenor Battlehammer, Lord of these lands and heir of King Bort Battlehammer. I confess I am lost. I understand being lost and a Lord of this land seems like something a crazy beggar would say, but I implore you, I am telling the truth. You seem like you know these lands better than most. Please, tell me which direction would be Castle Battlehammer?",
     "options": [
       {
         "text": "'My Lord, go past those bushes over there and through the clearing. You will be able to see your castle in the distance.'",
         "result": "inventoryItem",
         "id": "turkey_leg_consumable",
-        "responseText": "LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Here is a Turkey Leg from my finest Turkey. Come by any time and we can dine on a full Turkey!"
+        "responseText": "LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Here is a Turkey Leg from my finest Turkey. Come by any time and we can dine on a full Turkey."
       },
       {
         "text": "'This path will lead you there safely. You will just have to head the other direction, My Lord.'",
-        "responseText": "LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Come visit me anytime and I will show you how to harness the power of your highest ability!",
+        "responseText": "LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Come visit me anytime and I will show you how to harness the power of your highest ability.",
         "result": "special",
         "details": "recover",
         "amount": 1
@@ -485,7 +485,7 @@
         "text": "'These things happen, My Lord. However, I seem to be just as lost as you are, sadly.'",
         "result": "item",
         "details": "weapon",
-        "responseText": "LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Come visit me anytime and we will improve that sword of yours!"
+        "responseText": "LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Come visit me anytime and we will improve that sword of yours."
       },
       {
         "text": "You distrust the raving madman. Why would a Lord of the lands be lost? You decide to attack the lunatic with your weapon.",
@@ -613,7 +613,7 @@
         ]
       },
       "village_backstory": {
-        "text": "Oh, this village has seen many seasons. We're nestled right at the foot of the Whisperwind Peaks, you see. Long ago, they say ancient spirits dwelled there, protecting us from the creeping shadows of the Sunken City. It's quieter now, but the old ways linger. We will know the shadows are back if our young ones start disappearing. The shadows crave innocent minds. But so far, no missing children!",
+        "text": "Oh, this village has seen many seasons. We're nestled right at the foot of the Whisperwind Peaks, you see. Long ago, they say ancient spirits dwelled there, protecting us from the creeping shadows of the Sunken City. It's quieter now, but the old ways linger. We will know the shadows are back if our young ones start disappearing. The shadows crave innocent minds. But so far, no missing children.",
         "options": [
           {
             "text": "Thats... great for you...",
@@ -648,7 +648,7 @@
         ]
       },
       "healing_offer": {
-        "text": "Oh, you poor thing! You look a bit rough. I've got some remedies. What do you need?",
+        "text": "Oh, you poor thing. You look a bit rough. I've got some remedies. What do you need?",
         "options": [
           {
             "text": "A quick pick-me-up. (Free +5 HP)",
@@ -674,7 +674,7 @@
             "healthAmount": 15,
             "goldCost": 2,
             "amount": 4,
-            "responseText": "Hanni chuckles, pulling out a tankard. 'Always got some homebrew for a parched throat! Just 2 gold, but it's strong stuff!'",
+            "responseText": "Hanni chuckles, pulling out a tankard. 'Always got some homebrew for a parched throat. Just 2 gold, but it's strong stuff.'",
             "flow": "close_encounter"
           },
           {
@@ -819,7 +819,7 @@
         ]
       },
       "talk_to_mornik": {
-        "text": "You sidle up to the dwarf, who looks up with a grin. 'Well, hello there, stranger! Name's Mornik Ironaxe. Care for a drink? On me!' He shoves a tankard of potent-smelling brew into your hand.",
+        "text": "You sidle up to the dwarf, who looks up with a grin. 'Well, hello there, stranger. Name's Mornik Ironaxe. Care for a drink? On me.' He shoves a tankard of potent-smelling brew into your hand.",
         "options": [
           {
             "text": "Accept Mornik's drink.",
@@ -833,7 +833,7 @@
           },
           {
             "text": "Politely decline the drink.",
-            "responseText": "Mornik shrugs. 'Suit yourself. More for me, then!' He goes back to his ale.",
+            "responseText": "Mornik shrugs. 'Suit yourself. More for me, then.' He goes back to his ale.",
             "flow": "close_encounter"
           }
         ]
@@ -878,7 +878,7 @@
           {
             "text": "Let's just drink.",
             "flow": "close_encounter",
-            "responseText": "Mornik grins. 'Aye, a fine choice!'"
+            "responseText": "Mornik grins. 'Aye, a fine choice.'"
           },
           {
             "text": "I've heard enough for tonight.",
@@ -888,7 +888,7 @@
         ]
       },
       "mornik_rock_tales": {
-        "text": "He recounts tales of deep delves, finding rare gems, and the echoes of ancient pickaxes. 'A good shield, that's what keeps ye safe in the dark! My old dwarven shield, it's seen many a scrape, but it's still sturdy.'",
+        "text": "He recounts tales of deep delves, finding rare gems, and the echoes of ancient pickaxes. 'A good shield, that's what keeps ye safe in the dark. My old dwarven shield, it's seen many a scrape, but it's still sturdy.'",
         "options": [
           {
             "text": "I could use a good shield.",
@@ -900,7 +900,7 @@
             "next_node_id": "wake_up_hangover"
           },
           {
-            "text": "Fascinating! Any other tales?",
+            "text": "Fascinating. Any other tales?",
             "flow": "dialogue_branch",
             "next_node_id": "mornik_life_start"
           },
@@ -912,7 +912,7 @@
         ]
       },
       "mornik_goblin_tales": {
-        "text": "Mornik's face darkens slightly as he speaks of cunning goblins and narrow escapes. 'Always keep yer wits about ye, and never trust a shiny object that ain't gold! They're tricksters, those green skins.'",
+        "text": "Mornik's face darkens slightly as he speaks of cunning goblins and narrow escapes. 'Always keep yer wits about ye, and never trust a shiny object that ain't gold. They're tricksters, those green skins.'",
         "options": [
           {
             "text": "Any advice on dealing with them?",
@@ -955,7 +955,7 @@
     "greeting": "You step into the grand hall of the Bard's Library, usually a place of quiet study, but tonight it's abuzz with an unusual energy. A makeshift stage is set up, and a sign reads: 'Karaoke Contest. Master the Ballad of the Wandering Blade.'",
     "dialogueNodes": {
       "start": {
-        "text": "The air vibrates with nervous excitement and off-key singing. A cheerful gnome gestures towards the stage. 'Care to try your hand, traveler? Tonight, we seek the finest rendition of 'Molly Malone'. Winner gets 100 Gold Pieces!'",
+        "text": "The air vibrates with nervous excitement and off-key singing. A cheerful gnome gestures towards the stage. 'Care to try your hand, traveler? Tonight, we seek the finest rendition of 'Molly Malone'. Winner gets 100 Gold Pieces.'",
         "options": [
           {
             "text": "Sign up for the contest despite not knowing the song at all.",
@@ -978,12 +978,12 @@
         "text": "The gnome directs you to the stage where some 50 patrons half drunk cheer. The small band in the corner begins the song as the crowd sings the first line 'In Dublin's fair city, Where the girls are so pretty, I first set my eyes on sweet Molly Malone' and they await for you to belt out the next line...",
         "options": [
           {
-            "text": "Sing: 'As she wheeled her wheel-barrow, Through streets broad and narrow, Crying: Cockles and mussels, alive, alive, oh!",
+            "text": "Sing: 'As she wheeled her wheel-barrow, Through streets broad and narrow, Crying: Cockles and mussels, alive, alive, oh.",
             "flow": "dialogue_branch",
             "next_node_id": "line_1"
           },
           {
-            "text": "Sing: 'As she ate a squirrel, Through streets full of barrels, Sighing: Rocks and muskrats, alive, alive, oh!'",
+            "text": "Sing: 'As she ate a squirrel, Through streets full of barrels, Sighing: Rocks and muskrats, alive, alive, oh.'",
             "flow": "dialogue_branch",
             "next_node_id": "lose_contest"
           },
@@ -995,7 +995,7 @@
         ]
       },
       "line_1": {
-        "text": "The crowd begins clapping along moderately and singing along: 'Alive, alive, oh, Alive, alive, oh! Crying Cockles and mussels, alive, alive, oh!'",
+        "text": "The crowd begins clapping along moderately and singing along: 'Alive, alive, oh, Alive, alive, oh. Crying Cockles and mussels, alive, alive, oh.'",
         "options": [
           {
             "text": "Sing: 'She was a nice mother, But sure 'twas no father, For so were her brother and sister before'",
@@ -1018,51 +1018,51 @@
         "text": "The crowd begins wildly singing back: 'And they each wheel'd their barrow, Through streets broad and narrow'",
         "options": [
           {
-            "text": "Sing back to the crowd: 'Sighing: Rocks and muskrats, alive, alive, oh!'",
+            "text": "Sing back to the crowd: 'Sighing: Rocks and muskrats, alive, alive, oh.'",
             "flow": "dialogue_branch",
             "next_node_id": "lose_contest"
           },
           {
-            "text": "Sing back to the crowd: 'Crying Cockles and mussels alive, alive oh!'",
+            "text": "Sing back to the crowd: 'Crying Cockles and mussels alive, alive oh.'",
             "flow": "dialogue_branch",
             "next_node_id": "line_3"
           },
           {
-            "text": "Sing: 'Molly Maloooone! Molly MaloooooooooOOoooooOoOone!'",
+            "text": "Sing: 'Molly Maloooone. Molly MaloooooooooOOoooooOoOone.'",
             "flow": "dialogue_branch",
             "next_node_id": "lose_contest"
           }
         ]
       },
       "line_3": {
-        "text": "The crowd is out of control. The floor is being scuffed with the amount of feet scraping in rhythm and neighbors nearby are poking their heads in a sleepy eyed state as the crowd sings back to you 'She died of a fever and no one could save her. And that was the end of sweet Molly Malone!'.",
+        "text": "The crowd is out of control. The floor is being scuffed with the amount of feet scraping in rhythm and neighbors nearby are poking their heads in a sleepy eyed state as the crowd sings back to you 'She died of a fever and no one could save her. And that was the end of sweet Molly Malone.'.",
         "options": [
           {
-            "text": "Sing: 'But her goat wheels her barrow, Through streets made of marrow, Crying Socks filled of muscle, alive, alive, oh!'",
+            "text": "Sing: 'But her goat wheels her barrow, Through streets made of marrow, Crying Socks filled of muscle, alive, alive, oh.'",
             "flow": "dialogue_branch",
             "next_node_id": "lose_contest"
           },
           {
-            "text": "Sing: 'Rest in Peace, Mollllyyy Maaaaloooooneee!'",
+            "text": "Sing: 'Rest in Peace, Mollllyyy Maaaaloooooneee.'",
             "flow": "dialogue_branch",
             "next_node_id": "lose_contest"
           },
           {
-            "text": "Sing: 'But her ghost wheels her barrow, Through streets broad and narrow, Crying, Cockles and mussels, alive, alive, oh!'",
+            "text": "Sing: 'But her ghost wheels her barrow, Through streets broad and narrow, Crying, Cockles and mussels, alive, alive, oh.'",
             "flow": "dialogue_branch",
             "next_node_id": "win_contest"
           }
         ]
       },
       "win_contest": {
-        "text": "The crowd is in a steady roar. The gnome is running toward you with a big pouch of gold. He is jumping up and down shouting 'You win! You Win! Here is your prize!'",
+        "text": "The crowd is in a steady roar. The gnome is running toward you with a big pouch of gold. He is jumping up and down shouting 'You win. You Win. Here is your prize.'",
         "options": [
           {
             "text": "Accept your winnings.",
             "effect": "item",
             "details": "gold",
             "amount": 100,
-            "responseText": "You receive a heavy pouch of 100 gleaming gold pieces! Your vocal cords might be sore, but your purse is certainly not, and you've earned the respect of the bards present.",
+            "responseText": "You receive a heavy pouch of 100 gleaming gold pieces. Your vocal cords might be sore, but your purse is certainly not, and you've earned the respect of the bards present.",
             "flow": "close_encounter"
           }
         ]
@@ -1082,11 +1082,11 @@
   {
     "id": "npc_020_fishing_lesson",
     "name": "Old Man Francis",
-    "greeting": "Ahoy there. I'm Man Francis. Some people call me Old Man Francis. Kind of Rude if you ask me but if the Pince-nez fits! I don't really wear glasses but, anyway, How is your day?",
+    "greeting": "Ahoy there. I'm Man Francis. Some people call me Old Man Francis. Kind of Rude if you ask me but if the Pince-nez fits. I don't really wear glasses but, anyway, How is your day?",
     "type": "npc",
     "dialogueNodes": {
       "start": {
-        "text": "Ahoy there. I'm Man Francis. Some people call me Old Man Francis. Kind of Rude if you ask me but if the Pince-nez fits! I don't really wear glasses but, anyway, How is your day?",
+        "text": "Ahoy there. I'm Man Francis. Some people call me Old Man Francis. Kind of Rude if you ask me but if the Pince-nez fits. I don't really wear glasses but, anyway, How is your day?",
         "options": [
           {
             "text": "Teach me how to fish, please.",
@@ -1213,7 +1213,7 @@
         ]
       },
       "lesson_8": {
-        "text": "'The art of chumming. A little bit of food, scattered just so, can bring 'em right to you. Don't overdo it, though, or they'll be full! Got the knack?'",
+        "text": "'The art of chumming. A little bit of food, scattered just so, can bring 'em right to you. Don't overdo it, though, or they'll be full. Got the knack?'",
         "options": [
           {
             "text": "The knack?",
@@ -1378,7 +1378,7 @@
         ]
       },
       "lesson_19": {
-        "text": "'Wait... I think you have something. I think you have something!'",
+        "text": "'Wait... I think you have something. I think you have something.'",
         "options": [
           {
             "text": "Reel in the fish using the lessons you have learned.",
@@ -1393,7 +1393,7 @@
         ]
       },
       "lesson_20": {
-        "text": "'You got it! Thats the biggest fish I have seen in a long while! I bet that fish ages well with age.'",
+        "text": "'You got it. Thats the biggest fish I have seen in a long while. I bet that fish ages well with age.'",
         "options": [
           {
             "text": "Receive the Fish of Eternal Enlightenment",

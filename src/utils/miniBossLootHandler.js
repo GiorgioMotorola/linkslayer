@@ -18,7 +18,7 @@ export function handleMiniBossLootDrop({
   if (weaponAmount > 0) {
     weaponBonus.value += weaponAmount;
     log(
-      `⚔️ <span class="player-name">${playerName.value}</span> gained a weapon upgrade! Weapon damage +${weaponAmount} (Total: +${weaponBonus.value})`
+      `⚔️ <span class="player-name">${playerName.value}</span> gained a weapon upgrade. Weapon damage +${weaponAmount} (Total: +${weaponBonus.value})`
     );
   }
 
@@ -26,7 +26,7 @@ export function handleMiniBossLootDrop({
   if (defenseAmount > 0) {
     shieldBonus.value += defenseAmount;
     log(
-      `🛡️ <span class="player-name">${playerName.value}</span> found reinforced armor! Defense +${defenseAmount} (Total: +${shieldBonus.value})`
+      `🛡️ <span class="player-name">${playerName.value}</span> found reinforced armor. Defense +${defenseAmount} (Total: +${shieldBonus.value})`
     );
   }
 }

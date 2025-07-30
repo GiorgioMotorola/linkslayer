@@ -132,7 +132,7 @@ function applyOptionEffects({
           );
         } else {
           log(
-            `❌ <span class="player-name">${playerName.value}</span> can't afford that drink! (Need: ${goldCost}, Have: ${playerGold.value})`
+            `❌ <span class="player-name">${playerName.value}</span> can't afford that. (Need: ${goldCost}, Have: ${playerGold.value})`
           );
         }
       }
@@ -171,7 +171,7 @@ function applyOptionEffects({
       } else if (option.details === "enlightenmentFish") {
         inventory.value.enlightenmentFish = 1;
         log(
-          `🐟 <span class="player-name">${playerName.value}</span> acquired The Fish of Eternal Enlightenment!`
+          `🐟 <span class="player-name">${playerName.value}</span> acquired The Fish of Eternal Enlightenment.`
         );
       }
       break;
@@ -384,7 +384,7 @@ export function handleEncounterOption({
     enemyState.enemyNextAction.value = "attack";
     playerState.combatEncountersFought.value++;
     utilityFunctions.log(
-      `💥 Your choice has led to a fierce battle! You are attacked by the mini-boss: <strong>${miniBoss.name}</strong>! What do you do?`
+      `💥 You are attacked by <strong>${miniBoss.name}</strong> What do you do?`
     );
     return;
   }

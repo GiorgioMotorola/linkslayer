@@ -40,7 +40,7 @@ export function handleAssembleUpgrade({
       inventory.weaponPieces -= 2;
       weaponBonus.value += 1;
       log(
-        `🛠️ <span class="player-name">${playerName.value}</span> assembled 2 Weapon Pieces into **+1 Weapon Damage!**`
+        `🛠️ <span class="player-name">${playerName.value}</span> assembled 2 Weapon Pieces into +1 Weapon Damage.`
       );
     } else {
       log(
@@ -54,7 +54,7 @@ export function handleAssembleUpgrade({
       inventory.defensePieces -= 2;
       shieldBonus.value += 1;
       log(
-        `🛡️ <span class="player-name">${playerName.value}</span> assembled 2 Defense Pieces into **+1 Defense Bonus!**`
+        `🛡️ <span class="player-name">${playerName.value}</span> assembled 2 Defense Pieces into +1 Defense Bonus.`
       );
     } else {
       log(

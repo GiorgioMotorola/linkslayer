@@ -168,7 +168,7 @@
       {
         "text": "Place your weapon on the shelf and press 'upgrade'.",
         "result": "combat",
-        "responseText": "Cazzata, Malanga!"
+        "responseText": "Cazzata, Malanga."
       },
       {
         "text": "Move forward without upgrading your weapon.",
@@ -304,7 +304,7 @@
   },
   {
     "id": "lore_012",
-    "text": "There is a crate in front of you that appears to have a series of wires that loop around the outside and feed into the inside. A note sits beside the crate that says 'CAUTION: Do NOT cut the Red wire!'.",
+    "text": "There is a crate in front of you that appears to have a series of wires that loop around the outside and feed into the inside. A note sits beside the crate that says 'CAUTION: Do NOT cut the Red wire.'.",
     "options": [
       {
         "text": "Cut the Red Wire",
@@ -495,7 +495,7 @@
       },
       {
         "text": "Bet the gold piece on range 51-60",
-        "responseText": "You win!",
+        "responseText": "You win.",
         "result": "item",
         "details": "gold",
         "amount": 50
@@ -539,7 +539,7 @@
   },
   {
     "id": "lore_018",
-    "text": "There appears to be a stone block with a hole carved into it. The hole appears to be worn away while the rest of the block seems to be smooth. While staring at the block, you hear the sound of a voice that shouts 'Halt, trespasser! If you come any closer, you better tell me how fast you want to die!'",
+    "text": "There appears to be a stone block with a hole carved into it. The hole appears to be worn away while the rest of the block seems to be smooth. While staring at the block, you hear the sound of a voice that shouts 'Halt, trespasser. If you come any closer, you better tell me how fast you want to die.'",
     "options": [
       {
         "text": "Test the voice and take one small step forward.",
@@ -547,7 +547,7 @@
         "details": "poison",
         "amount": 10,
         "damage": 1,
-        "responseText": "The voice shouts 'I warned you!' and spits a small dose of poison from the hole in the stone block."
+        "responseText": "The voice shouts 'I warned you.' and spits a small dose of poison from the hole in the stone block."
       },
       {
         "text": "Decide the voice is bluffing and start running toward the stone block with your weapon.",
@@ -555,7 +555,7 @@
         "details": "poison",
         "amount": 10,
         "damage": 2,
-        "responseText": "The voice shouts 'I warned you!' and spits a medium dose of poison from the hole in the stone block."
+        "responseText": "The voice shouts 'I warned you.' and spits a medium dose of poison from the hole in the stone block."
       },
       {
         "text": "'Oh yeah? What are you going to do... spit a large dose of poison from that hole in the stone block?'",
@@ -568,7 +568,7 @@
       {
         "text": "Turn around and walk away.",
         "result": "none",
-        "responseText": "The voice yells 'Yeah, you better walk away!'"
+        "responseText": "The voice yells 'Yeah, you better walk away.'"
       }
     ]
   },
@@ -888,7 +888,7 @@
             "text": "Turn right towards the thudding sound.",
             "result": "mini_boss_combat",
             "miniBossType": "Lich Apprentice",
-            "responseText": "The thudding grows louder, revealing a crude training area where a hulking brute practices with a heavy club. It sees you!"
+            "responseText": "The thudding grows louder, revealing a crude training area where a hulking brute practices with a heavy club. It sees you."
           },
           {
             "text": "Go back the way you came and leave the well.",
@@ -1060,7 +1060,7 @@
         ]
       },
       "step_5_left_tunnel_chest_puzzle": {
-        "text": "The left tunnel narrows then opens into a small, secluded chamber. In the center, a sturdy wooden **treasure chest** sits, bound with iron bands. A curious numerical lock adorns its front, requiring a single number as input.",
+        "text": "The left tunnel narrows then opens into a small, secluded chamber. In the center, a sturdy wooden treasure chest sits, bound with iron bands. A curious numerical lock adorns its front, requiring a single number as input.",
         "options": [
           {
             "text": "Enter '5'.",
@@ -1079,7 +1079,7 @@
             "result": "item",
             "details": "gold",
             "amount": 100,
-            "responseText": "With a satisfying click, the lock springs open! Inside, glimmers a cache of coins."
+            "responseText": "With a satisfying click, the lock springs open. Inside, glimmers a cache of coins."
           },
           {
             "text": "Enter '12'.",

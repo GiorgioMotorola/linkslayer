@@ -52,7 +52,7 @@ export function handleLootDrop({ playerState, utilityFunctions }) {
       const amount = Math.floor(Math.random() * 16) + 5;
       playerGold.value += amount;
       log(
-        `💰 <span class="player-name">${playerName.value}</span> loots ${amount} Gold Pieces!`
+        `💰 <span class="player-name">${playerName.value}</span> loots ${amount} Gold Pieces.`
       );
       break;
     }

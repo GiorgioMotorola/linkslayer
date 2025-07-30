@@ -160,20 +160,20 @@ watch(
 const buyItem = (item) => {
   if (!item) {
     console.error("Attempted to buy an undefined item:", item);
-    showToast("Error: Unknown item!", true);
+    showToast("Error: Unknown item.", true);
     return;
   }
 
   if (item.isSpecialLoot) {
-    showToast(`You already acquired ${item.name}!`, true);
+    showToast(`You already acquired ${item.name}.`, true);
     return;
   }
 
   if (props.playerGold >= item.cost) {
     emit("buy", item);
-    showToast(`Purchased ${item.name}!`);
+    showToast(`Purchased ${item.name}.`);
   } else {
-    showToast(`Not enough gold for ${item.name}!`, true);
+    showToast(`Not enough gold for ${item.name}.`, true);
   }
 };
 

@@ -92,7 +92,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       baseSpecialDamage = 8;
       damageToEnemy = baseSpecialDamage;
       log(
-        `⚔️ <span class="player-name">${playerName.value}</span> unleashes **${specialName}** for ${baseSpecialDamage} damage.`
+        `⚔️ <span class="player-name">${playerName.value}</span> unleashes ${specialName} for ${baseSpecialDamage} damage.`
       );
     } else if (cls === "Wizard") {
       effect = playerClass.value.specialEffect(enemyHP.value, playerHP.value);
@@ -101,7 +101,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       log(
         `🔥 <span class="player-name">${
           playerName.value
-        }</span> casts **${specialName}**, dealing ${baseSpecialDamage} damage.${
+        }</span> casts ${specialName}, dealing ${baseSpecialDamage} damage.${
           effect.stunned ? ` The enemy is stunned.` : ""
         }`
       );
@@ -118,7 +118,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       skipEnemyCurrentTurn = true;
 
       log(
-        `🗡️ <span class="player-name">${playerName.value}</span> disappears and executes **${specialName}** for ${baseSpecialDamage} damage.`
+        `🗡️ <span class="player-name">${playerName.value}</span> disappears and executes ${specialName} for ${baseSpecialDamage} damage.`
       );
     } else if (cls === "Paladin") {
       baseSpecialDamage = 5;
@@ -132,7 +132,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       playerHP.value = effect.playerHP;
 
       log(
-        `✨ <span class="player-name">${playerName.value}</span> calls upon **${specialName}**, dealing ${baseSpecialDamage} damage and restoring HP.`
+        `✨ <span class="player-name">${playerName.value}</span> calls upon ${specialName}, dealing ${baseSpecialDamage} damage and restoring HP.`
       );
     } else if (cls === "Cleric") {
       baseSpecialDamage = 6;
@@ -145,7 +145,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       playerHP.value = effect.playerHP;
 
       log(
-        `🙏 <span class="player-name">${playerName.value}</span> invokes **${specialName}**, healing 5 HP and dealing ${baseSpecialDamage} damage.`
+        `🙏 <span class="player-name">${playerName.value}</span> invokes ${specialName}, healing 5 HP and dealing ${baseSpecialDamage} damage.`
       );
     } else if (cls === "Sorcerer") {
       baseSpecialDamage = 12;
@@ -155,7 +155,7 @@ export function handleCombatAction({ player, enemy, state, utils }) {
       playerHP.value = effect.playerHP;
 
       log(
-        `💥 <span class="player-name">${playerName.value}</span> unleashes **${specialName}**, dealing ${baseSpecialDamage} damage but taking recoil.`
+        `💥 <span class="player-name">${playerName.value}</span> unleashes ${specialName}, dealing ${baseSpecialDamage} damage but taking recoil.`
       );
     } else {
       log(

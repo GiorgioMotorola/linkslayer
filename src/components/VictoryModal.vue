@@ -110,7 +110,7 @@ const share = () => {
     navigator.clipboard
       .writeText(summaryText)
       .then(() => {
-        showAlertAsBanner("Results copied to clipboard!", "success");
+        showAlertAsBanner("Results copied to clipboard.", "success");
       })
       .catch((err) => {
         console.error("Failed to copy text: ", err);
@@ -128,7 +128,7 @@ function copyLogToClipboard() {
 
   navigator.clipboard
     .writeText(rawLog)
-    .then(() => showAlertAsBanner("Game log copied to clipboard!", "success"))
+    .then(() => showAlertAsBanner("Game log copied to clipboard.", "success"))
     .catch((err) => {
       console.error("Failed to copy log:", err);
       showAlertAsBanner("Failed to copy log. Please try again.", "error");

@@ -346,7 +346,7 @@ watch(clickCount, (newClicks) => {
     const effectivePoisonDamage = Number(poisonDamagePerClick.value);
     if (isNaN(effectivePoisonDamage)) {
       console.error(
-        "CRITICAL ERROR: poisonDamagePerClick.value is NaN! Resetting to 0.",
+        "CRITICAL ERROR: poisonDamagePerClick.value is NaN. Resetting to 0.",
         poisonDamagePerClick.value
       );
       poisonDamagePerClick.value = 0;
@@ -385,7 +385,7 @@ watch(clickCount, (newClicks) => {
         netHealthChange += actualHeal;
         healthRegenHealedCount.value += actualHeal;
         log(
-          `🌱 You feel a surge of vitality! Healed ${actualHeal} HP from Herbal Poultice.`
+          `🌱 You feel a surge of vitality. Healed ${actualHeal} HP from Herbal Poultice.`
         );
       }
 
@@ -1158,7 +1158,7 @@ function markBossDefeated() {
 
 function openInventoryModal() {
   isInventoryModalOpen.value = true;
-  console.log("Inventory modal opened!");
+  console.log("Inventory modal opened.");
   console.log("isInventoryModalOpen value:", isInventoryModalOpen.value);
 }
 

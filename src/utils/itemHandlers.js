@@ -11,7 +11,7 @@ export function handleShopPurchase(
   if (item.isSpecialLoot) {
     purchased = true;
     utilityFunctions.log(
-      `✨ <span class="player-name">${gameData.playerName.value}</span> obtained ${item.name}!`
+      `✨ <span class="player-name">${gameData.playerName.value}</span> obtained ${item.name}.`
     );
   } else if (playerState.playerGold.value >= item.cost) {
     playerState.playerGold.value -= item.cost;
@@ -146,7 +146,7 @@ export function handleShopPurchase(
         } else if (item.details === "enlightenmentFish") {
           playerState.inventory.value.enlightenmentFish = 1;
           utilityFunctions.log(
-            `🐟 ${gameData.playerName.value} acquired The Fish of Eternal Enlightenment!`
+            `🐟 ${gameData.playerName.value} acquired The Fish of Eternal Enlightenment.`
           );
         } else if (item.details === "sharedSufferingAmulet") {
           playerState.inventory.value.sharedSufferingAmulets =
@@ -179,7 +179,7 @@ export function useCompass(
   const fullChain = gameData.chain;
 
   if (playerState.inventory.value.compass <= 0) {
-    utilityFunctions.log(`🧭 You don't have any Arcane Compasses to use!`);
+    utilityFunctions.log(`🧭 You don't have any Arcane Compasses to use.`);
     return;
   }
 
@@ -188,7 +188,7 @@ export function useCompass(
 
   if (!fullChain || fullChain.length === 0) {
     utilityFunctions.log(
-      `🧭 The compass spins wildly; there's no defined path to jump within yet!`
+      `🧭 The compass spins wildly; there's no defined path to jump within yet.`
     );
     console.warn(
       "useCompass: Attempted to use compass when fullChain is undefined or empty."
@@ -202,7 +202,7 @@ export function useCompass(
     utilityFunctions.isBoss(combatData.encounter.value.enemy)
   ) {
     utilityFunctions.log(
-      `🚫 You cannot use the Arcane Compass during a boss battle!`
+      `🚫 You cannot use the Arcane Compass during a boss battle.`
     );
     return;
   }
@@ -231,7 +231,7 @@ export function useCompass(
       `🧭 The compass pulls you, disorienting you for a moment, then guides you directly to ${targetArticle.replaceAll(
         "_",
         " "
-      )}!`
+      )}.`
     );
 
     const targetIndexInChain = fullChain.indexOf(targetArticle);
@@ -268,7 +268,7 @@ export const useHealthPotion = (
       playerState.effectiveMaxHP.value
     );
     utilityFunctions.log(
-      `You consumed a Health Potion and recovered ${itemConstants.HEALTH_POTION_HEAL_AMOUNT} HP! Your HP is now ${playerState.playerHP.value}.`
+      `You consumed a Health Potion and recovered ${itemConstants.HEALTH_POTION_HEAL_AMOUNT} HP. Your HP is now ${playerState.playerHP.value}.`
     );
   } else {
     utilityFunctions.log("You don't have any Health Potions to use.");
@@ -283,7 +283,7 @@ export const useTurkeyLeg = (playerState, utilityFunctions, itemConstants) => {
       playerState.effectiveMaxHP.value
     );
     utilityFunctions.log(
-      `🍖 You consumed a Turkey Leg and recovered ${itemConstants.TURKEY_LEG_HEAL_AMOUNT} HP! Your HP is now ${playerState.playerHP.value}.`
+      `🍖 You consumed a Turkey Leg and recovered ${itemConstants.TURKEY_LEG_HEAL_AMOUNT} HP. Your HP is now ${playerState.playerHP.value}.`
     );
   } else {
     utilityFunctions.log("You don't have any Turkey Legs to use.");
@@ -298,7 +298,7 @@ export const useBarkTea = (playerState, utilityFunctions, itemConstants) => {
       playerState.effectiveMaxHP.value
     );
     utilityFunctions.log(
-      `☕ You drank Bark Team and recovered ${itemConstants.BARK_TEA_HEAL_AMOUNT} HP! Your HP is now ${playerState.playerHP.value}.`
+      `☕ You drank Bark Team and recovered ${itemConstants.BARK_TEA_HEAL_AMOUNT} HP. Your HP is now ${playerState.playerHP.value}.`
     );
   } else {
     utilityFunctions.log("You don't have any Bark Tea to use.");
@@ -324,7 +324,7 @@ export const useFrenchOnionSoup = (
     playerState.specialUsesLeft.value += specialRestored;
 
     utilityFunctions.log(
-      `🥣 You consumed French Onion Soup and recovered ${healedAmount} HP and ${specialRestored} special use! Your HP is now ${playerState.playerHP.value}.`
+      `🥣 You consumed French Onion Soup and recovered ${healedAmount} HP and ${specialRestored} special use. Your HP is now ${playerState.playerHP.value}.`
     );
   } else {
     utilityFunctions.log("You don't have any French Onion Soup to use.");
@@ -339,7 +339,7 @@ export const useAntidote = (playerState, utilityFunctions) => {
       playerState.poisonedClicksLeft.value = 0;
       playerState.poisonDamagePerClick.value = 0;
       utilityFunctions.log(
-        `✅ You consumed an Antidote. The poison has been neutralized!`
+        `✅ You consumed an Antidote. The poison has been neutralized.`
       );
       utilityFunctions.closeInventoryModal();
     } else {
@@ -358,7 +358,7 @@ export const useInvisibilityCloak = (
   itemConstants
 ) => {
   if (playerState.isCloakActive.value) {
-    utilityFunctions.log(`👻 The Cloak of Invisibility is already active!`);
+    utilityFunctions.log(`👻 The Cloak of Invisibility is already active.`);
     return;
   }
   if (playerState.inventory.value.invisibilityCloaks > 0) {
@@ -366,7 +366,7 @@ export const useInvisibilityCloak = (
     playerState.isCloakActive.value = true;
     playerState.cloakClicksRemaining.value = itemConstants.CLOAK_DURATION;
     utilityFunctions.log(
-      `👻 You don the Cloak of Invisibility! You will avoid non-boss encounters for ${itemConstants.CLOAK_DURATION} clicks.`
+      `👻 You don the Cloak of Invisibility. You will avoid non-boss encounters for ${itemConstants.CLOAK_DURATION} clicks.`
     );
   } else {
     utilityFunctions.log(`👻 You don't have a Cloak of Invisibility.`);
@@ -375,7 +375,7 @@ export const useInvisibilityCloak = (
 
 export const useHerbalPoultice = (playerState, utilityFunctions) => {
   if (playerState.healthRegenActive.value) {
-    utilityFunctions.log(`🌿 A health regeneration effect is already active!`);
+    utilityFunctions.log(`🌿 A health regeneration effect is already active.`);
     return;
   }
   if (playerState.inventory.value.herbalPoultices > 0) {
@@ -392,7 +392,7 @@ export const useHerbalPoultice = (playerState, utilityFunctions) => {
       playerState.healthRegenMaxHeal.value = poulticeDetails.maxHeal;
       playerState.healthRegenHealedCount.value = 0;
       utilityFunctions.log(
-        `🌿 You applied a Herbal Poultice! Health will regenerate for ${poulticeDetails.durationClicks} clicks.`
+        `🌿 You applied a Herbal Poultice. Health will regenerate for ${poulticeDetails.durationClicks} clicks.`
       );
     } else {
       utilityFunctions.log(`Error: Herbal Poultice details not found.`);
@@ -416,7 +416,7 @@ export const useSmokeBomb = (
     ) {
       if (utilityFunctions.isBoss(combatData.encounter.value.enemy)) {
         utilityFunctions.log(
-          `🚫 You cannot use a Smoke Bomb during a boss battle!`
+          `🚫 You cannot use a Smoke Bomb during a boss battle.`
         );
         return;
       }
@@ -424,7 +424,7 @@ export const useSmokeBomb = (
       playerState.inventory.value.smokeBombs =
         Number(playerState.inventory.value.smokeBombs || 0) - 1;
       utilityFunctions.log(
-        `💨 You throw a Smoke Bomb! You swiftly escape the combat!`
+        `💨 You throw a Smoke Bomb. You swiftly escape the combat.`
       );
       combatData.encounter.value = null;
       modalState.bossOverlay.value = false;
@@ -454,7 +454,7 @@ export const useAdventurersRations = (
 
     if (playerState.blurClicksLeft.value > 0) {
       playerState.blurClicksLeft.value = 0;
-      utilityFunctions.log(`✨ Your vision clears!`);
+      utilityFunctions.log(`✨ Your vision clears.`);
     }
 
     utilityFunctions.log(
@@ -475,7 +475,7 @@ export const useEnlightenmentFish = (
     const healedAmount = fishHPState.enlightenmentFishAccumulatedHP.value;
     if (healedAmount <= 0) {
       utilityFunctions.log(
-        `🐟 The Fish of Eternal Enlightenment has no HP accumulated yet!`
+        `🐟 The Fish of Eternal Enlightenment has no HP accumulated yet.`
       );
       return;
     }
@@ -488,7 +488,7 @@ export const useEnlightenmentFish = (
     fishHPState.enlightenmentFishAccumulatedHP.value = 0;
 
     utilityFunctions.log(
-      `🐟 You consumed The Fish of Eternal Enlightenment and recovered ${healedAmount} HP! Your HP is now ${playerState.playerHP.value}.`
+      `🐟 You consumed The Fish of Eternal Enlightenment and recovered ${healedAmount} HP. Your HP is now ${playerState.playerHP.value}.`
     );
   } else {
     utilityFunctions.log("You don't have The Fish of Eternal Enlightenment.");
@@ -503,7 +503,7 @@ export const useAmuletOfSharedSuffering = (
 ) => {
   if (playerState.inventory.value.sharedSufferingAmulets <= 0) {
     utilityFunctions.log(
-      `💔 You don't have an Amulet of Shared Suffering to use!`
+      `💔 You don't have an Amulet of Shared Suffering to use.`
     );
     return;
   }
@@ -513,7 +513,7 @@ export const useAmuletOfSharedSuffering = (
 
   if (!isInCombat) {
     utilityFunctions.log(
-      `🚫 The Amulet of Shared Suffering can only be used in combat!`
+      `🚫 The Amulet of Shared Suffering can only be used in combat.`
     );
     return;
   }
@@ -528,7 +528,7 @@ export const useAmuletOfSharedSuffering = (
     combatData.enemyHP.value - enemyDamage
   );
   utilityFunctions.log(
-    `💔 You activate the Amulet of Shared Suffering! The enemy takes ${enemyDamage} damage!`
+    `💔 You activate the Amulet of Shared Suffering. The enemy takes ${enemyDamage} damage.`
   );
 
   playerState.playerHP.value = Math.max(
@@ -540,7 +540,7 @@ export const useAmuletOfSharedSuffering = (
   );
 
   if (combatData.enemyHP.value <= 0) {
-    utilityFunctions.log(`💥 The enemy was defeated by the amulet's power!`);
+    utilityFunctions.log(`💥 The enemy was defeated by the amulet's power.`);
     utilityFunctions.handleLootDrop(combatData.encounter.value.enemy);
     utilityFunctions.handleCloseEncounter();
   } else {
@@ -563,7 +563,7 @@ export const useMinorHealthPotion = (
       playerState.effectiveMaxHP.value
     );
     utilityFunctions.log(
-      `You consumed a Potion of Minor Health and recovered ${itemConstants.MINOR_HEALTH_POTION_HEAL_AMOUNT} HP! Your HP is now ${playerState.playerHP.value}.`
+      `You consumed a Potion of Minor Health and recovered ${itemConstants.MINOR_HEALTH_POTION_HEAL_AMOUNT} HP. Your HP is now ${playerState.playerHP.value}.`
     );
   } else {
     utilityFunctions.log("You don't have any Potions of Minor Health to use.");

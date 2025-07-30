@@ -277,13 +277,11 @@ const openModal = () => {
 const closeModal = () => {
   isModalOpen.value = false;
 };
-const isNotesModalOpen = ref(false); // Controls the visibility of the NotesModal
+const isNotesModalOpen = ref(false); 
 const openNotesModal = () => {
-  // Function to open the NotesModal
   isNotesModalOpen.value = true;
 };
 const closeNotesModal = () => {
-  // Function to close the NotesModal
   isNotesModalOpen.value = false;
 };
 
@@ -434,7 +432,7 @@ watch(
       if (newEncounter.enemy?.isBoss) {
         fullText = `💀 <strong>BOSS ENCOUNTER:</strong> ${
           newEncounter.enemy.name ?? "Unknown Boss"
-        }!<br><br>${
+        }.<br><br>${
           newEncounter.enemy.message || "Prepare for the fight of your life."
         }`;
       } else if (newEncounter.enemy?.isMiniBoss) {
@@ -442,7 +440,7 @@ watch(
           newEncounter.enemy.name ?? "Unknown Mini-Boss"
         }</strong> from <strong>${
           props.formattedTitle ?? "an unknown location"
-        }</strong>! (HP: ${newEncounter.enemy.currentHP}) What do you do?`;
+        }</strong>. (HP: ${newEncounter.enemy.currentHP}) What do you do?`;
       } else {
         let baseCombatMessage = `🗡️ You've been attacked by <strong>${
           props.formattedTitle ?? "an unknown location"
@@ -577,8 +575,8 @@ watch(
       if (newEncounter.enemy?.isBoss) {
         fullText = `💀 <strong>BOSS ENCOUNTER:</strong> ${
           newEncounter.enemy.name
-        }!<br><br>${
-          newEncounter.enemy.message || "Prepare for the fight of your life."
+        }.<br><br>${
+          newEncounter.enemy.message || "Roll for damage."
         }`;
       } else if (newEncounter.enemy?.message) {
         fullText = newEncounter.enemy.message;

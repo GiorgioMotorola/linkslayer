@@ -37,7 +37,7 @@ export async function handleClick({
 
   if (title === gameData.chain[playerState.currentTargetIndex.value + 1]) {
     playerState.currentTargetIndex.value++;
-    utilityFunctions.log(`🎯 You have reached ${title.replaceAll("_", " ")}!`);
+    utilityFunctions.log(`🎯 You have reached ${title.replaceAll("_", " ")}.`);
   }
 
   let encounterPreventedByCloak = false;
@@ -80,8 +80,8 @@ export async function handleClick({
     playerState.combatEncountersFought.value++;
 
     utilityFunctions.log(
-      `💀 <strong>BOSS ENCOUNTER:</strong> ${boss.name}!<br><br>${
-        boss.message || "Prepare for the fight of your life."
+      `💀 <strong>BOSS ENCOUNTER:</strong> ${boss.name}.<br><br>${
+        boss.message || "Roll for damage."
       }`
     );
 
