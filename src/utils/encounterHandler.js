@@ -434,10 +434,5 @@ export function handleEncounterOption({
   if (currentEncounter !== null) {
     enemyState.encounter.value = null;
     modalState.bossOverlay.value = false;
-    utilityFunctions.log(
-      `Encounter closed by fallback for option result: ${
-        option.result || "none"
-      }`
-    );
   }
 }
