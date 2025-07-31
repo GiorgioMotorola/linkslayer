@@ -960,29 +960,134 @@ button:hover {
 }
 
 @media screen and (max-width: 600px) {
+
+header {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #e8ecee;
+  z-index: 100;
+  padding: 0.2rem;
+  border-top: 1.5px solid #000000;
+  transition: background-color 1.5s ease-in-out, filter 1.5s ease-in-out;
+  color: rgb(35, 36, 35);
+  transition: background-color 1.5s ease-in-out, filter 1.5s ease-in-out,
+    color 1.5s ease-in-out;
+
+  display: flex;
+  flex-direction: column;
+}
+
   .path {
     font-size: 17px;
     margin-bottom: 1rem;
   }
 
   .player-name-line {
-    font-size: 20px;
+    font-size: 16px;
   }
 
-  .all-stats-row-box {
-    padding: 0.6rem 0.8rem;
-    gap: 1rem;
-  }
+.all-stats-row-box {
+  background-color: #e3e6e6;
+  border: 1px solid #080808;
+  border-radius: 8px;
+  padding: 0rem 0rem;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: fit-content;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0rem;
+  color: rgb(229, 231, 229);
+}
 
   .stat-label {
-    font-size: 14px;
+    font-size: 11px;
   }
 
   .stat-value {
-    font-size: 24px;
+    font-size: 11px;
   }
 
   .current-path {
     font-size: 13px;
   }
+
+.inventory-button, .notes-button {
+  border: 1px solid #2c3e50;
+  border-radius: 0.3rem;
+  padding: 0.3rem 0.3rem;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 400;
+  transition: none;
+  box-shadow: none;
+  letter-spacing: 0px;
+}
+
+.stat-column,
+.stat-column-hp,
+.stat-column-clicks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.stat-column-hp {
+  border-right: none;
+  padding-right: .5rem;
+}
+
+.stat-column-clicks {
+  border-left: none;
+  padding-left: .5rem;
+}
+
+.game-log {
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: #1f2e4a;
+  color: rgb(229, 231, 229);
+  font-family: monospace;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  border: 1px solid #080808;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: "IBM Plex Sans", sans-serif;
+}
+
+.log {
+  color: rgb(229, 231, 229);
+  font-size: 13px;
+  padding: 0.3rem;
+}
+
+.log-btns {
+  display: flex;
+  flex-direction: row;
+  border: none;
+  background-color: #1f2e4a;
+  font-size: 11px;
+  margin-top: 0rem;
+  color: rgb(229, 231, 229);
+  font-weight: 400;
+  gap: 1rem;
+}
+
+.latest-log {
+  font-weight: bold;
+  font-size: 14px;
+  background-color: #4a91e265;
+}
+
+.log-entry {
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
 }
