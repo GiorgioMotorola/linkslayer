@@ -49,7 +49,7 @@ export function handleLootDrop({ playerState, utilityFunctions }) {
     }
 
     case "gold": {
-      const amount = Math.floor(Math.random() * 16) + 5;
+      const amount = Math.floor(Math.random() * 30) + 10;
       playerGold.value += amount;
       log(
         `💰 <span class="player-name">${playerName.value}</span> loots ${amount} Gold Pieces.`
