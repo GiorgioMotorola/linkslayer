@@ -128,21 +128,6 @@ const load = async () => {
     return;
   }
 
-  const articleContent = await fetchWikipediaArticle(props.articleTitle);
-  await new Promise(resolve => setTimeout(resolve, 10));
-
-  if (articleContent === null) {
-    console.error(
-      `🛑 Failed to load article: ${props.articleTitle}. Keeping previous content.`
-    );
-    showAndClearError(
-      `Failed to load "${props.articleTitle}". Please try another link.`,
-      4000
-    );
-
-    return;
-  }
-
   try {
     const articleContent = await fetchWikipediaArticle(props.articleTitle);
 
@@ -154,7 +139,6 @@ const load = async () => {
         `Failed to load "${props.articleTitle}". Please try another link.`,
         4000
       );
-      articleHtml.value = "";
       return;
     }
 
@@ -175,9 +159,6 @@ const handleLinkClick = (event) => {
   if (props.inEncounter || isLoading.value) {
     return;
   }
-  if (props.inEncounter) {
-    return;
-  }
 
   const anchor = event.target.closest("a");
   if (anchor) {
@@ -189,7 +170,10 @@ const handleLinkClick = (event) => {
 
       if (!isWikipedia) {
         showAndClearError(
-          `Sorry, "${title}" is a link that will not load properly, probably due to being in another language other than English or a Wikitionary article. Please try another article.`,
+          `Sorry, "${title.replaceAll(
+            "_",
+            " "
+          )}" is not a Wikipedia article and will not load properly. Please try another link.`,
           4000
         );
         return;
@@ -200,7 +184,10 @@ const handleLinkClick = (event) => {
         emit("link-clicked", title);
       } else {
         showAndClearError(
-          `Sorry, "${title}" is not an English Wikipedia article and will not load properly. Try another article.`,
+          `Sorry, "${title.replaceAll(
+            "_",
+            " "
+          )}" is not an English Wikipedia article and will not load properly. Try another article.`,
           3500
         );
       }
@@ -257,7 +244,7 @@ onMounted(load);
   font-size: 20px;
   text-align: center;
   margin-bottom: 0.5rem;
-    font-family: "Roboto", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .path-display {
@@ -278,7 +265,7 @@ onMounted(load);
   justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
-   background: #E8ECEE;
+  background: #e8ecee;
 }
 
 .path-display .separator {
@@ -316,11 +303,11 @@ onMounted(load);
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.3); 
+  background: rgba(255, 255, 255, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 50; 
+  z-index: 50;
   flex-direction: column;
 }
 
@@ -329,17 +316,6 @@ onMounted(load);
   color: #333;
   font-size: 1.2em;
 }
-
-/* .spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #02e437;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 10px auto;
-  z-index: 9000;
-} */
 
 @media screen and (max-width: 600px) {
   .article {
