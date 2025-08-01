@@ -109,6 +109,7 @@
         :longRestsUsed="longRestsUsed"
         :weaponPieces="inventory.weaponPieces"
         :defensePieces="inventory.defensePieces"
+        :restModalCount="restModalCount"
         @rest="callHandleRest"
         @assemble-upgrade="handleAssembleUpgradeWrapper"
       />
@@ -273,6 +274,8 @@ const healthRegenClicksRemaining = ref(0);
 const healthRegenMaxHeal = ref(0);
 const healthRegenHealedCount = ref(0);
 const isLoadingGame = ref(false);
+const enemyDifficultyLevel = ref(0);
+const restModalCount = ref(0);
 const inventory = ref({
   compass: 0,
   healthPotions: 0,
@@ -321,6 +324,12 @@ const effectiveMaxHP = computed(() => {
   return playerClass.value ? playerClass.value.maxHP + hpCapBonus.value : 0;
 });
 
+watch(showRestModal, (newValue) => {
+  if (newValue) {
+    restModalCount.value++;
+  }
+});
+
 watch(playerHP, (newVal) => {
   if (playerClass.value && newVal <= 0 && !defeated.value) {
     log(
@@ -333,10 +342,10 @@ watch(playerHP, (newVal) => {
 });
 
 watch(clickCount, (newClicks) => {
-  if (newClicks > 0 && newClicks % 15 === 0) {
+  if (newClicks > 0 && newClicks % 12 === 0) {
     showRestModal.value = true;
   }
-  if (newClicks > 0 && newClicks % 12 === 0 && !showRestModal.value) {
+  if (newClicks > 0 && newClicks % 10 === 0 && !showRestModal.value) {
     showShopModal.value = true;
   }
 
@@ -482,6 +491,7 @@ async function callHandleClick(title) {
       combatWinsSinceLastCapIncrease,
     },
     gameData: {
+      enemyDifficultyLevel: enemyDifficultyLevel.value, 
       chain,
       current,
       bossSpawned,
@@ -521,6 +531,7 @@ async function callHandleClick(title) {
 }
 
 function callHandleRest(choice) {
+  const isLongRestTaken = ref(false);
   handleRest({
     player: {
       playerHP,
@@ -533,12 +544,19 @@ function callHandleRest(choice) {
       restChoice: choice,
       shortRestsUsed,
       longRestsUsed,
+      isLongRestTaken,
     },
     utils: {
       log,
       showRestModal,
     },
   });
+  if (isLongRestTaken.value) {
+    enemyDifficultyLevel.value++;
+    log(
+      `⚔️ The world gets a little more dangerous.`
+    );
+  }
 }
 const handleLoot = (defeatedEnemyData) => {
   const lootHandlerArgs = {

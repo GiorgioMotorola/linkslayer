@@ -129,7 +129,7 @@
           </div>
         </div>
 
-        <div class="stat-column">
+        <!-- <div class="stat-column">
           <div class="stat-label">Short Rest</div>
           <div class="stat-value" :class="shortRestAnimClass">
             {{ 4 - shortRestsUsedCount }}
@@ -141,7 +141,7 @@
           <div class="stat-value" :class="longRestAnimClass">
             {{ 2 - longRestsUsedCount }}
           </div>
-        </div>
+        </div> -->
 
         <div class="stat-column">
           <div class="stat-label">Gold</div>

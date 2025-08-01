@@ -90,7 +90,7 @@ const share = () => {
     `Total Clicks: ${props.clicks}\n` +
     (props.shortcutsUsed > 0
       ? `Shortcuts Used: ${props.shortcutsUsed}\n`
-      : "Shortcuts Used: 0\n") + // Added '\n' for consistency
+      : "Shortcuts Used: 0\n") + 
     `Time: ${props.timer}\n` +
     `Combat Encounters: ${props.combatEncountersFought}\n` +
     `HP Remaining: ${props.playerHP}\n` +

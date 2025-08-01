@@ -14,24 +14,11 @@ export function handleLootDrop({ playerState, utilityFunctions }) {
   } = playerState;
   const { log } = utilityFunctions;
 
-  const lootOptions = [
-    "weaponPiece",
-    "special",
-    "defensePiece",
-    "gold",
-    "turkeyLeg",
-  ];
+  const lootOptions = ["weaponPiece", "defensePiece", "gold"];
   const selectedLoot =
     lootOptions[Math.floor(Math.random() * lootOptions.length)];
 
   switch (selectedLoot) {
-    case "special": {
-      specialUsesLeft.value += 1;
-      log(
-        `🎁 <span class="player-name">${playerName.value}</span> regains +1 Class Ability charges. (Total: ${specialUsesLeft.value})`
-      );
-      break;
-    }
     case "weaponPiece": {
       inventory.value.weaponPieces = (inventory.value.weaponPieces || 0) + 1;
       log(
@@ -53,13 +40,6 @@ export function handleLootDrop({ playerState, utilityFunctions }) {
       playerGold.value += amount;
       log(
         `💰 <span class="player-name">${playerName.value}</span> loots ${amount} Gold Pieces.`
-      );
-      break;
-    }
-    case "turkeyLeg": {
-      inventory.value.turkeyLegs++;
-      log(
-        `🍖 <span class="player-name">${playerName.value}</span> loots a Turkey Leg.`
       );
       break;
     }

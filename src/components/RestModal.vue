@@ -5,16 +5,14 @@
 
       <div class="rest-options">
         <button
+          v-if="shouldShowShortRest"
           @click="handleRestChoice('short')"
           :disabled="props.shortRestsUsed >= 4"
         >
           Short Rest (+10 HP) ({{ 4 - props.shortRestsUsed }} left)
         </button>
-        <button
-          @click="handleRestChoice('long')"
-          :disabled="props.longRestsUsed >= 2"
-        >
-          Long Rest (+20 HP, +1 Special) ({{ 2 - props.longRestsUsed }} left)
+        <button v-if="shouldShowLongRest" @click="handleRestChoice('long')">
+          Long Rest (+20 HP, +1 Special)
         </button>
         <button
           @click="handleAssemble('weapon')"
@@ -37,7 +35,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch } from "vue";
+import { defineProps, defineEmits, ref, watch, computed } from "vue";
 import { getRandomRestPhrase } from "../utils/restPhrases.js";
 
 const props = defineProps({
@@ -46,6 +44,7 @@ const props = defineProps({
   longRestsUsed: Number,
   weaponPieces: { type: Number, default: 0 },
   defensePieces: { type: Number, default: 0 },
+  restModalCount: Number,
 });
 
 const currentRestPhrase = ref("");
@@ -69,6 +68,14 @@ const handleRestChoice = (choice) => {
 const handleAssemble = (type) => {
   emit("assemble-upgrade", type);
 };
+
+const shouldShowLongRest = computed(() => {
+  return props.restModalCount % 2 === 0;
+});
+
+const shouldShowShortRest = computed(() => {
+  return props.restModalCount % 2 !== 0;
+});
 </script>
 
 <style scoped>
