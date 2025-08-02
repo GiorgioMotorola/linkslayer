@@ -1,5 +1,4 @@
 // utils/encounterGenerator.js
-
 import loreData from "@/assets/data/loreEncounters.json";
 import npcData from "@/assets/data/friendlyEncounters.json";
 import { ENEMY_TYPES } from "@/utils/enemies";
@@ -41,22 +40,19 @@ export function rollEncounter(difficultyLevel) {
 export function generateEnemy(difficultyLevel = 0) {
   const enemyData = ENEMY_TYPES[Math.floor(Math.random() * ENEMY_TYPES.length)];
 
-  // Scale HP: +2 HP per difficulty level
-  const scaledMinHP = enemyData.minHP + (2 * difficultyLevel);
-  const scaledMaxHP = enemyData.maxHP + (2 * difficultyLevel);
+  const scaledMinHP = enemyData.minHP + 2 * difficultyLevel;
+  const scaledMaxHP = enemyData.maxHP + 2 * difficultyLevel;
 
-  // Scale damage: +1 to both min and max damage per difficulty level
-  const scaledMinDamage = enemyData.minDamage + (1 * difficultyLevel);
-  const scaledMaxDamage = enemyData.maxDamage + (1 * difficultyLevel);
+  const scaledMinDamage = enemyData.minDamage + 2 * difficultyLevel;
+  const scaledMaxDamage = enemyData.maxDamage + 2 * difficultyLevel;
 
   const hp =
-    Math.floor(Math.random() * (scaledMaxHP - scaledMinHP + 1)) +
-    scaledMinHP;
+    Math.floor(Math.random() * (scaledMaxHP - scaledMinHP + 1)) + scaledMinHP;
 
   return {
     ...enemyData,
     currentHP: hp,
     minDamage: scaledMinDamage,
-    maxDamage: scaledMaxDamage
+    maxDamage: scaledMaxDamage,
   };
 }

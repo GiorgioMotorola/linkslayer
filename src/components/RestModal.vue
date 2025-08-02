@@ -9,7 +9,7 @@
           @click="handleRestChoice('short')"
           :disabled="props.shortRestsUsed >= 4"
         >
-          Short Rest (+10 HP) ({{ 4 - props.shortRestsUsed }} left)
+          Short Rest (+10 HP)
         </button>
         <button v-if="shouldShowLongRest" @click="handleRestChoice('long')">
           Long Rest (+20 HP, +1 Special)

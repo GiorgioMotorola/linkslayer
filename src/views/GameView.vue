@@ -491,7 +491,7 @@ async function callHandleClick(title) {
       combatWinsSinceLastCapIncrease,
     },
     gameData: {
-      enemyDifficultyLevel: enemyDifficultyLevel.value, 
+      enemyDifficultyLevel,
       chain,
       current,
       bossSpawned,
@@ -531,8 +531,7 @@ async function callHandleClick(title) {
 }
 
 function callHandleRest(choice) {
-  const isLongRestTaken = ref(false);
-  handleRest({
+  const restType = handleRest({
     player: {
       playerHP,
       playerClass,
@@ -544,17 +543,17 @@ function callHandleRest(choice) {
       restChoice: choice,
       shortRestsUsed,
       longRestsUsed,
-      isLongRestTaken,
     },
     utils: {
       log,
       showRestModal,
     },
   });
-  if (isLongRestTaken.value) {
-    enemyDifficultyLevel.value++;
+
+  if (restType === "long") {
+    enemyDifficultyLevel.value = enemyDifficultyLevel.value + 1;
     log(
-      `⚔️ The world gets a little more dangerous.`
+      `⚔️ The world gets ${enemyDifficultyLevel.value} times more dangerous.`
     );
   }
 }
@@ -809,16 +808,6 @@ function handleAssembleUpgrade({
   utilityFunctions,
 }) {
   const { log } = utilityFunctions;
-
-  console.log(`Attempting to assemble ${upgradeType} upgrade.`);
-  console.log(
-    `Current Weapon Pieces (Type: ${typeof inventory.value.weaponPieces}):`,
-    inventory.value.weaponPieces
-  );
-  console.log(
-    `Current Defense Pieces (Type: ${typeof inventory.value.defensePieces}):`,
-    inventory.value.defensePieces
-  );
 
   if (upgradeType === "weapon") {
     if (inventory.value.weaponPieces >= 2) {
@@ -1176,8 +1165,6 @@ function markBossDefeated() {
 
 function openInventoryModal() {
   isInventoryModalOpen.value = true;
-  console.log("Inventory modal opened.");
-  console.log("isInventoryModalOpen value:", isInventoryModalOpen.value);
 }
 
 function closeInventoryModal() {

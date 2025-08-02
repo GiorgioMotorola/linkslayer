@@ -7,24 +7,32 @@ export function handleRest({ player, state, utils }) {
   const { log, showRestModal } = utils;
 
   const choice = restChoice;
+  let restType = null;
 
   if (choice === "short" && shortRestsUsed.value < 100) {
     const healAmount = 10;
     playerHP.value = Math.min(playerHP.value + healAmount, effectiveMaxHP);
     log(`${playerName.value} feels rested and has gained +${healAmount}HP.`);
     shortRestsUsed.value++;
+    restType = "short";
   } else if (choice === "long" && longRestsUsed.value < 100) {
-    const healAmount = 20;
-    playerHP.value = Math.min(playerHP.value + healAmount, effectiveMaxHP);
-    log(`${playerName.value} feels rested and has gained +${healAmount}HP.`);
-    longRestsUsed.value++;
+    playerHP.value = effectiveMaxHP;
     specialUsesLeft.value = specialUsesLeft.value + 1;
-    log(`${playerName.value} also recovered 1 Class Ability charge.`);
+    log(
+      `${playerName.value} takes a long rest. Your HP and Class Ability charges are fully restored.`
+    );
+    longRestsUsed.value++;
+    restType = "long";
   } else if (choice === "continue") {
     log(`${playerName.value} decided not to rest and continued their journey.`);
+    restType = "continue";
+  } else {
+    log("You cannot rest any further at this time.");
+    restType = "none";
   }
 
   showRestModal.value = false;
+  return restType;
 }
 
 export function handleAssembleUpgrade({
