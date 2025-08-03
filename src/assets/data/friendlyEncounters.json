@@ -952,10 +952,10 @@
   {
     "id": "npc_019_karaoke_contest",
     "name": "The Bard's Library Karaoke",
-    "greeting": "You step into the grand hall of the Bard's Library, usually a place of quiet study, but tonight it's abuzz with an unusual energy. A makeshift stage is set up, and a sign reads: 'Karaoke Contest. Master the Ballad of the Wandering Blade.'",
+    "greeting": "You step into the grand hall of the Bard's Library, usually a place of quiet study, but tonight it's abuzz with an unusual energy. A makeshift stage is set up, and a sign reads: 'Tonight: Karaoke Contest.' The air vibrates with nervous excitement and off-key singing. A cheerful gnome gestures towards the stage. 'Care to try your hand, traveler? Tonight, we seek the finest rendition of 'Molly Malone'. Winner gets 100 Gold Pieces.'",
     "dialogueNodes": {
       "start": {
-        "text": "The air vibrates with nervous excitement and off-key singing. A cheerful gnome gestures towards the stage. 'Care to try your hand, traveler? Tonight, we seek the finest rendition of 'Molly Malone'. Winner gets 100 Gold Pieces.'",
+        "text":"You step into the grand hall of the Bard's Library, usually a place of quiet study, but tonight it's abuzz with an unusual energy. A makeshift stage is set up, and a sign reads: 'Tonight: Karaoke Contest.' The air vibrates with nervous excitement and off-key singing. A cheerful gnome gestures towards the stage. 'Care to try your hand, traveler? Tonight, we seek the finest rendition of 'Molly Malone'. Winner gets 100 Gold Pieces.'",
         "options": [
           {
             "text": "Sign up for the contest despite not knowing the song at all.",
@@ -1401,6 +1401,219 @@
             "effect": "inventoryItem",
             "details": "enlightenmentFish",
             "responseText": "You receive The Fish of Eternal Enlightenment. It shimmers with ancient power."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "npc_020_kidnapped_encounter",
+    "name": "The Fallen Tree",
+    "greeting": "A quiet walk through the woods is shattered by a desperate scream for help. You follow the sound, finding a person pinned beneath a large, fallen tree. The person is struggling, their face a mask of pain. Their voice is weak, pleading for you to help them.",
+    "dialogueNodes": {
+      "start": {
+        "text": "A quiet walk through the woods is shattered by a desperate scream for help. You follow the sound, finding a person pinned beneath a large, fallen tree. The person is struggling, their face a mask of pain. Their voice is weak, pleading for you to help them.",
+        "options": [
+          {
+            "text": "Attempt to lift the tree off the person.",
+            "flow": "dialogue_branch",
+            "next_node_id": "kidnapped_start"
+          },
+          {
+            "text": "Ask the person for their name.",
+            "flow": "dialogue_branch",
+            "next_node_id": "kidnapped_start"
+          },
+          {
+            "text": "Steal the person's gold.",
+            "flow": "dialogue_branch",
+            "next_node_id": "kidnapped_start"
+          },
+          {
+            "text": "Walk away as if you didn't hear anything at all.",
+            "flow": "close_encounter",
+            "responseText": "You turn and walk away, the scream fading behind you. Best not to get involved."
+          }
+        ]
+      },
+      "kidnapped_start": {
+        "text": "As you get closer, you feel a sharp pain on the back of your head. The lights go out, and your consciousness drifts away.",
+        "options": [
+          {
+            "text": "Drift into a dream.",
+            "flow": "dialogue_branch",
+            "next_node_id": "dream_sequence"
+          }
+        ]
+      },
+      "dream_sequence": {
+        "text": "You dream of a time long ago, safe and sound at your parents' old peat-covered lakehouse. You are young again, chasing squirrels and helping your father chop wood by the shore. Everything is calm. You are safe. You are safe.",
+        "options": [
+          {
+            "text": "Wake up from the dream.",
+            "flow": "dialogue_branch",
+            "next_node_id": "wakeup"
+          }
+        ]
+      },
+      "wakeup": {
+        "text": "You wake up with a jolt, a dull ache throbbing in your head. You are tied to a chair with ropes in a dimly lit, underground bunker. A closed metal door sits opposite you. At a nearby table, a man is sitting, calmly cutting up an apple with a knife and eating the pieces.",
+        "options": [
+          {
+            "text": "Attempt to stand up.",
+            "flow": "dialogue_branch",
+            "next_node_id": "wakeup_stand"
+          },
+          {
+            "text": "Scream, 'Where am I?! Who are you?!'",
+            "flow": "dialogue_branch",
+            "next_node_id": "dialogue_route"
+          },
+          {
+            "text": "Offer your gold to be released.",
+            "flow": "dialogue_branch",
+            "next_node_id": "wakeup_gold"
+          },
+          {
+            "text": "Threaten to kill the man.",
+            "flow": "dialogue_branch",
+            "next_node_id": "choke_event"
+          },
+          {
+            "text": "Say nothing and stare at the man.",
+            "flow": "dialogue_branch",
+            "next_node_id": "wakeup_stare"
+          }
+        ]
+      },
+      "wakeup_stand": {
+        "text": "You strain against the ropes, attempting to stand, but the chair topples over. The man sighs, gets up, and without a word, rights the chair and you back up straight.",
+        "options": [
+          {
+            "text": "Continue",
+            "flow": "dialogue_branch",
+            "next_node_id": "wakeup"
+          }
+        ]
+      },
+      "wakeup_gold": {
+        "text": "The man doesn't even look up from his apple. 'Oh, don't worry,' he says, 'we plan on stealing everything from you no matter how this turns out.'",
+        "options": [
+          {
+            "text": "Continue",
+            "flow": "dialogue_branch",
+            "next_node_id": "wakeup"
+          }
+        ]
+      },
+      "wakeup_stare": {
+        "text": "You stare at the man. The man continues to stare at his apple, taking another bite.",
+        "options": [
+          {
+            "text": "Continue",
+            "flow": "dialogue_branch",
+            "next_node_id": "wakeup"
+          }
+        ]
+      },
+      "dialogue_route": {
+        "text": "The man stops cutting his apple, puts the knife on the table, and meets your gaze. 'Me? I'm nobody. You? You're a ransom toward a big payday.'",
+        "options": [
+          {
+            "text": "'Ransom?! I'm nobody!'",
+            "flow": "dialogue_branch",
+            "next_node_id": "dialogue_route_2"
+          },
+          {
+            "text": "'You'll pay for this!'",
+            "flow": "dialogue_branch",
+            "next_node_id": "dialogue_route_3"
+          }
+        ]
+      },
+      "dialogue_route_2": {
+        "text": "'We have been following you,' he says, a small smile playing on his lips. 'We've seen you talk to Lords and Kings on your journey. You are definitely somebody.'",
+        "options": [
+          {
+            "text": "Continue the encounter.",
+            "flow": "dialogue_branch",
+            "next_node_id": "wakeup"
+          }
+        ]
+      },
+      "dialogue_route_3": {
+        "text": "'You mean your Kings and noblepeople will pay us for this?' he replies with a sneer.",
+        "options": [
+          {
+            "text": "Continue the encounter.",
+            "flow": "dialogue_branch",
+            "next_node_id": "wakeup"
+          }
+        ]
+      },
+      "choke_event": {
+        "text": "The man laughs, puts a piece of apple in his mouth, starts chewing, and stands up. He walks over to you, pointing the knife at your throat. With a mouth full of apple, he says, 'Yeah... very funny. I'm not the one tied u-' He suddenly starts choking, grabbing his throat. He falls down, flailing on the ground, and soon enough, the life leaves his body. His knife clatters to the floor.",
+        "options": [
+          {
+            "text": "Fall on the ground near the knife to cut your ropes free.",
+            "flow": "dialogue_branch",
+            "next_node_id": "freedom_options"
+          }
+        ]
+      },
+      "freedom_options": {
+        "text": "After a struggle, you manage to cut yourself free. You stand up, your legs still a little unsteady, and look around the bunker. The metal door is your only way out.",
+        "options": [
+          {
+            "text": "Open the door.",
+            "flow": "dialogue_branch",
+            "next_node_id": "open_door"
+          }
+        ]
+      },
+      "open_door": {
+        "text": "You open the metal door, revealing a small hallway. You can go left or right.",
+        "options": [
+          {
+            "text": "Go left.",
+            "flow": "dialogue_branch",
+            "next_node_id": "go_left"
+          },
+          {
+            "text": "Go right.",
+            "flow": "dialogue_branch",
+            "next_node_id": "go_right"
+          }
+        ]
+      },
+      "go_left": {
+        "text": "You hear a loud clanking of ale glasses and loud, drunken voices through a closed door on the left.",
+        "options": [
+          {
+            "text": "Kick the door down and get your revenge for ruining a nice day.",
+            "result": "mini_boss_combat",
+            "miniBossType": "Drunken Kidnappers",
+            "responseText": "You smash the door off its hinges, revealing a room full of rowdy, startled kidnappers. They all turn to face you."
+          },
+          {
+            "text": "Turn around and go right instead.",
+            "flow": "dialogue_branch",
+            "next_node_id": "go_right"
+          }
+        ]
+      },
+      "go_right": {
+        "text": "You see a set of stairs leading up to a cellar door.",
+        "options": [
+          {
+            "text": "Turn around and go the other way.",
+            "flow": "dialogue_branch",
+            "next_node_id": "go_left"
+          },
+          {
+            "text": "Go through the cellar door.",
+            "flow": "close_encounter",
+            "responseText": "You carefully open the cellar door and slip outside, into the cool night air. You are free."
           }
         ]
       }

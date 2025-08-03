@@ -145,7 +145,7 @@ export const MINI_BOSS_TYPES = [
     weaponReward: 1,
     defenseReward: 2,
   },
-    {
+  {
     type: "Grotto Banshee",
     hp: 80,
     minDamage: 5,
@@ -153,6 +153,15 @@ export const MINI_BOSS_TYPES = [
     goldReward: 0,
     weaponReward: 1,
     defenseReward: 0,
+  },
+  {
+    type: "Drunken Kidnappers",
+    hp: 130,
+    minDamage: 6,
+    maxDamage: 9,
+    goldReward: 150,
+    weaponReward: 1,
+    defenseReward: 1,
   },
 ];
 
