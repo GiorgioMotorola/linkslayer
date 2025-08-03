@@ -9,10 +9,10 @@
           @click="handleRestChoice('short')"
           :disabled="props.shortRestsUsed >= 4"
         >
-          Short Rest (+10 HP)
+          Short Rest (+20 HP)
         </button>
         <button v-if="shouldShowLongRest" @click="handleRestChoice('long')">
-          Long Rest (+20 HP, +1 Special)
+          Long Rest (Restores HP to full, +1 class ability, Enemey Health and Damage increases.)
         </button>
         <button
           @click="handleAssemble('weapon')"

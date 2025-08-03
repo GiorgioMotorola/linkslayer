@@ -1,7 +1,11 @@
 <template>
   <div class="modal">
     <div class="class-select">
-      <div class="game-title">LINKSLAYER</div>
+      <div class="game-title">
+        <h4>LINK&nbsp;</h4>
+        <img :src="logo" alt="LINKSLAYER game title" />
+        <h4>&nbsp;SLAYER</h4>
+      </div>
       <div id="notification-banner" class="notification-banner">
         <span id="notification-message"></span>
         <button class="close-button" @click="hideNotification">×</button>
@@ -49,6 +53,7 @@ import { classes } from "@/utils/classes";
 import prompts from "@/assets/data/prompts.json";
 import TipsModal from "./TipsModal.vue";
 import randomNames from "@/assets/data/randomNames.json";
+import logo from "../assets/newlogo-nobg.png";
 
 const name = ref("");
 const emit = defineEmits(["select", "show-tips"]);
@@ -220,17 +225,22 @@ watch(
 }
 
 .game-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h4 {
   font-family: "Metal Mania", system-ui;
-  font-size: 40px;
   font-weight: 400;
-  margin-bottom: 0.5rem;
-  letter-spacing: 4px;
-  text-decoration-line: underline;
+  letter-spacing: 10px;
   text-decoration-color: rgb(99, 79, 79);
   color: #990000;
-  text-shadow: -2px -2px 0 #000000, 2px -2px 0 #000000, -2px 2px 0 #000000,
-    2px 2px 0 #000000, -2px 0px 0 #000000, 2px 0px 0 #000000, 0px -2px 0 #000000,
-    0px 2px 0 #000000;
+}
+
+.game-title img {
+  max-width: 80px;
+  max-height: 80px;
 }
 
 .modal {
@@ -243,14 +253,14 @@ watch(
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: .5vh;
+  padding-top: 0.5vh;
   z-index: 1000;
   background: #5e5e5e8e;
   backdrop-filter: blur(6px);
 }
 
 .class-select {
-  background: #E8ECEE;
+  background: #e8ecee;
   padding: 1rem;
   border-radius: 3px;
   text-align: center;
@@ -296,12 +306,12 @@ watch(
 button {
   background: transparent;
   border: none;
-  font-size: 25px;
+  font-size: 20px;
   font-family: "MedievalSharp", cursive;
 }
 
 .desc {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 button:hover {
@@ -497,7 +507,7 @@ button:hover {
 }
 
 .journey-length-selection {
-    background: transparent;
+  background: transparent;
   padding: 0.5rem;
   margin-top: 1.5rem;
   text-align: center;

@@ -9,17 +9,17 @@ export function handleRest({ player, state, utils }) {
   const choice = restChoice;
   let restType = null;
 
-  if (choice === "short" && shortRestsUsed.value < 100) {
-    const healAmount = 10;
+  if (choice === "short" && shortRestsUsed.value < 9999) {
+    const healAmount = 20;
     playerHP.value = Math.min(playerHP.value + healAmount, effectiveMaxHP);
     log(`${playerName.value} feels rested and has gained +${healAmount}HP.`);
     shortRestsUsed.value++;
     restType = "short";
-  } else if (choice === "long" && longRestsUsed.value < 100) {
+  } else if (choice === "long" && longRestsUsed.value < 9999) {
     playerHP.value = effectiveMaxHP;
     specialUsesLeft.value = specialUsesLeft.value + 1;
     log(
-      `${playerName.value} takes a long rest. Your HP and Class Ability charges are fully restored.`
+      `${playerName.value} takes a long rest. You retrieve 1 class ability and your HP is fully restored.`
     );
     longRestsUsed.value++;
     restType = "long";
