@@ -163,6 +163,7 @@ header {
   justify-content: center;
   gap: 5rem;
   color: rgb(229, 231, 229);
+  transition: box-shadow 0.3s ease-out, border-color 0.3s ease-out;
 }
 
 .stat-column,
@@ -577,40 +578,23 @@ button:hover {
 @keyframes action-scale {
   0% {
     transform: scale(1) translateY(0);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     background-color: transparent;
-    color: rgb(148, 2, 2);
   }
   20% {
     transform: scale(0.95) translateY(2px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-    background-color: rgba(148, 2, 2, 0.1);
   }
   50% {
     transform: scale(1.1) translateY(-5px) rotate(2deg);
-    background: radial-gradient(
-      circle at center,
-      rgba(255, 60, 60, 0.9) 0%,
-      rgba(148, 2, 2, 0.7) 50%,
-      transparent 100%
-    );
-    box-shadow: 0 0 15px rgba(255, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.4),
-      0 8px 15px rgba(0, 0, 0, 0.5);
-    color: white;
     filter: brightness(1.5);
   }
   75% {
     transform: scale(0.98) translateY(0) rotate(0deg);
     background-color: transparent;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    color: rgb(148, 2, 2);
     filter: brightness(1);
   }
   100% {
     transform: scale(1) translateY(0);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     background-color: transparent;
-    color: rgb(148, 2, 2);
     filter: brightness(1);
   }
 }
@@ -618,44 +602,23 @@ button:hover {
 @keyframes defend-shield {
   0% {
     transform: scale(1) translateY(0) skewX(0deg);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    background-color: transparent;
-    color: rgb(41, 45, 49);
     border: none;
   }
   20% {
     transform: scale(0.98, 1.05) translateY(-2px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    background-color: rgba(41, 45, 49, 0.05);
   }
   50% {
     transform: scale(1.05) translateY(-3px);
-    background: radial-gradient(
-      circle at center,
-      rgba(74, 144, 226, 0.7) 0%,
-      rgba(41, 45, 49, 0.4) 50%,
-      transparent 100%
-    );
-    box-shadow: 0 0 20px rgba(74, 144, 226, 0.9),
-      0 0 40px rgba(74, 144, 226, 0.5), inset 0 0 10px rgba(150, 200, 255, 0.8);
-    border: 2px solid rgba(74, 144, 226, 0.8);
-    color: white;
     filter: brightness(1.2);
   }
   75% {
     transform: scale(0.99) translateY(0);
     background-color: transparent;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    color: rgb(41, 45, 49);
-    border: none;
     filter: brightness(1);
   }
   100% {
     transform: scale(1) translateY(0);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     background-color: transparent;
-    color: rgb(41, 45, 49);
-    border: none;
     filter: brightness(1);
   }
 }
@@ -691,44 +654,18 @@ button:hover {
 @keyframes special-flash {
   0% {
     transform: scale(1) rotate(0deg);
-    background: transparent;
-    color: gold;
-    text-shadow: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
   20% {
     transform: scale(0.98) rotate(-1deg);
-    background-color: rgba(255, 215, 0, 0.1);
   }
   50% {
     transform: scale(1.15) rotate(5deg);
-    background: radial-gradient(
-      circle at center,
-      rgba(255, 255, 0, 0.9) 0%,
-      rgba(255, 165, 0, 0.7) 40%,
-      transparent 100%
-    );
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.9), 0 0 40px rgba(150, 0, 255, 0.7),
-      0 0 60px rgba(0, 200, 255, 0.4);
-    color: white;
-    text-shadow: 0 0 10px gold, 0 0 20px rgba(255, 215, 0, 0.7);
-    filter: brightness(1.8) hue-rotate(90deg);
   }
   75% {
     transform: scale(0.98) rotate(0deg);
-    background-color: transparent;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    color: gold;
-    text-shadow: none;
-    filter: brightness(1) hue-rotate(0deg);
   }
   100% {
     transform: scale(1) rotate(0deg);
-    background: transparent;
-    color: gold;
-    text-shadow: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    filter: brightness(1) hue-rotate(0deg);
   }
 }
 
@@ -930,6 +867,83 @@ button:hover {
   75% {
     transform: translateY(-2px) scale(1.05);
   }
+}
+
+@keyframes container-attack {
+  0% {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-color: #080808;
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.4);
+    border-color: rgba(255, 0, 0, 0.8);
+  }
+  100% {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-color: #080808;
+  }
+}
+
+@keyframes container-defend {
+  0% {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-color: #080808;
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(74, 144, 226, 0.9), 0 0 40px rgba(74, 144, 226, 0.5);
+    border-color: rgba(74, 144, 226, 0.8);
+  }
+  100% {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-color: #080808;
+  }
+}
+
+@keyframes container-flee {
+  0% {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-color: #080808;
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.9), 0 0 40px rgba(255, 165, 0, 0.5);
+    border-color: rgb(0, 255, 128);
+  }
+  100% {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-color: #080808;
+  }
+}
+
+@keyframes container-special {
+  0% {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-color: #080808;
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.9), 0 0 40px rgba(150, 0, 255, 0.7);
+    border-color: gold;
+  }
+  100% {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-color: #080808;
+  }
+}
+
+
+.container-anim-attack {
+  animation: container-attack 0.5s ease-out;
+}
+
+.container-anim-defend {
+  animation: container-defend 0.5s ease-out;
+}
+
+.container-anim-flee {
+  animation: container-flee 0.5s ease-out;
+}
+
+.container-anim-special {
+  animation: container-special 0.5s ease-out;
 }
 
 .stat-flash {

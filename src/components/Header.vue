@@ -100,7 +100,7 @@
         </div>
         </div>
 
-      <div class="all-stats-row-box">
+      <div class="all-stats-row-box" :class="containerAnimClass">
         <div class="stat-column-hp">
           <div class="stat-label">HP</div>
           <div class="stat-value">
@@ -262,6 +262,8 @@ const expanded = ref(false);
 const visibleLogCount = ref(Math.min(props.gameLog?.length ?? 0, 5));
 const newLineIds = ref([]);
 const isMapModalOpen = ref(false);
+const containerAnimClass = ref("");
+let containerAnimTimeout = null;
 
 const displayedLog = computed(() => {
   return expanded.value ? props.gameLog : props.gameLog.slice(-5);
@@ -677,9 +679,37 @@ function handleAction(action) {
   activeAction.value = action;
   emit("action", action);
 
+  let animClass = "";
+  if (action === "attack") {
+    animClass = "container-anim-attack";
+  } else if (action === "defend") {
+    animClass = "container-anim-defend";
+  } else if (action === "flee") {
+    animClass = "container-anim-flee";
+  } else if (action === "special") {
+    animClass = "container-anim-special";
+  }
+
+  if (animClass) {
+    triggerContainerAnim(containerAnimClass, animClass);
+  }
+
   setTimeout(() => {
     activeAction.value = "";
   }, 300);
+}
+
+function triggerContainerAnim(refVar, className, duration = 700) {
+  if (containerAnimTimeout) {
+    clearTimeout(containerAnimTimeout);
+  }
+  refVar.value = "";
+  nextTick(() => {
+    refVar.value = className;
+    containerAnimTimeout = setTimeout(() => {
+      refVar.value = "";
+    }, duration);
+  });
 }
 
 const formattedTitle = computed(() =>
