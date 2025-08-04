@@ -4,7 +4,7 @@
       <div class="modal-header">
       </div>
       <div class="modal-body">
-        <img src="http://localhost:5173/map-nobg.png" alt="LINKSLAYER map" />
+        <img src="https://linkslayer.mweatherford.rocks/map-nobg.png" alt="LINKSLAYER map" />
       </div>
     </div>
   </div>
