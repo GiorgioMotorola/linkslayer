@@ -92,13 +92,16 @@
           </div>
         </div>
         <div class="player-buttons-right">
-          <button @click="openMapModal" class="map-button">Show Map</button>
-          <button @click="emit('open-inventory-modal')" class="inventory-button">
-            View Backpack
+          <button
+            @click="emit('open-inventory-modal')"
+            class="inventory-button"
+          >
+            Backpack
           </button>
           <button @click="openNotesModal" class="notes-button">Journal</button>
+          <button @click="openMapModal" class="map-button">Map</button>
         </div>
-        </div>
+      </div>
 
       <div class="all-stats-row-box" :class="containerAnimClass">
         <div class="stat-column-hp">
@@ -283,7 +286,7 @@ const openModal = () => {
 const closeModal = () => {
   isModalOpen.value = false;
 };
-const isNotesModalOpen = ref(false); 
+const isNotesModalOpen = ref(false);
 const openNotesModal = () => {
   isNotesModalOpen.value = true;
 };
@@ -589,9 +592,7 @@ watch(
       if (newEncounter.enemy?.isBoss) {
         fullText = `💀 <strong>BOSS ENCOUNTER:</strong> ${
           newEncounter.enemy.name
-        }.<br><br>${
-          newEncounter.enemy.message || "Roll for damage."
-        }`;
+        }.<br><br>${newEncounter.enemy.message || "Roll for damage."}`;
       } else if (newEncounter.enemy?.message) {
         fullText = newEncounter.enemy.message;
       } else {
