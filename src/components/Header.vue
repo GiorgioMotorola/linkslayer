@@ -92,6 +92,7 @@
           </div>
         </div>
         <div class="player-buttons-right">
+          <button @click="openMapModal" class="map-button">Show Map</button>
           <button @click="emit('open-inventory-modal')" class="inventory-button">
             View Backpack
           </button>
@@ -190,6 +191,7 @@
       </div>
     </div>
     <NotesModal v-if="isNotesModalOpen" @close="closeNotesModal" />
+    <MapModal v-if="isMapModalOpen" @close="closeMapModal" />
   </header>
 </template>
 
@@ -198,6 +200,7 @@ import { ref, computed, watch, nextTick } from "vue";
 import TipsModal from "./TipsModal.vue";
 import "./styles/headerStyles.css";
 import NotesModal from "./NotesModal.vue";
+import MapModal from "./MapModal.vue";
 
 const props = defineProps({
   start: String,
@@ -258,6 +261,7 @@ const currentDialogueNodeId = ref(null);
 const expanded = ref(false);
 const visibleLogCount = ref(Math.min(props.gameLog?.length ?? 0, 5));
 const newLineIds = ref([]);
+const isMapModalOpen = ref(false);
 
 const displayedLog = computed(() => {
   return expanded.value ? props.gameLog : props.gameLog.slice(-5);
@@ -283,6 +287,14 @@ const openNotesModal = () => {
 };
 const closeNotesModal = () => {
   isNotesModalOpen.value = false;
+};
+
+const openMapModal = () => {
+  isMapModalOpen.value = true;
+};
+
+const closeMapModal = () => {
+  isMapModalOpen.value = false;
 };
 
 const currentDialogue = computed(() => {

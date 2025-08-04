@@ -233,6 +233,33 @@ header {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.map-button {
+  background-color: transparent;
+  color: #2c3e50;
+  border: 3px solid #2c3e50;
+  border-radius: 0.3rem;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  font-size: 19px;
+  font-weight: 400;
+  transition: all 0.25s ease-out;
+  box-shadow: none;
+  letter-spacing: 0.5px;
+}
+.map-button:hover {
+  background-color: rgba(44, 62, 80, 0.08);
+  color: #1a2b3b;
+  border-color: #34495e;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.map-button:active {
+  background-color: rgba(44, 62, 80, 0.15);
+  transform: translateY(0px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
 .notes-button {
   background-color: transparent;
   color: #2c3e50;
@@ -1007,7 +1034,7 @@ button:hover {
     font-size: 13px;
   }
 
-  .inventory-button,
+  .inventory-button, .map-button,
   .notes-button {
     border: 1px solid #2c3e50;
     border-radius: 0.3rem;
