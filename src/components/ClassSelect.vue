@@ -2,7 +2,7 @@
   <div class="modal">
     <div class="class-select">
       <div class="game-title">
-        <h4>LINK&nbsp;</h4>
+        <h4>LINK</h4>
         <img :src="logo" alt="LINKSLAYER game title" />
         <h4>&nbsp;SLAYER</h4>
       </div>
@@ -53,7 +53,7 @@ import { classes } from "@/utils/classes";
 import prompts from "@/assets/data/prompts.json";
 import TipsModal from "./TipsModal.vue";
 import randomNames from "@/assets/data/randomNames.json";
-import logo from "../assets/newlogo-nobg.png";
+import logo from "../assets/newlogo-nobg1.png";
 
 const name = ref("");
 const emit = defineEmits(["select", "show-tips"]);
