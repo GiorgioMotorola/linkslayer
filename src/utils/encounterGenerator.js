@@ -40,11 +40,11 @@ export function rollEncounter(difficultyLevel) {
 export function generateEnemy(difficultyLevel = 0) {
   const enemyData = ENEMY_TYPES[Math.floor(Math.random() * ENEMY_TYPES.length)];
 
-  const scaledMinHP = enemyData.minHP + 2 * difficultyLevel;
-  const scaledMaxHP = enemyData.maxHP + 2 * difficultyLevel;
+  const scaledMinHP = enemyData.minHP + 1 * difficultyLevel;
+  const scaledMaxHP = enemyData.maxHP + 1 * difficultyLevel;
 
-  const scaledMinDamage = enemyData.minDamage + 2 * difficultyLevel;
-  const scaledMaxDamage = enemyData.maxDamage + 2 * difficultyLevel;
+  const scaledMinDamage = enemyData.minDamage + 1 * difficultyLevel;
+  const scaledMaxDamage = enemyData.maxDamage + 1 * difficultyLevel;
 
   const hp =
     Math.floor(Math.random() * (scaledMaxHP - scaledMinHP + 1)) + scaledMinHP;
