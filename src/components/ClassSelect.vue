@@ -24,7 +24,7 @@
         <div class="journey-length-prompt"></div>
         <div class="button-group-container">
           <button
-            v-for="length in [3, 4, 5, 6, 7, 8, 9]"
+            v-for="length in [5, 6, 7, 8, 9, 10, 11, 12]"
             :key="length"
             :class="{ 'selected-button': selectedJourneyLength === length }"
             @click="selectedJourneyLength = length"
@@ -265,7 +265,7 @@ watch(
   padding: 1rem;
   border-radius: 3px;
   text-align: center;
-  max-width: 650px;
+  max-width: 750px;
   width: 90%;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   animation: pop-in 0.3s ease;
@@ -307,7 +307,7 @@ watch(
 button {
   background: transparent;
   border: none;
-  font-size: 20px;
+  font-size: 25px;
   font-family: "MedievalSharp", cursive;
 }
 
@@ -437,7 +437,7 @@ button:hover {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .journey-length-button {
