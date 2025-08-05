@@ -3,8 +3,8 @@
     <div class="class-select">
       <div class="game-title">
         <div class="game-name">LINK</div>
+        <div class="game-name">SLAYER</div>
         <img :src="logo" alt="LINKSLAYER game title" />
-        <div class="game-name">&nbsp;SLAYER</div>
       </div>
       <div id="notification-banner" class="notification-banner">
         <span id="notification-message"></span>
