@@ -72,7 +72,7 @@ const props = defineProps({
   fullChain: Array,
 });
 
-const selectedJourneyLength = ref(3);
+const selectedJourneyLength = ref(5);
 
 const isModalOpen = ref(false);
 
