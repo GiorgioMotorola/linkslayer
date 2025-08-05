@@ -2,9 +2,9 @@
   <div class="modal">
     <div class="class-select">
       <div class="game-title">
-        <h4>LINK</h4>
+        <div class="game-name">LINK</div>
         <img :src="logo" alt="LINKSLAYER game title" />
-        <h4>&nbsp;SLAYER</h4>
+        <div class="game-name">&nbsp;SLAYER</div>
       </div>
       <div id="notification-banner" class="notification-banner">
         <span id="notification-message"></span>
@@ -230,12 +230,13 @@ watch(
   align-items: center;
 }
 
-h4 {
+.game-name {
   font-family: "Metal Mania", system-ui;
   font-weight: 400;
-  letter-spacing: 10px;
+  letter-spacing: 7px;
   text-decoration-color: rgb(99, 79, 79);
   color: #990000;
+  font-size: 25px;
 }
 
 .game-title img {
@@ -311,7 +312,7 @@ button {
 }
 
 .desc {
-  font-size: 14px;
+  font-size: 15px;
 }
 
 button:hover {
