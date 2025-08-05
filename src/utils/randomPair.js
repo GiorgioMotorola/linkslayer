@@ -78,7 +78,6 @@ const WIKI_ARTICLES = [
   "Mount_Rainier",
   "Death_Valley",
   "Mothman",
-  "The_Blob",
   "Crop_circle",
   "Yeti",
   "Haunted_house",

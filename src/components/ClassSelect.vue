@@ -282,6 +282,7 @@ watch(
   justify-content: center;
   align-items: center;
   margin-bottom: 1rem;
+  margin-top: 3rem;
 }
 
 .name-input {
