@@ -99,7 +99,7 @@
             Backpack
           </button>
           <button @click="openNotesModal" class="notes-button">Journal</button>
-          <button @click="openMapModal" class="map-button">Map</button>
+          <button @click="emit('open-map-modal')" class="map-button">Map</button>
         </div>
       </div>
 
@@ -194,7 +194,6 @@
       </div>
     </div>
     <NotesModal v-if="isNotesModalOpen" @close="closeNotesModal" />
-    <MapModal v-if="isMapModalOpen" @close="closeMapModal" />
   </header>
 </template>
 
@@ -203,7 +202,6 @@ import { ref, computed, watch, nextTick } from "vue";
 import TipsModal from "./TipsModal.vue";
 import "./styles/headerStyles.css";
 import NotesModal from "./NotesModal.vue";
-import MapModal from "./MapModal.vue";
 
 const props = defineProps({
   start: String,
@@ -254,6 +252,7 @@ const emit = defineEmits([
   "show-tips",
   "use-compass",
   "open-inventory-modal",
+  "open-map-modal",
 ]);
 
 const activeAction = ref("");
@@ -294,13 +293,6 @@ const closeNotesModal = () => {
   isNotesModalOpen.value = false;
 };
 
-const openMapModal = () => {
-  isMapModalOpen.value = true;
-};
-
-const closeMapModal = () => {
-  isMapModalOpen.value = false;
-};
 
 const currentDialogue = computed(() => {
   if (!props.encounter) return null;

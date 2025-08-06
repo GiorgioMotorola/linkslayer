@@ -1,19 +1,66 @@
 <template>
-  <div class="modal-overlay" @click.self="emit('close')">
+  <div class="modal-overlay" @click.self="$emit('close')">
     <div class="modal-content">
-      <div class="modal-header">
-      </div>
-      <div class="modal-body">
-        <img src="https://linkslayer.mweatherford.rocks/map-nobg.png" alt="LINKSLAYER map" />
+      <div class="map-container">
+        <img
+          src="https://linkslayer.mweatherford.rocks/map-nobg.png"
+          alt="LINKSLAYER map"
+        />
+
+        <div
+          v-for="(article, index) in fullChain"
+          :key="index"
+          class="dot"
+          :class="{ 'active-dot': index === currentTargetIndex }"
+          :style="dotStyle(index)"
+        >
+          X
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { defineEmits } from "vue";
+import { defineProps, defineEmits } from "vue";
 
-const emit = defineEmits(["close"]);
+defineProps({
+  fullChain: {
+    type: Array,
+    default: () => [],
+  },
+  currentTargetIndex: {
+    type: Number,
+    default: -1,
+  },
+});
+
+defineEmits(["close"]);
+const pathCoordinates = [
+  { x: 50, y: 90 },
+  { x: 27, y: 80 },
+  { x: 36, y: 71 },
+  { x: 25, y: 65 },
+  { x: 29, y: 54 },
+  { x: 46, y: 53 },
+  { x: 70, y: 50 },
+  { x: 55, y: 40 },
+  { x: 50, y: 35 },
+  { x: 45, y: 30 },
+  { x: 50, y: 25 },
+  { x: 60, y: 20 },
+];
+
+const dotStyle = (index) => {
+  const coords = pathCoordinates[index];
+  if (coords) {
+    return {
+      left: `${coords.x}%`,
+      top: `${coords.y}%`,
+    };
+  }
+  return {};
+};
 </script>
 
 <style scoped>
@@ -40,37 +87,50 @@ const emit = defineEmits(["close"]);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* .modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-} */
-
-.modal-header h2 {
-  margin: 0;
+.map-container {
+  position: relative;
+  width: 100%;
+  height: auto;
 }
 
-.close-button {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #555;
-}
-
-.close-button:hover {
-  color: #000;
-}
-
-.modal-body {
-    background-color: #e9e2d0;
-}
-
-.modal-body img {
+.map-container img {
   display: block;
-  margin: 0 auto;
+  width: 100%;
+  height: auto;
+}
+
+.dot {
+  position: absolute;
+  width: 20px; 
+  height: 20px;
+  color: #2b2a2a; 
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  transition: color 0.3s ease, font-size 0.3s ease;
+}
+
+.active-dot {
+  color: #da0902; 
+  font-size: 25px; 
+  animation: pulse 1.5s infinite; 
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
 }
 </style>

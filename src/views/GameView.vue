@@ -35,6 +35,7 @@
     :combatWinsSinceLastCapIncrease="combatWinsSinceLastCapIncrease"
     :hpCapBonus="hpCapBonus"
     :formattedTitle="formattedTitle"
+    @open-map-modal="isMapModalOpen = true"
   />
 
   <div class="main-content-wrapper">
@@ -145,6 +146,13 @@
         :amulet-of-shared-suffering-damage="AMULET_ENEMY_DAMAGE"
         :health-regen-clicks-remaining="healthRegenClicksRemaining"
       />
+
+      <MapModal
+        v-if="isMapModalOpen"
+        :fullChain="chain"
+        :currentTargetIndex="currentTargetIndex"
+        @close="isMapModalOpen = false"
+      />
     </div>
   </div>
 
@@ -179,6 +187,7 @@ import { handleLootDrop as externalHandleLootDrop } from "@/utils/lootHandler";
 import { handleEnemyTurn as externalHandleEnemyTurn } from "@/utils/enemyTurnHandler";
 import { handleMiniBossLootDrop } from "@/utils/miniBossLootHandler";
 import InventoryModal from "@/components/InventoryModal.vue";
+import MapModal from "@/components/MapModal.vue";
 import { shopItems } from "@/utils/shopItems";
 import {
   handleShopPurchase as externalHandleShopPurchase,
@@ -275,6 +284,7 @@ const healthRegenMaxHeal = ref(0);
 const healthRegenHealedCount = ref(0);
 const isLoadingGame = ref(false);
 const enemyDifficultyLevel = ref(0);
+const isMapModalOpen = ref(false);
 const restModalCount = ref(0);
 const inventory = ref({
   compass: 0,
