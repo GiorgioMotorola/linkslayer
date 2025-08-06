@@ -16,7 +16,7 @@
         {{ article.replaceAll("_", " ") }}
       </span>
       <span v-if="index < props.fullChain.length - 1" class="separator">
-        &nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;
+        &nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;
       </span>
     </span>
   </div>
@@ -248,7 +248,7 @@ onMounted(load);
 }
 
 .path-display {
-  font-size: 15px;
+  font-size: 12px;
   text-align: center;
   margin-bottom: 0.5rem;
   color: #555;
@@ -269,7 +269,7 @@ onMounted(load);
 }
 
 .path-display .separator {
-  margin: 0 5px;
+  margin: 0 0px;
 }
 
 .error-message {
