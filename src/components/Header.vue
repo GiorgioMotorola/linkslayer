@@ -5,6 +5,13 @@
         <div v-if="encounter.type === 'combat'">
           <div class="oh-no">{{ formattedTitle }} &#x2694;</div>
           <div class="attack-line" v-html="typedLine"></div>
+
+          <!-- Enemy Intent Display -->
+          <div v-if="enemyIntentMessage" class="enemy-intent" :class="enemyIntentClass">
+            <div class="intent-icon">{{ enemyIntentIcon }}</div>
+            <div class="intent-text">{{ enemyIntentMessage }}</div>
+          </div>
+
           <div class="btn-group">
             <button
               :class="{ 'btn-anim-attack': activeAction === 'attack' }"
@@ -334,6 +341,43 @@ const shortRestsUsedCount = computed(() => props.shortRestsUsed ?? 0);
 
 const playerSpecialAbilityName = computed(() => {
   return props.playerClass?.special || "Special";
+});
+
+// Enemy Intent Display
+const enemyIntentMessage = computed(() => {
+  if (!props.enemyNextAction) return "";
+
+  switch (props.enemyNextAction) {
+    case "attack":
+      return `Attacking for ${props.nextEnemyAttack} damage`;
+    case "defend":
+      return "Defending";
+    case "flee":
+      return "About to flee";
+    case "trip":
+      return "Tripped! Free attack";
+    default:
+      return "";
+  }
+});
+
+const enemyIntentIcon = computed(() => {
+  switch (props.enemyNextAction) {
+    case "attack":
+      return "🗡️";
+    case "defend":
+      return "🛡️";
+    case "flee":
+      return "🏃";
+    case "trip":
+      return "🤾";
+    default:
+      return "⚔️";
+  }
+});
+
+const enemyIntentClass = computed(() => {
+  return `intent-${props.enemyNextAction || 'default'}`;
 });
 
 const hpAnimClass = ref("");

@@ -320,16 +320,53 @@ onMounted(load);
 @media screen and (max-width: 600px) {
   .article {
     padding: 0.5rem;
+    max-width: 100vw;
+    width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   .title {
     font-size: 25px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   .path-display {
-    font-size: 14px;
-    padding: 5px 0;
+    font-size: 11px;
+    padding: 5px 0.5rem;
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   .path-display .separator {
     margin: 0 2px;
+  }
+
+  /* Force all article content to stay within viewport */
+  .article :deep(img) {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .article :deep(table) {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    display: block !important;
+  }
+
+  .article :deep(pre) {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+  }
+
+  .article :deep(*) {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 }
 </style>

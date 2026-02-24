@@ -403,6 +403,94 @@ button:hover {
   margin-bottom: 1rem;
 }
 
+/* Enemy Intent Display */
+.enemy-intent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin: 1rem auto 1rem auto;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  max-width: 350px;
+  border: 2px solid;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.intent-icon {
+  font-size: 24px;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+.intent-text {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Intent Type Colors */
+.intent-attack {
+  background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+  border-color: #990000;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+}
+
+.intent-defend {
+  background: linear-gradient(135deg, #4444ff 0%, #0000cc 100%);
+  border-color: #000099;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 255, 0.3);
+}
+
+.intent-flee {
+  background: linear-gradient(135deg, #ffaa00 0%, #cc8800 100%);
+  border-color: #996600;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(255, 170, 0, 0.3);
+}
+
+.intent-trip {
+  background: linear-gradient(135deg, #00cc00 0%, #009900 100%);
+  border-color: #006600;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 200, 0, 0.3);
+}
+
+.intent-default {
+  background: linear-gradient(135deg, #666666 0%, #444444 100%);
+  border-color: #333333;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.95;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Dark mode styles */
+.darkened-header .enemy-intent {
+  filter: brightness(0.85);
+}
+
 .oh-no {
   text-align: center;
   margin-bottom: 0.3rem;
@@ -1008,7 +1096,7 @@ button:hover {
     right: 0;
     background: #e8ecee;
     z-index: 100;
-    padding: 0.2rem;
+    padding: 0.3rem 0.5rem;
     border-top: 1.5px solid #000000;
     transition: background-color 1.5s ease-in-out, filter 1.5s ease-in-out;
     color: rgb(35, 36, 35);
@@ -1017,154 +1105,237 @@ button:hover {
 
     display: flex;
     flex-direction: column;
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
   }
 
   .path {
-    font-size: 17px;
-    margin-bottom: 1rem;
+    font-size: 14px;
+    margin-bottom: 0.5rem;
+  }
+
+  .player-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0 5px;
+    margin-bottom: 0.5rem;
+  }
+
+  .player-info-left {
+    width: 100%;
+    text-align: center;
   }
 
   .player-name-line {
-    font-size: 16px;
+    font-size: 14px;
+    text-align: center;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+  }
+
+  .player-buttons-right {
+    width: 100%;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
   }
 
   .all-stats-row-box {
     background-color: #e3e6e6;
     border: 1px solid #080808;
-    border-radius: 8px;
-    padding: 0rem 0rem;
+    border-radius: 6px;
+    padding: 0.4rem 0.2rem;
     margin-left: auto;
     margin-right: auto;
-    max-width: fit-content;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 0.2rem;
-    justify-content: space-around;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
     color: rgb(229, 231, 229);
   }
 
   .current-path {
-    font-size: 13px;
+    font-size: 12px;
   }
 
-  .inventory-button, .map-button,
+  .backpack-button,
+  .inventory-button,
+  .map-button,
   .notes-button {
     border: 1px solid #2c3e50;
     border-radius: 0.3rem;
-    padding: 0.3rem 0.3rem;
+    padding: 0.4rem 0.6rem;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 400;
     transition: none;
     box-shadow: none;
     letter-spacing: 0px;
     white-space: nowrap;
+    flex: 1;
+    min-width: 0;
   }
 
   .stat-column,
   .stat-column-hp,
   .stat-column-clicks {
-    flex: 1 1 30%;
-    min-width: 70px;
-    box-sizing: border-box;
-    padding: 0.2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    white-space: normal;
+    border: none !important;
+    padding: 0.3rem 0.1rem;
+    overflow: hidden;
+    min-width: 0;
   }
 
   .stat-column-hp,
   .stat-column-clicks {
     border-right: none;
     border-left: none;
-    padding-right: 0.2rem;
-    padding-left: 0.2rem;
+    padding-right: 0;
+    padding-left: 0;
   }
 
   .stat-label {
-    font-size: 10px;
+    font-size: 9px;
+    margin-bottom: 0.1rem;
   }
 
   .stat-value {
+    font-size: 16px;
+  }
+
+  /* Enemy Intent Display - Mobile Optimized */
+  .enemy-intent {
+    max-width: 95%;
+    width: 95%;
+    margin: 0.5rem auto;
+    padding: 0.6rem 0.8rem;
     font-size: 14px;
+    gap: 0.4rem;
+  }
+
+  .intent-icon {
+    font-size: 20px;
+  }
+
+  .intent-text {
+    font-size: 13px;
+    letter-spacing: 0.3px;
   }
 
   .game-log {
-    max-height: 200px;
+    max-height: 150px;
     overflow-y: auto;
+    overflow-x: hidden;
     background-color: #1f2e4a;
     color: rgb(229, 231, 229);
     font-family: monospace;
-    padding: 0.5rem;
-    margin-top: 1rem;
+    padding: 0.4rem;
+    margin-top: 0.5rem;
     border: 1px solid #080808;
-    border-radius: 8px;
-    font-size: 12px;
+    border-radius: 6px;
+    font-size: 11px;
     font-family: "IBM Plex Sans", sans-serif;
+    max-width: 100%;
+    box-sizing: border-box;
+    word-break: break-word;
   }
 
   .log {
     color: rgb(229, 231, 229);
-    font-size: 13px;
-    padding: 0.3rem;
+    font-size: 12px;
+    padding: 0.2rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   .log-btns {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     border: none;
     background-color: #1f2e4a;
-    font-size: 11px;
+    font-size: 10px;
     margin-top: 0rem;
     color: rgb(229, 231, 229);
     font-weight: 400;
-    gap: 1rem;
+    gap: 0.5rem;
+  }
+
+  .tips-button {
+    font-size: 11px;
+    padding: 0.2rem;
   }
 
   .latest-log {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 13px;
     background-color: #4a91e265;
   }
 
   .log-entry {
     opacity: 0;
     transition: opacity 0.3s ease-in;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+  }
+
+  .encounter-dashboard {
+    padding: 0.3rem;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
   }
 
   .oh-no,
   .npc-name,
   .lore-name {
-    font-size: 15px;
+    font-size: 18px;
     padding-bottom: 5px;
-    margin-left: 15px;
-    margin-right: 15px;
+    margin-left: 10px;
+    margin-right: 10px;
   }
 
-  /* button {
-    display: block; 
-    width: 100%;
-    font-size: 11px;
-    padding: 1px 0;
-    margin-bottom: 0.0rem;
-  } */
+  .btn-group {
+    margin-top: 10px;
+  }
 
   .btn-group button {
-    font-size: 11px;
-    padding: 1px 0;
-    margin-bottom: 0.1rem;
+    font-size: 14px;
+    padding: 0.3rem 0;
+    margin-bottom: 0.2rem;
   }
 
   .npc button,
   .lore button {
     font-size: 13px;
-    padding: 1px 0;
-    margin-bottom: 0.1rem;
+    padding: 0.2rem 0;
+    margin-bottom: 0.2rem;
   }
 
   .attack-line,
   .npc-greeting,
   .lore-greeting {
-    font-size: 14px;
-    padding-bottom: 0.3rem;
-    padding-top: 0.1rem;
+    font-size: 13px;
+    padding-bottom: 0.4rem;
+    padding-top: 0.2rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+  }
+
+  .enemy {
+    font-size: 16px;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
   }
 }

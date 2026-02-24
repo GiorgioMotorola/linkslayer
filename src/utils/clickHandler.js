@@ -86,7 +86,7 @@ export async function handleClick({
       }`
     );
 
-    utilityFunctions.logEnemyAction();
+    utilityFunctions.logEnemyAction(enemyState.enemyNextAction, enemyState.nextEnemyAttack);
 
     return;
   }
@@ -169,7 +169,7 @@ export async function handleClick({
             gameData.formattedTitle.value
           }</strong> ${fullEncounter.enemy.name ?? ""}. What do you do?`
         );
-        utilityFunctions.logEnemyAction();
+        utilityFunctions.logEnemyAction(enemyState.enemyNextAction, enemyState.nextEnemyAttack);
       }
 
       return;

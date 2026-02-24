@@ -1,0 +1,491 @@
+// src/composables/useGameHandlers.js
+
+import { classes } from "@/utils/classes";
+import { isBoss } from "@/utils/bossGenerator";
+import { handleCombatAction } from "@/utils/combat";
+import { handleRest } from "@/utils/restHandler";
+import { handleClick as externalHandleClick } from "@/utils/clickHandler.js";
+import { handleEncounterOption as externalHandleEncounterOption } from "@/utils/encounterHandler";
+import { handleLootDrop as externalHandleLootDrop } from "@/utils/lootHandler";
+import { handleEnemyTurn as externalHandleEnemyTurn } from "@/utils/enemyTurnHandler";
+import { handleMiniBossLootDrop } from "@/utils/miniBossLootHandler";
+import { handleShopPurchase as externalHandleShopPurchase } from "@/utils/itemHandlers";
+import { getRandomChain } from "@/utils/randomPair";
+
+export function useGameHandlers(deps) {
+  const {
+    // Game Flow
+    gameFlow,
+
+    // Logging
+    log,
+    logEnemyAction,
+
+    // Modals
+    modals,
+
+    // Player
+    player,
+
+    // Inventory
+    inventory,
+    enlightenmentFishAccumulatedHP,
+
+    // Combat
+    combat,
+
+    // Status Effects
+    statusEffects,
+  } = deps;
+
+  // Destructure what we need from each
+  const {
+    journeyLength,
+    chain,
+    current,
+    currentTargetIndex,
+    path,
+    formattedTitle,
+    clickCount,
+    shortcutsUsedCount,
+    timerInterval,
+    defeated,
+    bossSpawned,
+    bossDefeated,
+    selectedBossType,
+    bossOverlay,
+    combatEncountersFought,
+    combatWinsSinceLastCapIncrease,
+    hpCapBonus,
+    seenLoreEncounters,
+    seenNPCEncounters,
+    enemyDifficultyLevel,
+    markBossDefeated,
+  } = gameFlow;
+
+  const { showRestModal, showShopModal, showTipsModal } = modals;
+
+  const {
+    playerClass,
+    playerName,
+    playerHP,
+    specialUsesLeft,
+    totalSpecialsUsed,
+    weaponBonus,
+    shieldBonus,
+    playerGold,
+    shortRestsUsed,
+    longRestsUsed,
+    effectiveMaxHP,
+  } = player;
+
+  const {
+    blurClicksLeft,
+    poisonedClicksLeft,
+    poisonDamagePerClick,
+    isCloakActive,
+    cloakClicksRemaining,
+  } = statusEffects;
+
+  const {
+    encounter,
+    encounterMessage,
+    inEncounter,
+    enemyHP,
+    nextEnemyAttack,
+    enemyNextAction,
+    currentEnemy,
+    enemyStatusEffects,
+    enemyIsStunned,
+    DEFAULT_ENEMY_HP,
+    decideEnemyAction,
+    handleCloseEncounter,
+  } = combat;
+
+  // Loot handler
+  function handleLoot(defeatedEnemyData) {
+    const lootHandlerArgs = {
+      playerState: {
+        playerHP,
+        playerName,
+        playerClass,
+        specialUsesLeft,
+        weaponBonus,
+        shieldBonus,
+        playerGold,
+        effectiveMaxHP: effectiveMaxHP.value,
+        inventory,
+      },
+      utilityFunctions: {
+        log,
+      },
+      defeatedEnemyData: defeatedEnemyData,
+    };
+
+    if (isBoss(defeatedEnemyData)) {
+      log(
+        `✨ The ${defeatedEnemyData.name} dissipates, leaving no worldly possessions behind.`
+      );
+      markBossDefeated();
+    } else if (defeatedEnemyData.isMiniBoss) {
+      handleMiniBossLootDrop(lootHandlerArgs);
+    } else {
+      externalHandleLootDrop(lootHandlerArgs);
+    }
+  }
+
+  // Close encounter wrapper
+  function handleCloseEncounterWrapper() {
+    handleCloseEncounter({
+      bossDefeated,
+      current,
+      chain,
+      journeyLength,
+      currentTargetIndex,
+      path,
+      timerInterval,
+    });
+  }
+
+  // Click handler
+  async function callHandleClick(title) {
+    const finalTarget = chain[journeyLength.value - 1];
+
+    await externalHandleClick({
+      title,
+      playerState: {
+        clickCount,
+        path,
+        currentTargetIndex,
+        combatEncountersFought,
+        combatWinsSinceLastCapIncrease,
+      },
+      gameData: {
+        enemyDifficultyLevel,
+        chain,
+        current,
+        bossSpawned,
+        bossDefeated,
+        selectedBossType,
+        formattedTitle,
+        seenLoreEncounters,
+        seenNPCEncounters,
+        timerInterval,
+        journeyLength,
+        finalTarget,
+      },
+      modalState: {
+        inEncounter,
+        showRestModal,
+        showShopModal,
+        showTipsModal,
+        bossOverlay,
+      },
+      enemyState: {
+        encounter,
+        enemyHP,
+        encounterMessage,
+        nextEnemyAttack,
+        enemyNextAction,
+        currentEnemy,
+      },
+      utilityFunctions: {
+        log,
+        logEnemyAction,
+        clearInterval: (intervalId) => clearInterval(intervalId),
+        isBoss,
+      },
+      isCloakActive,
+      cloakClicksRemaining,
+    });
+  }
+
+  // Rest handler
+  function callHandleRest(choice) {
+    const restType = handleRest({
+      player: {
+        playerHP,
+        playerClass,
+        specialUsesLeft,
+        playerName,
+        effectiveMaxHP: effectiveMaxHP.value,
+      },
+      state: {
+        restChoice: choice,
+        shortRestsUsed,
+        longRestsUsed,
+      },
+      utils: {
+        log,
+        showRestModal,
+      },
+    });
+
+    if (restType === "long") {
+      enemyDifficultyLevel.value = enemyDifficultyLevel.value + 1;
+      log(
+        `⚔️ The world gets ${enemyDifficultyLevel.value} times more dangerous.`
+      );
+    }
+  }
+
+  // Combat action handler
+  function handleCombatActionWrapper(playerAction) {
+    handleCombatAction({
+      player: {
+        playerHP,
+        playerClass,
+        specialUsesLeft,
+        weaponBonus,
+        shieldBonus,
+        playerName,
+        action: playerAction,
+        effectiveMaxHP,
+        totalSpecialsUsed,
+      },
+      enemy: {
+        enemyHP,
+        encounter,
+        nextEnemyAttack,
+        enemyNextAction,
+        enemyStatusEffects,
+        enemyIsStunned,
+      },
+      state: {
+        log,
+        formattedTitle: formattedTitle.value,
+        DEFAULT_ENEMY_HP,
+        isBoss,
+        combatWinsSinceLastCapIncrease,
+        hpCapBonus,
+      },
+      utils: {
+        clearTimer: () => clearInterval(timerInterval),
+        setDefeated: () => (defeated.value = true),
+        handleLootDrop: handleLoot,
+        markBossDefeated,
+        gotoEnemyTurn,
+        bossOverlay: bossOverlay,
+      },
+    });
+  }
+
+  // Enemy turn handler
+  function gotoEnemyTurn() {
+    externalHandleEnemyTurn({
+      enemyState: {
+        enemyStatusEffects,
+        enemyHP,
+        encounter,
+        enemyIsStunned,
+        enemyNextAction,
+        nextEnemyAttack,
+      },
+      playerState: {
+        playerName,
+        playerHP,
+        effectiveMaxHP: effectiveMaxHP.value,
+      },
+      gameData: {},
+      utilityFunctions: {
+        log,
+      },
+      combatFunctions: {
+        formattedTitle: formattedTitle,
+        decideEnemyAction: decideEnemyAction,
+        logEnemyAction: logEnemyAction,
+      },
+    });
+  }
+
+  // Encounter option handler
+  async function callHandleEncounterOption(option) {
+    await externalHandleEncounterOption({
+      option,
+      playerState: {
+        playerHP,
+        playerName,
+        playerClass,
+        combatEncountersFought,
+        specialUsesLeft,
+        weaponBonus,
+        shieldBonus,
+        blurClicksLeft,
+        poisonedClicksLeft,
+        poisonDamagePerClick,
+        playerGold,
+        currentTargetIndex,
+        path,
+        clickCount,
+        shortcutsUsedCount,
+        inventory,
+        effectiveMaxHP: effectiveMaxHP.value,
+      },
+      gameData: {
+        chain,
+        current,
+        formattedTitle: formattedTitle.value,
+      },
+      enemyState: {
+        encounter,
+        enemyHP,
+        encounterMessage,
+        nextEnemyAttack,
+        enemyNextAction,
+      },
+      modalState: {
+        bossOverlay,
+      },
+      utilityFunctions: {
+        log,
+      },
+    });
+  }
+
+  // Shop purchase handler
+  function handleShopPurchase(item) {
+    externalHandleShopPurchase(
+      item,
+      {
+        playerGold,
+        playerHP,
+        effectiveMaxHP,
+        weaponBonus,
+        shieldBonus,
+        specialUsesLeft,
+        longRestsUsed,
+        shortRestsUsed,
+        blurClicksLeft,
+        inventory,
+      },
+      {
+        playerName,
+      },
+      {
+        log,
+      }
+    );
+  }
+
+  // Class selection handler
+  function handleClassSelection({ classKey, name, journeyLength: selectedLen }) {
+    playerClass.value = classes[classKey];
+    playerHP.value = playerClass.value.maxHP;
+    playerName.value = name;
+    journeyLength.value = selectedLen;
+
+    const newChain = getRandomChain(journeyLength.value);
+    chain.splice(0, chain.length, ...newChain);
+    current.value = chain[0];
+    path.value = [current.value];
+
+    if (playerClass.value.startingWeaponBonus) {
+      weaponBonus.value += playerClass.value.startingWeaponBonus;
+      log(
+        `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingWeaponBonus} starting Weapon Damage.`
+      );
+    }
+    if (playerClass.value.startingSpecialUses) {
+      specialUsesLeft.value += playerClass.value.startingSpecialUses;
+      log(
+        `🎁 <span class="player-name">${playerName.value}</span> starts with +${playerClass.value.startingSpecialUses} Class Ability charges.`
+      );
+    }
+    if (playerClass.value.startingShieldBonus) {
+      shieldBonus.value += playerClass.value.startingShieldBonus;
+      log(
+        `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingShieldBonus} starting Defense Bonus.`
+      );
+    }
+    if (playerClass.value.startingHealthPotionBonus) {
+      inventory.value.healthPotions = playerClass.value.startingHealthPotionBonus;
+      log(
+        `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingHealthPotionBonus} starting Health Potions.`
+      );
+    }
+    if (playerClass.value.startingInvisibilityCloaks) {
+      inventory.value.invisibilityCloaks =
+        playerClass.value.startingInvisibilityCloaks;
+      log(
+        `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingInvisibilityCloaks} starting Invisibility Cloaks.`
+      );
+    }
+    if (playerClass.value.startingPlayerGold) {
+      playerGold.value = playerClass.value.startingPlayerGold;
+      log(
+        `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingPlayerGold} starting Gold.`
+      );
+    }
+    log(`Player name: ${playerName.value}`);
+    log(`Class selected: ${playerClass.value.name}`);
+    log(`Journey length: ${journeyLength.value} articles.`);
+  }
+
+  // Assemble upgrade handler
+  function handleAssembleUpgrade({
+    inventory,
+    playerName,
+    weaponBonus,
+    shieldBonus,
+    upgradeType,
+    utilityFunctions,
+  }) {
+    const { log } = utilityFunctions;
+
+    if (upgradeType === "weapon") {
+      if (inventory.value.weaponPieces >= 2) {
+        inventory.value.weaponPieces -= 2;
+        weaponBonus.value += 1;
+        log(
+          `⚔️ <span class="player-name">${playerName.value}</span> crafted a Weapon Upgrade (+1 Weapon Bonus)`
+        );
+        log(
+          `Weapon Pieces: ${inventory.value.weaponPieces}, Weapon Bonus: ${weaponBonus.value}`
+        );
+      } else {
+        log(`⛔ Not enough Weapon Pieces to craft an upgrade. You need 2.`);
+      }
+    } else if (upgradeType === "defense") {
+      if (inventory.value.defensePieces >= 2) {
+        inventory.value.defensePieces -= 2;
+        shieldBonus.value += 1;
+        log(
+          `🛡️ <span class="player-name">${playerName.value}</span> crafted a Defense Upgrade. (+1 Defense Bonus)`
+        );
+        log(
+          `Defense Pieces: ${inventory.value.defensePieces}, Defense Bonus: ${shieldBonus.value}`
+        );
+      } else {
+        log(`⛔ Not enough Defense Pieces to craft an upgrade. You need 2.`);
+      }
+    } else {
+      log(`Unknown upgrade type: ${upgradeType}`);
+    }
+  }
+
+  function handleAssembleUpgradeWrapper(upgradeType) {
+    handleAssembleUpgrade({
+      inventory: inventory,
+      playerName,
+      weaponBonus,
+      shieldBonus,
+      upgradeType,
+      utilityFunctions: {
+        log,
+      },
+    });
+    showRestModal.value = false;
+  }
+
+  return {
+    callHandleClick,
+    callHandleRest,
+    handleCombatActionWrapper,
+    gotoEnemyTurn,
+    callHandleEncounterOption,
+    handleShopPurchase,
+    handleClassSelection,
+    handleAssembleUpgradeWrapper,
+    handleCloseEncounterWrapper,
+  };
+}

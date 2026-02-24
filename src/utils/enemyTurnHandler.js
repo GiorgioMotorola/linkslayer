@@ -77,5 +77,5 @@ export function handleEnemyTurn({
       nextEnemyAttack.value = null;
     }
   }
-  logEnemyAction();
+  logEnemyAction(enemyNextAction, nextEnemyAttack);
 }
