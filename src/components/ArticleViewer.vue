@@ -5,6 +5,10 @@
   >
     {{ errorMessage }}
   </div>
+  <div v-if="isLoading" class="loading-notification">
+    <div class="loading-spinner"></div>
+    <span>Loading Wikipedia article...</span>
+  </div>
   <div v-if="inEncounter" class="overlay"></div>
   <div class="path-display">
     <span v-for="(article, index) in props.fullChain" :key="index">
@@ -293,6 +297,49 @@ onMounted(load);
   opacity: 0;
 }
 
+.loading-notification {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  background: #111;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  z-index: 999;
+  font-size: 0.8em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: slideInRight 0.2s ease-out;
+  letter-spacing: 0.3px;
+}
+
+.loading-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .blurred-content {
   filter: blur(5px);
 }
@@ -303,18 +350,29 @@ onMounted(load);
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 50;
   flex-direction: column;
+  backdrop-filter: blur(2px);
 }
 
 .loader-content {
   text-align: center;
   color: #333;
   font-size: 1.2em;
+}
+
+.loader-content .spinner {
+  border: 4px solid rgba(74, 144, 226, 0.2);
+  border-top: 4px solid #4a90e2;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
 }
 
 @media screen and (max-width: 600px) {
@@ -367,6 +425,19 @@ onMounted(load);
   .article :deep(*) {
     max-width: 100% !important;
     box-sizing: border-box !important;
+  }
+
+  .loading-notification {
+    top: 8px;
+    right: 8px;
+    padding: 6px 10px;
+    font-size: 0.75em;
+    gap: 6px;
+  }
+
+  .loading-spinner {
+    width: 12px;
+    height: 12px;
   }
 }
 </style>

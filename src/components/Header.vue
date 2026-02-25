@@ -1,16 +1,18 @@
 <template>
-  <header :class="{ 'darkened-header': isDarkened }">
+  <header ref="headerEl" :class="{ 'darkened-header': isDarkened }">
     <transition name="encounter-fade" mode="out-in">
       <div v-if="encounter" class="encounter-dashboard">
         <div v-if="encounter.type === 'combat'">
           <div class="oh-no">{{ formattedTitle }} &#x2694;</div>
           <div class="attack-line" v-html="typedLine"></div>
 
-          <!-- Enemy Intent Display -->
-          <div v-if="enemyIntentMessage" class="enemy-intent" :class="enemyIntentClass">
-            <div class="intent-icon">{{ enemyIntentIcon }}</div>
-            <div class="intent-text">{{ enemyIntentMessage }}</div>
-          </div>
+          <!-- Enemy Intent Display (teleported to body to escape filter: brightness stacking context) -->
+          <Teleport to="body">
+            <div v-if="enemyIntentMessage" class="enemy-intent" :class="enemyIntentClass" :style="badgeBottomStyle">
+              <div class="intent-icon">{{ enemyIntentIcon }}</div>
+              <div class="intent-text">{{ enemyIntentMessage }}</div>
+            </div>
+          </Teleport>
 
           <div class="btn-group">
             <button
@@ -205,7 +207,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, nextTick } from "vue";
+import { ref, computed, watch, nextTick, onMounted, onUnmounted } from "vue";
 import TipsModal from "./TipsModal.vue";
 import "./styles/headerStyles.css";
 import NotesModal from "./NotesModal.vue";
@@ -261,6 +263,28 @@ const emit = defineEmits([
   "open-inventory-modal",
   "open-map-modal",
 ]);
+
+const headerEl = ref(null);
+const headerHeight = ref(300);
+let headerResizeObserver = null;
+
+onMounted(() => {
+  if (headerEl.value) {
+    headerHeight.value = headerEl.value.offsetHeight;
+    headerResizeObserver = new ResizeObserver(() => {
+      headerHeight.value = headerEl.value?.offsetHeight ?? 300;
+    });
+    headerResizeObserver.observe(headerEl.value);
+  }
+});
+
+onUnmounted(() => {
+  headerResizeObserver?.disconnect();
+});
+
+const badgeBottomStyle = computed(() => ({
+  bottom: `${headerHeight.value + 8}px`,
+}));
 
 const activeAction = ref("");
 const typedLine = ref("");
@@ -349,13 +373,13 @@ const enemyIntentMessage = computed(() => {
 
   switch (props.enemyNextAction) {
     case "attack":
-      return `Attacking for ${props.nextEnemyAttack} damage`;
+      return `Enemy attacking for ${props.nextEnemyAttack} dmg`;
     case "defend":
-      return "Defending";
+      return "Enemy defending";
     case "flee":
-      return "About to flee";
+      return "Enemy about to flee";
     case "trip":
-      return "Tripped! Free attack";
+      return "Enemy tripped — free attack!";
     default:
       return "";
   }

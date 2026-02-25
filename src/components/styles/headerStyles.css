@@ -405,18 +405,23 @@ button:hover {
 
 /* Enemy Intent Display */
 .enemy-intent {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  margin: 1rem auto 1rem auto;
+  padding: 0.6rem 1.2rem;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 16px;
-  max-width: 350px;
+  font-size: 15px;
+  max-width: 380px;
+  width: max-content;
   border: 2px solid;
-  animation: pulse-glow 2s ease-in-out infinite;
+  z-index: 110;
+  animation: pulse-glow-centered 2s ease-in-out infinite;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .intent-icon {
@@ -431,38 +436,38 @@ button:hover {
 
 /* Intent Type Colors */
 .intent-attack {
-  background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
-  border-color: #990000;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+  background: linear-gradient(135deg, #6b1f1f 0%, #4a1515 100%);
+  border-color: #3a0f0f;
+  color: #f0c8c8;
+  box-shadow: 0 3px 8px rgba(100, 0, 0, 0.25);
 }
 
 .intent-defend {
-  background: linear-gradient(135deg, #4444ff 0%, #0000cc 100%);
-  border-color: #000099;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 255, 0.3);
+  background: linear-gradient(135deg, #1a3a6b 0%, #112449 100%);
+  border-color: #0c1a38;
+  color: #b8ccee;
+  box-shadow: 0 3px 8px rgba(0, 30, 100, 0.25);
 }
 
 .intent-flee {
-  background: linear-gradient(135deg, #ffaa00 0%, #cc8800 100%);
-  border-color: #996600;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(255, 170, 0, 0.3);
+  background: linear-gradient(135deg, #6b4a00 0%, #4a3300 100%);
+  border-color: #382600;
+  color: #eed898;
+  box-shadow: 0 3px 8px rgba(80, 50, 0, 0.25);
 }
 
 .intent-trip {
-  background: linear-gradient(135deg, #00cc00 0%, #009900 100%);
-  border-color: #006600;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 200, 0, 0.3);
+  background: linear-gradient(135deg, #1e5c1e 0%, #133d13 100%);
+  border-color: #0e2e0e;
+  color: #a8d8a8;
+  box-shadow: 0 3px 8px rgba(0, 60, 0, 0.25);
 }
 
 .intent-default {
-  background: linear-gradient(135deg, #666666 0%, #444444 100%);
-  border-color: #333333;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #3a3a3a 0%, #252525 100%);
+  border-color: #1a1a1a;
+  color: #cccccc;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Animations */
@@ -474,6 +479,17 @@ button:hover {
   50% {
     transform: scale(1.02);
     opacity: 0.95;
+  }
+}
+
+@keyframes pulse-glow-centered {
+  0%, 100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.03);
+    opacity: 0.92;
   }
 }
 
@@ -1214,21 +1230,28 @@ button:hover {
 
   /* Enemy Intent Display - Mobile Optimized */
   .enemy-intent {
-    max-width: 95%;
-    width: 95%;
-    margin: 0.5rem auto;
-    padding: 0.6rem 0.8rem;
-    font-size: 14px;
-    gap: 0.4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    top: unset;
+    max-width: 90vw;
+    width: max-content;
+    padding: 0.35rem 0.8rem;
+    font-size: 12px;
+    gap: 0.35rem;
+    border-radius: 5px;
+    border-width: 1px;
   }
 
   .intent-icon {
-    font-size: 20px;
+    font-size: 14px;
+    flex-shrink: 0;
   }
 
   .intent-text {
-    font-size: 13px;
-    letter-spacing: 0.3px;
+    font-size: 12px;
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: nowrap;
   }
 
   .game-log {

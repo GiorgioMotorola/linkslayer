@@ -258,6 +258,7 @@ watch(
   z-index: 1000;
   background: #5e5e5e8e;
   backdrop-filter: blur(6px);
+  overflow-y: auto;
 }
 
 .class-select {
@@ -270,6 +271,7 @@ watch(
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   animation: pop-in 0.3s ease;
   border: 1px solid black;
+  box-sizing: border-box;
 }
 
 .who-are-you-div {
@@ -470,41 +472,83 @@ button:hover {
 }
 
 @media screen and (max-width: 600px) {
+  .modal {
+    align-items: flex-start;
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+  }
+
   .class-select {
-    padding: 0.8rem;
+    padding: 0.75rem;
+    width: 96%;
+    margin: 0 auto;
+    max-height: none;
   }
-  .game-title {
-    font-size: 30px;
+
+  .game-title img {
+    max-width: 55px;
+    max-height: 55px;
   }
-  .journey-prompt {
-    font-size: 16px;
-    text-indent: 2rem;
+
+  .game-name {
+    font-size: 20px;
+    letter-spacing: 4px;
   }
+
+  .name-input-group {
+    margin-top: 1.2rem;
+    margin-bottom: 0.75rem;
+  }
+
   .name-input {
     font-size: 16px;
-    padding: 3px;
+    padding: 6px 8px;
+    width: 100%;
+    max-width: 220px;
   }
+
   .randomize-name-button {
     font-size: 16px;
-    padding: 3px 8px;
+    padding: 6px 10px;
   }
+
+  .journey-length-selection {
+    margin-top: 0.75rem;
+    padding: 0.3rem;
+  }
+
+  .button-group-container {
+    gap: 5px;
+  }
+
+  .journey-length-button {
+    font-size: 13px;
+    padding: 8px 6px;
+    min-width: 0;
+    flex: 1 1 calc(25% - 5px);
+  }
+
   .class-grid {
-    gap: 1rem;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
   }
-  button {
-    font-size: 20px;
+
+  .class-card button {
+    font-size: 18px;
   }
+
   .desc {
     font-size: 13px;
   }
-  .journey-length-selection {
-    font-size: 14px;
-    margin-top: 1rem;
-    padding: 0.5rem;
-    background: transparent;
-  }
+
   .tips-button {
-    font-size: 15px;
+    font-size: 14px;
+    margin-top: 0.75rem;
+  }
+
+  .journey-prompt {
+    font-size: 14px;
+    text-indent: 1rem;
   }
 }
 
@@ -526,7 +570,7 @@ button:hover {
   gap: 5px;
 }
 .journey-length-button {
-  font-size: 14px;
+  font-size: 11px;
   padding: 6px 10px;
   min-width: unset;
   flex-grow: 1;

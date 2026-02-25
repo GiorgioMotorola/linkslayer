@@ -139,4 +139,43 @@ strong {
   font-weight: bold;
   color: #00008b;
 }
+
+@media screen and (max-width: 600px) {
+  .modal-overlay {
+    align-items: flex-start;
+    overflow-y: auto;
+    padding: 0.5rem;
+    box-sizing: border-box;
+  }
+
+  .tips-modal-content {
+    padding: 1.2rem;
+    width: 100%;
+    max-height: none;
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+
+  .close-button {
+    font-size: 2rem;
+    top: 10px;
+    right: 10px;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    padding-right: 2rem;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+  }
+
+  p,
+  ul {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+}
 </style>
