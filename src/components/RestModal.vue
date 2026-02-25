@@ -253,4 +253,37 @@ button:disabled:hover {
 .crafting-buttons button:nth-child(2):hover:not(:disabled) {
   background: rgba(75, 75, 75, 0.4);
 }
+
+@media screen and (max-width: 600px) {
+  .rest-overlay {
+    align-items: flex-start;
+    overflow-y: auto;
+    padding: 0.75rem 0.5rem;
+    box-sizing: border-box;
+  }
+
+  .rest-modal {
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+    gap: 0.6rem;
+  }
+
+  .rest-modal-phrase {
+    font-size: 15px;
+    padding-bottom: 1rem;
+  }
+
+  button {
+    font-size: 13px;
+    padding: 0.6rem 0.8rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .rest-options {
+    gap: 0.6rem;
+    margin-bottom: 10px;
+  }
+}
 </style>

@@ -605,14 +605,142 @@ function selectItem(item) {
   }
 
   .shop-footer-buttons {
-    flex-direction: column; /* Stack buttons vertically on small screens */
-    gap: 10px; /* Adjust gap for vertical stacking */
+    flex-direction: column;
+    gap: 10px;
   }
 
   .close-button-game-style {
-    width: 100%; /* Make buttons full width on small screens */
-    padding: 10px 15px; /* Adjust padding for smaller buttons */
-    font-size: 1em; /* Adjust font size */
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 1em;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .shop-overlay {
+    align-items: flex-start;
+    overflow-y: auto;
+    padding: 0.5rem;
+    box-sizing: border-box;
+  }
+
+  .shop-content-game-style {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .shop-title {
+    font-size: 16px;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+
+  .shop-header {
+    padding: 4px 8px;
+    margin-bottom: 10px;
+  }
+
+  .shopkeeper-greeting {
+    font-size: 13px;
+    margin-bottom: 3px;
+  }
+
+  .player-gold {
+    font-size: 13px;
+  }
+
+  /* Flatten the layout so all sections can be freely ordered */
+  .shop-main-layout {
+    display: contents;
+  }
+
+  .shop-title    { order: 0; }
+  .shop-header   { order: 1; }
+  .shop-footer-buttons { order: 2; }
+  .item-details-panel {
+    order: 3;
+    height: auto;
+    width: 100%;
+    flex: none;
+    padding: 10px;
+  }
+  .shop-list-panel {
+    order: 4;
+    height: auto;
+    max-height: none;
+    width: 100%;
+    flex: none;
+    overflow: visible;
+  }
+
+  .shop-items-container {
+    overflow: visible;
+  }
+
+  .shop-items-container {
+    padding: 4px;
+  }
+
+  .item-slot {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+
+  .item-name {
+    font-size: 12px;
+  }
+
+  .item-cost {
+    font-size: 11px;
+  }
+
+  .details-title {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  .details-content {
+    font-size: 12px;
+  }
+
+  .selected-item-name {
+    font-size: 13px;
+  }
+
+  .selected-item-cost {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .selected-item-description {
+    margin-bottom: 10px;
+  }
+
+  .haiku-container {
+    margin-top: 1rem;
+    font-size: 14px;
+  }
+
+  .buy-button-details {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .shop-footer-buttons {
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+
+  .close-button-game-style {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 13px;
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
   }
 }
 </style>
