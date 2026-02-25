@@ -52,7 +52,7 @@
         <div class="npc" v-else-if="encounter.type === 'npc'">
           <div class="npc-name">{{ encounter.npc.name }} &#x1F5E8;</div>
           <div class="npc-greeting" v-html="typedGreeting"></div>
-          <div v-if="currentDialogue && currentDialogue.options">
+          <div v-if="currentDialogue && currentDialogue.options" class="dialogue-options">
             <button
               v-for="(option, index) in currentDialogue.options"
               :key="index"
@@ -61,7 +61,7 @@
               > {{ option.text }}
             </button>
           </div>
-          <div v-else>
+          <div v-else class="dialogue-options">
             <button @click="emit('close')">> Continue</button>
           </div>
         </div>
@@ -69,7 +69,7 @@
         <div class="lore" v-else-if="encounter.type === 'lore'">
           <div class="lore-name">Discovery ⚲</div>
           <div class="lore-greeting" v-html="typedGreeting"></div>
-          <div v-if="currentDialogue && currentDialogue.options">
+          <div v-if="currentDialogue && currentDialogue.options" class="dialogue-options">
             <button
               v-for="(option, index) in currentDialogue.options"
               :key="index"
@@ -78,7 +78,7 @@
               > {{ option.text }}
             </button>
           </div>
-          <div v-else>
+          <div v-else class="dialogue-options">
             <button @click="emit('close')">> Continue</button>
           </div>
         </div>
@@ -292,14 +292,13 @@ const typedGreeting = ref("");
 let typeInterval = null;
 const currentDialogueNodeId = ref(null);
 const expanded = ref(false);
-const visibleLogCount = ref(Math.min(props.gameLog?.length ?? 0, 5));
+const visibleLogCount = ref(Math.min(props.gameLog?.length ?? 0, 3));
 const newLineIds = ref([]);
-const isMapModalOpen = ref(false);
 const containerAnimClass = ref("");
 let containerAnimTimeout = null;
 
 const displayedLog = computed(() => {
-  return expanded.value ? props.gameLog : props.gameLog.slice(-5);
+  return expanded.value ? props.gameLog : props.gameLog.slice(-3);
 });
 
 const visibleLog = computed(() => {
@@ -709,7 +708,7 @@ function startTyping(fullText, type = "combat") {
 }
 watch(
   () => props.gameLog.length,
-  async (newLength, oldLength) => {
+  async (newLength) => {
     const diff = newLength - visibleLogCount.value;
 
     if (diff > 0) {

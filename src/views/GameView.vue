@@ -98,6 +98,7 @@
         :targets="chain[currentTargetIndex + 1]"
         :inEncounter="inEncounter"
         @link-clicked="callHandleClick"
+        @open-map="isMapModalOpen = true"
         :path="path"
         :fullChain="chain"
         :currentTargetIndex="currentTargetIndex"
@@ -159,7 +160,7 @@
 </template>
 
 <script setup>
-import { watch, nextTick } from "vue";
+import { watch, nextTick, onMounted, onUnmounted } from "vue";
 import ArticleViewer from "@/components/ArticleViewer.vue";
 import Header from "@/components/Header.vue";
 import VictoryModal from "@/components/VictoryModal.vue";
@@ -362,6 +363,15 @@ const itemHandlers = createItemHandlers({
     healthRegenHealedCount,
   },
 });
+
+// Warn on refresh/close while game is in progress
+const handleBeforeUnload = (e) => {
+  if (playerClass.value) {
+    e.preventDefault();
+  }
+};
+onMounted(() => window.addEventListener("beforeunload", handleBeforeUnload));
+onUnmounted(() => window.removeEventListener("beforeunload", handleBeforeUnload));
 
 // Inventory item usage handler
 function handleUseInventoryItem(itemType) {

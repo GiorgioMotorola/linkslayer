@@ -11,18 +11,12 @@
   </div>
   <div v-if="inEncounter" class="overlay"></div>
   <div class="path-display">
-    <span v-for="(article, index) in props.fullChain" :key="index">
-      <span
-        :style="{
-          color: props.currentTargetIndex === index ? '#0645ad' : '#555',
-        }"
-      >
-        {{ article.replaceAll("_", " ") }}
-      </span>
-      <span v-if="index < props.fullChain.length - 1" class="separator">
-        &nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;•&nbsp;&nbsp;
-      </span>
-    </span>
+    <div class="path-crumb">
+      <span class="path-reading">{{ props.fullChain[props.currentTargetIndex]?.replaceAll("_", " ") }}</span>
+      <span class="path-arrow">→</span>
+      <span class="path-goal">{{ props.fullChain[props.currentTargetIndex + 1]?.replaceAll("_", " ") }}</span>
+    </div>
+    <button class="path-map-hint" @click="emit('open-map')">See Full Path in Map</button>
   </div>
   <div class="article" :class="{ 'blurred-content': isBlurred }">
     <div v-if="inEncounter" class="overlay"></div>
@@ -56,7 +50,7 @@ const props = defineProps({
   isBlurred: Boolean,
 });
 
-const emit = defineEmits(["link-clicked"]);
+const emit = defineEmits(["link-clicked", "open-map"]);
 
 const articleHtml = ref("");
 const errorMessage = ref("");
@@ -252,28 +246,72 @@ onMounted(load);
 }
 
 .path-display {
-  font-size: 12px;
-  text-align: center;
-  margin-bottom: 0.5rem;
-  color: #555;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background-color: #ffffff;
-  padding: 5px 0;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background: #e8ecee;
   border-bottom: solid 1px black;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 100;
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  background: #e8ecee;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 12px;
+  box-sizing: border-box;
+  gap: 8px;
 }
 
-.path-display .separator {
-  margin: 0 0px;
+.path-crumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  color: #555;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.path-reading {
+  color: #555;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+.path-arrow {
+  color: #888;
+  flex-shrink: 0;
+  font-size: 13px;
+}
+
+.path-goal {
+  color: #0645ad;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+.path-map-hint {
+  font-size: 13px;
+  color: #4b4949;
+  background: none;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+  font-family: inherit;
+}
+
+.path-map-hint:hover {
+  color: #0645ad;
+  background: rgba(6, 69, 173, 0.07);
 }
 
 .error-message {
@@ -384,23 +422,35 @@ onMounted(load);
     box-sizing: border-box;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    font-size: 14px;
   }
   .title {
-    font-size: 25px;
+    font-size: 22px;
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
   .path-display {
-    font-size: 11px;
-    padding: 5px 0.5rem;
-    max-width: 100vw;
-    overflow-x: hidden;
-    box-sizing: border-box;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+    padding: 4px 8px;
+    gap: 4px;
   }
-  .path-display .separator {
-    margin: 0 2px;
+
+  .path-reading {
+    max-width: 100px;
+    font-size: 10px;
+  }
+
+  .path-goal {
+    max-width: 110px;
+    font-size: 10px;
+  }
+
+  .path-arrow {
+    font-size: 11px;
+  }
+
+  .path-map-hint {
+    font-size: 10px;
+    padding: 1px 4px;
   }
 
   /* Force all article content to stay within viewport */

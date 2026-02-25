@@ -1,0 +1,188 @@
+- id: npc_001
+  name: Old Man Flynn
+  greeting: "OLD MAN FLYNN: Did you know They Know?"
+  options:
+    - text: "'Yes sir, I did.'"
+      result: item
+      details: shield
+      responseText: "OLD MAN FLYNN: I knew it. I knew someone would know. That brace looks like it needs a fair polishing. Let me give it a fair polishing, my son."
+    - text: Ignore him and walk away
+      result: none
+      responseText: You nod politely and keep moving. They continue to know.
+    - text: "'What do you mean?'"
+      result: none
+      responseText: "OLD MAN FLYNN: You... don't know? Then I have nothing to discuss with you."
+    - text: "'From what I heard, they do NOT know, actually.'"
+      result: damage-minor
+      responseText: Old Man Flynn uses his cane to bop you on the head. He then walks away.
+
+- id: npc_004
+  name: TJ the Golden
+  greeting: "TJ THE GOLDEN: Take a seat, will ya? I am cracking beers and listening to Steely Dan."
+  options:
+    - text: Take a seat, crack a beer, and listen to Steely Dan
+      result: item
+      details: beer-health
+      responseText: "Your mind and body are restored by a father's kindness and you gain +5 HP, and your vision is blurry from the delicious beer."
+    - text: "'No thanks, I only like to Imagine the Dragon I am going to fight later.'"
+      result: none
+      responseText: "TJ THE GOLDEN: Alright. Suit yourself, padre."
+    - text: "'No thanks, I have no time to learn the saxophone.'"
+      result: none
+      responseText: "TJ THE GOLDEN: They got a name for the winners in the world. I hope you have a name for when you lose."
+    - text: "'Hell yeah I'd have a beer.'"
+      result: item
+      details: beer-health
+      responseText: "Your mind and body are restored by a father's kindness and you gain +5 HP, and your vision is blurry from the delicious beer."
+
+- id: npc_006
+  name: Evil Tom
+  greeting: "EVIL TOM: My name is Evil Tom. I'm a really nice guy. \U0001F603"
+  options:
+    - text: "'I don't believe you, Evil Tom.'"
+      result: combat
+      responseText: "EVIL TOM: Well, I never."
+    - text: "'Right on.'"
+      result: damage
+      responseText: Evil Tom sneezes and vanishes in a puff of smoke, leaving only a pair of old Crocs. The Crocs hurt to look at and deal 5 damage.
+    - text: "'For sure.'"
+      result: damage
+      responseText: Evil Tom coughs so hard he accidentally punches you in the face and you take 5 damage.
+    - text: "'You should change your name to Nice Tom then.'"
+      result: item
+      details: health
+      responseText: "EVIL TOM: Thank you. There is a lack of kindness in this world, and it's nice to meet someone who is counter to the culture. Here is some fresh bread."
+
+- id: npc_011
+  name: Miss Riddlesworth
+  greeting: "MISS RIDDLESWORTH: You see me once in a minute, twice in a moment, but never in a thousand years. What am I?"
+  options:
+    - text: "'A blink'"
+      result: none
+      responseText: "MISS RIDDLESWORTH: Wrong."
+    - text: "'The letter M'"
+      result: item
+      details: health
+      responseText: "MISS RIDDLESWORTH: H- How did you guess?"
+    - text: "'A memory'"
+      result: none
+      responseText: "MISS RIDDLESWORTH: Not a chance."
+    - text: "'The moon'"
+      result: none
+      responseText: "MISS RIDDLESWORTH: You could not be more incorrect."
+
+- id: npc_012
+  name: Mr Riddlesworth
+  greeting: "MR RIDDLESWORTH: I build up castles, I tear down mountains. I make some men blind, I help others to see. What am I?"
+  options:
+    - text: "'Time'"
+      result: none
+      responseText: "MR RIDDLESWORTH: Incorrect."
+    - text: "'Fire'"
+      result: none
+      responseText: "MR RIDDLESWORTH: Well, that's not the answer."
+    - text: "'Sand'"
+      result: item
+      details: weapon
+      responseText: "MR RIDDLESWORTH: You got it."
+    - text: "'Gold'"
+      result: none
+      responseText: "MR RIDDLESWORTH: Wrong."
+
+- id: npc_016
+  name: A Cute Dog
+  greeting: "'woof'"
+  options:
+    - text: "'Hey I think a guy is looking for you.'"
+      result: combat
+      responseText: The dog doesn't appear to be a dog after all and morphs into a disgusting creature.
+    - text: "'Woof' back at ya."
+      result: combat
+      responseText: The dog doesn't appear to be a dog after all and morphs into a disgusting creature.
+    - text: "More like Fartie, heh."
+      result: combat
+      responseText: The dog doesn't appear to be a dog after all and morphs into a disgusting creature.
+    - text: Attack the dog
+      result: inventoryItem
+      id: turkey_leg_consumable
+      responseText: "You must have smelled something fishy because the dog was an enemy in disguise. The 'dog' dies immediately and drops a Turkey Leg, for some reason."
+
+- id: npc_019_karaoke_contest
+  name: "The Bard's Library Karaoke"
+  greeting: "You step into the grand hall of the Bard's Library, usually a place of quiet study, but tonight it's abuzz with an unusual energy. A makeshift stage is set up, and a sign reads: 'Tonight: Karaoke Contest.' The air vibrates with nervous excitement and off-key singing. A cheerful gnome gestures towards the stage. 'Care to try your hand, traveler? Tonight, we seek the finest rendition of 'Molly Malone'. Winner gets 100 Gold Pieces.'"
+  dialogueNodes:
+    start:
+      text: "You step into the grand hall of the Bard's Library, usually a place of quiet study, but tonight it's abuzz with an unusual energy. A makeshift stage is set up, and a sign reads: 'Tonight: Karaoke Contest.' The air vibrates with nervous excitement and off-key singing. A cheerful gnome gestures towards the stage. 'Care to try your hand, traveler? Tonight, we seek the finest rendition of 'Molly Malone'. Winner gets 100 Gold Pieces.'"
+      options:
+        - text: Sign up for the contest despite not knowing the song at all.
+          flow: dialogue_branch
+          next_node_id: pick_song
+        - text: "Decline. Singing isn't your forte."
+          flow: close_encounter
+          responseText: "You politely decline, deciding to leave the stage to the more musically inclined. The library's usual quiet calls to you."
+        - text: Just listen to the other contestants.
+          flow: close_encounter
+          responseText: "You find a comfortable spot and enjoy the spectacle, chuckling at some of the more enthusiastic, if untalented, performers."
+    pick_song:
+      text: "The gnome directs you to the stage where some 50 patrons half drunk cheer. The small band in the corner begins the song as the crowd sings the first line 'In Dublin's fair city, Where the girls are so pretty, I first set my eyes on sweet Molly Malone' and they await for you to belt out the next line..."
+      options:
+        - text: "Sing: 'As she wheeled her wheel-barrow, Through streets broad and narrow, Crying: Cockles and mussels, alive, alive, oh."
+          flow: dialogue_branch
+          next_node_id: line_1
+        - text: "Sing: 'As she ate a squirrel, Through streets full of barrels, Sighing: Rocks and muskrats, alive, alive, oh.'"
+          flow: dialogue_branch
+          next_node_id: lose_contest
+        - text: "Dont sing and instead begin sweating and anxiously shaking.'"
+          flow: dialogue_branch
+          next_node_id: lose_contest
+    line_1:
+      text: "The crowd begins clapping along moderately and singing along: 'Alive, alive, oh, Alive, alive, oh. Crying Cockles and mussels, alive, alive, oh.'"
+      options:
+        - text: "Sing: 'She was a nice mother, But sure 'twas no father, For so were her brother and sister before'"
+          flow: dialogue_branch
+          next_node_id: lose_contest
+        - text: "Sing: 'She was a fishmonger, But sure 'twas no wonder, For so were her father and mother before'"
+          flow: dialogue_branch
+          next_node_id: line_2
+        - text: "Dont sing and instead vomit off stage left and run out of the Library."
+          flow: dialogue_branch
+          next_node_id: lose_contest
+    line_2:
+      text: "The crowd begins wildly singing back: 'And they each wheel'd their barrow, Through streets broad and narrow'"
+      options:
+        - text: "Sing back to the crowd: 'Sighing: Rocks and muskrats, alive, alive, oh.'"
+          flow: dialogue_branch
+          next_node_id: lose_contest
+        - text: "Sing back to the crowd: 'Crying Cockles and mussels alive, alive oh.'"
+          flow: dialogue_branch
+          next_node_id: line_3
+        - text: "Sing: 'Molly Maloooone. Molly MaloooooooooOOoooooOoOone.'"
+          flow: dialogue_branch
+          next_node_id: lose_contest
+    line_3:
+      text: "The crowd is out of control. The floor is being scuffed with the amount of feet scraping in rhythm and neighbors nearby are poking their heads in a sleepy eyed state as the crowd sings back to you 'She died of a fever and no one could save her. And that was the end of sweet Molly Malone.'."
+      options:
+        - text: "Sing: 'But her goat wheels her barrow, Through streets made of marrow, Crying Socks filled of muscle, alive, alive, oh.'"
+          flow: dialogue_branch
+          next_node_id: lose_contest
+        - text: "Sing: 'Rest in Peace, Mollllyyy Maaaaloooooneee.'"
+          flow: dialogue_branch
+          next_node_id: lose_contest
+        - text: "Sing: 'But her ghost wheels her barrow, Through streets broad and narrow, Crying, Cockles and mussels, alive, alive, oh.'"
+          flow: dialogue_branch
+          next_node_id: win_contest
+    win_contest:
+      text: "The crowd is in a steady roar. The gnome is running toward you with a big pouch of gold. He is jumping up and down shouting 'You win. You Win. Here is your prize.'"
+      options:
+        - text: Accept your winnings.
+          effect: item
+          details: gold
+          amount: 100
+          responseText: "You receive a heavy pouch of 100 gleaming gold pieces. Your vocal cords might be sore, but your purse is certainly not, and you've earned the respect of the bards present."
+          flow: close_encounter
+    lose_contest:
+      text: A collective groan rises from the audience. The gnome sighs. Better luck next time.
+      options:
+        - text: Accept defeat and leave.
+          flow: close_encounter
+          responseText: "Well, at least a Bandit wasn't swiping at me with a sword. I guess it wasn't all bad."

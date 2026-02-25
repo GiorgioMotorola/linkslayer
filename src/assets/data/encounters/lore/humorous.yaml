@@ -1,0 +1,113 @@
+- id: lore_007
+  text: "You reach a vending machine with the branding 'Uncle Junior's Weapon Upgrades'. It appears it doesn't take any currency and just asks you to place your weapon on its shelf and press 'upgrade'."
+  options:
+    - text: "Place your weapon on the shelf and press 'upgrade'."
+      result: combat
+      responseText: Cazzata, Malanga.
+    - text: Move forward without upgrading your weapon.
+      result: none
+      responseText: Nothing is free in this life. I'll pass.
+    - text: Check behind the vending machine for any other services it may or may not have.
+      result: none
+      responseText: There is nothing behind the vending machine.
+    - text: Press upgrade without placing your weapon on the shelf.
+      result: item
+      details: poison
+      amount: 5
+      damage: 2
+      responseText: The vending machine fires on and violently spits out a glass vial full of a green liquid. It shatters on your face. It appears to be poison.
+
+- id: lore_008
+  text: "You come across a treasure chest. The lock appears to be busted."
+  options:
+    - text: Open the chest
+      effect: item
+      details: gold
+      amount: 50
+      responseText: There appears to be gold in that there chest.
+    - text: Walk beyond it and continue on.
+      result: none
+      responseText: Doubtful there is anything in there if the lock is busted.
+    - text: Admire the treasure chest from afar
+      result: none
+      responseText: "'This is a nice treasure chest.'"
+    - text: Kick the treasure chest
+      result: damage-minor
+      responseText: Your foot hurts now.
+
+- id: lore_012
+  text: "There is a crate in front of you that appears to have a series of wires that loop around the outside and feed into the inside. A note sits beside the crate that says 'CAUTION: Do NOT cut the Red wire.'."
+  options:
+    - text: Cut the Red Wire
+      result: damage-major
+      responseText: "The crate explodes and throws you back 50 feet. Following directions appears to be your weak suit."
+    - text: Cut the Green Wire
+      effect: item
+      details: gold
+      amount: 45
+      responseText: "The crate whirs a low tone and then immediately opens up, all 4 sides collapsing to the ground. A pile of gold is revealed."
+    - text: Cut All of the Wires
+      result: damage-major
+      responseText: "You cut the Blue Wire and nothing happens. You cut the Green Wire and the crate starts emitting a loud whirring sound. You panic and cut the Red Wire and the crate explodes and throws you back 50 feet. Impatience isn't a virtue."
+    - text: Cut the Blue Wire
+      result: none
+      responseText: Nothing happens.
+
+- id: lore_017
+  text: "You come across a tavern that seems to be bustling with life. As you walk in, you see several patrons drinking and yelling in excitement. They appear to be surrounded by something called Tymora's Spinner. You ask one patron what is going on and they say 'I have lost 10 times in a row on this stupid game. Here, have my last gold piece. See if your luck is better than mine.' You accept the gold piece. After watching a couple of rounds, it appears you can spend 1 gold piece to bet on a range of numbers and if the ball lands in that range, you win."
+  options:
+    - text: Bet the gold piece on range 1-10
+      result: item
+      details: gold
+      amount: 0
+      responseText: You lost.
+    - text: Bet the gold piece on range 11-20
+      result: item
+      details: gold
+      amount: 0
+      responseText: You lost.
+    - text: Bet the gold piece on range 21-30
+      result: item
+      details: gold
+      amount: 0
+      responseText: You lost.
+    - text: Bet the gold piece on range 31-40
+      result: item
+      details: gold
+      amount: 0
+      responseText: You lost.
+    - text: Bet the gold piece on range 41-50
+      result: item
+      details: gold
+      amount: 0
+      responseText: You lost.
+    - text: Bet the gold piece on range 51-60
+      effect: item
+      details: gold
+      amount: 50
+      responseText: You win.
+    - text: Bet the gold piece on range 61-70
+      result: item
+      details: gold
+      amount: 0
+      responseText: You lost.
+    - text: Bet the gold piece on range 71-80
+      result: item
+      details: gold
+      amount: 0
+      responseText: You lost.
+    - text: Bet the gold piece on range 81-90
+      result: item
+      details: gold
+      amount: 0
+      responseText: You lost.
+    - text: Bet the gold piece on range 91-100
+      result: item
+      details: gold
+      amount: 0
+      responseText: You lost.
+    - text: "Don't bet. Keep the gold piece and leave the tavern."
+      result: item
+      details: gold
+      amount: 1
+      responseText: "'I can't leave my life up to chance.'"

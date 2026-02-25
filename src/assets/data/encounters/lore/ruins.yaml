@@ -1,0 +1,259 @@
+- id: lore_009
+  text: "You see a very large statue in a clearing. It appears to be thousands of years old. It is surrounded by ruined rock and structures that have seen better days. The statue appears to be in decent shape and has not succumbed to the elements. Approaching the statue, you can see a plaque. Written on the plaque is the following: 'To our leader in laughter, Norm. What is green and has wheels?' The plaque appears to ask a question."
+  options:
+    - text: "Respond with 'swords?'"
+      result: none
+      responseText: Nothing happens.
+    - text: "Respond with 'rocks?'"
+      result: none
+      responseText: Nothing happens.
+    - text: "Respond with 'clouds?'"
+      result: none
+      responseText: Nothing happens.
+    - text: "Respond with 'grass?'"
+      result: shortcut
+      details: clicks
+      amount: 6
+      responseText: "The statue slowly moves to the south, revealing an entryway to an underground path. Above the archway that leads into the path reads another plaque that says 'Grass. I lied about the wheels'. The path appears to be a shortcut through the forest."
+
+- id: lore_010
+  text: "There is a sturdy bridge ahead of you. The bridge may be short, but it appears to be made up of squares. Each square a different color. The first four squares are colored Red, White, Green, and Blue. Each square has 'Currents murmur my name, the daylight wears my face, sorrow drapes itself in my hue, and I wait beneath your next footfall' written on them respectively."
+  options:
+    - text: Step on the Green square
+      result: damage
+      responseText: "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage."
+    - text: Step on the White square
+      result: damage
+      responseText: "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage."
+    - text: Step on the Blue square
+      result: shortcut
+      details: clicks
+      amount: 6
+      responseText: "The Blue square lights up, then dims. Then all the squares turn blue. You walk across the bridge safely."
+    - text: Step on the Red square
+      result: damage
+      responseText: "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage."
+
+- id: lore_011
+  text: "There is a sturdy bridge ahead of you. The bridge may be short, but it appears to be made up of squares. These squares have arrows pointing North, South, East, and West. The squares have written on them 'You'll want warmth upon the road to me, The faithful star holds my name, The sky stretches on with my voice, And I lie just ahead, beneath your next step.'"
+  options:
+    - text: Step on the North square
+      result: shortcut
+      details: clicks
+      amount: 10
+      responseText: "The North square lights up, then all 4 squares light up. Then they slowly dim and suddenly change into one large arrow pointing toward the end of the bridge allowing you to cross it safely."
+    - text: Step on the South square
+      result: damage
+      responseText: "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage."
+    - text: Step on the East square
+      result: damage
+      responseText: "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage."
+    - text: Step on the West square
+      result: damage
+      responseText: "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage."
+
+- id: lore_014
+  text: After following a set of train tracks for 2 miles, you come across a train station heading to far away lands.
+  options:
+    - text: Blackstaff Tower
+      routeTitle: College_Fjord
+    - text: The Forgotten Bard Tree
+      routeTitle: The_Bund
+    - text: "Duran's Cliff"
+      routeTitle: Rio_de_Janeiro
+    - text: Oceanside Caverns
+      routeTitle: Great_Barrier_Reef
+    - text: "No, thank you."
+      result: none
+      responseText: "THE SCROLL DEALER: Be careful out there..."
+
+- id: lore_015
+  text: You find a dusty old chest hidden beneath a gnarled tree root. It looks untouched for centuries.
+  options:
+    - text: Open the chest carefully.
+      effect: item
+      details: gold
+      amount: 15
+      responseText: "The chest creaks open, revealing a small pouch of gold."
+    - text: Open the chest in a fit of rage.
+      effect: item
+      details: gold
+      amount: 15
+      responseText: "The chest violently opens, revealing a small pouch of gold."
+    - text: "Leave the chest, it might be cursed."
+      result: none
+      responseText: You decide against opening the chest and move on.
+    - text: Punch the chest
+      result: damage
+      responseText: You decide to punch the chest for some reason.
+
+- id: lore_016
+  text: "You find a wooden box sitting in the mud. Inside the box, you find 6 masks. Outside of each mask, dawning a letter on the forehead, you notice the masks are otherwise featureless. Each mask has a different letter: F, P, W, R, C, and S."
+  options:
+    - text: Put on the F mask.
+      result: item
+      details: weapon
+      responseText: You feel power flowing through your veins.
+    - text: Put on the P mask.
+      result: item
+      details: shield
+      responseText: You feel safer and ready for any attack.
+    - text: Put on the W mask.
+      result: special
+      details: recover
+      amount: 2
+      responseText: You feel more confident that you will win this fight.
+    - text: Put on the R mask.
+      effect: item
+      details: gold
+      amount: 15
+      responseText: You feel richer than ever.
+    - text: Put on the C mask.
+      result: item
+      details: health-major
+      responseText: You feel healthier than ever.
+    - text: Put on the S mask.
+      result: item
+      details: health-major
+      responseText: You feel healthier than ever.
+
+- id: lore_020_wizards_tower
+  dialogueNodes:
+    start:
+      text: "Before you stands an ominous wizard's tower, its stone weathered and ancient. Rumors whisper that the wizard who once lived here was slain, and now a monstrous entity inhabits its halls. The monster refuses to leave and the nearby town fears it."
+      options:
+        - text: Open the main entrance.
+          flow: dialogue_branch
+          next_node_id: main_entrance
+        - text: Search for a less obvious way in.
+          flow: dialogue_branch
+          next_node_id: hidden_entry_search
+        - text: "Decide it's too dangerous and leave."
+          flow: close_encounter
+          responseText: Maybe someone else can kill the monster...
+    main_entrance:
+      text: "The heavy oak doors are slightly ajar, revealing a dark, dusty foyer. A faint, metallic scent hangs in the air."
+      options:
+        - text: "Step cautiously into the foyer, trying to make not even a footstep apparent."
+          flow: dialogue_branch
+          next_node_id: foyer
+        - text: Push the doors wide open and announce your presence.
+          result: mini_boss_combat
+          miniBossType: "Bog Hag (Wearing the skin of the Wizard)"
+          responseText: The monster announces their presence as well with a loud growl...
+        - text: Reconsider and look for another way in.
+          flow: dialogue_branch
+          next_node_id: hidden_entry_search
+    hidden_entry_search:
+      text: "You circle the tower, examining its crumbling walls. Near the back, you find a small, overgrown service entrance, almost completely hidden by ivy. It looks less used, but potentially unstable."
+      options:
+        - text: Try the service entrance.
+          flow: dialogue_branch
+          next_node_id: service_entrance
+        - text: Go back to the main entrance.
+          flow: dialogue_branch
+          next_node_id: main_entrance
+    service_entrance:
+      text: "The service door creaks open with surprising ease. Inside, a narrow, dimly lit corridor stretches before you. You notice a glimmer in a shadowy corner."
+      options:
+        - text: Investigate the glimmer.
+          effect: item
+          details: gold
+          amount: 25
+          responseText: "You find a small pouch dropped by a previous visitor, containing 10 gold pieces. You continue on..."
+          flow: dialogue_branch
+          next_node_id: foyer
+        - text: Proceed down the corridor.
+          flow: dialogue_branch
+          next_node_id: foyer
+    foyer:
+      text: "The foyer is grand but decaying. A majestic, spiraling staircase dominates the center, and two dark corridors lead off to the left and right."
+      options:
+        - text: Ascend the grand staircase.
+          flow: dialogue_branch
+          next_node_id: grand_staircase
+        - text: Take the left corridor.
+          flow: dialogue_branch
+          next_node_id: left_corridor
+        - text: Take the right corridor.
+          flow: dialogue_branch
+          next_node_id: right_corridor
+    grand_staircase:
+      text: "The stairs creak under your weight, echoing loudly. Halfway up, a trap unsprings and you see a dozen nails flying in your direction."
+      options:
+        - text: Quickly dodge the nail trap.
+          effect: damage-minor
+          amount: 3
+          responseText: "You manage to avoid the worst, but a nail grazes your arm. You take 3 damage. You continue on."
+          flow: dialogue_branch
+          next_node_id: top_of_tower
+        - text: Tank the nail trap.
+          flow: dialogue_branch
+          effect: damage-minor
+          amount: 10
+          responseText: "You tank the nails and a few get stuck in your skin. You take 10 damage. You continue on."
+          next_node_id: top_of_tower
+    left_corridor:
+      text: "This corridor is lined with empty shelves and overturned furniture. It smells faintly of dust and something sweet. You spot a discarded vial on the floor."
+      options:
+        - text: Pick up the vial.
+          result: item
+          details: health
+          responseText: "You pick up the vial. It's a Health Potion. A lucky find. You continue on."
+          flow: dialogue_branch
+          next_node_id: dead_end_left
+        - text: Continue to the end of the corridor.
+          flow: dialogue_branch
+          next_node_id: dead_end_left
+    right_corridor:
+      text: "This corridor is surprisingly well-maintained, adorned with faded tapestries. The air here is colder, and you hear a faint, guttural growl from deeper within."
+      options:
+        - text: Follow the growling sound.
+          flow: dialogue_branch
+          next_node_id: monster_lair_approach
+        - text: Return to the foyer.
+          flow: dialogue_branch
+          next_node_id: foyer
+    dead_end_left:
+      text: "The corridor ends abruptly at a solid, unyielding wall. There's no way forward here."
+      options:
+        - text: Return to the foyer.
+          flow: dialogue_branch
+          next_node_id: foyer
+    monster_lair_approach:
+      text: "The growling grows louder, echoing from a large, ornate door at the end of the corridor."
+      options:
+        - text: Brace yourself and open the door.
+          result: mini_boss_combat
+          miniBossType: "Bog Hag (Wearing the skin of the Wizard)"
+          responseText: The monster announces their presence by emitting an ear piercing growl.
+        - text: Hesitate and return to the foyer.
+          flow: dialogue_branch
+          next_node_id: foyer
+    top_of_tower:
+      text: "You reach the top floor. The wizard's study is here, filled with arcane instruments and dusty tomes. A strange, pulsating orb floats in the center of the room."
+      options:
+        - text: Confront the pulsating orb.
+          result: mini_boss_combat
+          miniBossType: "Bog Hag (Wearing the skin of the Wizard)"
+          responseText: "The orb flares brightly, revealing its true, monstrous form."
+        - text: Search the study for clues.
+          effect: item
+          details: gold
+          amount: 30
+          responseText: "You quickly search the study, finding a hidden stash of gold beneath a loose floorboard."
+          flow: dialogue_branch
+          next_node_id: top_of_tower_search_outcome
+        - text: Descend the stairs and leave the tower.
+          flow: close_encounter
+          responseText: "You decide the top floor is too dangerous for now. You carefully descend and leave the tower."
+    top_of_tower_search_outcome:
+      text: "You've found some gold."
+      options:
+        - text: Confront the pulsating orb.
+          result: mini_boss_combat
+          miniBossType: "Bog Hag (Wearing the skin of the Wizard)"
+          responseText: "The orb flares brightly, revealing its true, monstrous form."
+        - text: Descend the stairs and leave the tower.
+          flow: close_encounter
+          responseText: "You decide the top floor is too dangerous for now. You carefully descend and leave the tower."

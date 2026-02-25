@@ -1,0 +1,160 @@
+- id: lore_018
+  text: "There appears to be a stone block with a hole carved into it. The hole appears to be worn away while the rest of the block seems to be smooth. While staring at the block, you hear the sound of a voice that shouts 'Halt, trespasser. If you come any closer, you better tell me how fast you want to die.'"
+  options:
+    - text: Test the voice and take one small step forward.
+      result: item
+      details: poison
+      amount: 10
+      damage: 1
+      responseText: "The voice shouts 'I warned you.' and spits a small dose of poison from the hole in the stone block."
+    - text: Decide the voice is bluffing and start running toward the stone block with your weapon.
+      result: item
+      details: poison
+      amount: 10
+      damage: 2
+      responseText: "The voice shouts 'I warned you.' and spits a medium dose of poison from the hole in the stone block."
+    - text: "'Oh yeah? What are you going to do... spit a large dose of poison from that hole in the stone block?'"
+      result: item
+      details: poison
+      amount: 15
+      damage: 2
+      responseText: The voice spits a large dose of poison from the hole in the stone block.
+    - text: Turn around and walk away.
+      result: none
+      responseText: "The voice yells 'Yeah, you better walk away.'"
+
+- id: lore_021_whispering_well
+  dialogueNodes:
+    start:
+      text: "You discover an ancient stone well, strangely overgrown with a gnarled, moss-covered tree that seems to sprout directly from its depths."
+      options:
+        - text: Use the tree to climb down the well.
+          flow: dialogue_branch
+          next_node_id: well_bottom
+        - text: Walk away. Some mysteries are best left alone.
+          flow: close_encounter
+          responseText: You decide the well holds more trouble than treasure and continue on your journey.
+    well_bottom:
+      text: "You touch down into shallow, cool water. The air is damp, and a faint light reveals a narrow tunnel leading away from the bottom of the well. The tunnel seems to lead towards a distant, flickering light and the faint sounds of voices."
+      options:
+        - text: Follow the tunnel cautiously towards the light.
+          flow: dialogue_branch
+          next_node_id: tunnel_fork
+        - text: Walk through the tunnel yelling and screaming like a crazy person.
+          result: mini_boss_combat
+          miniBossType: Lich Apprentice
+          responseText: "Your shouts echo, and a monstrous growl answers. A hulking figure bursts from the shadows, ready for a fight."
+        - text: Climb back out of the well.
+          flow: close_encounter
+          responseText: "The well's depths are too unsettling. You carefully climb back to the surface and leave."
+    tunnel_fork:
+      text: "The tunnel opens into a small cavern. Ahead, the tunnel continues straight, but a smaller, darker passage branches off to your left. The sounds of the voices seem closer down the straight path."
+      options:
+        - text: Go left into the darker passage.
+          flow: dialogue_branch
+          next_node_id: ladder_to_camp
+        - text: Go straight, deeper into the main tunnel.
+          flow: dialogue_branch
+          next_node_id: straight_path_fork
+        - text: "Turn around and climb out of the well. This is too risky."
+          flow: close_encounter
+          responseText: The thought of bandits makes you reconsider. You backtrack and climb out of the well.
+    ladder_to_camp:
+      text: "The dark passage leads to a rickety wooden ladder ascending into what sounds like a very active bandit camp. You hear boisterous laughter and the clinking of steel. Going up this ladder now would surely lead to immediate discovery and probably death."
+      options:
+        - text: "Say 'screw it' and go up the ladder."
+          result: mini_boss_combat
+          miniBossType: Bandit Camp
+          responseText: "You bravely and foolishly ascend the ladder. You're immediately spotted."
+        - text: Go back and take the straight path instead.
+          flow: dialogue_branch
+          next_node_id: straight_path_fork
+        - text: Go back the way you came and leave the well.
+          flow: close_encounter
+          responseText: The bandit camp is too dangerous. You retreat and leave the well behind.
+    straight_path_fork:
+      text: "The straight tunnel continues, then forks again. To your left, you see a faint, soft glow. To your right, you hear a low, rhythmic thudding sound."
+      options:
+        - text: Turn left towards the soft glow.
+          result: item
+          details: health
+          responseText: "You find a hidden alcove with a glowing moss that, when consumed, restores 10 HP. It tastes faintly of lemon and regret."
+          flow: dialogue_branch
+          next_node_id: exit_tunnel_safe
+        - text: Turn right towards the thudding sound.
+          result: mini_boss_combat
+          miniBossType: Lich Apprentice
+          responseText: "The thudding grows louder, revealing a crude training area where a hulking brute practices with a heavy club. It sees you."
+        - text: Go back the way you came and leave the well.
+          flow: close_encounter
+          responseText: "You've seen enough of this underground network. You retreat and leave the well."
+    exit_tunnel_safe:
+      text: "The tunnel continues for a short distance and opens into a secluded part of the forest, far from the bandit camp. You've found a safe exit."
+      options:
+        - text: Exit the tunnel and continue your journey.
+          flow: close_encounter
+          responseText: "You emerge from the tunnel, blinking in the sunlight, ready for your next adventure."
+
+- id: lore_023_abandoned_campfire
+  dialogueNodes:
+    start:
+      text: "You find the remains of a recently abandoned campfire. Embers glow faintly beneath a pile of ash, and a worn leather journal lies beside a half-eaten, petrified meal. It looks like it was left in a hurry."
+      options:
+        - text: Read the journal.
+          flow: dialogue_branch
+          next_node_id: journal_entry_1
+        - text: Search the campsite thoroughly.
+          effect: item
+          details: gold
+          amount: 10
+          responseText: "You sift through the ashes and find a few tarnished coins. Not much, but every piece counts."
+          flow: dialogue_branch
+        - text: Put out the embers and move on.
+          result: none
+          responseText: "You carefully douse the remaining embers. The wilderness can be unforgiving with unattended fires. You continue your journey."
+    journal_entry_1:
+      text: "The journal's first page is dated weeks ago and appears to be marked with a '⚲' as if it's marking some sort importance: 'Day 1: The cartographers maps were right. The 'Missing Grotto' is real, just as the legends foretold. I'm camped near what they call the 'Quiet River Bend' now. Legend has it, this Grotto was a safe house for Pirates. There is a well known pirate shanty I sing to keep my spirits up: ⚲ 'A pi-rates life is ne-ver through, three, then one, then four, then two' ⚲ Next, I'll head ⚲ east along the riverbank. ⚲'"
+      options:
+        - text: Turn to the next entry.
+          flow: dialogue_branch
+          next_node_id: journal_entry_2
+        - text: Close the journal for now.
+          flow: close_encounter
+          responseText: "You close the dusty journal, the prospector's initial excitement lingering in your mind."
+    journal_entry_2:
+      text: "Day 4: Spent days upstream and down. Found the landmark. It's exactly as described: a colossal ⚲ twin-trunked oak tree ⚲ on the eastern bank. The entrance is cunningly disguised, marked right at its base. Clever. From here, I need to focus on the ⚲ roots at the base of the tree. ⚲'"
+      options:
+        - text: Turn to the next entry.
+          flow: dialogue_branch
+          next_node_id: journal_entry_3
+        - text: Close the journal for now.
+          flow: close_encounter
+          responseText: "You close the dusty journal, the prospector's excitement about the twin-trunked oak lingering in your mind."
+    journal_entry_3:
+      text: "Day 7: The grotto is breathtaking. The river truly weeps stone inside, stalactites shimmering like frozen tears. Reached the main chamber. Found an unusual boulder, with lines etched vertically. ⚲ I sing the Pirates Grotto Shanty.'"
+      options:
+        - text: Turn to the next entry.
+          flow: dialogue_branch
+          next_node_id: journal_entry_4
+        - text: Close the journal for now.
+          flow: close_encounter
+          responseText: "You close the dusty journal, envisioning the shimmering magic of the grotto and the mysterious boulder."
+    journal_entry_4:
+      text: "Day 10: Beyond the boulder, there are two tunnels. The right leads back to the bigger river. The ⚲ left ⚲ seems to lead to a chamber with a chest. I heard those who used this grotto often locked their treasures using existing secrets but ⚲ adding, subtracting, multiplying, and then adding again... ⚲ whatever that means."
+      options:
+        - text: Turn to the next entry.
+          flow: dialogue_branch
+          next_node_id: journal_entry_5
+        - text: Close the journal for now.
+          flow: close_encounter
+          responseText: "You close the dusty journal, pondering the riddle of the chest."
+    journal_entry_5:
+      text: "Finders note: I found this journal floating down the river. I leave it here in case the original owner has kin who would like the keep it. It is for certain the original owner did not survive whatever did them in. Whoever finds this, please put out my campfire if it's still going."
+      options:
+        - text: Close the journal.
+          flow: quest_start
+          quest_id: the_hidden_cache
+          responseText: "You close the journal, the new prospector's words echoing in your mind. A complex grotto, a challenging chest, and a campfire to extinguish... your adventure truly begins now."
+        - text: Go back to the first entry.
+          flow: dialogue_branch
+          next_node_id: journal_entry_1
