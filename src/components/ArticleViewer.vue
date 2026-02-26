@@ -10,19 +10,23 @@
     <span>Loading Wikipedia article...</span>
   </div>
   <div v-if="inEncounter" class="overlay"></div>
-  <div class="path-display">
-    <img :src="logo" alt="logo" class="path-logo" />
-    <div class="path-crumb">
-      <div class="path-group path-group-from">
-        <span class="path-label">from</span>
-        <span class="path-reading">{{ props.fullChain[props.currentTargetIndex]?.replaceAll("_", " ") }}</span>
-      </div>
-      <div class="path-group path-group-to">
-        <span class="path-label path-label-goal">to</span>
-        <span class="path-goal">{{ props.fullChain[props.currentTargetIndex + 1]?.replaceAll("_", " ") }}</span>
+  <div class="path-wrapper">
+    <div class="path-display">
+      <img :src="logo" alt="logo" class="path-logo" />
+      <div class="path-crumb">
+        <div class="path-group path-group-from">
+          <span class="path-label">from</span>
+          <span class="path-reading">{{ props.fullChain[props.currentTargetIndex]?.replaceAll("_", " ") }}</span>
+        </div>
+        <div class="path-group path-group-to">
+          <span class="path-label path-label-goal">to</span>
+          <span class="path-goal">{{ props.fullChain[props.currentTargetIndex + 1]?.replaceAll("_", " ") }}</span>
+        </div>
       </div>
     </div>
-    <button class="path-map-hint" @click="emit('open-map')">Full Path in Map</button>
+    <div class="path-sub-bar">
+      <button class="path-map-hint" @click="emit('open-map')">See the Full Path in Map</button>
+    </div>
   </div>
   <div class="article" :class="{ 'blurred-content': isBlurred }">
     <div v-if="inEncounter" class="overlay"></div>
@@ -44,7 +48,7 @@
 <script setup>
 import { ref, watch, onMounted, computed } from "vue";
 import { fetchWikipediaArticle } from "@/utils/wikipediaApi";
-import logo from "@/assets/newlogo-nobg1.png";
+import logo from "../assets/newlogo-nobg1.png";
 
 const props = defineProps({
   articleTitle: String,
@@ -222,7 +226,7 @@ onMounted(load);
   background-color: #ffffff;
   max-width: 2000px;
   margin-bottom: 25rem;
-  margin-top: 1.25rem;
+  margin-top: 4.5rem;
   z-index: 10;
 }
 
@@ -252,43 +256,57 @@ onMounted(load);
   font-family: "Roboto", sans-serif;
 }
 
-.path-display {
+.path-wrapper {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background: #e8ecee;
-  border-bottom: solid 1px black;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 100;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.path-display {
+  background: #e8ecee;
+  border-bottom: solid 1px #ccc;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 5px 12px;
   box-sizing: border-box;
-  gap: 8px;
+  position: relative;
+}
+
+.path-sub-bar {
+  background: #e5e5e6;
+  border-bottom: solid 1px black;
+  display: flex;
+  justify-content: center;
+  padding: 2px 12px;
+  box-sizing: border-box;
 }
 
 .path-logo {
   height: 28px;
   width: auto;
-  flex-shrink: 0;
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .path-crumb {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
   font-size: 12px;
   color: #555;
-  flex: 1;
-  min-width: 0;
 }
 
 .path-group {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  min-width: 0;
+  width: 220px;
 }
 
 .path-group-from {
@@ -334,17 +352,19 @@ onMounted(load);
 }
 
 .path-map-hint {
-  font-size: 11px;
-  color: #4b4949;
+  font-size: 13px;
+  color: #0e0d0d;
   background: none;
   border: none;
   cursor: pointer;
   white-space: nowrap;
-  flex-shrink: 0;
-  padding: 2px 6px;
+  padding: 0 6px 1px;
   border-radius: 4px;
   transition: color 0.15s, background 0.15s;
   font-family: inherit;
+  align-self: center;
+  letter-spacing: 0.5px;
+  font-weight: 700;
 }
 
 .path-map-hint:hover {
@@ -476,6 +496,10 @@ onMounted(load);
     gap: 4px;
   }
 
+  .path-sub-bar {
+    padding: 2px 8px;
+  }
+
   .path-logo {
     height: 20px;
   }
@@ -505,12 +529,15 @@ onMounted(load);
   }
 
   .path-crumb {
-    align-items: flex-start;
     gap: 8px;
   }
 
+  .path-group {
+    width: 140px;
+  }
+
   .path-map-hint {
-    font-size: 10px;
+    font-size: 9px;
     padding: 1px 4px;
   }
 
