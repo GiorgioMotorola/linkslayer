@@ -22,10 +22,10 @@
     <div v-if="inEncounter" class="overlay"></div>
     <div class="title">{{ formattedTitle }}</div>
     <div v-if="isLoading" class="loader-overlay">
-      <div class="loader-content">
+      <!-- <div class="loader-content">
         <div class="spinner"></div>
         <p>Loading article...</p>
-      </div>
+      </div> -->
     </div>
     <div
       v-html="articleHtml"
