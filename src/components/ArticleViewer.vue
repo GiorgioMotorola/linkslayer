@@ -340,7 +340,7 @@ onMounted(load);
   top: 12px;
   right: 12px;
   background: #111;
-  color: #fff;
+  color: #ffffff;
   padding: 8px 14px;
   border-radius: 6px;
   z-index: 999;
@@ -350,6 +350,10 @@ onMounted(load);
   gap: 8px;
   animation: slideInRight 0.2s ease-out;
   letter-spacing: 0.3px;
+}
+
+.loading-notification span {
+  color: #fff;
 }
 
 .loading-spinner {
@@ -436,20 +440,20 @@ onMounted(load);
 
   .path-reading {
     max-width: 100px;
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .path-goal {
     max-width: 110px;
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .path-arrow {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .path-map-hint {
-    font-size: 10px;
+    font-size: 12px;
     padding: 1px 4px;
   }
 
