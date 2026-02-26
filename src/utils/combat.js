@@ -1,6 +1,6 @@
 // combat.js
 
-export function handleCombatAction({ player, enemy, state, utils }) {
+export function handleCombatAction({ player, enemy, state, utils, itemEffects = {} }) {
   const {
     playerHP,
     playerClass,
@@ -19,7 +19,14 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     nextEnemyAttack,
     enemyNextAction,
     enemyIsStunned,
+    enemyStatusEffects,
   } = enemy;
+
+  const {
+    serratedDaggerActive,
+    luckyFleeActive,
+    wardingShieldHitsRemaining,
+  } = itemEffects;
 
   const {
     log,
@@ -71,6 +78,11 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     log(
       `🗡️ <span class="player-name">${playerName.value}</span> hits ${formattedTitle} for ${damageToEnemy} damage.`
     );
+    if (serratedDaggerActive?.value && enemyStatusEffects) {
+      enemyStatusEffects.value.push({ type: "bleed", damage: 1, duration: 2 });
+      serratedDaggerActive.value = false;
+      log(`🩸 The serrated edge opens a wound — ${formattedTitle} begins to Bleed.`);
+    }
   } else if (playerAction === "special") {
     if (specialUsesLeft.value <= 0) {
       log(
@@ -191,7 +203,13 @@ export function handleCombatAction({ player, enemy, state, utils }) {
     if (isBossFromState(encounter.value?.enemy)) {
       log(`You cannot flee from ${encounter.value?.enemy?.name}.`);
     } else {
-      if (Math.random() > 0.7) {
+      const guaranteedFlee = luckyFleeActive?.value;
+      if (guaranteedFlee) {
+        luckyFleeActive.value = false;
+        log(`🪙 The Lucky Coin shines! <span class="player-name">${playerName.value}</span> escapes without fail.`);
+        encounter.value = null;
+        return;
+      } else if (Math.random() > 0.7) {
         log(
           `🏃 <span class="player-name">${playerName.value}</span> fled successfully.`
         );
@@ -264,6 +282,15 @@ export function handleCombatAction({ player, enemy, state, utils }) {
           log(
             `💥 ${formattedTitle} attacks back and <span class="player-name">${playerName.value}</span> takes ${damageToPlayer} damage.`
           );
+        }
+
+        if (wardingShieldHitsRemaining?.value > 0) {
+          damageToPlayer = Math.max(0, Math.floor(damageToPlayer * 0.5));
+          wardingShieldHitsRemaining.value--;
+          log(`🛡️ Warding Shield absorbs half the blow! Reduced to ${damageToPlayer} damage. (${wardingShieldHitsRemaining.value} hits remaining)`);
+          if (wardingShieldHitsRemaining.value <= 0) {
+            log(`🛡️ The Warding Shield shatters.`);
+          }
         }
       } else if (enemyNextAction.value === "trip") {
         damageToPlayer = 0;

@@ -15,6 +15,8 @@ export async function handleClick({
   utilityFunctions,
   isCloakActive,
   cloakClicksRemaining,
+  wardStoneActive,
+  encounterBeaconActive,
 }) {
   const { journeyLength, enemyDifficultyLevel } = gameData;
 
@@ -49,6 +51,11 @@ export async function handleClick({
     utilityFunctions.log(
       "👻 You slip past unseen thanks to the Cloak of Invisibility."
     );
+    encounterPreventedByCloak = true;
+  }
+
+  if (wardStoneActive?.value && title !== finalTarget) {
+    utilityFunctions.log("🪨 The Ward Stone hums — you pass by unnoticed.");
     encounterPreventedByCloak = true;
   }
 
@@ -112,8 +119,25 @@ export async function handleClick({
   if (
     title !== finalTarget &&
     !encounterPreventedByCloak &&
-    Math.random() < 0.4
+    (encounterBeaconActive?.value || Math.random() < 0.4)
   ) {
+    // Encounter Beacon forces a friendly NPC encounter
+    if (encounterBeaconActive?.value) {
+      encounterBeaconActive.value = false;
+      const availableNPCs = friendlyEncounters.filter(
+        (npc) => !gameData.seenNPCEncounters.value.includes(npc.id)
+      );
+      if (availableNPCs.length > 0) {
+        const npc = availableNPCs[Math.floor(Math.random() * availableNPCs.length)];
+        gameData.seenNPCEncounters.value.push(npc.id);
+        enemyState.encounter.value = { type: "npc", npc };
+        utilityFunctions.log(`🏮 The Encounter Beacon draws a friendly face — ${npc.greeting}`);
+      } else {
+        utilityFunctions.log(`🏮 The Encounter Beacon pulses, but all known travelers have passed through.`);
+      }
+      return;
+    }
+
     const roll = rollEncounter(enemyDifficultyLevel.value);
     let fullEncounter = null;
 

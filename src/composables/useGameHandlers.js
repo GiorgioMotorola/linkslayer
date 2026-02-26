@@ -85,6 +85,11 @@ export function useGameHandlers(deps) {
     poisonDamagePerClick,
     isCloakActive,
     cloakClicksRemaining,
+    serratedDaggerActive,
+    luckyFleeActive,
+    wardingShieldHitsRemaining,
+    wardStoneActive,
+    encounterBeaconActive,
   } = statusEffects;
 
   const {
@@ -197,6 +202,8 @@ export function useGameHandlers(deps) {
       },
       isCloakActive,
       cloakClicksRemaining,
+      wardStoneActive,
+      encounterBeaconActive,
     });
   }
 
@@ -266,6 +273,11 @@ export function useGameHandlers(deps) {
         markBossDefeated,
         gotoEnemyTurn,
         bossOverlay: bossOverlay,
+      },
+      itemEffects: {
+        serratedDaggerActive,
+        luckyFleeActive,
+        wardingShieldHitsRemaining,
       },
     });
   }

@@ -27,6 +27,11 @@ export function handleEnemyTurn({
       log(
         `🩸 ${formattedTitle.value} is bleeding. ${formattedTitle.value} takes ${effect.damage} additional damage.`
       );
+    } else if (effect.type === "poison") {
+      enemyHP.value -= effect.damage;
+      log(
+        `☠️ ${formattedTitle.value} is poisoned. ${formattedTitle.value} takes ${effect.damage} poison damage.`
+      );
     }
 
     effect.duration -= 1;

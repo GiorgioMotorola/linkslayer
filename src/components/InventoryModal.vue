@@ -1,6 +1,7 @@
 <template>
   <div class="inventory-overlay" @click.self="closeModal">
     <div class="inventory-content-game-style">
+      <button @click="closeModal" class="close-button-game-style">Close</button>
       <h2 class="inventory-title">Backpack</h2>
 
       <div class="inventory-items-container">
@@ -12,7 +13,7 @@
                 >x{{ inventory.minorHealthPotions }}</span
               >
             </div>
-            <div class="item-description">Restores 10 HP.</div>
+            <div class="item-description">{{ itemDesc.minorHealthPotion }}</div>
           </div>
           <div class="item-button-box">
             <button
@@ -30,7 +31,7 @@
               <span class="item-name">Potion of Major Health</span>
               <span class="item-count">x{{ inventory.healthPotions }}</span>
             </div>
-            <div class="item-description">Restores 25 HP.</div>
+            <div class="item-description">{{ itemDesc.healthPotion }}</div>
           </div>
           <div class="item-button-box">
             <button
@@ -48,7 +49,7 @@
               <span class="item-name">Turkey Leg</span>
               <span class="item-count">x{{ inventory.turkeyLegs }}</span>
             </div>
-            <div class="item-description">A hearty meal that restores HP.</div>
+            <div class="item-description">A hearty meal that restores HP.</div><!-- Turkey Leg: loot-only, not in shopItems -->
           </div>
           <div class="item-button-box">
             <button
@@ -66,9 +67,7 @@
               <span class="item-name">Bark Tea</span>
               <span class="item-count">x{{ inventory.barkTeas }}</span>
             </div>
-            <div class="item-description">
-              A bitter brew with minor healing properties, restores 10 HP.
-            </div>
+            <div class="item-description">{{ itemDesc.barkTea }}</div>
           </div>
           <div class="item-button-box">
             <button class="buy-button-details" @click.stop="useItem('barkTea')">
@@ -83,9 +82,7 @@
               <span class="item-name">French Onion Soup</span>
               <span class="item-count">x{{ inventory.frenchOnionSoups }}</span>
             </div>
-            <div class="item-description">
-              A rich and restorative soup, restores 15 HP.
-            </div>
+            <div class="item-description">{{ itemDesc.frenchOnionSoup }}</div>
           </div>
           <div class="item-button-box">
             <button
@@ -105,10 +102,7 @@
                 >x{{ inventory.adventurersRations }}</span
               >
             </div>
-            <div class="item-description">
-              Simple, wholesome provisions that restore a 7 HP and clear the
-              mind of any blur.
-            </div>
+            <div class="item-description">{{ itemDesc.adventurersRations }}</div>
           </div>
           <div class="item-button-box">
             <button
@@ -127,10 +121,8 @@
               <span class="item-count">x{{ inventory.herbalPoultices }}</span>
             </div>
             <div class="item-description">
-              Heals 1 HP for each click up to 30 clicks.
-              <template
-                v-if="isHealthRegenActive && healthRegenClicksRemaining > 0"
-              >
+              {{ itemDesc.herbalPoultice }}
+              <template v-if="isHealthRegenActive && healthRegenClicksRemaining > 0">
                 ({{ healthRegenClicksRemaining }} clicks remaining).
               </template>
             </div>
@@ -177,9 +169,7 @@
               <span class="item-name">Antidote</span>
               <span class="item-count">x{{ inventory.antidotes }}</span>
             </div>
-            <div class="item-description">
-              Cures all types of poison. Must be poisoned to use.
-            </div>
+            <div class="item-description">{{ itemDesc.antidote }}</div>
           </div>
           <div class="item-button-box">
             <button
@@ -198,9 +188,7 @@
               <span class="item-name">Smoke Bomb</span>
               <span class="item-count">x{{ inventory.smokeBombs }}</span>
             </div>
-            <div class="item-description">
-              Allows you to flee from non-boss combat. Must be in combat to use.
-            </div>
+            <div class="item-description">{{ itemDesc.smokeBomb }}</div>
           </div>
           <div class="item-button-box">
             <button
@@ -222,7 +210,7 @@
               >
             </div>
             <div class="item-description">
-              Grants temporary invisibility from all encounters for 10 clicks.
+              {{ itemDesc.invisibilityCloak }}
               <template v-if="isCloakActive && cloakClicksRemaining > 0">
                 ({{ cloakClicksRemaining }} clicks remaining).
               </template>
@@ -250,10 +238,7 @@
                 >x{{ inventory.sharedSufferingAmulets }}</span
               >
             </div>
-            <div class="item-description">
-              Deals {{ amuletOfSharedSufferingDamage }} damage to the enemy
-              based on accumulated player damage taken.
-            </div>
+            <div class="item-description">{{ itemDesc.sharedSufferingAmulet }}</div>
           </div>
           <div class="item-button-box">
             <button
@@ -272,9 +257,7 @@
               <span class="item-name">Arcane Compass</span>
               <span class="item-count">x{{ inventory.compass }}</span>
             </div>
-            <div class="item-description">
-              Skips you to a random non-start/end article.
-            </div>
+            <div class="item-description">{{ itemDesc.compass }}</div>
           </div>
           <div class="item-button-box">
             <button class="buy-button-details" @click.stop="useItem('compass')">
@@ -289,15 +272,131 @@
               <span class="item-name">A Cool Stick</span>
               <span class="item-count">x{{ inventory.stickItem }}</span>
             </div>
-            <div class="item-description">
-              It's just a cool stick that I found. Hangs out in your inventory
-              until the end, granting you stick like encouragement.
-            </div>
+            <div class="item-description">{{ itemDesc.stickItem }}</div>
           </div>
           <div class="item-button-box">
             <button class="buy-button-details disabled-placeholder" disabled>
               N/A
             </button>
+          </div>
+        </div>
+
+        <div v-if="inventory.flashPowders > 0" class="item-slot-wrapper">
+          <div class="item-details-box">
+            <div class="item-name-quantity">
+              <span class="item-name">Flash Powder</span>
+              <span class="item-count">x{{ inventory.flashPowders }}</span>
+            </div>
+            <div class="item-description">{{ itemDesc.flashPowder }}</div>
+          </div>
+          <div class="item-button-box">
+            <button class="buy-button-details" @click.stop="useItem('flashPowder')" :disabled="!isInCombat || isBossEncounter">Use</button>
+          </div>
+        </div>
+
+        <div v-if="inventory.venomVials > 0" class="item-slot-wrapper">
+          <div class="item-details-box">
+            <div class="item-name-quantity">
+              <span class="item-name">Venom Vial</span>
+              <span class="item-count">x{{ inventory.venomVials }}</span>
+            </div>
+            <div class="item-description">{{ itemDesc.venomVial }}</div>
+          </div>
+          <div class="item-button-box">
+            <button class="buy-button-details" @click.stop="useItem('venomVial')" :disabled="!isInCombat">Use</button>
+          </div>
+        </div>
+
+        <div v-if="inventory.serratedDaggers > 0" class="item-slot-wrapper">
+          <div class="item-details-box">
+            <div class="item-name-quantity">
+              <span class="item-name">Serrated Dagger</span>
+              <span class="item-count">x{{ inventory.serratedDaggers }}</span>
+            </div>
+            <div class="item-description">
+              {{ itemDesc.serratedDagger }}
+              <template v-if="isSerratedDaggerActive"> (Bleed primed on next attack.)</template>
+            </div>
+          </div>
+          <div class="item-button-box">
+            <button class="buy-button-details" @click.stop="useItem('serratedDagger')" :disabled="!isInCombat || isSerratedDaggerActive">Use</button>
+          </div>
+        </div>
+
+        <div v-if="inventory.luckyCoins > 0" class="item-slot-wrapper">
+          <div class="item-details-box">
+            <div class="item-name-quantity">
+              <span class="item-name">Lucky Coin</span>
+              <span class="item-count">x{{ inventory.luckyCoins }}</span>
+            </div>
+            <div class="item-description">
+              {{ itemDesc.luckyCoin }}
+              <template v-if="isLuckyFleeActive"> (Guaranteed flee ready.)</template>
+            </div>
+          </div>
+          <div class="item-button-box">
+            <button class="buy-button-details" @click.stop="useItem('luckyCoin')" :disabled="!isInCombat || isLuckyFleeActive">Use</button>
+          </div>
+        </div>
+
+        <div v-if="inventory.wardingShields > 0" class="item-slot-wrapper">
+          <div class="item-details-box">
+            <div class="item-name-quantity">
+              <span class="item-name">Warding Shield</span>
+              <span class="item-count">x{{ inventory.wardingShields }}</span>
+            </div>
+            <div class="item-description">
+              {{ itemDesc.wardingShield }}
+              <template v-if="wardingShieldHitsRemaining > 0"> ({{ wardingShieldHitsRemaining }} hits remaining.)</template>
+            </div>
+          </div>
+          <div class="item-button-box">
+            <button class="buy-button-details" @click.stop="useItem('wardingShield')" :disabled="wardingShieldHitsRemaining > 0">Use</button>
+          </div>
+        </div>
+
+        <div v-if="inventory.wardStones > 0" class="item-slot-wrapper">
+          <div class="item-details-box">
+            <div class="item-name-quantity">
+              <span class="item-name">Ward Stone</span>
+              <span class="item-count">x{{ inventory.wardStones }}</span>
+            </div>
+            <div class="item-description">
+              {{ itemDesc.wardStone }}
+              <template v-if="isWardStoneActive"> ({{ wardStoneClicksRemaining }} clicks remaining.)</template>
+            </div>
+          </div>
+          <div class="item-button-box">
+            <button class="buy-button-details" @click.stop="useItem('wardStone')" :disabled="isWardStoneActive">Use</button>
+          </div>
+        </div>
+
+        <div v-if="inventory.encounterBeacons > 0" class="item-slot-wrapper">
+          <div class="item-details-box">
+            <div class="item-name-quantity">
+              <span class="item-name">Encounter Beacon</span>
+              <span class="item-count">x{{ inventory.encounterBeacons }}</span>
+            </div>
+            <div class="item-description">
+              {{ itemDesc.encounterBeacon }}
+              <template v-if="isEncounterBeaconActive"> (Active — next encounter will be a friendly NPC.)</template>
+            </div>
+          </div>
+          <div class="item-button-box">
+            <button class="buy-button-details" @click.stop="useItem('encounterBeacon')" :disabled="isEncounterBeaconActive">Use</button>
+          </div>
+        </div>
+
+        <div v-if="inventory.goldPouches > 0" class="item-slot-wrapper">
+          <div class="item-details-box">
+            <div class="item-name-quantity">
+              <span class="item-name">Gold Pouch</span>
+              <span class="item-count">x{{ inventory.goldPouches }} ({{ goldPouchAccumulatedGold }} gold stored)</span>
+            </div>
+            <div class="item-description">{{ itemDesc.goldPouch }}</div>
+          </div>
+          <div class="item-button-box">
+            <button class="buy-button-details" @click.stop="useItem('goldPouch')" :disabled="goldPouchAccumulatedGold <= 0">Use</button>
           </div>
         </div>
 
@@ -311,13 +410,18 @@
         </div>
       </div>
 
-      <button @click="closeModal" class="close-button-game-style">Close</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, watch, computed } from "vue";
+import { defineProps, defineEmits, computed } from "vue";
+import { shopItems } from "@/utils/shopItems.js";
+
+// Single source of truth: descriptions keyed by the item's `details` field
+const itemDesc = Object.fromEntries(
+  shopItems.filter((i) => i.details && i.description).map((i) => [i.details, i.description])
+);
 
 const props = defineProps({
   inventory: {
@@ -369,6 +473,34 @@ const props = defineProps({
     default: 0,
   },
   amuletOfSharedSufferingDamage: {
+    type: Number,
+    default: 0,
+  },
+  isSerratedDaggerActive: {
+    type: Boolean,
+    default: false,
+  },
+  isLuckyFleeActive: {
+    type: Boolean,
+    default: false,
+  },
+  wardingShieldHitsRemaining: {
+    type: Number,
+    default: 0,
+  },
+  isWardStoneActive: {
+    type: Boolean,
+    default: false,
+  },
+  wardStoneClicksRemaining: {
+    type: Number,
+    default: 0,
+  },
+  isEncounterBeaconActive: {
+    type: Boolean,
+    default: false,
+  },
+  goldPouchAccumulatedGold: {
     type: Number,
     default: 0,
   },
@@ -453,9 +585,13 @@ function useItem(itemType) {
   padding-right: 15px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0;
   scrollbar-width: thin;
   scrollbar-color: #4a4a4a #1a1a1a;
+}
+
+.item-slot-wrapper + .item-slot-wrapper {
+  border-top: 1px solid #3a3a3a;
 }
 
 .inventory-items-container::-webkit-scrollbar {
@@ -484,9 +620,10 @@ function useItem(itemType) {
 .item-slot-wrapper {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   flex-shrink: 0;
+  padding: 6px 0;
 }
 
 .item-details-box {
@@ -536,11 +673,11 @@ function useItem(itemType) {
 .item-button-box {
   border-radius: 3px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   flex-shrink: 0;
-  min-width: 80px;
-  min-height: 50px;
+  min-width: 70px;
+  padding-top: 8px;
   transition: background-color 0.2s, border-color 0.2s;
 }
 
@@ -615,7 +752,7 @@ function useItem(itemType) {
   border-radius: 5px;
   cursor: pointer;
   font-size: 1.1em;
-  margin-top: 25px;
+  margin-bottom: 15px;
   transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
   text-transform: uppercase;
   font-family: "IBM Plex Sans", sans-serif;
@@ -646,30 +783,6 @@ function useItem(itemType) {
     padding: 0;
   }
 
-  .item-slot-wrapper {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .item-details-box {
-    width: 100%;
-    padding: 8px 10px;
-  }
-
-  .item-button-box {
-    width: 100%;
-    min-width: unset;
-    min-height: unset;
-    margin-top: 5px;
-  }
-
-  .buy-button-details {
-    width: 80%;
-    font-size: 0.9em;
-    padding: 8px 15px;
-  }
-
   .inventory-title {
     font-size: 1.8em;
   }
@@ -682,8 +795,51 @@ function useItem(itemType) {
     border: none;
     background-color: transparent;
   }
+
   .no-items-message-wrapper {
     width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .inventory-content-game-style {
+    font-size: 12px;
+    padding: 10px;
+    overflow-x: hidden;
+  }
+
+  .inventory-title {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .inventory-items-container {
+    overflow-x: hidden;
+    gap: 6px;
+  }
+
+  .item-details-box {
+    padding: 4px 8px;
+  }
+
+  .item-description {
+    font-size: 0.82em;
+  }
+
+  .item-button-box {
+    min-width: 55px;
+    padding-top: 4px;
+  }
+
+  .buy-button-details {
+    font-size: 0.82em;
+    padding: 5px 8px;
+  }
+
+  .close-button-game-style {
+    font-size: 0.9em;
+    padding: 8px 15px;
+    margin-top: 12px;
   }
 }
 </style>

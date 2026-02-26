@@ -160,6 +160,54 @@ export function handleShopPurchase(
           utilityFunctions.log(
             `➕ ${gameData.playerName.value} acquired a Potion of Minor Health.`
           );
+        } else if (item.details === "flashPowder") {
+          playerState.inventory.value.flashPowders =
+            Number(playerState.inventory.value.flashPowders || 0) + 1;
+          utilityFunctions.log(
+            `✨ ${gameData.playerName.value} acquired Flash Powder.`
+          );
+        } else if (item.details === "venomVial") {
+          playerState.inventory.value.venomVials =
+            Number(playerState.inventory.value.venomVials || 0) + 1;
+          utilityFunctions.log(
+            `☠️ ${gameData.playerName.value} acquired a Venom Vial.`
+          );
+        } else if (item.details === "serratedDagger") {
+          playerState.inventory.value.serratedDaggers =
+            Number(playerState.inventory.value.serratedDaggers || 0) + 1;
+          utilityFunctions.log(
+            `🗡️ ${gameData.playerName.value} acquired a Serrated Dagger.`
+          );
+        } else if (item.details === "luckyCoin") {
+          playerState.inventory.value.luckyCoins =
+            Number(playerState.inventory.value.luckyCoins || 0) + 1;
+          utilityFunctions.log(
+            `🪙 ${gameData.playerName.value} acquired a Lucky Coin.`
+          );
+        } else if (item.details === "wardingShield") {
+          playerState.inventory.value.wardingShields =
+            Number(playerState.inventory.value.wardingShields || 0) + 1;
+          utilityFunctions.log(
+            `🛡️ ${gameData.playerName.value} acquired a Warding Shield.`
+          );
+        } else if (item.details === "wardStone") {
+          playerState.inventory.value.wardStones =
+            Number(playerState.inventory.value.wardStones || 0) + 1;
+          utilityFunctions.log(
+            `🪨 ${gameData.playerName.value} acquired a Ward Stone.`
+          );
+        } else if (item.details === "encounterBeacon") {
+          playerState.inventory.value.encounterBeacons =
+            Number(playerState.inventory.value.encounterBeacons || 0) + 1;
+          utilityFunctions.log(
+            `🔦 ${gameData.playerName.value} acquired an Encounter Beacon.`
+          );
+        } else if (item.details === "goldPouch") {
+          playerState.inventory.value.goldPouches =
+            Number(playerState.inventory.value.goldPouches || 0) + 1;
+          utilityFunctions.log(
+            `👜 ${gameData.playerName.value} acquired a Gold Pouch.`
+          );
         }
         break;
 
@@ -568,4 +616,172 @@ export const useMinorHealthPotion = (
   } else {
     utilityFunctions.log("You don't have any Potions of Minor Health to use.");
   }
+};
+
+// Flash Powder — stuns enemy for 1 turn (combat only)
+export const useFlashPowder = (playerState, utilityFunctions, combatData) => {
+  const { inventory } = playerState;
+  const { log, closeInventoryModal } = utilityFunctions;
+  const { encounter, enemyIsStunned } = combatData;
+
+  if (inventory.value.flashPowders <= 0) {
+    log(`You don't have any Flash Powder.`);
+    return;
+  }
+  if (!encounter.value || encounter.value.type !== "combat") {
+    log(`🚫 Flash Powder can only be used during combat.`);
+    return;
+  }
+  inventory.value.flashPowders--;
+  enemyIsStunned.value = true;
+  log(`💥 You throw Flash Powder! The enemy is blinded and will skip their next turn.`);
+  closeInventoryModal();
+};
+
+// Venom Vial — poisons enemy for N turns in combat
+export const useVenomVial = (playerState, utilityFunctions, combatData) => {
+  const { inventory } = playerState;
+  const { log, closeInventoryModal } = utilityFunctions;
+  const { encounter, enemyStatusEffects } = combatData;
+
+  if (inventory.value.venomVials <= 0) {
+    log(`You don't have any Venom Vials.`);
+    return;
+  }
+  if (!encounter.value || encounter.value.type !== "combat") {
+    log(`🚫 Venom Vial can only be used during combat.`);
+    return;
+  }
+  inventory.value.venomVials--;
+  enemyStatusEffects.value.push({ type: "poison", damage: 3, duration: 4 });
+  log(`☠️ You splash the Venom Vial! The enemy is poisoned and will take 3 damage per turn for 4 turns.`);
+  closeInventoryModal();
+};
+
+// Serrated Dagger — next attack applies bleed
+export const useSerratedDagger = (playerState, utilityFunctions, combatData) => {
+  const { inventory } = playerState;
+  const { log, closeInventoryModal } = utilityFunctions;
+  const { encounter, serratedDaggerActive } = combatData;
+
+  if (inventory.value.serratedDaggers <= 0) {
+    log(`You don't have any Serrated Daggers.`);
+    return;
+  }
+  if (!encounter.value || encounter.value.type !== "combat") {
+    log(`🚫 Serrated Dagger can only be used during combat.`);
+    return;
+  }
+  if (serratedDaggerActive.value) {
+    log(`🗡️ A bleed effect is already primed on your next attack.`);
+    return;
+  }
+  inventory.value.serratedDaggers--;
+  serratedDaggerActive.value = true;
+  log(`🗡️ You coat your blade with the Serrated Dagger. Your next attack will cause the enemy to Bleed.`);
+  closeInventoryModal();
+};
+
+// Lucky Coin — guarantees next flee succeeds
+export const useLuckyCoin = (playerState, utilityFunctions, combatData) => {
+  const { inventory } = playerState;
+  const { log, closeInventoryModal } = utilityFunctions;
+  const { encounter, luckyFleeActive } = combatData;
+
+  if (inventory.value.luckyCoins <= 0) {
+    log(`You don't have any Lucky Coins.`);
+    return;
+  }
+  if (!encounter.value || encounter.value.type !== "combat") {
+    log(`🚫 Lucky Coin can only be used during combat.`);
+    return;
+  }
+  if (luckyFleeActive.value) {
+    log(`🪙 A guaranteed flee is already active.`);
+    return;
+  }
+  inventory.value.luckyCoins--;
+  luckyFleeActive.value = true;
+  log(`🪙 You flip the Lucky Coin. Your next Flee attempt is guaranteed to succeed.`);
+  closeInventoryModal();
+};
+
+// Warding Shield — halves incoming damage for next 3 hits
+export const useWardingShield = (playerState, utilityFunctions, combatData) => {
+  const { inventory } = playerState;
+  const { log, closeInventoryModal } = utilityFunctions;
+  const { wardingShieldHitsRemaining } = combatData;
+
+  if (inventory.value.wardingShields <= 0) {
+    log(`You don't have any Warding Shields.`);
+    return;
+  }
+  if (wardingShieldHitsRemaining.value > 0) {
+    log(`🛡️ A Warding Shield is already active (${wardingShieldHitsRemaining.value} hits remaining).`);
+    return;
+  }
+  inventory.value.wardingShields--;
+  wardingShieldHitsRemaining.value = 3;
+  log(`🛡️ You raise the Warding Shield! Incoming enemy attack damage is halved for the next 3 hits.`);
+  closeInventoryModal();
+};
+
+// Ward Stone — suppresses encounters for 5 clicks
+export const useWardStone = (playerState, utilityFunctions, combatData) => {
+  const { inventory } = playerState;
+  const { log } = utilityFunctions;
+  const { wardStoneActive, wardStoneClicksRemaining } = combatData;
+
+  if (inventory.value.wardStones <= 0) {
+    log(`You don't have any Ward Stones.`);
+    return;
+  }
+  if (wardStoneActive.value) {
+    log(`🪨 A Ward Stone is already active (${wardStoneClicksRemaining.value} clicks remaining).`);
+    return;
+  }
+  inventory.value.wardStones--;
+  wardStoneActive.value = true;
+  wardStoneClicksRemaining.value = 5;
+  log(`🪨 You activate the Ward Stone. Non-boss encounters suppressed for 5 clicks.`);
+};
+
+// Encounter Beacon — forces next encounter to be friendly NPC
+export const useEncounterBeacon = (playerState, utilityFunctions, combatData) => {
+  const { inventory } = playerState;
+  const { log } = utilityFunctions;
+  const { encounterBeaconActive } = combatData;
+
+  if (inventory.value.encounterBeacons <= 0) {
+    log(`You don't have any Encounter Beacons.`);
+    return;
+  }
+  if (encounterBeaconActive.value) {
+    log(`🏮 An Encounter Beacon is already active.`);
+    return;
+  }
+  inventory.value.encounterBeacons--;
+  encounterBeaconActive.value = true;
+  log(`🏮 You light the Encounter Beacon. Your next encounter will be a friendly NPC.`);
+};
+
+// Gold Pouch — collect accumulated gold
+export const useGoldPouch = (playerState, utilityFunctions, goldPouchData) => {
+  const { inventory, playerGold } = playerState;
+  const { log, closeInventoryModal } = utilityFunctions;
+  const { goldPouchAccumulatedGold } = goldPouchData;
+
+  if (inventory.value.goldPouches <= 0) {
+    log(`You don't have a Gold Pouch.`);
+    return;
+  }
+  if (goldPouchAccumulatedGold.value <= 0) {
+    log(`👜 Your Gold Pouch is empty. Keep clicking to accumulate gold.`);
+    return;
+  }
+  const collected = goldPouchAccumulatedGold.value;
+  playerGold.value += collected;
+  goldPouchAccumulatedGold.value = 0;
+  log(`👜 You collect ${collected} gold from your Gold Pouch.`);
+  closeInventoryModal();
 };

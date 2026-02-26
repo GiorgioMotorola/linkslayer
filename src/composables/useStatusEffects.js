@@ -21,6 +21,22 @@ export function useStatusEffects() {
   const healthRegenMaxHeal = ref(0);
   const healthRegenHealedCount = ref(0);
 
+  // Serrated Dagger (next attack applies bleed)
+  const serratedDaggerActive = ref(false);
+
+  // Lucky Coin (next flee auto-succeeds)
+  const luckyFleeActive = ref(false);
+
+  // Warding Shield (halve incoming damage for N hits)
+  const wardingShieldHitsRemaining = ref(0);
+
+  // Ward Stone (suppress encounters for N clicks)
+  const wardStoneActive = ref(false);
+  const wardStoneClicksRemaining = ref(0);
+
+  // Encounter Beacon (force next encounter to be NPC)
+  const encounterBeaconActive = ref(false);
+
   // Computed properties
   const isPlayerPoisoned = computed(() => poisonedClicksLeft.value > 0);
   const isBlurred = computed(() => blurClicksLeft.value > 0);
@@ -159,6 +175,24 @@ export function useStatusEffects() {
           `🐟 The Fish of Eternal Enlightenment shimmers, gaining 1 HP. (Total: ${enlightenmentFishAccumulatedHP.value} HP)`
         );
       }
+
+      // Handle ward stone countdown
+      if (wardStoneActive.value) {
+        wardStoneClicksRemaining.value--;
+        log(`🪨 Ward Stone active: ${wardStoneClicksRemaining.value} clicks remaining.`);
+        if (wardStoneClicksRemaining.value <= 0) {
+          wardStoneActive.value = false;
+          wardStoneClicksRemaining.value = 0;
+          log(`🪨 The Ward Stone crumbles to dust.`);
+        }
+      }
+
+      // Handle gold pouch accumulation
+      if (inventory.value.goldPouches > 0) {
+        const { goldPouchAccumulatedGold } = deps;
+        goldPouchAccumulatedGold.value++;
+        log(`👜 Gold Pouch: +1 gold stored. (Total: ${goldPouchAccumulatedGold.value} gold)`);
+      }
     });
   }
 
@@ -182,6 +216,22 @@ export function useStatusEffects() {
     healthRegenClicksRemaining,
     healthRegenMaxHeal,
     healthRegenHealedCount,
+
+    // Serrated Dagger
+    serratedDaggerActive,
+
+    // Lucky Coin
+    luckyFleeActive,
+
+    // Warding Shield
+    wardingShieldHitsRemaining,
+
+    // Ward Stone
+    wardStoneActive,
+    wardStoneClicksRemaining,
+
+    // Encounter Beacon
+    encounterBeaconActive,
 
     // Setup
     setupClickWatcher,

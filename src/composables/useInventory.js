@@ -15,6 +15,14 @@ import {
   useEnlightenmentFish as externalUseEnlightenmentFish,
   useAmuletOfSharedSuffering as externalUseAmuletOfSharedSuffering,
   useMinorHealthPotion as externalUseMinorHealthPotion,
+  useFlashPowder as externalUseFlashPowder,
+  useVenomVial as externalUseVenomVial,
+  useSerratedDagger as externalUseSerratedDagger,
+  useLuckyCoin as externalUseLuckyCoin,
+  useWardingShield as externalUseWardingShield,
+  useWardStone as externalUseWardStone,
+  useEncounterBeacon as externalUseEncounterBeacon,
+  useGoldPouch as externalUseGoldPouch,
 } from "@/utils/itemHandlers";
 
 export function useInventory() {
@@ -35,7 +43,17 @@ export function useInventory() {
     minorHealthPotions: 0,
     weaponPieces: 0,
     defensePieces: 0,
+    flashPowders: 0,
+    venomVials: 0,
+    serratedDaggers: 0,
+    luckyCoins: 0,
+    wardingShields: 0,
+    wardStones: 0,
+    encounterBeacons: 0,
+    goldPouches: 0,
   });
+
+  const goldPouchAccumulatedGold = ref(0);
 
   // Item-specific state
   const enlightenmentFishAccumulatedHP = ref(0);
@@ -299,12 +317,77 @@ export function useInventory() {
           }
         );
       },
+
+      useFlashPowder: () => {
+        externalUseFlashPowder(
+          { inventory },
+          { log: utilityFunctions.log, closeInventoryModal: modalState.closeInventoryModal },
+          { encounter: combatData.encounter, enemyIsStunned: combatData.enemyIsStunned }
+        );
+      },
+
+      useVenomVial: () => {
+        externalUseVenomVial(
+          { inventory },
+          { log: utilityFunctions.log, closeInventoryModal: modalState.closeInventoryModal },
+          { encounter: combatData.encounter, enemyStatusEffects: combatData.enemyStatusEffects }
+        );
+      },
+
+      useSerratedDagger: () => {
+        externalUseSerratedDagger(
+          { inventory },
+          { log: utilityFunctions.log, closeInventoryModal: modalState.closeInventoryModal },
+          { encounter: combatData.encounter, serratedDaggerActive: statusEffects.serratedDaggerActive }
+        );
+      },
+
+      useLuckyCoin: () => {
+        externalUseLuckyCoin(
+          { inventory },
+          { log: utilityFunctions.log, closeInventoryModal: modalState.closeInventoryModal },
+          { encounter: combatData.encounter, luckyFleeActive: statusEffects.luckyFleeActive }
+        );
+      },
+
+      useWardingShield: () => {
+        externalUseWardingShield(
+          { inventory },
+          { log: utilityFunctions.log, closeInventoryModal: modalState.closeInventoryModal },
+          { wardingShieldHitsRemaining: statusEffects.wardingShieldHitsRemaining }
+        );
+      },
+
+      useWardStone: () => {
+        externalUseWardStone(
+          { inventory },
+          { log: utilityFunctions.log },
+          { wardStoneActive: statusEffects.wardStoneActive, wardStoneClicksRemaining: statusEffects.wardStoneClicksRemaining }
+        );
+      },
+
+      useEncounterBeacon: () => {
+        externalUseEncounterBeacon(
+          { inventory },
+          { log: utilityFunctions.log },
+          { encounterBeaconActive: statusEffects.encounterBeaconActive }
+        );
+      },
+
+      useGoldPouch: () => {
+        externalUseGoldPouch(
+          { inventory, playerGold: playerState.playerGold },
+          { log: utilityFunctions.log, closeInventoryModal: modalState.closeInventoryModal },
+          { goldPouchAccumulatedGold }
+        );
+      },
     };
   }
 
   return {
     inventory,
     enlightenmentFishAccumulatedHP,
+    goldPouchAccumulatedGold,
     HEALTH_POTION_HEAL_AMOUNT,
     TURKEY_LEG_HEAL_AMOUNT,
     BARK_TEA_HEAL_AMOUNT,

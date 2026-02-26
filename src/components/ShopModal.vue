@@ -45,21 +45,7 @@
                   (You have <strong>+{{ shieldBonus }}</strong> Defense Bonus).
                 </span>
                 <span v-else-if="selectedItemDetails.effect === 'special'">
-                  (You have <strong>{{ specialUsesLeft }}</strong> Charges
-                  Left).
-                </span>
-                <span
-                  v-else-if="selectedItemDetails.details === 'herbalPoultice'"
-                >
-                  (Heals {{ selectedItemDetails.amount }} HP per click for
-                  {{ selectedItemDetails.durationClicks }} clicks, Total of
-                  {{ selectedItemDetails.maxHeal }} HP).
-                </span>
-                <span
-                  v-else-if="selectedItemDetails.details === 'frenchOnionSoup'"
-                >
-                  (Restores {{ selectedItemDetails.amount }} HP and
-                  {{ selectedItemDetails.specialAmount }} special use).
+                  (You have <strong>{{ specialUsesLeft }}</strong> Charges Left).
                 </span>
                 <div class="haiku-container">
                   <div>" {{ selectedItemDetails.haikuOne }}</div>
@@ -193,22 +179,9 @@ function showToast(message, isError = false) {
 }
 
 function selectItem(item) {
-  console.log("Item clicked:", item);
   selectedItem.value = item;
-  console.log("selectedItem after click (by ID):", selectedItem.value);
   selectedItemDetails.value = { ...item };
-
-  if (item.details === "herbalPoultice") {
-    selectedItemDetails.value.description = `A potent herbal remedy that heals ${item.amount} Health per click for ${item.durationClicks} clicks (Total of ${item.maxHeal} Health).`;
-  } else if (item.details === "frenchOnionSoup") {
-    selectedItemDetails.value.description = `A hearty soup that restores 15 HP and ${item.specialAmount} special use.`;
-  } else if (item.details === "sharedSufferingAmulet") {
-    selectedItemDetails.value.description = `Deals ${item.amount} damage to enemy, 25 to player. Ends combat if enemy defeated.`;
-  } else if (item.description) {
-    selectedItemDetails.value.description = item.description;
-  } else {
-    selectedItemDetails.value.description = "No description available.";
-  }
+  selectedItemDetails.value.description = item.description ?? "No description available.";
 }
 </script>
 
@@ -233,7 +206,7 @@ function selectItem(item) {
   width: 80%;
   max-width: 1100px;
   height: 100%;
-  max-height: 450px;
+  max-height: 90vh;
   position: relative;
   font-size: 13px;
   color: #d0d0d0;
@@ -301,6 +274,10 @@ function selectItem(item) {
   flex-grow: 1;
   overflow-y: auto;
   padding: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  align-content: start;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -313,15 +290,13 @@ function selectItem(item) {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px;
-  margin-bottom: 2px;
+  padding: 7px 10px;
   background: rgba(26, 26, 26, 0.6);
   border: 1px solid #3a3a3a;
   border-radius: 3px;
   font-size: 1em;
   color: #e0e0e0;
   cursor: pointer;
-  flex-shrink: 0;
 }
 
 .item-slot:hover:not(.selected-item) {
@@ -475,11 +450,11 @@ function selectItem(item) {
 }
 
 .shop-footer-buttons {
-  display: flex; /* Use flexbox to arrange buttons */
-  justify-content: center; /* Center the buttons horizontally */
-  gap: 20px; /* Space between the buttons */
-  margin-top: 25px; /* Adjust margin as needed */
-  width: 100%; /* Ensure it takes full width if needed */
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 25px;
+  width: 100%;
 }
 
 .close-button-game-style {
@@ -657,15 +632,16 @@ function selectItem(item) {
     display: contents;
   }
 
-  .shop-title    { order: 0; }
-  .shop-header   { order: 1; }
-  .shop-footer-buttons { order: 2; }
+  .shop-title          { order: 0; }
+  .shop-footer-buttons { order: 1; margin-top: 0; margin-bottom: 10px; }
+  .shop-header         { order: 2; }
   .item-details-panel {
     order: 3;
     height: auto;
     width: 100%;
     flex: none;
     padding: 10px;
+    box-sizing: border-box;
   }
   .shop-list-panel {
     order: 4;
@@ -674,6 +650,7 @@ function selectItem(item) {
     width: 100%;
     flex: none;
     overflow: visible;
+    box-sizing: border-box;
   }
 
   .shop-items-container {

@@ -145,6 +145,13 @@
         :enlightenment-fish-hp="enlightenmentFishAccumulatedHP"
         :amulet-of-shared-suffering-damage="AMULET_ENEMY_DAMAGE"
         :health-regen-clicks-remaining="healthRegenClicksRemaining"
+        :is-serrated-dagger-active="serratedDaggerActive"
+        :is-lucky-flee-active="luckyFleeActive"
+        :warding-shield-hits-remaining="wardingShieldHitsRemaining"
+        :is-ward-stone-active="wardStoneActive"
+        :ward-stone-clicks-remaining="wardStoneClicksRemaining"
+        :is-encounter-beacon-active="encounterBeaconActive"
+        :gold-pouch-accumulated-gold="goldPouchAccumulatedGold"
       />
 
       <MapModal
@@ -240,6 +247,7 @@ const inventoryManager = useInventory();
 const {
   inventory,
   enlightenmentFishAccumulatedHP,
+  goldPouchAccumulatedGold,
   AMULET_ENEMY_DAMAGE,
   createItemHandlers,
 } = inventoryManager;
@@ -258,6 +266,12 @@ const {
   healthRegenClicksRemaining,
   healthRegenMaxHeal,
   healthRegenHealedCount,
+  serratedDaggerActive,
+  luckyFleeActive,
+  wardingShieldHitsRemaining,
+  wardStoneActive,
+  wardStoneClicksRemaining,
+  encounterBeaconActive,
   setupClickWatcher,
 } = statusEffects;
 
@@ -283,6 +297,7 @@ setupClickWatcher({
   showRestModal,
   showShopModal,
   enlightenmentFishAccumulatedHP,
+  goldPouchAccumulatedGold,
 });
 
 // Watch playerHP for defeat condition
@@ -329,6 +344,7 @@ const itemHandlers = createItemHandlers({
     clickCount,
     shortcutsUsedCount,
     currentTargetIndex,
+    playerGold,
   },
   gameData: {
     current,
@@ -349,6 +365,8 @@ const itemHandlers = createItemHandlers({
   combatData: {
     encounter,
     enemyHP,
+    enemyIsStunned: combat.enemyIsStunned,
+    enemyStatusEffects: combat.enemyStatusEffects,
   },
   statusEffects: {
     poisonedClicksLeft,
@@ -361,6 +379,12 @@ const itemHandlers = createItemHandlers({
     healthRegenClicksRemaining,
     healthRegenMaxHeal,
     healthRegenHealedCount,
+    serratedDaggerActive,
+    luckyFleeActive,
+    wardingShieldHitsRemaining,
+    wardStoneActive,
+    wardStoneClicksRemaining,
+    encounterBeaconActive,
   },
 });
 
@@ -401,6 +425,22 @@ function handleUseInventoryItem(itemType) {
     itemHandlers.useAmuletOfSharedSuffering();
   } else if (itemType === "minorHealthPotion") {
     itemHandlers.useMinorHealthPotion();
+  } else if (itemType === "flashPowder") {
+    itemHandlers.useFlashPowder();
+  } else if (itemType === "venomVial") {
+    itemHandlers.useVenomVial();
+  } else if (itemType === "serratedDagger") {
+    itemHandlers.useSerratedDagger();
+  } else if (itemType === "luckyCoin") {
+    itemHandlers.useLuckyCoin();
+  } else if (itemType === "wardingShield") {
+    itemHandlers.useWardingShield();
+  } else if (itemType === "wardStone") {
+    itemHandlers.useWardStone();
+  } else if (itemType === "encounterBeacon") {
+    itemHandlers.useEncounterBeacon();
+  } else if (itemType === "goldPouch") {
+    itemHandlers.useGoldPouch();
   }
 }
 </script>
