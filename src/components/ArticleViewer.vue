@@ -11,12 +11,18 @@
   </div>
   <div v-if="inEncounter" class="overlay"></div>
   <div class="path-display">
+    <img :src="logo" alt="logo" class="path-logo" />
     <div class="path-crumb">
-      <span class="path-reading">{{ props.fullChain[props.currentTargetIndex]?.replaceAll("_", " ") }}</span>
-      <span class="path-arrow">→</span>
-      <span class="path-goal">{{ props.fullChain[props.currentTargetIndex + 1]?.replaceAll("_", " ") }}</span>
+      <div class="path-group path-group-from">
+        <span class="path-label">from</span>
+        <span class="path-reading">{{ props.fullChain[props.currentTargetIndex]?.replaceAll("_", " ") }}</span>
+      </div>
+      <div class="path-group path-group-to">
+        <span class="path-label path-label-goal">to</span>
+        <span class="path-goal">{{ props.fullChain[props.currentTargetIndex + 1]?.replaceAll("_", " ") }}</span>
+      </div>
     </div>
-    <button class="path-map-hint" @click="emit('open-map')">See Full Path in Map</button>
+    <button class="path-map-hint" @click="emit('open-map')">Full Path in Map</button>
   </div>
   <div class="article" :class="{ 'blurred-content': isBlurred }">
     <div v-if="inEncounter" class="overlay"></div>
@@ -38,6 +44,7 @@
 <script setup>
 import { ref, watch, onMounted, computed } from "vue";
 import { fetchWikipediaArticle } from "@/utils/wikipediaApi";
+import logo from "@/assets/newlogo-nobg1.png";
 
 const props = defineProps({
   articleTitle: String,
@@ -256,39 +263,70 @@ onMounted(load);
   z-index: 100;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 5px 12px;
   box-sizing: border-box;
   gap: 8px;
 }
 
+.path-logo {
+  height: 28px;
+  width: auto;
+  flex-shrink: 0;
+}
+
 .path-crumb {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 15px;
+  gap: 12px;
+  font-size: 12px;
   color: #555;
+  flex: 1;
   min-width: 0;
-  overflow: hidden;
+}
+
+.path-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.path-group-from {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.path-group-to {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.path-label {
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #888;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.path-label-goal {
+  color: #888;
 }
 
 .path-reading {
-  color: #555;
+  color: #0645ad;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 280px;
 }
 
-.path-arrow {
-  color: #888;
-  flex-shrink: 0;
-  font-size: 13px;
-}
 
 .path-goal {
-  color: #0645ad;
   font-weight: 600;
+  color: #b05a00;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -296,7 +334,7 @@ onMounted(load);
 }
 
 .path-map-hint {
-  font-size: 13px;
+  font-size: 11px;
   color: #4b4949;
   background: none;
   border: none;
@@ -438,22 +476,41 @@ onMounted(load);
     gap: 4px;
   }
 
+  .path-logo {
+    height: 20px;
+  }
+
+  .path-label {
+    font-size: 7px;
+    letter-spacing: 1px;
+    margin-bottom: 1px;
+  }
+
   .path-reading {
-    max-width: 100px;
-    font-size: 12px;
+    max-width: none;
+    font-size: 11px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-word;
   }
 
   .path-goal {
-    max-width: 110px;
-    font-size: 12px;
+    max-width: none;
+    font-size: 11px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-word;
   }
 
-  .path-arrow {
-    font-size: 12px;
+  .path-crumb {
+    align-items: flex-start;
+    gap: 8px;
   }
 
   .path-map-hint {
-    font-size: 12px;
+    font-size: 10px;
     padding: 1px 4px;
   }
 
