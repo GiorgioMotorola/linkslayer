@@ -148,8 +148,7 @@
               >
             </div>
             <div class="item-description">
-              Heals based on accumulated HP, currently
-              {{ enlightenmentFishHp }} HP.
+              Collects +1 HP per click. Can be consumed once. Currently {{ enlightenmentFishHp }} HP.
             </div>
           </div>
           <div class="item-button-box">

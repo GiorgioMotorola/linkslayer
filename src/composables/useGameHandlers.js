@@ -108,34 +108,89 @@ export function useGameHandlers(deps) {
     handleCloseEncounter,
   } = combat;
 
-  // Dice roll display
+  // Dice roll display + damage notifications (sequenced)
   const lastDiceRoll = ref(null);
+  const lastDamageDealt = ref(null);
+  const lastDamageTaken = ref(null);
+
   let diceRollTimer = null;
+  let diceAnimInterval = null;
+  let dealtTimer = null;
+  let takenTimer = null;
+  let isDiceAnimating = false;
+  let pendingDealt = null;
+  let pendingTaken = null;
+
+  const DICE_TICKS = 15;
+  const DICE_TICK_MS = 80;
+  const DISPLAY_MS = 3000;
+  const DEALT_TO_TAKEN_DELAY = 600;
+
+  function showDealt(amount) {
+    clearTimeout(dealtTimer);
+    lastDamageDealt.value = amount;
+    dealtTimer = setTimeout(() => { lastDamageDealt.value = null; }, DISPLAY_MS);
+  }
+
+  function showTaken(amount, delay = 0) {
+    setTimeout(() => {
+      clearTimeout(takenTimer);
+      lastDamageTaken.value = amount;
+      takenTimer = setTimeout(() => { lastDamageTaken.value = null; }, DISPLAY_MS);
+    }, delay);
+  }
 
   function onDiceRoll({ roll, threshold, didHit }) {
     clearTimeout(diceRollTimer);
-    lastDiceRoll.value = { roll, threshold, didHit };
+    clearInterval(diceAnimInterval);
+    pendingDealt = null;
+    pendingTaken = null;
+    isDiceAnimating = true;
+
+    // Start cycling random numbers
+    lastDiceRoll.value = { roll: Math.floor(Math.random() * 20) + 1, threshold, didHit, isRolling: true };
+
+    let ticks = 0;
+    diceAnimInterval = setInterval(() => {
+      ticks++;
+      if (ticks >= DICE_TICKS) {
+        clearInterval(diceAnimInterval);
+        isDiceAnimating = false;
+        lastDiceRoll.value = { roll, threshold, didHit, isRolling: false };
+
+        // Reveal buffered results sequentially
+        const hasDealt = pendingDealt !== null;
+        if (hasDealt) {
+          showDealt(pendingDealt);
+          pendingDealt = null;
+        }
+        if (pendingTaken !== null) {
+          showTaken(pendingTaken, hasDealt ? DEALT_TO_TAKEN_DELAY : 0);
+          pendingTaken = null;
+        }
+      } else {
+        lastDiceRoll.value = { roll: Math.floor(Math.random() * 20) + 1, threshold, didHit, isRolling: true };
+      }
+    }, DICE_TICK_MS);
+
     diceRollTimer = setTimeout(() => {
       lastDiceRoll.value = null;
-    }, 4000);
+    }, DICE_TICKS * DICE_TICK_MS + DISPLAY_MS);
   }
-
-  // Damage notifications
-  const lastDamageDealt = ref(null);
-  const lastDamageTaken = ref(null);
-  let dealtTimer = null;
-  let takenTimer = null;
 
   function onCombatResult({ type, amount }) {
     if (!amount || amount <= 0) return;
+    if (isDiceAnimating) {
+      // Buffer until dice lands
+      if (type === "dealt") pendingDealt = amount;
+      else if (type === "taken") pendingTaken = amount;
+      return;
+    }
+    // Steady attack — no dice, show immediately in sequence
     if (type === "dealt") {
-      clearTimeout(dealtTimer);
-      lastDamageDealt.value = amount;
-      dealtTimer = setTimeout(() => { lastDamageDealt.value = null; }, 4000);
+      showDealt(amount);
     } else if (type === "taken") {
-      clearTimeout(takenTimer);
-      lastDamageTaken.value = amount;
-      takenTimer = setTimeout(() => { lastDamageTaken.value = null; }, 4000);
+      showTaken(amount, lastDamageDealt.value !== null ? DEALT_TO_TAKEN_DELAY : 0);
     }
   }
 

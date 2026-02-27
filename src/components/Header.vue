@@ -3,7 +3,11 @@
     <transition name="encounter-fade" mode="out-in">
       <div v-if="encounter" class="encounter-dashboard">
         <div v-if="encounter.type === 'combat'">
-          <div class="oh-no">{{ formattedTitle }} &#x2694;</div>
+          <div class="combat-hp-bar">
+            <div class="combat-hp-player" :class="{ 'hp-counting': isPlayerHpAnimating }">❤️ {{ displayedPlayerHP }}/{{ effectiveMaxHP }}</div>
+            <div class="combat-hp-vs">⚔️</div>
+            <div class="combat-hp-enemy" :class="{ 'hp-counting': isEnemyHpAnimating }">💀 {{ formattedTitle }} {{ encounter.enemy?.name }} (HP: {{ displayedEnemyHP }})</div>
+          </div>
           <div class="attack-line" v-html="typedLine"></div>
 
           <!-- Enemy Intent Display -->
@@ -20,11 +24,11 @@
               <div
                 v-if="lastDiceRoll"
                 class="dice-roll-display"
-                :class="lastDiceRoll.didHit ? 'dice-hit' : 'dice-miss'"
+                :class="lastDiceRoll.isRolling ? 'dice-rolling' : ''"
                 :style="diceRollBadgeStyle"
               >
                 <div class="dice-number">{{ lastDiceRoll.roll }}</div>
-                <div class="dice-label">need {{ lastDiceRoll.threshold }}+</div>
+                <div class="dice-label" v-if="!lastDiceRoll.isRolling">need {{ lastDiceRoll.threshold }}+</div>
               </div>
             </transition>
           </Teleport>
@@ -32,7 +36,7 @@
           <!-- Damage Dealt / Taken Badges -->
           <Teleport to="body">
             <transition name="damage-fade">
-              <div v-if="lastDamageDealt" class="damage-badge damage-dealt" :style="badgeBottomStyle">
+              <div v-if="lastDamageDealt" class="damage-badge damage-dealt" :style="diceRollBadgeStyle">
                 <div class="damage-number">{{ lastDamageDealt }}</div>
                 <div class="damage-label">dealt</div>
               </div>
@@ -40,7 +44,7 @@
           </Teleport>
           <Teleport to="body">
             <transition name="damage-fade">
-              <div v-if="lastDamageTaken" class="damage-badge damage-taken" :style="badgeBottomStyle">
+              <div v-if="lastDamageTaken" class="damage-badge damage-taken" :style="diceRollBadgeStyle">
                 <div class="damage-number">{{ lastDamageTaken }}</div>
                 <div class="damage-label">taken</div>
               </div>
@@ -50,6 +54,7 @@
           <div class="btn-group">
             <button
               :class="{ 'btn-anim-attack': activeAction === 'attack_steady' }"
+              :disabled="combatLocked"
               @click="handleAction('attack_steady')"
             >
               > Steady (hits 100% of the time, deals base dmg)
@@ -57,6 +62,7 @@
 
             <button
               :class="{ 'btn-anim-attack': activeAction === 'attack_power' }"
+              :disabled="combatLocked"
               @click="handleAction('attack_power')"
             >
               > Power (hits 70% of the time, deals 1.2x base dmg, +1 extra dmg to player if failure)
@@ -64,6 +70,7 @@
 
             <button
               :class="{ 'btn-anim-attack': activeAction === 'attack_reckless' }"
+              :disabled="combatLocked"
               @click="handleAction('attack_reckless')"
             >
               > Reckless (hits 50% of the time, deals 1.5x base dmg, +2 extra dmg to player if failure)
@@ -71,6 +78,7 @@
 
             <button
               :class="{ 'btn-anim-defend': activeAction === 'defend' }"
+              :disabled="combatLocked"
               @click="handleAction('defend')"
             >
               > Defend
@@ -78,6 +86,7 @@
 
             <button
               :class="{ 'btn-anim-flee': activeAction === 'flee' }"
+              :disabled="combatLocked"
               @click="handleAction('flee')"
             >
               > Flee
@@ -85,14 +94,11 @@
 
             <button
               :class="{ 'btn-anim-special': activeAction === 'special' }"
+              :disabled="combatLocked"
               @click="handleAction('special')"
             >
               > {{ playerSpecialAbilityName }}
             </button>
-          </div>
-          <div class="enemy">
-            💀 (HP:
-            {{ enemyHP }})
           </div>
         </div>
 
@@ -339,7 +345,76 @@ onMounted(() => {
 
 onUnmounted(() => {
   headerResizeObserver?.disconnect();
+  if (playerHpAnimInterval) clearInterval(playerHpAnimInterval);
+  if (enemyHpAnimInterval) clearInterval(enemyHpAnimInterval);
 });
+
+// ── HP countdown animation ──────────────────────────────────────────────────
+const displayedPlayerHP = ref(props.playerHP);
+const displayedEnemyHP = ref(props.enemyHP ?? 0);
+const isPlayerHpAnimating = ref(false);
+const isEnemyHpAnimating = ref(false);
+let playerHpAnimInterval = null;
+let enemyHpAnimInterval = null;
+
+// Snap player HP when it increases (healing) or when outside combat
+watch(() => props.playerHP, (newVal, oldVal) => {
+  if (newVal >= (oldVal ?? newVal) || !props.encounter || props.encounter.type !== "combat") {
+    if (playerHpAnimInterval) { clearInterval(playerHpAnimInterval); playerHpAnimInterval = null; }
+    isPlayerHpAnimating.value = false;
+    displayedPlayerHP.value = newVal;
+  }
+});
+
+// Snap enemy HP for new enemy / HP increase / outside combat
+watch(() => props.enemyHP, (newVal, oldVal) => {
+  if ((newVal ?? 0) >= (oldVal ?? 0) || !props.encounter || props.encounter.type !== "combat") {
+    if (enemyHpAnimInterval) { clearInterval(enemyHpAnimInterval); enemyHpAnimInterval = null; }
+    isEnemyHpAnimating.value = false;
+    displayedEnemyHP.value = newVal ?? 0;
+  }
+});
+
+// When "dealt" badge appears → count enemy HP down
+watch(() => props.lastDamageDealt, (newVal) => {
+  if (newVal !== null && newVal !== undefined && newVal > 0) {
+    if (enemyHpAnimInterval) clearInterval(enemyHpAnimInterval);
+    const target = Math.max(props.enemyHP ?? 0, 0);
+    displayedEnemyHP.value = target + newVal;
+    isEnemyHpAnimating.value = true;
+    enemyHpAnimInterval = setInterval(() => {
+      if (displayedEnemyHP.value > target) {
+        displayedEnemyHP.value--;
+      } else {
+        displayedEnemyHP.value = target;
+        clearInterval(enemyHpAnimInterval);
+        enemyHpAnimInterval = null;
+        isEnemyHpAnimating.value = false;
+      }
+    }, 100);
+  }
+});
+
+// When "taken" badge appears → count player HP down
+watch(() => props.lastDamageTaken, (newVal) => {
+  if (newVal !== null && newVal !== undefined && newVal > 0) {
+    if (playerHpAnimInterval) clearInterval(playerHpAnimInterval);
+    const target = Math.max(props.playerHP, 0);
+    displayedPlayerHP.value = target + newVal;
+    isPlayerHpAnimating.value = true;
+    playerHpAnimInterval = setInterval(() => {
+      if (displayedPlayerHP.value > target) {
+        displayedPlayerHP.value--;
+      } else {
+        displayedPlayerHP.value = target;
+        clearInterval(playerHpAnimInterval);
+        playerHpAnimInterval = null;
+        isPlayerHpAnimating.value = false;
+      }
+    }, 100);
+  }
+});
+// ───────────────────────────────────────────────────────────────────────────
 
 const badgeBottomStyle = computed(() => ({
   bottom: `${headerHeight.value + 8}px`,
@@ -348,6 +423,10 @@ const badgeBottomStyle = computed(() => ({
 const diceRollBadgeStyle = computed(() => ({
   bottom: `${headerHeight.value + 8 + 62}px`,
 }));
+
+const combatLocked = computed(() =>
+  !!props.lastDiceRoll || props.lastDamageDealt !== null || props.lastDamageTaken !== null
+);
 
 const activeAction = ref("");
 const typedLine = ref("");
