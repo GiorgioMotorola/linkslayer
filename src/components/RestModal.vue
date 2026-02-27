@@ -3,6 +3,10 @@
     <div class="rest-modal">
       <div class="rest-modal-phrase">{{ currentRestPhrase }}</div>
 
+      <div v-if="shouldShowLongRest" class="danger-warning">
+        ⚠️ The wilderness grows uneasy. Whatever you choose here, enemies will grow stronger.
+      </div>
+
       <div class="rest-options">
         <button
           v-if="shouldShowShortRest"
@@ -12,7 +16,7 @@
           Short Rest (+20 HP)
         </button>
         <button v-if="shouldShowLongRest" @click="handleRestChoice('long')">
-          Long Rest (Restores HP to full, +1 class ability, Enemey Health and Damage increases.)
+          Long Rest (Restores HP to full, +1 class ability)
         </button>
         <button
           @click="handleAssemble('weapon')"
@@ -201,6 +205,15 @@ button:disabled:hover {
   margin-bottom: 15px;
   line-height: 1.5;
   font-size: 17px;
+}
+
+.danger-warning {
+  color: #e08050;
+  font-size: 15px;
+  border: 1px solid #7a3a1a;
+  border-radius: 6px;
+  padding: 0.5rem 0.8rem;
+  background: rgba(100, 40, 10, 0.25);
 }
 
 .rest-options,

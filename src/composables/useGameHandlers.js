@@ -64,7 +64,7 @@ export function useGameHandlers(deps) {
     markBossDefeated,
   } = gameFlow;
 
-  const { showRestModal, showShopModal, showTipsModal } = modals;
+  const { showRestModal, showShopModal, showTipsModal, restModalCount } = modals;
 
   const {
     playerClass,
@@ -260,7 +260,7 @@ export function useGameHandlers(deps) {
       },
     });
 
-    if (restType === "long") {
+    if (restModalCount.value % 2 === 0) {
       enemyDifficultyLevel.value = enemyDifficultyLevel.value + 1;
       log(
         `⚔️ The world gets ${enemyDifficultyLevel.value} times more dangerous.`
@@ -520,6 +520,12 @@ export function useGameHandlers(deps) {
         log,
       },
     });
+    if (restModalCount.value % 2 === 0) {
+      enemyDifficultyLevel.value = enemyDifficultyLevel.value + 1;
+      log(
+        `⚔️ The world gets ${enemyDifficultyLevel.value} times more dangerous.`
+      );
+    }
     showRestModal.value = false;
   }
 
