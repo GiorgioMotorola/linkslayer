@@ -6,7 +6,7 @@
           <div class="combat-hp-bar">
             <div class="combat-hp-player" :class="{ 'hp-counting': isPlayerHpAnimating }">❤️ {{ displayedPlayerHP }}/{{ effectiveMaxHP }}</div>
             <div class="combat-hp-vs">⚔️</div>
-            <div class="combat-hp-enemy" :class="{ 'hp-counting': isEnemyHpAnimating }">💀 {{ formattedTitle }} {{ encounter.enemy?.name }} (HP: {{ displayedEnemyHP }})</div>
+            <div class="combat-hp-enemy" :class="{ 'hp-counting': isEnemyHpAnimating }">💀 {{ displayedEnemyHP }}</div>
           </div>
           <div class="attack-line" v-html="typedLine"></div>
 
@@ -914,9 +914,6 @@ function triggerContainerAnim(refVar, className, duration = 700) {
   });
 }
 
-const formattedTitle = computed(() =>
-  (props.path?.[props.path.length - 1] ?? "").replaceAll("_", " ")
-);
 
 function copyLogToClipboard() {
   const rawLog = props.gameLog
