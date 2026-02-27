@@ -100,6 +100,7 @@ export function useGameHandlers(deps) {
     enemyHP,
     nextEnemyAttack,
     enemyNextAction,
+    enemyTurnKey,
     currentEnemy,
     enemyStatusEffects,
     enemyIsStunned,
@@ -176,6 +177,21 @@ export function useGameHandlers(deps) {
     diceRollTimer = setTimeout(() => {
       lastDiceRoll.value = null;
     }, DICE_TICKS * DICE_TICK_MS + DISPLAY_MS);
+  }
+
+  function onVictory() {
+    // Wait for dice animation + damage badge to finish, then show "Path Cleared."
+    const victoryDelay = isDiceAnimating
+      ? DICE_TICKS * DICE_TICK_MS + DISPLAY_MS
+      : DISPLAY_MS;
+    setTimeout(() => {
+      enemyTurnKey.value++;
+      enemyNextAction.value = "victory";
+      setTimeout(() => {
+        encounter.value = null;
+        enemyNextAction.value = null;
+      }, 1400);
+    }, victoryDelay);
   }
 
   function onCombatResult({ type, amount }) {
@@ -362,6 +378,7 @@ export function useGameHandlers(deps) {
         bossOverlay: bossOverlay,
         onDiceRoll,
         onCombatResult,
+        onVictory,
       },
       itemEffects: {
         serratedDaggerActive,
@@ -373,7 +390,12 @@ export function useGameHandlers(deps) {
 
   // Enemy turn handler
   function gotoEnemyTurn() {
-    externalHandleEnemyTurn({
+    // Delay showing the new enemy intent until current dice + damage animations finish
+    const hadDice = isDiceAnimating;
+    const intentDelay = (hadDice ? DICE_TICKS * DICE_TICK_MS : 0) + DEALT_TO_TAKEN_DELAY + 400;
+    setTimeout(() => {
+      enemyTurnKey.value++;
+      externalHandleEnemyTurn({
       enemyState: {
         enemyStatusEffects,
         enemyHP,
@@ -397,6 +419,7 @@ export function useGameHandlers(deps) {
         logEnemyAction: logEnemyAction,
       },
     });
+    }, intentDelay);
   }
 
   // Encounter option handler

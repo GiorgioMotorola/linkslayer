@@ -1,7 +1,7 @@
 <template>
   <div class="inventory-overlay" @click.self="closeModal">
     <div class="inventory-content-game-style">
-      <button @click="closeModal" class="close-button-game-style">Close</button>
+      <button @click="closeModal" class="close-button-game-style">⎯ &nbsp; Close Backpack &nbsp; ⎯</button>
       <h2 class="inventory-title">Backpack</h2>
 
       <div class="inventory-items-container">
@@ -746,11 +746,13 @@ function useItem(itemType) {
 .close-button-game-style {
   background-color: transparent;
   color: #f3f3f3;
-  padding: 12px 25px;
+  padding: 7px 22px;
   border: 1px solid #6a6a6a;
-  border-radius: 5px;
+  align-self: center;
+  border-radius: 3px;
   cursor: pointer;
-  font-size: 1.1em;
+  font-size: 11px;
+  letter-spacing: 2px;
   margin-bottom: 15px;
   transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
   text-transform: uppercase;

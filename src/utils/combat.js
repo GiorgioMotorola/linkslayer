@@ -280,7 +280,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       `💀 <span class="player-name">${playerName.value}</span> defeated ${formattedTitle}`
     );
     const defeatedEnemyData = encounter.value?.enemy;
-    encounter.value = null;
+    utils.onVictory?.(defeatedEnemyData);
     handleLootDrop(defeatedEnemyData);
 
     combatWinsSinceLastCapIncrease.value++;

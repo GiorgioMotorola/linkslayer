@@ -24,7 +24,7 @@
           <Teleport to="body">
             <div v-if="enemyIntentMessage" class="enemy-intent" :class="enemyIntentClass" :style="badgeBottomStyle">
               <div class="intent-icon">{{ enemyIntentIcon }}</div>
-              <div class="intent-text">{{ enemyIntentMessage }}</div>
+              <div class="intent-text" v-html="displayedIntentHTML"></div>
             </div>
           </Teleport>
 
@@ -271,6 +271,7 @@ const props = defineProps({
   enemyHP: Number,
   nextEnemyAttack: Number,
   enemyNextAction: String,
+  enemyTurnKey: Number,
   message: String,
   playerName: String,
   weaponBonus: Number,
@@ -417,7 +418,7 @@ const diceRollBadgeStyle = computed(() => ({
 }));
 
 const combatLocked = computed(() =>
-  !!props.lastDiceRoll || props.lastDamageDealt !== null || props.lastDamageTaken !== null
+  !!props.lastDiceRoll || props.lastDamageDealt !== null || props.lastDamageTaken !== null || props.enemyNextAction === "victory"
 );
 
 const activeAction = ref("");
@@ -513,6 +514,8 @@ const enemyIntentMessage = computed(() => {
       return "Enemy about to flee";
     case "trip":
       return "Enemy tripped — free attack!";
+    case "victory":
+      return "Path Cleared.";
     default:
       return "";
   }
@@ -528,6 +531,8 @@ const enemyIntentIcon = computed(() => {
       return "🏃";
     case "trip":
       return "🤾";
+    case "victory":
+      return "🏆";
     default:
       return "⚔️";
   }
@@ -535,6 +540,60 @@ const enemyIntentIcon = computed(() => {
 
 const enemyIntentClass = computed(() => {
   return `intent-${props.enemyNextAction || 'default'}`;
+});
+
+// Typewriter for intent text
+const displayedIntentHTML = ref("");
+let intentTypingInterval = null;
+let lastTypedKey = -1;
+
+function startIntentTypewriter() {
+  const newAction = props.enemyNextAction;
+  clearInterval(intentTypingInterval);
+  displayedIntentHTML.value = "";
+  const fullText = enemyIntentMessage.value;
+  if (!fullText) return;
+
+  // Find where the damage number starts so we can colour it red as it types
+  const damageStart =
+    newAction === "attack" && props.nextEnemyAttack
+      ? fullText.indexOf(String(props.nextEnemyAttack))
+      : -1;
+
+  let i = 0;
+  intentTypingInterval = setInterval(() => {
+    i++;
+    if (damageStart >= 0 && i > damageStart) {
+      displayedIntentHTML.value =
+        fullText.slice(0, damageStart) +
+        `<span class="intent-damage">` +
+        fullText.slice(damageStart, i) +
+        `</span>`;
+    } else {
+      displayedIntentHTML.value = fullText.slice(0, i);
+    }
+    if (i >= fullText.length) clearInterval(intentTypingInterval);
+  }, 35);
+}
+
+// Primary trigger: fires every turn (including same action/damage repeats)
+watch(() => props.enemyTurnKey, () => {
+  lastTypedKey = props.enemyTurnKey;
+  startIntentTypewriter();
+});
+
+// Fallback: handles cases where enemyNextAction changes but enemyTurnKey didn't
+// (e.g. first combat turn before gotoEnemyTurn syncs, or edge cases)
+watch(() => props.enemyNextAction, () => {
+  if (!props.enemyNextAction) {
+    clearInterval(intentTypingInterval);
+    displayedIntentHTML.value = "";
+    return;
+  }
+  if (lastTypedKey !== props.enemyTurnKey) {
+    lastTypedKey = props.enemyTurnKey;
+    startIntentTypewriter();
+  }
 });
 
 const hpAnimClass = ref("");
@@ -628,6 +687,10 @@ watch(
       currentDialogueNodeId.value = newEncounter.lore.currentNodeId || "start";
       fullText = currentDialogue.value?.text || newEncounter.lore.text || "";
     } else if (newEncounter.type === "combat") {
+      // Reset so the fallback enemyNextAction watch can fire for the initial intent
+      lastTypedKey = -1;
+      displayedIntentHTML.value = "";
+
       console.log("--- Combat Encounter Debug ---");
       console.log("props.formattedTitle:", props.formattedTitle);
       console.log("newEncounter.enemy:", newEncounter.enemy);

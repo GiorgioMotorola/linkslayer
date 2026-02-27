@@ -14,6 +14,7 @@
     :enemyHP="enemyHP"
     :nextEnemyAttack="nextEnemyAttack"
     :enemyNextAction="enemyNextAction"
+    :enemyTurnKey="enemyTurnKey"
     :message="encounterMessage"
     @action="handleCombatActionWrapper"
     @option-chosen="callHandleEncounterOption"
@@ -288,6 +289,7 @@ const {
   enemyHP,
   nextEnemyAttack,
   enemyNextAction,
+  enemyTurnKey,
 } = combat;
 
 // Setup click watcher for status effects

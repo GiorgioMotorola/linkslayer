@@ -12,6 +12,7 @@ export function useCombat() {
   const enemyHP = ref(25);
   const nextEnemyAttack = ref(null);
   const enemyNextAction = ref("attack");
+  const enemyTurnKey = ref(0);
   const currentEnemy = ref(null);
   const enemyStatusEffects = ref([]);
   const enemyIsStunned = ref(false);
@@ -96,6 +97,7 @@ export function useCombat() {
     enemyHP,
     nextEnemyAttack,
     enemyNextAction,
+    enemyTurnKey,
     currentEnemy,
     enemyStatusEffects,
     enemyIsStunned,
