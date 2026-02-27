@@ -430,22 +430,26 @@ header {
   color: #fff;
   line-height: 1;
   z-index: 110;
+  transition: background 0.45s ease, border-color 0.45s ease, box-shadow 0.45s ease;
 }
 
 .dice-roll-display.dice-hit {
-  border-color: #fff;
+  background: #1b5e20;
+  border-color: #4caf50;
   color: #fff;
-  box-shadow: 0 0 14px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 18px 5px rgba(76, 175, 80, 0.7);
 }
 
 .dice-roll-display.dice-miss {
-  border-color: #fff;
+  background: #7f0000;
+  border-color: #ef5350;
   color: #fff;
-  box-shadow: 0 0 14px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 18px 5px rgba(239, 83, 80, 0.7);
 }
 
 .dice-roll-display.dice-rolling {
   animation: dice-shake 0.1s ease-in-out infinite;
+  transition: none;
 }
 
 @keyframes dice-shake {
@@ -480,57 +484,31 @@ header {
 }
 
 /* Damage badges */
-.damage-badge {
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: 2px solid;
-  z-index: 110;
-  background: #1a1a1a;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
-  white-space: nowrap;
-  line-height: 1;
+.hp-delta {
+  font-size: 0.75em;
+  font-weight: 700;
+  margin-left: 5px;
 }
 
-.damage-number {
-  font-size: 1.4em;
-  font-weight: bold;
-}
-
-.damage-label {
-  font-size: 0.6em;
-  opacity: 0.8;
-  margin-top: 2px;
-}
-
-.damage-dealt {
-  right: calc(50% + 36px);
-  border-color: #4caf50;
-  color: #4caf50;
-}
-
-.damage-taken {
-  left: calc(50% + 36px);
-  border-color: #e53935;
+.hp-delta-taken {
   color: #e53935;
 }
 
-.damage-fade-enter-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+.hp-delta-dealt {
+  color: #ff6f00;
 }
 
-.damage-fade-leave-active {
-  transition: opacity 1s ease, transform 1s ease;
+.delta-fade-enter-active {
+  transition: opacity 0.15s ease;
 }
 
-.damage-fade-enter-from,
-.damage-fade-leave-to {
+.delta-fade-leave-active {
+  transition: opacity 1.2s ease;
+}
+
+.delta-fade-enter-from,
+.delta-fade-leave-to {
   opacity: 0;
-  transform: translateY(6px);
 }
 
 .btn-group {

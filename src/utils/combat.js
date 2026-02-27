@@ -80,13 +80,13 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     let hitThreshold = null; // null = auto-hit (steady)
 
     if (playerAction === "attack_power") {
-      damageMultiplier = 1.2;
+      damageMultiplier = 1.5;
       attackName = "lands a power strike";
       hitThreshold = 7; // needs 7+ on d20 (70%)
     } else if (playerAction === "attack_reckless") {
-      damageMultiplier = 1.5;
+      damageMultiplier = 2.0;
       attackName = "swings recklessly";
-      hitThreshold = 11; // needs 11+ on d20 (50%)
+      hitThreshold = 13; // needs 13+ on d20 (40%)
     }
 
     let didHit = true;

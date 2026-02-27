@@ -4,9 +4,19 @@
       <div v-if="encounter" class="encounter-dashboard">
         <div v-if="encounter.type === 'combat'">
           <div class="combat-hp-bar">
-            <div class="combat-hp-player" :class="{ 'hp-counting': isPlayerHpAnimating }">❤️ {{ displayedPlayerHP }}/{{ effectiveMaxHP }}</div>
+            <div class="combat-hp-player" :class="{ 'hp-counting': isPlayerHpAnimating }">
+              ❤️ {{ displayedPlayerHP }}/{{ effectiveMaxHP }}
+              <transition name="delta-fade">
+                <span v-if="lastDamageTaken" class="hp-delta hp-delta-taken">-{{ lastDamageTaken }}</span>
+              </transition>
+            </div>
             <div class="combat-hp-vs">⚔️</div>
-            <div class="combat-hp-enemy" :class="{ 'hp-counting': isEnemyHpAnimating }">💀 {{ displayedEnemyHP }}</div>
+            <div class="combat-hp-enemy" :class="{ 'hp-counting': isEnemyHpAnimating }">
+              💀 {{ displayedEnemyHP }}
+              <transition name="delta-fade">
+                <span v-if="lastDamageDealt" class="hp-delta hp-delta-dealt">-{{ lastDamageDealt }}</span>
+              </transition>
+            </div>
           </div>
           <div class="attack-line" v-html="typedLine"></div>
 
@@ -18,35 +28,17 @@
             </div>
           </Teleport>
 
-          <!-- Dice Roll Display (above enemy intent) -->
+          <!-- Dice Roll Display -->
           <Teleport to="body">
             <transition name="dice-roll-fade">
               <div
                 v-if="lastDiceRoll"
                 class="dice-roll-display"
-                :class="lastDiceRoll.isRolling ? 'dice-rolling' : ''"
+                :class="lastDiceRoll.isRolling ? 'dice-rolling' : (lastDiceRoll.didHit ? 'dice-hit' : 'dice-miss')"
                 :style="diceRollBadgeStyle"
               >
                 <div class="dice-number">{{ lastDiceRoll.roll }}</div>
                 <div class="dice-label" v-if="!lastDiceRoll.isRolling">need {{ lastDiceRoll.threshold }}+</div>
-              </div>
-            </transition>
-          </Teleport>
-
-          <!-- Damage Dealt / Taken Badges -->
-          <Teleport to="body">
-            <transition name="damage-fade">
-              <div v-if="lastDamageDealt" class="damage-badge damage-dealt" :style="diceRollBadgeStyle">
-                <div class="damage-number">{{ lastDamageDealt }}</div>
-                <div class="damage-label">dealt</div>
-              </div>
-            </transition>
-          </Teleport>
-          <Teleport to="body">
-            <transition name="damage-fade">
-              <div v-if="lastDamageTaken" class="damage-badge damage-taken" :style="diceRollBadgeStyle">
-                <div class="damage-number">{{ lastDamageTaken }}</div>
-                <div class="damage-label">taken</div>
               </div>
             </transition>
           </Teleport>
@@ -57,7 +49,7 @@
               :disabled="combatLocked"
               @click="handleAction('attack_steady')"
             >
-              > Steady (hits 100% of the time, deals base dmg)
+              > Steady (100% Success | Normal dmg)
             </button>
 
             <button
@@ -65,7 +57,7 @@
               :disabled="combatLocked"
               @click="handleAction('attack_power')"
             >
-              > Power (hits 70% of the time, deals 1.2x base dmg, +1 extra dmg to player if failure)
+              > Power (70% Success | 1.5x dmg | miss -1hp)
             </button>
 
             <button
@@ -73,7 +65,7 @@
               :disabled="combatLocked"
               @click="handleAction('attack_reckless')"
             >
-              > Reckless (hits 50% of the time, deals 1.5x base dmg, +2 extra dmg to player if failure)
+              > Reckless (40% Success | 2x dmg | miss -2hp)
             </button>
 
             <button
