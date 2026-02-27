@@ -39,7 +39,7 @@ export const classes = {
     maxHP: 50,
     special: "Fireball",
     description:
-      "50 HP. Class Ability(Fireball) deals between 5 and 15 damage with a 30% chance to stun the enemy. Starts with +1 Class Ability charges.",
+      "50 HP. Class Ability(Fireball) deals between 5 and 15 damage with a 30% chance to stun the enemy. Starts with +2 Class Ability charges.",
     specialEffect: (enemyHP, playerHP) => {
       const wizardDamage = Math.floor(Math.random() * 11) + 5;
       const stunned = Math.random() < 0.3;
@@ -51,7 +51,7 @@ export const classes = {
       };
     },
     startingWeaponBonus: 0,
-    startingSpecialUses: 1,
+    startingSpecialUses: 2,
     startingShieldBonus: 0,
     startingHealthPotionBonus: 0,
     startingInvisibilityCloaks: 0,

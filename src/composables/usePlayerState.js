@@ -6,7 +6,7 @@ export function usePlayerState(hpCapBonus) {
   const playerClass = ref(null);
   const playerName = ref("");
   const playerHP = ref(0);
-  const specialUsesLeft = ref(5);
+  const specialUsesLeft = ref(3);
   const totalSpecialsUsed = ref(0);
   const weaponBonus = ref(0);
   const shieldBonus = ref(0);

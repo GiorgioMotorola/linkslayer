@@ -36,6 +36,9 @@
     :hpCapBonus="hpCapBonus"
     :formattedTitle="formattedTitle"
     @open-map-modal="isMapModalOpen = true"
+    :lastDiceRoll="lastDiceRoll"
+    :lastDamageDealt="lastDamageDealt"
+    :lastDamageTaken="lastDamageTaken"
   />
 
   <div class="main-content-wrapper">
@@ -322,6 +325,9 @@ const {
   handleClassSelection,
   handleAssembleUpgradeWrapper,
   handleCloseEncounterWrapper,
+  lastDiceRoll,
+  lastDamageDealt,
+  lastDamageTaken,
 } = useGameHandlers({
   gameFlow,
   log,

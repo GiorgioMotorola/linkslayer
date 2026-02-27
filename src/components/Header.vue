@@ -6,7 +6,7 @@
           <div class="oh-no">{{ formattedTitle }} &#x2694;</div>
           <div class="attack-line" v-html="typedLine"></div>
 
-          <!-- Enemy Intent Display (teleported to body to escape filter: brightness stacking context) -->
+          <!-- Enemy Intent Display -->
           <Teleport to="body">
             <div v-if="enemyIntentMessage" class="enemy-intent" :class="enemyIntentClass" :style="badgeBottomStyle">
               <div class="intent-icon">{{ enemyIntentIcon }}</div>
@@ -14,12 +14,59 @@
             </div>
           </Teleport>
 
+          <!-- Dice Roll Display (above enemy intent) -->
+          <Teleport to="body">
+            <transition name="dice-roll-fade">
+              <div
+                v-if="lastDiceRoll"
+                class="dice-roll-display"
+                :class="lastDiceRoll.didHit ? 'dice-hit' : 'dice-miss'"
+                :style="diceRollBadgeStyle"
+              >
+                <div class="dice-number">{{ lastDiceRoll.roll }}</div>
+                <div class="dice-label">need {{ lastDiceRoll.threshold }}+</div>
+              </div>
+            </transition>
+          </Teleport>
+
+          <!-- Damage Dealt / Taken Badges -->
+          <Teleport to="body">
+            <transition name="damage-fade">
+              <div v-if="lastDamageDealt" class="damage-badge damage-dealt" :style="badgeBottomStyle">
+                <div class="damage-number">{{ lastDamageDealt }}</div>
+                <div class="damage-label">dealt</div>
+              </div>
+            </transition>
+          </Teleport>
+          <Teleport to="body">
+            <transition name="damage-fade">
+              <div v-if="lastDamageTaken" class="damage-badge damage-taken" :style="badgeBottomStyle">
+                <div class="damage-number">{{ lastDamageTaken }}</div>
+                <div class="damage-label">taken</div>
+              </div>
+            </transition>
+          </Teleport>
+
           <div class="btn-group">
             <button
-              :class="{ 'btn-anim-attack': activeAction === 'attack' }"
-              @click="handleAction('attack')"
+              :class="{ 'btn-anim-attack': activeAction === 'attack_steady' }"
+              @click="handleAction('attack_steady')"
             >
-              > Attack
+              > Steady (hits 100% of the time, deals base dmg)
+            </button>
+
+            <button
+              :class="{ 'btn-anim-attack': activeAction === 'attack_power' }"
+              @click="handleAction('attack_power')"
+            >
+              > Power (hits 70% of the time, deals 1.2x base dmg, +1 extra dmg to player if failure)
+            </button>
+
+            <button
+              :class="{ 'btn-anim-attack': activeAction === 'attack_reckless' }"
+              @click="handleAction('attack_reckless')"
+            >
+              > Reckless (hits 50% of the time, deals 1.5x base dmg, +2 extra dmg to player if failure)
             </button>
 
             <button
@@ -248,6 +295,18 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  lastDiceRoll: {
+    type: Object,
+    default: null,
+  },
+  lastDamageDealt: {
+    type: Number,
+    default: null,
+  },
+  lastDamageTaken: {
+    type: Number,
+    default: null,
+  },
 });
 
 const emit = defineEmits([
@@ -284,6 +343,10 @@ onUnmounted(() => {
 
 const badgeBottomStyle = computed(() => ({
   bottom: `${headerHeight.value + 8}px`,
+}));
+
+const diceRollBadgeStyle = computed(() => ({
+  bottom: `${headerHeight.value + 8 + 62}px`,
 }));
 
 const activeAction = ref("");
@@ -740,7 +803,7 @@ function handleAction(action) {
   emit("action", action);
 
   let animClass = "";
-  if (action === "attack") {
+  if (action === "attack_steady" || action === "attack_power" || action === "attack_reckless") {
     animClass = "container-anim-attack";
   } else if (action === "defend") {
     animClass = "container-anim-defend";

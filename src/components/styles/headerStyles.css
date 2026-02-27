@@ -350,6 +350,36 @@ header {
   animation: fadeInUp 0.3s forwards;
 }
 
+.dice-face {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.7em;
+  height: 1.7em;
+  border: 2px solid #888;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.95em;
+  background: #1a1a1a;
+  vertical-align: middle;
+  margin: 0 3px;
+  padding: 0 3px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+  letter-spacing: 0;
+}
+
+.dice-face.hit {
+  border-color: #4caf50;
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.12);
+}
+
+.dice-face.miss {
+  border-color: #e53935;
+  color: #e53935;
+  background: rgba(229, 57, 53, 0.12);
+}
+
 .tips-button {
   margin-top: 0.3rem;
   background-color: transparent;
@@ -375,8 +405,122 @@ header {
   }
 }
 
+.dice-roll-display {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border: 3px solid #888;
+  border-radius: 8px;
+  background: #1a1a1a;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+  color: #ccc;
+  line-height: 1;
+  z-index: 110;
+}
+
+.dice-roll-display.dice-hit {
+  border-color: #4caf50;
+  color: #4caf50;
+  box-shadow: 0 0 14px rgba(76, 175, 80, 0.45);
+}
+
+.dice-roll-display.dice-miss {
+  border-color: #e53935;
+  color: #e53935;
+  box-shadow: 0 0 14px rgba(229, 57, 53, 0.45);
+}
+
+.dice-number {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.dice-label {
+  font-size: 0.6em;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+.dice-roll-fade-enter-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.dice-roll-fade-leave-active {
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.dice-roll-fade-enter-from,
+.dice-roll-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) scale(0.6);
+}
+
+/* Damage badges */
+.damage-badge {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 2px solid;
+  z-index: 110;
+  background: #1a1a1a;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.damage-number {
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+.damage-label {
+  font-size: 0.6em;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+.damage-dealt {
+  left: 10px;
+  border-color: #4caf50;
+  color: #4caf50;
+}
+
+.damage-taken {
+  right: 10px;
+  border-color: #e53935;
+  color: #e53935;
+}
+
+.damage-fade-enter-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.damage-fade-leave-active {
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.damage-fade-enter-from,
+.damage-fade-leave-to {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
 .btn-group {
   margin-top: 20px;
+}
+
+.btn-group button {
+  text-align: left;
 }
 
 button {
@@ -1388,7 +1532,7 @@ button:hover {
   }
 
   .btn-group button {
-    font-size: 13px;
+    font-size: 11px;
     padding: 0.2rem 0;
     margin-bottom: 0.1rem;
   }

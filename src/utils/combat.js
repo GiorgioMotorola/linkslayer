@@ -62,7 +62,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
   let skipEnemyCurrentTurn = false;
   let playerDefendedThisTurn = false;
 
-  if (playerAction === "attack") {
+  if (playerAction === "attack_steady" || playerAction === "attack_power" || playerAction === "attack_reckless") {
     let randomDamage = Math.floor(Math.random() * 5) + 2;
     if (playerClass.value.name === "Fighter") randomDamage += 1;
     if (playerClass.value.name === "Rogue" && Math.random() < 0.25) {
@@ -74,14 +74,50 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     if (weaponBonus.value > 0) {
       randomDamage += weaponBonus.value;
     }
-    damageToEnemy = randomDamage;
-    log(
-      `🗡️ <span class="player-name">${playerName.value}</span> hits ${formattedTitle} for ${damageToEnemy} damage.`
-    );
-    if (serratedDaggerActive?.value && enemyStatusEffects) {
-      enemyStatusEffects.value.push({ type: "bleed", damage: 1, duration: 2 });
-      serratedDaggerActive.value = false;
-      log(`🩸 The serrated edge opens a wound — ${formattedTitle} begins to Bleed.`);
+
+    let damageMultiplier = 1.0;
+    let attackName = "strikes";
+    let hitThreshold = null; // null = auto-hit (steady)
+
+    if (playerAction === "attack_power") {
+      damageMultiplier = 1.2;
+      attackName = "lands a power strike";
+      hitThreshold = 7; // needs 7+ on d20 (70%)
+    } else if (playerAction === "attack_reckless") {
+      damageMultiplier = 1.5;
+      attackName = "swings recklessly";
+      hitThreshold = 11; // needs 11+ on d20 (50%)
+    }
+
+    let didHit = true;
+    if (hitThreshold !== null) {
+      const roll = Math.floor(Math.random() * 20) + 1;
+      didHit = roll >= hitThreshold;
+      utils.onDiceRoll?.({ roll, threshold: hitThreshold, didHit });
+      const dieClass = didHit ? "hit" : "miss";
+      const dieFace = `<span class="dice-face ${dieClass}">${roll}</span>`;
+      log(
+        `🎲 ${dieFace} (need ${hitThreshold}+) — ${didHit ? "Hit!" : "Miss!"}`
+      );
+    }
+
+    if (didHit) {
+      damageToEnemy = Math.floor(randomDamage * damageMultiplier);
+      log(
+        `🗡️ <span class="player-name">${playerName.value}</span> ${attackName} and hits ${formattedTitle} for ${damageToEnemy} damage.`
+      );
+      if (serratedDaggerActive?.value && enemyStatusEffects) {
+        enemyStatusEffects.value.push({ type: "bleed", damage: 1, duration: 2 });
+        serratedDaggerActive.value = false;
+        log(`🩸 The serrated edge opens a wound — ${formattedTitle} begins to Bleed.`);
+      }
+    } else {
+      damageToEnemy = 0;
+      const missPenalty = playerAction === "attack_reckless" ? 2 : 1;
+      playerHP.value = Math.max(playerHP.value - missPenalty, 0);
+      log(
+        `💨 <span class="player-name">${playerName.value}</span> ${attackName} but misses — ${formattedTitle} seizes the opening and deals ${missPenalty} damage.`
+      );
     }
   } else if (playerAction === "special") {
     if (specialUsesLeft.value <= 0) {
@@ -236,6 +272,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       );
     }
     enemyHP.value -= finalDamageToEnemy;
+    utils.onCombatResult?.({ type: "dealt", amount: finalDamageToEnemy });
   }
 
   if (enemyHP.value <= 0) {
@@ -308,6 +345,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
 
   if (typeof damageToPlayer === "number" && !isNaN(damageToPlayer)) {
     playerHP.value = Math.max(playerHP.value - damageToPlayer, 0);
+    if (damageToPlayer > 0) utils.onCombatResult?.({ type: "taken", amount: damageToPlayer });
   } else {
     console.error(
       "ERROR: damageToPlayer is not a valid number, defaulting to 0 damage.",

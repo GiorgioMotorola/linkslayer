@@ -1,5 +1,6 @@
 // src/composables/useGameHandlers.js
 
+import { ref } from "vue";
 import { classes } from "@/utils/classes";
 import { isBoss } from "@/utils/bossGenerator";
 import { handleCombatAction } from "@/utils/combat";
@@ -106,6 +107,37 @@ export function useGameHandlers(deps) {
     decideEnemyAction,
     handleCloseEncounter,
   } = combat;
+
+  // Dice roll display
+  const lastDiceRoll = ref(null);
+  let diceRollTimer = null;
+
+  function onDiceRoll({ roll, threshold, didHit }) {
+    clearTimeout(diceRollTimer);
+    lastDiceRoll.value = { roll, threshold, didHit };
+    diceRollTimer = setTimeout(() => {
+      lastDiceRoll.value = null;
+    }, 4000);
+  }
+
+  // Damage notifications
+  const lastDamageDealt = ref(null);
+  const lastDamageTaken = ref(null);
+  let dealtTimer = null;
+  let takenTimer = null;
+
+  function onCombatResult({ type, amount }) {
+    if (!amount || amount <= 0) return;
+    if (type === "dealt") {
+      clearTimeout(dealtTimer);
+      lastDamageDealt.value = amount;
+      dealtTimer = setTimeout(() => { lastDamageDealt.value = null; }, 4000);
+    } else if (type === "taken") {
+      clearTimeout(takenTimer);
+      lastDamageTaken.value = amount;
+      takenTimer = setTimeout(() => { lastDamageTaken.value = null; }, 4000);
+    }
+  }
 
   // Loot handler
   function handleLoot(defeatedEnemyData) {
@@ -273,6 +305,8 @@ export function useGameHandlers(deps) {
         markBossDefeated,
         gotoEnemyTurn,
         bossOverlay: bossOverlay,
+        onDiceRoll,
+        onCombatResult,
       },
       itemEffects: {
         serratedDaggerActive,
@@ -499,5 +533,8 @@ export function useGameHandlers(deps) {
     handleClassSelection,
     handleAssembleUpgradeWrapper,
     handleCloseEncounterWrapper,
+    lastDiceRoll,
+    lastDamageDealt,
+    lastDamageTaken,
   };
 }
