@@ -4,7 +4,7 @@ export function handleRest({ player, state, utils }) {
   const { playerHP, playerClass, specialUsesLeft, playerName, effectiveMaxHP } =
     player;
   const { shortRestsUsed, longRestsUsed, restChoice } = state;
-  const { log, showRestModal } = utils;
+  const { log } = utils;
 
   const choice = restChoice;
   let restType = null;
@@ -24,14 +24,12 @@ export function handleRest({ player, state, utils }) {
     longRestsUsed.value++;
     restType = "long";
   } else if (choice === "continue") {
-    log(`${playerName.value} decided not to rest and continued their journey.`);
     restType = "continue";
   } else {
     log("You cannot rest any further at this time.");
     restType = "none";
   }
 
-  showRestModal.value = false;
   return restType;
 }
 

@@ -539,6 +539,8 @@ const enemyIntentMessage = computed(() => {
       return "Enemy about to flee";
     case "trip":
       return "Enemy tripped — free attack!";
+    case "stunned":
+      return "Enemy is stunned!";
     case "victory":
       return "Path Cleared.";
     case "fled":
@@ -558,6 +560,8 @@ const enemyIntentIcon = computed(() => {
       return "🏃";
     case "trip":
       return "🤾";
+    case "stunned":
+      return "💤";
     case "victory":
       return "🏆";
     case "fled":

@@ -48,7 +48,7 @@ export function handleEnemyTurn({
 
   if (enemyIsStunned.value) {
     log(`💤 ${formattedTitle.value} is stunned and skips their turn.`);
-    enemyNextAction.value = null;
+    enemyNextAction.value = "stunned";
     enemyIsStunned.value = false;
     return;
   }

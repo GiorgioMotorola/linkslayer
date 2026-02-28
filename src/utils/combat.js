@@ -156,6 +156,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
         baseSpecialDamage = 18;
         damageToEnemy = baseSpecialDamage;
         enemyIsStunned.value = true;
+        enemyNextAction.value = "stunned";
         skipEnemyCurrentTurn = true;
         log(`⚔️ <span class="player-name">${playerName.value}</span> delivers a Warlord's Strike for ${baseSpecialDamage} damage! The enemy is stunned.`);
       }
@@ -171,7 +172,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       log(`🔥 <span class="player-name">${playerName.value}</span> casts ${specialName}, dealing ${baseSpecialDamage} damage.${stunned ? ` The enemy is stunned.` : ""}`);
       if (stunned) {
         enemyIsStunned.value = true;
-        enemyNextAction.value = null;
+        enemyNextAction.value = "stunned";
         skipEnemyCurrentTurn = true;
       }
     } else if (cls === "Rogue") {
@@ -232,7 +233,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
           }
           if (effect.stunned) {
             enemyIsStunned.value = true;
-            enemyNextAction.value = null;
+            enemyNextAction.value = "stunned";
             skipEnemyCurrentTurn = true;
           }
           if (effect.skipEnemyTurn) {

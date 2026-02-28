@@ -675,6 +675,13 @@ button:hover {
   animation: victory-pulse 1s ease-in-out infinite alternate;
 }
 
+.intent-stunned {
+  border-color: #9b7fd4;
+  color: #c8a8f0;
+  box-shadow: 0 0 14px 3px rgba(155, 127, 212, 0.4);
+  animation: victory-pulse 1.4s ease-in-out infinite alternate;
+}
+
 /* Red damage number inside attack intent */
 .intent-damage {
   color: #e53935;

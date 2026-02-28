@@ -357,7 +357,7 @@ export function useGameHandlers(deps) {
 
   // Rest handler
   function callHandleRest(choice) {
-    const restType = handleRest({
+    handleRest({
       player: {
         playerHP,
         playerClass,
@@ -372,16 +372,18 @@ export function useGameHandlers(deps) {
       },
       utils: {
         log,
-        showRestModal,
       },
     });
 
-    if (restModalCount.value % 2 === 0) {
-      enemyDifficultyLevel.value = enemyDifficultyLevel.value + 1;
-      log(
-        `⚔️ The world gets ${enemyDifficultyLevel.value} times more dangerous.`
-      );
+    if (choice === "continue") {
+      showRestModal.value = false;
     }
+  }
+
+  function callHandleSleep() {
+    enemyDifficultyLevel.value = enemyDifficultyLevel.value + 1;
+    log(`⚔️ The world gets ${enemyDifficultyLevel.value} times more dangerous.`);
+    showRestModal.value = false;
   }
 
   // Combat action handler
@@ -613,10 +615,12 @@ export function useGameHandlers(deps) {
     if (offeringPot.value >= 3) {
       specialTier.value++;
       offeringPot.value = 0;
-      specialUsesLeft.value = 3;
+      const chargesRestored = specialUsesLeft.value < 3;
+      if (chargesRestored) specialUsesLeft.value = 3;
       const tierData = playerClass.value?.specialTiers?.[specialTier.value - 1];
       const newName = tierData?.name ?? playerClass.value?.special;
-      log(`✨ The Gods have answered. Your class ability ascends to Tier ${specialTier.value}: <strong>${newName}</strong>! Special charges restored to 3.`);
+      const chargeMsg = chargesRestored ? " Special charges restored to 3." : "";
+      log(`✨ The Gods have answered. Your class ability ascends to Tier ${specialTier.value}: <strong>${newName}</strong>!${chargeMsg}`);
     } else {
       log(`🙏 <span class="player-name">${playerName.value}</span> places ${cost}g in the offering bowl... (${offeringPot.value}/3)`);
     }
@@ -675,18 +679,12 @@ export function useGameHandlers(deps) {
         log,
       },
     });
-    if (restModalCount.value % 2 === 0) {
-      enemyDifficultyLevel.value = enemyDifficultyLevel.value + 1;
-      log(
-        `⚔️ The world gets ${enemyDifficultyLevel.value} times more dangerous.`
-      );
-    }
-    showRestModal.value = false;
   }
 
   return {
     callHandleClick,
     callHandleRest,
+    callHandleSleep,
     callHandleOffer,
     handleCombatActionWrapper,
     gotoEnemyTurn,

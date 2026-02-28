@@ -6,17 +6,20 @@
       <div class="rest-modal-phrase">{{ currentRestPhrase }}</div>
 
       <div v-if="shouldShowLongRest" class="danger-warning">
-        ⚠️ The wilderness grows uneasy. Whatever you choose here, enemies will grow stronger.
+        The wilderness grows uneasy. Enemies will be stronger when you wake up...
       </div>
 
       <div class="rest-options">
+
+        <!-- ── SHORT REST ──────────────────────────────── -->
         <button
           v-if="shouldShowShortRest"
-          @click="handleRestChoice('short')"
-          :disabled="props.shortRestsUsed >= 4"
+          @click="handleShortRest"
+          :disabled="shortRestDone"
         >
-          Short Rest (+20 HP)
+          🔥 Short Rest — gain +20 HP
         </button>
+
         <button
           v-if="shouldShowShortRest && props.specialTier < 3"
           @click="handleOffer"
@@ -26,42 +29,55 @@
           <span class="offering-main">🙏 Offer {{ props.nextOfferingCost }}g to the Gods — upgrade your Special</span>
           <span class="offering-sub">
             Offering bowl:
-            <span
-              v-for="i in 3"
-              :key="i"
-              class="pot-dot"
-              :class="{ filled: i <= props.offeringPot }"
-            >{{ i <= props.offeringPot ? '●' : '○' }}</span>
+            <span v-for="i in 3" :key="i" class="pot-dot" :class="{ filled: i <= props.offeringPot }">{{ i <= props.offeringPot ? '●' : '○' }}</span>
             {{ props.offeringPot }}/3
             <span v-if="props.specialTier === 1"> — Tier 1 → 2</span>
             <span v-if="props.specialTier === 2"> — Tier 2 → 3</span>
           </span>
         </button>
-        <button v-if="shouldShowLongRest" @click="handleRestChoice('long')">
-          Long Rest (Restores HP to full, +1 class ability)
+
+        <button v-if="shouldShowShortRest" @click="handleContinue" class="close-action-btn">
+          Continue On →
         </button>
+
+        <!-- ── LONG REST ───────────────────────────────── -->
         <button
+          v-if="shouldShowLongRest"
+          @click="handleLongRest"
+          :disabled="longRestDone"
+        >
+          🌙 Long Rest — restore full HP and gain +1 class ability
+        </button>
+
+        <button
+          v-if="shouldShowLongRest"
           @click="handleAssemble('weapon')"
           :disabled="(props.weaponPieces || 0) < 2"
         >
-          Assemble Weapon Upgrade (You have {{ props.weaponPieces || 0 }}. You
-          need at least 2 pieces to upgrade.)
+          🛠️ Assemble Weapon Upgrade
+          <span class="assemble-sub">{{ props.weaponPieces || 0 }} piece{{ (props.weaponPieces || 0) !== 1 ? 's' : '' }} — need 2</span>
         </button>
+
         <button
+          v-if="shouldShowLongRest"
           @click="handleAssemble('defense')"
           :disabled="(props.defensePieces || 0) < 2"
         >
-          Assemble Defense Upgrade (You have {{ props.defensePieces || 0 }}. You
-          need at least 2 pieces to upgrade.)
+          🛡️ Assemble Defense Upgrade
+          <span class="assemble-sub">{{ props.defensePieces || 0 }} piece{{ (props.defensePieces || 0) !== 1 ? 's' : '' }} — need 2</span>
         </button>
-        <button @click="handleRestChoice('continue')">Continue Journey</button>
+
+        <button v-if="shouldShowLongRest" @click="handleSleep" class="close-action-btn sleep-btn">
+          Drift Off to Sleep…
+        </button>
+
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref, watch, computed } from "vue";
+import { ref, watch, computed } from "vue";
 import { getRandomRestPhrase } from "../utils/restPhrases.js";
 
 const props = defineProps({
@@ -77,8 +93,12 @@ const props = defineProps({
   nextOfferingCost: { type: Number, default: 10 },
 });
 
+const emit = defineEmits(["rest", "assemble-upgrade", "offer", "sleep"]);
+
 const currentRestPhrase = ref("");
 const hasOfferedThisRest = ref(false);
+const shortRestDone = ref(false);
+const longRestDone = ref(false);
 
 watch(
   () => props.showRestModal,
@@ -86,15 +106,32 @@ watch(
     if (newValue) {
       currentRestPhrase.value = getRandomRestPhrase();
       hasOfferedThisRest.value = false;
+      shortRestDone.value = false;
+      longRestDone.value = false;
     }
   },
   { immediate: true }
 );
 
-const emit = defineEmits(["rest", "assemble-upgrade", "offer"]);
+const shouldShowLongRest = computed(() => props.restModalCount % 2 === 0);
+const shouldShowShortRest = computed(() => props.restModalCount % 2 !== 0);
 
-const handleRestChoice = (choice) => {
-  emit("rest", choice);
+const handleShortRest = () => {
+  shortRestDone.value = true;
+  emit("rest", "short");
+};
+
+const handleLongRest = () => {
+  longRestDone.value = true;
+  emit("rest", "long");
+};
+
+const handleContinue = () => {
+  emit("rest", "continue");
+};
+
+const handleSleep = () => {
+  emit("sleep");
 };
 
 const handleAssemble = (type) => {
@@ -105,14 +142,6 @@ const handleOffer = () => {
   hasOfferedThisRest.value = true;
   emit("offer");
 };
-
-const shouldShowLongRest = computed(() => {
-  return props.restModalCount % 2 === 0;
-});
-
-const shouldShowShortRest = computed(() => {
-  return props.restModalCount % 2 !== 0;
-});
 </script>
 
 <style scoped>
@@ -300,6 +329,34 @@ button:disabled::after {
 button:disabled:hover {
   cursor: not-allowed;
   opacity: 0.35;
+}
+
+/* ── Assemble sub-text ──────────────────────────────────── */
+.assemble-sub {
+  font-size: 0.82em;
+  opacity: 0.65;
+  margin-top: 2px;
+}
+
+/* ── Close / continue buttons ───────────────────────────── */
+.close-action-btn {
+  margin-top: 0.4rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.modal-campfire .close-action-btn {
+  border-color: rgba(220, 130, 30, 0.7) !important;
+  color: #f5d070 !important;
+}
+
+.modal-night .close-action-btn {
+  border-color: rgba(110, 140, 230, 0.7) !important;
+  color: #ccdaff !important;
+}
+
+.sleep-btn {
+  font-style: italic;
 }
 
 /* ── Offering button ────────────────────────────────────── */

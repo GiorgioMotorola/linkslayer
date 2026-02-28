@@ -44,6 +44,10 @@
     :playerGoal="playerGoal"
   />
 
+  <Transition name="sleep-fade">
+    <div v-if="isSleeping" class="sleep-overlay"></div>
+  </Transition>
+
   <div class="main-content-wrapper">
     <div v-if="isLoadingGame" class="game-loader-overlay">
       <div class="loader-content">
@@ -127,6 +131,7 @@
         @rest="callHandleRest"
         @assemble-upgrade="handleAssembleUpgradeWrapper"
         @offer="callHandleOffer"
+        @sleep="handleSleepTransition"
       />
 
       <ShopModal
@@ -180,7 +185,7 @@
 </template>
 
 <script setup>
-import { watch, computed, nextTick, onMounted, onUnmounted } from "vue";
+import { ref, watch, computed, nextTick, onMounted, onUnmounted } from "vue";
 import ArticleViewer from "@/components/ArticleViewer.vue";
 import Header from "@/components/Header.vue";
 import VictoryModal from "@/components/VictoryModal.vue";
@@ -347,9 +352,22 @@ watch(playerHP, (newVal) => {
 });
 
 // Initialize game handlers
+const isSleeping = ref(false);
+
+function handleSleepTransition() {
+  isSleeping.value = true;
+  setTimeout(() => {
+    callHandleSleep();
+    setTimeout(() => {
+      isSleeping.value = false;
+    }, 900);
+  }, 1800);
+}
+
 const {
   callHandleClick,
   callHandleRest,
+  callHandleSleep,
   callHandleOffer,
   handleCombatActionWrapper,
   callHandleEncounterOption,
@@ -486,6 +504,25 @@ function handleUseInventoryItem(itemType) {
 </script>
 
 <style scoped>
+.sleep-overlay {
+  position: fixed;
+  inset: 0;
+  background: black;
+  z-index: 9998;
+  pointer-events: none;
+}
+
+.sleep-fade-enter-active {
+  transition: opacity 1.6s ease;
+}
+.sleep-fade-leave-active {
+  transition: opacity 0.9s ease;
+}
+.sleep-fade-enter-from,
+.sleep-fade-leave-to {
+  opacity: 0;
+}
+
 .timer {
   font-size: 13px;
   color: #555;
