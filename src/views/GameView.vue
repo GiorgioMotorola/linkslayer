@@ -42,6 +42,7 @@
     :lastDamageTaken="lastDamageTaken"
     :specialTier="specialTier"
     :playerGoal="playerGoal"
+    :enemyStatusEffects="enemyStatusEffects"
   />
 
   <Transition name="sleep-fade">
@@ -72,14 +73,20 @@
         :path="path"
         :timer="formattedTimer"
         :targets="chain"
-        :shortcutsUsed="shortcutsUsedCount"
         :combatEncountersFought="combatEncountersFought"
+        :enemiesKilled="enemiesKilled"
         :playerHP="playerHP"
         :weaponBonus="weaponBonus"
         :shieldBonus="shieldBonus"
         :specialsUsed="totalSpecialsUsed"
         :longRestsUsed="longRestsUsed"
         :shortRestsUsed="shortRestsUsed"
+        :playerName="playerName"
+        :playerClass="playerClass"
+        :playerGoal="playerGoal"
+        :playerGold="playerGold"
+        :goldSpent="goldSpent"
+        :specialTier="specialTier"
         @close="resetGame"
         :gameLog="gameLog"
       />
@@ -90,14 +97,20 @@
         :path="path"
         :timer="formattedTimer"
         :targets="chain"
-        :shortcutsUsed="shortcutsUsedCount"
         :combatEncountersFought="combatEncountersFought"
+        :enemiesKilled="enemiesKilled"
         :playerHP="playerHP"
         :weaponBonus="weaponBonus"
         :shieldBonus="shieldBonus"
         :specialsUsed="totalSpecialsUsed"
         :longRestsUsed="longRestsUsed"
         :shortRestsUsed="shortRestsUsed"
+        :playerName="playerName"
+        :playerClass="playerClass"
+        :playerGoal="playerGoal"
+        :playerGold="playerGold"
+        :goldSpent="goldSpent"
+        :specialTier="specialTier"
         @close="resetGame"
         :gameLog="gameLog"
       />
@@ -227,6 +240,7 @@ const {
   isGameComplete,
   bossOverlay,
   combatEncountersFought,
+  enemiesKilled,
   combatWinsSinceLastCapIncrease,
   hpCapBonus,
   resetGame,
@@ -257,6 +271,7 @@ const {
   weaponBonus,
   shieldBonus,
   playerGold,
+  goldSpent,
   shortRestsUsed,
   longRestsUsed,
   effectiveMaxHP,
@@ -324,6 +339,7 @@ const {
   nextEnemyAttack,
   enemyNextAction,
   enemyTurnKey,
+  enemyStatusEffects,
 } = combat;
 
 // Setup click watcher for status effects

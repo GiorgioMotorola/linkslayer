@@ -36,6 +36,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     DEFAULT_ENEMY_HP,
     combatWinsSinceLastCapIncrease,
     hpCapBonus,
+    enemiesKilled,
   } = state;
 
   const {
@@ -301,6 +302,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     utils.onVictory?.(defeatedEnemyData);
     handleLootDrop(defeatedEnemyData);
 
+    if (enemiesKilled) enemiesKilled.value++;
     combatWinsSinceLastCapIncrease.value++;
     if (combatWinsSinceLastCapIncrease.value >= 5) {
       hpCapBonus.value += 10;

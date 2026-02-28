@@ -56,6 +56,7 @@ export function useGameHandlers(deps) {
     selectedBossType,
     bossOverlay,
     combatEncountersFought,
+    enemiesKilled,
     combatWinsSinceLastCapIncrease,
     hpCapBonus,
     seenLoreEncounters,
@@ -75,6 +76,7 @@ export function useGameHandlers(deps) {
     weaponBonus,
     shieldBonus,
     playerGold,
+    goldSpent,
     shortRestsUsed,
     longRestsUsed,
     effectiveMaxHP,
@@ -416,6 +418,7 @@ export function useGameHandlers(deps) {
         isBoss,
         combatWinsSinceLastCapIncrease,
         hpCapBonus,
+        enemiesKilled,
       },
       utils: {
         clearTimer: () => clearInterval(timerInterval),
@@ -499,6 +502,7 @@ export function useGameHandlers(deps) {
         chain,
         current,
         formattedTitle: formattedTitle.value,
+        enemyDifficultyLevel,
       },
       enemyState: {
         encounter,
@@ -522,6 +526,7 @@ export function useGameHandlers(deps) {
       item,
       {
         playerGold,
+        goldSpent,
         playerHP,
         effectiveMaxHP,
         weaponBonus,

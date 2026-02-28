@@ -356,7 +356,7 @@ export function handleEncounterOption({
   }
 
   if (option.result === "mini_boss_combat") {
-    const miniBoss = generateMiniBoss(option.miniBossType);
+    const miniBoss = generateMiniBoss(option.miniBossType, gameData.enemyDifficultyLevel?.value ?? 0);
     if (!miniBoss) {
       console.warn(
         `Could not generate specific mini-boss for type "${option.miniBossType}", skipping combat.`

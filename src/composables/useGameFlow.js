@@ -47,6 +47,7 @@ export function useGameFlow() {
 
   // Combat & Progression
   const combatEncountersFought = ref(0);
+  const enemiesKilled = ref(0);
   const combatWinsSinceLastCapIncrease = ref(0);
   const hpCapBonus = ref(0);
 
@@ -124,6 +125,7 @@ export function useGameFlow() {
 
     // Combat & Progression
     combatEncountersFought,
+    enemiesKilled,
     combatWinsSinceLastCapIncrease,
     hpCapBonus,
 

@@ -15,6 +15,7 @@ export function handleShopPurchase(
     );
   } else if (playerState.playerGold.value >= item.cost) {
     playerState.playerGold.value -= item.cost;
+    if (playerState.goldSpent) playerState.goldSpent.value += item.cost;
     purchased = true;
     utilityFunctions.log(
       `💸 <span class="player-name">${gameData.playerName.value}</span> purchased ${item.name} for ${item.cost} Gold.`

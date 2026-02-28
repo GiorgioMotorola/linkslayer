@@ -165,7 +165,7 @@ export const MINI_BOSS_TYPES = [
   },
 ];
 
-export function generateMiniBoss(specificType) {
+export function generateMiniBoss(specificType, difficultyLevel = 0) {
   if (!specificType) {
     throw new Error(
       "generateMiniBoss: A specificType must be provided for mini-boss generation."
@@ -182,13 +182,17 @@ export function generateMiniBoss(specificType) {
     );
   }
 
+  const scaledHP = miniBossData.hp + 3 * difficultyLevel;
+  const scaledMinDamage = miniBossData.minDamage + 3 * difficultyLevel;
+  const scaledMaxDamage = miniBossData.maxDamage + 3 * difficultyLevel;
+
   return {
     id: miniBossData.type.toLowerCase().replace(/\s/g, "_"),
     name: miniBossData.type,
-    currentHP: miniBossData.hp,
-    maxHP: miniBossData.hp,
-    minDamage: miniBossData.minDamage,
-    maxDamage: miniBossData.maxDamage,
+    currentHP: scaledHP,
+    maxHP: scaledHP,
+    minDamage: scaledMinDamage,
+    maxDamage: scaledMaxDamage,
     goldReward: miniBossData.goldReward || 0,
     weaponReward: miniBossData.weaponReward || 0,
     defenseReward: miniBossData.defenseReward || 0,

@@ -16,6 +16,7 @@ export function usePlayerState(hpCapBonus) {
   const playerGoal = ref("");
   const specialTier = ref(1);
   const offeringPot = ref(0); // 0, 1, or 2 donations in current tier
+  const goldSpent = ref(0);
 
   const effectiveMaxHP = computed(() => {
     return playerClass.value ? playerClass.value.maxHP + hpCapBonus.value : 0;
@@ -36,5 +37,6 @@ export function usePlayerState(hpCapBonus) {
     effectiveMaxHP,
     specialTier,
     offeringPot,
+    goldSpent,
   };
 }

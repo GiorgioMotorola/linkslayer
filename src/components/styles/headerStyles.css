@@ -779,6 +779,19 @@ button:hover {
   animation: hp-tick-pulse 0.05s ease-in-out infinite alternate;
 }
 
+.enemy-status-icon {
+  font-size: 0.78em;
+  margin-left: 4px;
+  opacity: 0.85;
+  vertical-align: middle;
+  animation: status-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  0%, 100% { opacity: 0.75; }
+  50%       { opacity: 1; }
+}
+
 @keyframes hp-tick-pulse {
   from { opacity: 1; }
   to   { opacity: 0.7; }

@@ -69,11 +69,14 @@ const BOSS_TYPES = [
   },
 ];
 
-export function getRandomBoss() {
+export function getRandomBoss(difficultyLevel = 0) {
   const bossData = BOSS_TYPES[Math.floor(Math.random() * BOSS_TYPES.length)];
 
   return {
     ...bossData,
+    hp: bossData.hp + 4 * difficultyLevel,
+    minDamage: bossData.minDamage + 4 * difficultyLevel,
+    maxDamage: bossData.maxDamage + 4 * difficultyLevel,
     name: `💀 ${bossData.type}`,
     isBoss: true,
     message: `A towering ${bossData.type} blocks your path to ultimate knowledge. Time to roll some true damage.`,

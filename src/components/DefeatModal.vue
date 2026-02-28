@@ -1,55 +1,83 @@
 <template>
   <div class="game-modal-overlay">
     <div class="game-modal-content">
-      <div class="modal-title">You Died ☠️</div>
-      <div class="summary-details">
-        <div class="detail-item">
-          <span class="label">Total Clicks:&nbsp;</span>
-          <span class="value">{{ clicks }}</span>
+
+      <div class="modal-icon">☠️</div>
+
+      <div class="modal-title">Defeated</div>
+
+      <div class="modal-identity">
+        <span class="identity-name">{{ playerName }}</span>
+        <span class="identity-sep"> the </span>
+        <span class="identity-class">{{ playerClass?.name ?? 'Adventurer' }}</span>
+      </div>
+
+      <div v-if="playerGoal" class="modal-goal">"{{ playerGoal }}"</div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-label">Time</div>
+          <div class="hero-stat-value">{{ timer }}</div>
         </div>
-        <div class="detail-item">
-          <span class="label">Shortcuts Used:&nbsp;</span>
-          <span class="value">{{ shortcutsUsed }}</span>
+        <div class="hero-stat">
+          <div class="hero-stat-label">HP Remaining</div>
+          <div class="hero-stat-value hp-value">{{ playerHP }}</div>
         </div>
-        <div class="detail-item">
-          <span class="label">Time:&nbsp;</span>
-          <span class="value">{{ timer }}</span>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-cell">
+          <div class="stat-cell-label">Clicks</div>
+          <div class="stat-cell-value">{{ clicks }}</div>
         </div>
-        <div class="detail-item">
-          <span class="label">Combat Encounters:&nbsp;</span>
-          <span class="value">{{ combatEncountersFought }}</span>
+        <div class="stat-cell">
+          <div class="stat-cell-label">Enemies Killed</div>
+          <div class="stat-cell-value">{{ enemiesKilled }}</div>
         </div>
-        <div class="detail-item">
-          <span class="label">HP Remaining:&nbsp;</span>
-          <span class="value">{{ playerHP }}</span>
+        <div class="stat-cell">
+          <div class="stat-cell-label">Encounters</div>
+          <div class="stat-cell-value">{{ combatEncountersFought }}</div>
         </div>
-        <div class="detail-item">
-          <span class="label">Weapon Bonus:&nbsp;</span>
-          <span class="value">+{{ weaponBonus }}</span>
+        <div class="stat-cell">
+          <div class="stat-cell-label">Gold Spent</div>
+          <div class="stat-cell-value">{{ goldSpent }}g</div>
         </div>
-        <div class="detail-item">
-          <span class="label">Defense Bonus:&nbsp;</span>
-          <span class="value">+{{ shieldBonus }}</span>
+        <div class="stat-cell">
+          <div class="stat-cell-label">Gold Remaining</div>
+          <div class="stat-cell-value">{{ playerGold }}g</div>
         </div>
-        <div class="detail-item">
-          <span class="label">Specials Used:&nbsp;</span>
-          <span class="value">{{ props.specialsUsed }}</span>
+        <div class="stat-cell">
+          <div class="stat-cell-label">Weapon Bonus</div>
+          <div class="stat-cell-value">+{{ weaponBonus }}</div>
         </div>
-        <div class="detail-item">
-          <span class="label">Long Rests Used:&nbsp;</span>
-          <span class="value">{{ longRestsUsed }}</span>
+        <div class="stat-cell">
+          <div class="stat-cell-label">Defense Bonus</div>
+          <div class="stat-cell-value">+{{ shieldBonus }}</div>
         </div>
-        <div class="detail-item">
-          <span class="label">Short Rests Used:&nbsp;</span>
-          <span class="value">{{ shortRestsUsed }}</span>
+        <div class="stat-cell">
+          <div class="stat-cell-label">Special Tier</div>
+          <div class="stat-cell-value">T{{ specialTier ?? 1 }}</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-cell-label">Specials Used</div>
+          <div class="stat-cell-value">{{ specialsUsed }}</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-cell-label">Short Rests</div>
+          <div class="stat-cell-value">{{ shortRestsUsed }}</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-cell-label">Long Rests</div>
+          <div class="stat-cell-value">{{ longRestsUsed }}</div>
         </div>
       </div>
 
       <div class="modal-buttons">
-        <button @click="share">> Share Results</button>
-        <button @click="copyLogToClipboard" class="log-copy">> Copy Log</button>
-        <button @click="$emit('close')">> Play Again</button>
+        <button @click="share" class="modal-btn">⬆ Share Results</button>
+        <button @click="copyLogToClipboard" class="modal-btn">📋 Copy Log</button>
+        <button @click="$emit('close')" class="modal-btn modal-btn-primary">↩ Play Again</button>
       </div>
+
     </div>
     <div id="defeat-notification-banner" class="notification-banner">
       <span id="defeat-notification-message"></span>
@@ -59,121 +87,90 @@
 </template>
 
 <script setup>
-import { computed, nextTick } from "vue";
+import { nextTick } from "vue";
 
-const props = defineProps([
-  "clicks",
-  "path",
-  "timer",
-  "targets",
-  "shortcutsUsed",
-  "combatEncountersFought",
-  "playerHP",
-  "weaponBonus",
-  "totalSpecialsUsed",
-  "longRestsUsed",
-  "shortRestsUsed",
-  "shieldBonus",
-  "specialsUsed",
-  "gameLog",
-]);
+const props = defineProps({
+  clicks: Number,
+  path: Array,
+  timer: String,
+  targets: Array,
+  combatEncountersFought: Number,
+  enemiesKilled: Number,
+  playerHP: Number,
+  weaponBonus: Number,
+  shieldBonus: Number,
+  specialsUsed: Number,
+  longRestsUsed: Number,
+  shortRestsUsed: Number,
+  playerName: String,
+  playerClass: Object,
+  playerGoal: String,
+  playerGold: Number,
+  goldSpent: Number,
+  specialTier: Number,
+  gameLog: Array,
+});
 
 const emit = defineEmits(["close"]);
 
-const formattedPath = computed(() =>
-  props.path.map((step) => step.replaceAll("_", " "))
-);
-
 const share = () => {
   const summaryText =
-    `☠️ You Died ☠️\n` +
-    `Total Clicks: ${props.clicks}\n` +
-    (props.shortcutsUsed > 0
-      ? `Shortcuts Used: ${props.shortcutsUsed}\n`
-      : "Shortcuts Used: 0\n") +
+    `☠️ DEFEATED — ${props.playerName} the ${props.playerClass?.name ?? 'Adventurer'}\n` +
+    (props.playerGoal ? `Goal: "${props.playerGoal}"\n` : "") +
+    `\n` +
     `Time: ${props.timer}\n` +
-    `Combat Encounters: ${props.combatEncountersFought}\n` +
     `HP Remaining: ${props.playerHP}\n` +
-    (props.weaponBonus > 0
-      ? `Weapon Bonus: +${props.weaponBonus}\n`
-      : "Weapon Bonus: 0\n") +
-    (props.shieldBonus > 0
-      ? `Defense Bonus: +${props.shieldBonus}\n`
-      : "Defense Bonus: 0\n") +
-    (props.specialsUsed > 0
-      ? `Specials Used: ${props.specialsUsed}\n`
-      : "Specials Used: 0\n") +
-    `Short Rests Used: ${props.longRestsUsed}\n` +
-    `Long Rests Used: ${props.shortRestsUsed}\n` +
-    `https://example.com`;
+    `Clicks: ${props.clicks}\n` +
+    `Enemies Killed: ${props.enemiesKilled ?? 0}\n` +
+    `Encounters: ${props.combatEncountersFought}\n` +
+    `Gold Spent: ${props.goldSpent ?? 0}g\n` +
+    `Gold Remaining: ${props.playerGold ?? 0}g\n` +
+    (props.weaponBonus > 0 ? `Weapon Bonus: +${props.weaponBonus}\n` : "") +
+    (props.shieldBonus > 0 ? `Defense Bonus: +${props.shieldBonus}\n` : "") +
+    `Special Tier: T${props.specialTier ?? 1}\n` +
+    `Specials Used: ${props.specialsUsed}\n` +
+    `Short Rests: ${props.shortRestsUsed} | Long Rests: ${props.longRestsUsed}`;
 
   if (navigator.clipboard) {
     navigator.clipboard
       .writeText(summaryText)
-      .then(() => {
-        showAlertAsBanner("Results copied to clipboard.", "success");
-      })
-      .catch((err) => {
-        console.error("Failed to copy text: ", err);
-        showAlertAsBanner("Failed to copy results. Please try again.");
-      });
+      .then(() => showAlertAsBanner("Results copied to clipboard.", "success"))
+      .catch(() => showAlertAsBanner("Failed to copy results.", "error"));
   } else {
-    showAlertAsBanner("Clipboard not supported in this browser.");
+    showAlertAsBanner("Clipboard not supported in this browser.", "error");
   }
 };
+
 function copyLogToClipboard() {
   const rawLog = props.gameLog
     .map((entry) => entry.text.replace(/<[^>]*>/g, ""))
     .join("\n");
-
   navigator.clipboard
     .writeText(rawLog)
     .then(() => showAlertAsBanner("Game log copied to clipboard.", "success"))
-    .catch((err) => {
-      console.error("Failed to copy log:", err);
-      showAlertAsBanner("Failed to copy log. Please try again.", "error");
-    });
+    .catch(() => showAlertAsBanner("Failed to copy log.", "error"));
 }
 
 let notificationTimeoutId = null;
 
 async function showAlertAsBanner(message, type = "info", duration = 3000) {
   await nextTick();
-
   const banner = document.getElementById("defeat-notification-banner");
   const messageSpan = document.getElementById("defeat-notification-message");
-
-  if (!banner || !messageSpan) {
-    console.error(
-      "Defeat Modal: Notification banner elements not found in the DOM."
-    );
-    showAlertAsBanner(message);
-    return;
-  }
-
+  if (!banner || !messageSpan) { alert(message); return; }
   banner.className = "notification-banner";
   banner.classList.add(type);
-
   messageSpan.textContent = message;
   banner.classList.add("show");
-
-  if (notificationTimeoutId) {
-    clearTimeout(notificationTimeoutId);
-  }
-
-  notificationTimeoutId = setTimeout(() => {
-    hideNotification();
-  }, duration);
+  if (notificationTimeoutId) clearTimeout(notificationTimeoutId);
+  notificationTimeoutId = setTimeout(hideNotification, duration);
 }
 
 function hideNotification() {
   const banner = document.getElementById("defeat-notification-banner");
   if (banner) {
     banner.classList.remove("show");
-    if (notificationTimeoutId) {
-      clearTimeout(notificationTimeoutId);
-      notificationTimeoutId = null;
-    }
+    if (notificationTimeoutId) { clearTimeout(notificationTimeoutId); notificationTimeoutId = null; }
   }
 }
 </script>
@@ -184,197 +181,263 @@ function hideNotification() {
   font-optical-sizing: auto;
 }
 
+/* ── Overlay ─────────────────────────────────────────────── */
 @keyframes fade-in-overlay {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
+
 .game-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   z-index: 999;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: auto;
   animation: fade-in-overlay 1.25s ease-out forwards;
+  background: linear-gradient(to bottom, rgba(12, 3, 3, 0.96), rgba(22, 6, 6, 0.93), rgba(14, 4, 4, 0.86));
+}
+
+/* ── Card ────────────────────────────────────────────────── */
+@keyframes pop-in {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
 }
 
 .game-modal-content {
-  background-color: rgba(32, 32, 32, 0.87);
-  padding: 2rem;
+  background: rgba(18, 4, 4, 0.94);
+  border: 1px solid rgba(160, 40, 40, 0.5);
+  box-shadow: 0 0 45px rgba(160, 30, 30, 0.18), 0 8px 28px rgba(0,0,0,0.75);
+  padding: 1.8rem 2rem;
   border-radius: 12px;
-  text-align: start;
-  max-width: 300px;
-  width: 90%;
-  box-shadow: 0 8px 24px rgba(37, 37, 37, 0.671);
+  max-width: 460px;
+  width: 92%;
   animation: pop-in 0.3s ease;
   z-index: 1000;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.9rem;
 }
 
+/* ── Icon ────────────────────────────────────────────────── */
+@keyframes skull-shake {
+  0%,100% { transform: rotate(0deg); }
+  15%     { transform: rotate(-8deg); }
+  30%     { transform: rotate(8deg); }
+  45%     { transform: rotate(-5deg); }
+  60%     { transform: rotate(5deg); }
+  75%     { transform: rotate(-2deg); }
+}
+
+.modal-icon {
+  font-size: 42px;
+  animation: skull-shake 3.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(200, 40, 40, 0.5));
+}
+
+/* ── Title ───────────────────────────────────────────────── */
 .modal-title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #d04040;
+  letter-spacing: 0.5px;
   text-align: center;
-  margin-bottom: 0rem;
-  font-size: 28px;
-  animation: npc-drop 0.5s ease-out forwards;
-  color: #c02020;
-  border-bottom: 1px solid rgb(155, 152, 152);
-  padding-bottom: 15px;
-  width: 100%;
-  background-color: rgba(32, 32, 32, 0);
 }
 
-.summary-details {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  text-align: left;
-  padding: 0 1rem;
+/* ── Identity ────────────────────────────────────────────── */
+.modal-identity {
   font-size: 16px;
+  color: #c07070;
+  text-align: center;
 }
 
-.detail-item {
-  display: flex;
-  justify-content: center;
-  padding: 0.3rem 0;
-  color: #303030;
-}
-
-.detail-item:last-child {
-  border-bottom: none;
-}
-
-.label {
+.identity-name {
   font-weight: 600;
-  color: #f8f8f8;
+  color: #e09090;
 }
 
-.value {
-  color: #f8f8f8;
-  font-weight: 500;
+.identity-sep {
+  color: #804040;
 }
 
+.identity-class {
+  font-style: italic;
+  color: #c06060;
+}
+
+/* ── Goal ────────────────────────────────────────────────── */
+.modal-goal {
+  font-size: 13px;
+  font-style: italic;
+  color: #906060;
+  text-align: center;
+  border-top: 1px solid rgba(160, 40, 40, 0.25);
+  border-bottom: 1px solid rgba(160, 40, 40, 0.25);
+  padding: 0.5rem 0.8rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ── Hero stats ──────────────────────────────────────────── */
+.hero-stats {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.hero-stat {
+  flex: 1;
+  background: rgba(160, 30, 30, 0.1);
+  border: 1px solid rgba(160, 40, 40, 0.3);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  text-align: center;
+}
+
+.hero-stat-label {
+  font-size: 11px;
+  color: #804040;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 2px;
+}
+
+.hero-stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #d04040;
+}
+
+.hp-value {
+  color: #e06060;
+}
+
+/* ── Stat grid ───────────────────────────────────────────── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.stat-cell {
+  background: rgba(160, 30, 30, 0.07);
+  border: 1px solid rgba(160, 40, 40, 0.2);
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.stat-cell-label {
+  font-size: 12px;
+  color: #804040;
+}
+
+.stat-cell-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #d08080;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
 .modal-buttons {
   display: flex;
   flex-direction: column;
   width: 100%;
-  align-items: flex-start;
-  margin-top: 1rem;
+  gap: 0.4rem;
+  margin-top: 0.3rem;
 }
 
-.modal-buttons button {
+.modal-btn {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  text-align: start;
-  border: none;
-  background-color: rgba(32, 32, 32, 0);
-  font-size: 17px;
-  margin-bottom: 0.5rem;
-  color: #f8f8f8;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid rgba(140, 40, 40, 0.45);
+  background: rgba(30, 6, 6, 0.65);
+  color: #c07070;
+  border-radius: 7px;
+  padding: 0.65rem 1rem;
+  font-size: 14px;
   font-weight: 400;
-  margin-top: 0.5rem;
-  width: auto;
-  padding: 0;
-}
-
-.modal-buttons button:hover {
-  color: rgb(28, 128, 158);
   cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  text-align: start;
 }
 
+.modal-btn:hover {
+  background: rgba(160, 40, 40, 0.2);
+  border-color: rgba(200, 70, 70, 0.65);
+  color: #e09090;
+}
+
+.modal-btn-primary {
+  border-color: rgba(180, 55, 55, 0.6);
+  color: #e08080;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+/* ── Notification banner ─────────────────────────────────── */
 .notification-banner {
   position: fixed;
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #dc3545;
+  background-color: #555;
   color: white;
-  padding: 15px 20px;
+  padding: 12px 18px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   z-index: 1001;
-  display: none;
   opacity: 0;
-  transition: opacity 0.5s ease-in-out, top 0.5s ease-in-out;
-  min-width: 250px;
+  display: none;
+  transition: opacity 0.4s ease;
+  min-width: 220px;
   max-width: 90%;
   text-align: center;
-  display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
 }
 
 .notification-banner.show {
   display: flex;
   opacity: 1;
-  top: 20px;
 }
+
+.notification-banner.success { background-color: #2d7a2d; }
+.notification-banner.error   { background-color: #8a2020; }
 
 .notification-banner .close-button {
   background: none;
   border: none;
   color: white;
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
-  margin-left: 15px;
+  flex-shrink: 0;
 }
 
-@keyframes pop-in {
-  from {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes npc-drop {
-  0% {
-    opacity: 0;
-    transform: translateX(-150px);
-  }
-  60% {
-    opacity: 1;
-    transform: translateX(10px);
-  }
-  80% {
-    transform: translateX(-5px);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
-
+/* ── Mobile ──────────────────────────────────────────────── */
 @media screen and (max-width: 600px) {
   .game-modal-content {
-    padding: 1.5rem;
-    gap: 0.6rem;
+    padding: 1.2rem;
+    gap: 0.7rem;
+    max-width: 96%;
   }
-  .modal-title {
-    font-size: 24px;
-    margin-bottom: 1rem;
-  }
-  .summary-details {
-    font-size: 14px;
-    padding: 0 0.5rem;
-  }
-  .modal-buttons button {
-    padding: 0;
-    font-size: 14px;
-  }
+
+  .modal-icon { font-size: 32px; }
+  .modal-title { font-size: 24px; }
+  .hero-stat-value { font-size: 18px; }
+
+  .stat-cell-label { font-size: 11px; }
+  .stat-cell-value { font-size: 13px; }
+
+  .modal-btn { font-size: 13px; padding: 0.55rem 0.8rem; }
 }
 </style>

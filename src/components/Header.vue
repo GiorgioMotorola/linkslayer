@@ -13,6 +13,12 @@
             <div class="combat-hp-vs">⚔️</div>
             <div class="combat-hp-enemy" :class="{ 'hp-counting': isEnemyHpAnimating }">
               💀 {{ displayedEnemyHP }}
+              <span
+                v-for="fx in enemyStatusIcons"
+                :key="fx.key"
+                class="enemy-status-icon"
+                :title="fx.label"
+              >{{ fx.icon }}</span>
               <transition name="delta-fade">
                 <span v-if="lastDamageDealt" class="hp-delta hp-delta-dealt">-{{ lastDamageDealt }}</span>
               </transition>
@@ -329,6 +335,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  enemyStatusEffects: {
+    type: Array,
+    default: () => [],
+  },
 });
 
 const emit = defineEmits([
@@ -435,6 +445,14 @@ watch(() => props.lastDamageTaken, (newVal) => {
 const badgeBottomStyle = computed(() => ({
   bottom: `${headerHeight.value + 8}px`,
 }));
+
+const enemyStatusIcons = computed(() => {
+  const effects = props.enemyStatusEffects ?? [];
+  const icons = [];
+  if (effects.some(e => e.type === "bleed")) icons.push({ icon: "🩸", key: "bleed", label: "bleed" });
+  if (effects.some(e => e.type === "poison")) icons.push({ icon: "🤢", key: "poison", label: "poison" });
+  return icons;
+});
 
 const diceRollBadgeStyle = computed(() => ({
   bottom: `${headerHeight.value + 8 + 62}px`,

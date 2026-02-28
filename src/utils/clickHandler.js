@@ -98,10 +98,17 @@ export async function handleClick({
     return;
   }
 
+  const isBossClick =
+    title === finalTarget &&
+    playerState.currentTargetIndex.value === journeyLength.value - 1 &&
+    !gameData.bossSpawned.value &&
+    !gameData.bossDefeated.value;
+
   if (
     playerState.clickCount.value > 0 &&
     playerState.clickCount.value % 12 === 0 &&
-    !encounterPreventedByCloak
+    !encounterPreventedByCloak &&
+    !isBossClick
   ) {
     modalState.showRestModal.value = true;
     return;
@@ -110,7 +117,8 @@ export async function handleClick({
     playerState.clickCount.value > 0 &&
     playerState.clickCount.value % 10 === 0 &&
     !modalState.showRestModal.value &&
-    !encounterPreventedByCloak
+    !encounterPreventedByCloak &&
+    !isBossClick
   ) {
     modalState.showShopModal.value = true;
     return;
