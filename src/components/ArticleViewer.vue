@@ -27,7 +27,6 @@
     <div class="path-sub-bar">
       <div class="sky-bar">
         <div class="sky-track" :style="skyTrackStyle">
-          <div class="sky-rest-mark" style="left: 47.83%"></div>
           <div class="sky-indicator" :style="{ left: skyPercent + '%' }">
             <span class="sky-icon">{{ isNightTime ? '🌙' : '☀️' }}</span>
           </div>
@@ -84,7 +83,8 @@ const skyColor = computed(() => {
   const pos = cyclePosition.value;
   if (pos <= 1)    return '#f07040'; // 6–7 AM sunrise
   if (pos <= 4)    return '#f0b838'; // 8–10 AM golden
-  if (pos <= 13)   return '#4898d8'; // 11 AM–7 PM day
+  if (pos <= 10)   return '#70c8f0'; // 11 AM–4 PM bright sky blue
+  if (pos <= 13)   return '#4898d8'; // 5–7 PM afternoon blue
   if (pos <= 15)   return '#e08828'; // 8–9 PM dusk
   if (pos <= 18)   return '#7030a8'; // 10 PM–midnight purple
   return '#2a1848';                  // 1–5 AM night
@@ -395,15 +395,6 @@ onMounted(load);
   overflow: visible;
 }
 
-
-.sky-rest-mark {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  width: 2px;
-  background: rgba(255, 255, 255, 0.55);
-  pointer-events: none;
-}
 
 .sky-indicator {
   position: absolute;
