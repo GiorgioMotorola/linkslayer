@@ -687,9 +687,22 @@ watch(
       currentDialogueNodeId.value = newEncounter.lore.currentNodeId || "start";
       fullText = currentDialogue.value?.text || newEncounter.lore.text || "";
     } else if (newEncounter.type === "combat") {
-      // Reset so the fallback enemyNextAction watch can fire for the initial intent
-      lastTypedKey = -1;
+      // Show initial intent statically (no typewriter) after props settle
       displayedIntentHTML.value = "";
+      lastTypedKey = -1;
+      nextTick(() => {
+        const fullText = enemyIntentMessage.value;
+        if (!fullText || displayedIntentHTML.value) return;
+        if (props.enemyNextAction === "attack" && props.nextEnemyAttack) {
+          const dmgStart = fullText.indexOf(String(props.nextEnemyAttack));
+          displayedIntentHTML.value = dmgStart >= 0
+            ? fullText.slice(0, dmgStart) + `<span class="intent-damage">${fullText.slice(dmgStart)}</span>`
+            : fullText;
+        } else {
+          displayedIntentHTML.value = fullText;
+        }
+        lastTypedKey = props.enemyTurnKey; // prevent fallback watch from re-firing
+      });
 
       console.log("--- Combat Encounter Debug ---");
       console.log("props.formattedTitle:", props.formattedTitle);
