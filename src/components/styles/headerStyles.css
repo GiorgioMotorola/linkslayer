@@ -1527,6 +1527,13 @@ button:hover {
     font-size: 8px;
     margin-bottom: 0;
     letter-spacing: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .tier-badge {
+    display: none;
   }
 
   .stat-value {

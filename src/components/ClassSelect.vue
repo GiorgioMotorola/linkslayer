@@ -45,8 +45,19 @@
 
       <div class="class-grid">
         <div v-for="(c, key) in classes" :key="key" class="class-card">
-          <button @click="selectClass(key)">> Select {{ c.name }}</button>
-          <div class="desc">{{ c.description }}</div>
+          <div class="class-card-top">
+            <span class="class-card-name">{{ c.name }}</span>
+            <button class="class-select-btn" @click="selectClass(key)">Select ▶</button>
+          </div>
+          <div class="class-card-stats">
+            <span class="stat-pill">❤️ {{ c.maxHP }} HP</span>
+            <span v-if="c.startingWeaponBonus > 0" class="stat-pill">🗡 +{{ c.startingWeaponBonus }} Weapon</span>
+            <span v-if="c.startingShieldBonus > 0" class="stat-pill">🛡 +{{ c.startingShieldBonus }} Defense</span>
+            <span v-if="c.startingPlayerGold > 0" class="stat-pill">💰 {{ c.startingPlayerGold }}g</span>
+            <span v-if="c.startingSpecialUses > 0" class="stat-pill">✨ +{{ c.startingSpecialUses }} Charges</span>
+            <span v-if="key === 'Mundane'" class="stat-pill stat-pill-hard">⚠️ Hard Mode</span>
+          </div>
+          <div class="class-card-desc">{{ c.specialTiers[0].name }}: {{ c.specialTiers[0].description }}</div>
         </div>
       </div>
       <button class="tips-button" @click="openModal">Game Tips</button>
@@ -321,7 +332,7 @@ watch(
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 3rem;
+  margin-top: 1.5rem;
   margin-bottom: 0.5rem;
 }
 
@@ -334,40 +345,96 @@ watch(
 }
 
 .name-input {
-  padding: 5px;
-  border-radius: 6px;
-  border: 1px solid rgb(156, 4, 4);
+  padding: 5px 12px;
+  border-radius: 5px;
+  border: 1px solid #c0a0a0;
   text-align: center;
-  font-size: 18px;
+  font-size: 15px;
+  width: 300px;
+  max-width: 100%;
 }
 
 .goal-input {
-  min-width: 260px;
-  font-size: 15px !important;
+  width: 380px;
+  max-width: 100%;
+  font-size: 14px !important;
   color: #555;
 }
 
 .class-grid {
   display: grid;
-  gap: 2rem;
-  margin-top: 1rem;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
   text-align: left;
 }
 
 .class-card {
-  background: transparent;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid #d4cfc8;
+  border-radius: 6px;
+  padding: 7px 12px;
+  text-align: left;
 }
 
-button {
-  background: transparent;
-  border: none;
-  font-size: 25px;
+.class-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.class-card-name {
   font-family: "MedievalSharp", cursive;
+  font-size: 17px;
+  color: #1a1a1a;
 }
 
-.desc {
-  font-size: 15px;
+.class-select-btn {
+  font-family: "MedievalSharp", cursive;
+  font-size: 13px;
+  background: transparent;
+  border: 1px solid #990000;
+  border-radius: 4px;
+  color: #990000;
+  padding: 4px 11px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.class-select-btn:hover {
+  background: #990000;
+  color: white;
+}
+
+.class-card-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.stat-pill {
+  font-size: 11px;
+  font-family: "IBM Plex Sans", sans-serif;
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 2px 9px;
+  color: #444;
+}
+
+.stat-pill-hard {
+  background: rgba(180, 60, 0, 0.08);
+  border-color: rgba(180, 60, 0, 0.25);
+  color: #8b3a00;
+}
+
+.class-card-desc {
+  font-size: 12.5px;
+  color: #666;
+  font-style: italic;
+  font-family: "IBM Plex Sans", sans-serif;
+  line-height: 1.4;
 }
 
 button:hover {
@@ -401,13 +468,12 @@ button:hover {
   min-width: 250px;
   max-width: 90%;
   text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
 .notification-banner.show {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   opacity: 1;
   top: 20px;
 }
@@ -487,12 +553,11 @@ button:hover {
 }
 
 .button-group-container {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 5px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 .journey-length-button {
@@ -500,14 +565,14 @@ button:hover {
   color: #333;
   border: 1px solid #ccc;
   border-radius: 5px;
-  padding: 8px 12px;
-  font-size: 16px;
+  padding: 6px 4px;
+  font-size: 12px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  min-width: 120px;
   text-align: center;
   font-family: "IBM Plex Sans", sans-serif;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .journey-length-button:hover {
@@ -526,76 +591,112 @@ button:hover {
 @media screen and (max-width: 600px) {
   .modal {
     align-items: flex-start;
-    padding-top: 0.5rem;
-    padding-bottom: 1rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.5rem;
   }
 
   .class-select {
-    padding: 0.75rem;
+    padding: 0.5rem 0.75rem;
     width: 96%;
     margin: 0 auto;
     max-height: none;
   }
 
   .game-title img {
-    max-width: 55px;
-    max-height: 55px;
+    max-width: 45px;
+    max-height: 45px;
   }
 
   .game-name {
-    font-size: 20px;
-    letter-spacing: 4px;
+    font-size: 18px;
+    letter-spacing: 3px;
+  }
+
+  .who-are-you-div {
+    margin-top: 0;
   }
 
   .name-input-group {
-    margin-top: 1.2rem;
-    margin-bottom: 0.75rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .goal-input-group {
+    margin-top: 0.25rem;
+    margin-bottom: 0.4rem;
   }
 
   .name-input {
-    font-size: 16px;
-    padding: 6px 8px;
+    font-size: 13px;
+    padding: 4px 8px;
     width: 100%;
     max-width: 220px;
   }
 
   .randomize-name-button {
-    font-size: 16px;
-    padding: 6px 10px;
+    font-size: 14px;
+    padding: 4px 8px;
   }
 
   .journey-length-selection {
-    margin-top: 0.75rem;
-    padding: 0.3rem;
+    margin-top: 0.3rem;
+    padding: 0.2rem;
   }
 
   .button-group-container {
-    gap: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 5px;
+    margin-bottom: 5px;
   }
 
   .journey-length-button {
-    font-size: 13px;
-    padding: 8px 6px;
-    min-width: 0;
-    flex: 1 1 calc(25% - 5px);
+    font-size: 11px;
+    padding: 4px 2px;
+    flex: 1 1 calc(25% - 4px);
+    white-space: nowrap;
   }
 
   .class-grid {
-    gap: 0.75rem;
-    margin-top: 0.75rem;
+    gap: 0.3rem;
+    margin-top: 0.3rem;
   }
 
-  .class-card button {
-    font-size: 18px;
+  .class-card {
+    padding: 5px 10px;
   }
 
-  .desc {
-    font-size: 13px;
+  .class-card-top {
+    margin-bottom: 2px;
+  }
+
+  .class-card-stats {
+    gap: 3px;
+    margin-bottom: 2px;
+  }
+
+  .class-card-name {
+    font-size: 15px;
+  }
+
+  .class-select-btn {
+    font-size: 11px;
+    padding: 3px 7px;
+  }
+
+  .stat-pill {
+    font-size: 10px;
+    padding: 1px 7px;
+  }
+
+  .class-card-desc {
+    font-size: 11px;
   }
 
   .tips-button {
-    font-size: 14px;
-    margin-top: 0.75rem;
+    font-size: 13px;
+    margin-top: 0.3rem;
   }
 
   .journey-prompt {
@@ -618,13 +719,4 @@ button:hover {
   font-size: 15px;
 }
 
-.button-group-container {
-  gap: 5px;
-}
-.journey-length-button {
-  font-size: 11px;
-  padding: 6px 10px;
-  min-width: unset;
-  flex-grow: 1;
-}
 </style>
