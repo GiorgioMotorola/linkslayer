@@ -28,14 +28,9 @@ function applyOptionEffects({
   switch (effectType) {
     case "item":
       if (option.details === "health") {
-        playerHP.value = Math.min(
-          Number(playerHP.value || 0) + (option.healthAmount || 5),
-          Number(effectiveMaxHP || 0)
-        );
+        inventory.value.breadcrumbs++;
         log(
-          `🎲 <span class="player-name">${
-            playerName.value
-          }</span> has gained +${option.healthAmount || 5} HP.`
+          `🍞 <span class="player-name">${playerName.value}</span> received some Breadcrumbs. They've been added to your backpack.`
         );
       }
       if (option.details === "health-major") {

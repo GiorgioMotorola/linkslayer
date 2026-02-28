@@ -13,7 +13,7 @@
                 >x{{ inventory.minorHealthPotions }}</span
               >
             </div>
-            <div class="item-description">{{ itemDesc.minorHealthPotion }}</div>
+            <div class="item-description">{{ itemDesc.minorHealthPotion }}<span class="hp-status"> — HP: {{ playerHP }}/{{ effectiveMaxHP }}</span></div>
           </div>
           <div class="item-button-box">
             <button
@@ -31,12 +31,30 @@
               <span class="item-name">Potion of Major Health</span>
               <span class="item-count">x{{ inventory.healthPotions }}</span>
             </div>
-            <div class="item-description">{{ itemDesc.healthPotion }}</div>
+            <div class="item-description">{{ itemDesc.healthPotion }}<span class="hp-status"> — HP: {{ playerHP }}/{{ effectiveMaxHP }}</span></div>
           </div>
           <div class="item-button-box">
             <button
               class="buy-button-details"
               @click.stop="useItem('healthPotion')"
+            >
+              Use
+            </button>
+          </div>
+        </div>
+
+        <div v-if="inventory.breadcrumbs > 0" class="item-slot-wrapper">
+          <div class="item-details-box">
+            <div class="item-name-quantity">
+              <span class="item-name">Breadcrumbs</span>
+              <span class="item-count">x{{ inventory.breadcrumbs }}</span>
+            </div>
+            <div class="item-description">A humble handful of crumbs. Restores 5 HP when consumed.<span class="hp-status"> — HP: {{ playerHP }}/{{ effectiveMaxHP }}</span></div>
+          </div>
+          <div class="item-button-box">
+            <button
+              class="buy-button-details"
+              @click.stop="useItem('breadcrumb')"
             >
               Use
             </button>
@@ -49,7 +67,7 @@
               <span class="item-name">Turkey Leg</span>
               <span class="item-count">x{{ inventory.turkeyLegs }}</span>
             </div>
-            <div class="item-description">A hearty meal that restores HP.</div><!-- Turkey Leg: loot-only, not in shopItems -->
+            <div class="item-description">A hearty meal that restores HP.<span class="hp-status"> — HP: {{ playerHP }}/{{ effectiveMaxHP }}</span></div><!-- Turkey Leg: loot-only, not in shopItems -->
           </div>
           <div class="item-button-box">
             <button
@@ -67,7 +85,7 @@
               <span class="item-name">Bark Tea</span>
               <span class="item-count">x{{ inventory.barkTeas }}</span>
             </div>
-            <div class="item-description">{{ itemDesc.barkTea }}</div>
+            <div class="item-description">{{ itemDesc.barkTea }}<span class="hp-status"> — HP: {{ playerHP }}/{{ effectiveMaxHP }}</span></div>
           </div>
           <div class="item-button-box">
             <button class="buy-button-details" @click.stop="useItem('barkTea')">
@@ -82,7 +100,7 @@
               <span class="item-name">French Onion Soup</span>
               <span class="item-count">x{{ inventory.frenchOnionSoups }}</span>
             </div>
-            <div class="item-description">{{ itemDesc.frenchOnionSoup }}</div>
+            <div class="item-description">{{ itemDesc.frenchOnionSoup }}<span class="hp-status"> — HP: {{ playerHP }}/{{ effectiveMaxHP }}</span></div>
           </div>
           <div class="item-button-box">
             <button
@@ -102,7 +120,7 @@
                 >x{{ inventory.adventurersRations }}</span
               >
             </div>
-            <div class="item-description">{{ itemDesc.adventurersRations }}</div>
+            <div class="item-description">{{ itemDesc.adventurersRations }}<span class="hp-status"> — HP: {{ playerHP }}/{{ effectiveMaxHP }}</span></div>
           </div>
           <div class="item-button-box">
             <button
@@ -125,6 +143,7 @@
               <template v-if="isHealthRegenActive && healthRegenClicksRemaining > 0">
                 ({{ healthRegenClicksRemaining }} clicks remaining).
               </template>
+              <span class="hp-status"> — HP: {{ playerHP }}/{{ effectiveMaxHP }}</span>
             </div>
           </div>
           <div class="item-button-box">
@@ -682,6 +701,11 @@ function useItem(itemType) {
 .item-description {
   font-size: 0.85em;
   color: #a0a0a0;
+}
+
+.hp-status {
+  color: #7aaa88;
+  font-size: 0.9em;
 }
 
 .item-button-box {

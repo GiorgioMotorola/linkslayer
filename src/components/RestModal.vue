@@ -17,6 +17,26 @@
         >
           Short Rest (+20 HP)
         </button>
+        <button
+          v-if="shouldShowShortRest && props.specialTier < 3"
+          @click="handleOffer"
+          :disabled="hasOfferedThisRest || props.playerGold < props.nextOfferingCost"
+          class="offering-button"
+        >
+          <span class="offering-main">🙏 Offer {{ props.nextOfferingCost }}g to the Gods — upgrade your Special</span>
+          <span class="offering-sub">
+            Offering bowl:
+            <span
+              v-for="i in 3"
+              :key="i"
+              class="pot-dot"
+              :class="{ filled: i <= props.offeringPot }"
+            >{{ i <= props.offeringPot ? '●' : '○' }}</span>
+            {{ props.offeringPot }}/3
+            <span v-if="props.specialTier === 1"> — Tier 1 → 2</span>
+            <span v-if="props.specialTier === 2"> — Tier 2 → 3</span>
+          </span>
+        </button>
         <button v-if="shouldShowLongRest" @click="handleRestChoice('long')">
           Long Rest (Restores HP to full, +1 class ability)
         </button>
@@ -51,21 +71,27 @@ const props = defineProps({
   weaponPieces: { type: Number, default: 0 },
   defensePieces: { type: Number, default: 0 },
   restModalCount: Number,
+  specialTier: { type: Number, default: 1 },
+  offeringPot: { type: Number, default: 0 },
+  playerGold: { type: Number, default: 0 },
+  nextOfferingCost: { type: Number, default: 10 },
 });
 
 const currentRestPhrase = ref("");
+const hasOfferedThisRest = ref(false);
 
 watch(
   () => props.showRestModal,
   (newValue) => {
     if (newValue) {
       currentRestPhrase.value = getRandomRestPhrase();
+      hasOfferedThisRest.value = false;
     }
   },
   { immediate: true }
 );
 
-const emit = defineEmits(["rest", "assemble-upgrade"]);
+const emit = defineEmits(["rest", "assemble-upgrade", "offer"]);
 
 const handleRestChoice = (choice) => {
   emit("rest", choice);
@@ -73,6 +99,11 @@ const handleRestChoice = (choice) => {
 
 const handleAssemble = (type) => {
   emit("assemble-upgrade", type);
+};
+
+const handleOffer = () => {
+  hasOfferedThisRest.value = true;
+  emit("offer");
 };
 
 const shouldShowLongRest = computed(() => {
@@ -269,6 +300,29 @@ button:disabled::after {
 button:disabled:hover {
   cursor: not-allowed;
   opacity: 0.35;
+}
+
+/* ── Offering button ────────────────────────────────────── */
+.offering-button {
+  gap: 0.3rem;
+}
+
+.offering-main {
+  font-weight: 500;
+}
+
+.offering-sub {
+  font-size: 0.85em;
+  opacity: 0.75;
+  letter-spacing: 0.02em;
+}
+
+.pot-dot {
+  margin: 0 1px;
+}
+
+.pot-dot.filled {
+  opacity: 1;
 }
 
 /* ── Danger warning ─────────────────────────────────────── */

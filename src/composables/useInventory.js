@@ -5,6 +5,7 @@ import {
   useCompass as externalUseCompass,
   useHealthPotion as externalUseHealthPotion,
   useTurkeyLeg as externalUseTurkeyLeg,
+  useBreadcrumb as externalUseBreadcrumb,
   useInvisibilityCloak as externalUseInvisibilityCloak,
   useHerbalPoultice as externalUseHerbalPoultice,
   useBarkTea as externalUseBarkTea,
@@ -30,6 +31,7 @@ export function useInventory() {
     compass: 0,
     healthPotions: 0,
     turkeyLegs: 0,
+    breadcrumbs: 0,
     invisibilityCloaks: 0,
     stickItem: 0,
     coolerStickItem: 0,
@@ -62,6 +64,7 @@ export function useInventory() {
   // Item heal constants
   const HEALTH_POTION_HEAL_AMOUNT = 25;
   const TURKEY_LEG_HEAL_AMOUNT = 6;
+  const BREADCRUMB_HEAL_AMOUNT = 5;
   const BARK_TEA_HEAL_AMOUNT = 10;
   const FRENCH_ONION_SOUP_HEAL_AMOUNT = 15;
   const FRENCH_ONION_SOUP_SPECIAL_AMOUNT = 1;
@@ -125,6 +128,22 @@ export function useInventory() {
           },
           {
             HEALTH_POTION_HEAL_AMOUNT,
+          }
+        );
+      },
+
+      useBreadcrumb: () => {
+        externalUseBreadcrumb(
+          {
+            inventory,
+            playerHP: playerState.playerHP,
+            effectiveMaxHP: playerState.effectiveMaxHP,
+          },
+          {
+            log: utilityFunctions.log,
+          },
+          {
+            BREADCRUMB_HEAL_AMOUNT,
           }
         );
       },

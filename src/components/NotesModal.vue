@@ -8,6 +8,37 @@
         <span class="header-ornament">✒️</span>
       </div>
 
+      <div v-if="props.playerClass" class="char-sheet">
+        <div class="char-sheet-row">
+          <span class="char-field"><span class="char-label">👤</span> {{ props.playerName || "Unknown" }}</span>
+          <span class="char-field"><span class="char-label">⚔</span> {{ props.playerClass?.name || "—" }}</span>
+        </div>
+        <div class="char-sheet-row">
+          <span class="char-field"><span class="char-label">🗡 Weapon</span> +{{ props.weaponBonus ?? 0 }}</span>
+          <span class="char-field"><span class="char-label">🛡 Defense</span> +{{ props.shieldBonus ?? 0 }}</span>
+        </div>
+        <div v-if="props.playerGoal" class="char-goal">
+          <span class="char-label">🎯 Goal</span>
+          <span class="char-goal-text">"{{ props.playerGoal }}"</span>
+        </div>
+      </div>
+
+      <div v-if="currentTierData" class="special-info-pane">
+        <div class="special-info-header">
+          <span class="special-info-name">✦ {{ currentTierData.name }}</span>
+          <span class="special-tier-badge">Tier {{ props.specialTier }}</span>
+        </div>
+        <div class="special-info-desc">{{ currentTierData.description }}</div>
+        <div class="special-tier-dots">
+          <span
+            v-for="t in 3"
+            :key="t"
+            class="tier-dot"
+            :class="{ 'tier-dot-active': t <= props.specialTier, 'tier-dot-current': t === props.specialTier }"
+          >{{ t }}</span>
+        </div>
+      </div>
+
       <div class="paper-wrapper">
         <textarea
           v-model="notesContent"
@@ -30,9 +61,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
+
+const props = defineProps({
+  playerClass: { type: Object, default: null },
+  specialTier: { type: Number, default: 1 },
+  playerName: { type: String, default: "" },
+  weaponBonus: { type: Number, default: 0 },
+  shieldBonus: { type: Number, default: 0 },
+  playerGoal: { type: String, default: "" },
+});
 
 const emit = defineEmits(["close"]);
+
+const currentTierData = computed(() => {
+  if (!props.playerClass?.specialTiers) return null;
+  return props.playerClass.specialTiers[props.specialTier - 1] ?? null;
+});
 
 const notesContent = ref("");
 const justSaved = ref(false);
@@ -113,6 +158,129 @@ const closeModal = () => {
 .header-ornament {
   font-size: 13px;
   opacity: 0.75;
+}
+
+/* ── Character sheet ── */
+.char-sheet {
+  background: rgba(255, 230, 160, 0.06);
+  border: 1px solid rgba(180, 130, 40, 0.3);
+  border-radius: 4px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.char-sheet-row {
+  display: flex;
+  gap: 20px;
+}
+
+.char-field {
+  font-size: 13px;
+  color: #c8a060;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.char-label {
+  font-size: 11px;
+  color: #8a6a40;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.char-goal {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 2px;
+  border-top: 1px solid rgba(180, 130, 40, 0.2);
+  margin-top: 2px;
+}
+
+.char-goal-text {
+  font-size: 12px;
+  color: #b89060;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* ── Class Special info pane ── */
+.special-info-pane {
+  background: rgba(255, 230, 160, 0.08);
+  border: 1px solid rgba(180, 130, 40, 0.35);
+  border-radius: 4px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.special-info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.special-info-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #d4a845;
+  letter-spacing: 0.5px;
+}
+
+.special-tier-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #8a6a00;
+  background: rgba(200, 160, 0, 0.2);
+  border: 1px solid rgba(180, 130, 0, 0.4);
+  border-radius: 3px;
+  padding: 1px 6px;
+  letter-spacing: 0.5px;
+}
+
+.special-info-desc {
+  font-size: 12px;
+  color: #b89060;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.special-tier-dots {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.tier-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  border: 1px solid rgba(180, 130, 40, 0.3);
+  color: #6a5030;
+  background: rgba(100, 70, 20, 0.2);
+}
+
+.tier-dot.tier-dot-active {
+  border-color: rgba(200, 150, 40, 0.6);
+  color: #c8a060;
+  background: rgba(140, 100, 20, 0.3);
+}
+
+.tier-dot.tier-dot-current {
+  border-color: #d4a845;
+  color: #f0c060;
+  background: rgba(180, 130, 20, 0.4);
+  box-shadow: 0 0 6px rgba(210, 160, 30, 0.4);
 }
 
 /* ── Aged paper wrapper ── */

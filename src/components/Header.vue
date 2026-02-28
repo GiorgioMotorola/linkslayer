@@ -72,6 +72,14 @@
             </button>
 
             <button
+              :class="{ 'btn-anim-special': activeAction === 'special' }"
+              :disabled="combatLocked"
+              @click="handleAction('special')"
+            >
+              ✦ {{ playerSpecialAbilityName }}
+            </button>
+
+            <button
               :class="{ 'btn-anim-defend': activeAction === 'defend' }"
               :disabled="combatLocked"
               @click="handleAction('defend')"
@@ -85,14 +93,6 @@
               @click="handleAction('flee')"
             >
               ↩ Flee
-            </button>
-
-            <button
-              :class="{ 'btn-anim-special': activeAction === 'special' }"
-              :disabled="combatLocked"
-              @click="handleAction('special')"
-            >
-              ✦ {{ playerSpecialAbilityName }}
             </button>
           </div>
         </div>
@@ -184,7 +184,10 @@
         </div>
 
         <div class="stat-column">
-          <div class="stat-label">{{ playerSpecialAbilityName }}</div>
+          <div class="stat-label">
+            {{ playerSpecialAbilityName }}
+            <span class="tier-badge">T{{ props.specialTier ?? 1 }}</span>
+          </div>
           <div class="stat-value" :class="specialAnimClass">
             {{ specialUsesLeft }}
           </div>
@@ -250,7 +253,16 @@
         </div>
       </div>
     </div>
-    <NotesModal v-if="isNotesModalOpen" @close="closeNotesModal" />
+    <NotesModal
+      v-if="isNotesModalOpen"
+      @close="closeNotesModal"
+      :playerClass="props.playerClass"
+      :specialTier="props.specialTier ?? 1"
+      :playerName="props.playerName"
+      :weaponBonus="props.weaponBonus"
+      :shieldBonus="props.shieldBonus"
+      :playerGoal="props.playerGoal"
+    />
   </header>
 </template>
 
@@ -308,6 +320,14 @@ const props = defineProps({
   lastDamageTaken: {
     type: Number,
     default: null,
+  },
+  specialTier: {
+    type: Number,
+    default: 1,
+  },
+  playerGoal: {
+    type: String,
+    default: "",
   },
 });
 
@@ -421,7 +441,7 @@ const diceRollBadgeStyle = computed(() => ({
 }));
 
 const combatLocked = computed(() =>
-  !!props.lastDiceRoll || props.lastDamageDealt !== null || props.lastDamageTaken !== null || props.enemyNextAction === "victory"
+  !!props.lastDiceRoll || props.lastDamageDealt !== null || props.lastDamageTaken !== null || props.enemyNextAction === "victory" || props.enemyNextAction === "fled"
 );
 
 const activeAction = ref("");
@@ -501,7 +521,9 @@ const longRestsUsedCount = computed(() => props.longRestsUsed ?? 0);
 const shortRestsUsedCount = computed(() => props.shortRestsUsed ?? 0);
 
 const playerSpecialAbilityName = computed(() => {
-  return props.playerClass?.special || "Special";
+  const tier = props.specialTier ?? 1;
+  const tierData = props.playerClass?.specialTiers?.[tier - 1];
+  return tierData?.name ?? props.playerClass?.special ?? "Special";
 });
 
 // Enemy Intent Display
@@ -519,6 +541,8 @@ const enemyIntentMessage = computed(() => {
       return "Enemy tripped — free attack!";
     case "victory":
       return "Path Cleared.";
+    case "fled":
+      return "Escaped Successfully!";
     default:
       return "";
   }
@@ -536,6 +560,8 @@ const enemyIntentIcon = computed(() => {
       return "🤾";
     case "victory":
       return "🏆";
+    case "fled":
+      return "🏃";
     default:
       return "⚔️";
   }

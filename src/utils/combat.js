@@ -11,6 +11,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     action: playerAction,
     effectiveMaxHP,
     totalSpecialsUsed,
+    specialTier,
   } = player;
 
   const {
@@ -135,86 +136,89 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       totalSpecialsUsed.value++;
     }
     const cls = playerClass.value.name;
-    const specialName = playerClass.value.special;
+    const tier = specialTier?.value ?? 1;
+    const tierData = playerClass.value.specialTiers?.[tier - 1];
+    const specialName = tierData?.name ?? playerClass.value.special;
 
     let baseSpecialDamage = 0;
-    let effect;
 
     if (cls === "Fighter") {
-      baseSpecialDamage = 8;
-      damageToEnemy = baseSpecialDamage;
-      log(
-        `⚔️ <span class="player-name">${playerName.value}</span> unleashes ${specialName} for ${baseSpecialDamage} damage.`
-      );
+      if (tier === 1) {
+        baseSpecialDamage = 8;
+        damageToEnemy = baseSpecialDamage;
+        log(`⚔️ <span class="player-name">${playerName.value}</span> unleashes ${specialName} for ${baseSpecialDamage} damage.`);
+      } else if (tier === 2) {
+        baseSpecialDamage = 12;
+        damageToEnemy = baseSpecialDamage;
+        enemyStatusEffects.value.push({ type: "bleed", damage: 1, duration: 1 });
+        log(`⚔️ <span class="player-name">${playerName.value}</span> cleaves for ${baseSpecialDamage} damage! The wound bleeds.`);
+      } else {
+        baseSpecialDamage = 18;
+        damageToEnemy = baseSpecialDamage;
+        enemyIsStunned.value = true;
+        skipEnemyCurrentTurn = true;
+        log(`⚔️ <span class="player-name">${playerName.value}</span> delivers a Warlord's Strike for ${baseSpecialDamage} damage! The enemy is stunned.`);
+      }
     } else if (cls === "Wizard") {
-      effect = playerClass.value.specialEffect(enemyHP.value, playerHP.value);
-      baseSpecialDamage = effect.wizardDamage;
+      let minDmg, maxDmg, stunChance;
+      if (tier === 1) { minDmg = 5; maxDmg = 15; stunChance = 0.3; }
+      else if (tier === 2) { minDmg = 8; maxDmg = 18; stunChance = 0.5; }
+      else { minDmg = 15; maxDmg = 25; stunChance = 1.0; }
+
+      baseSpecialDamage = Math.floor(Math.random() * (maxDmg - minDmg + 1)) + minDmg;
       damageToEnemy = baseSpecialDamage;
-      log(
-        `🔥 <span class="player-name">${
-          playerName.value
-        }</span> casts ${specialName}, dealing ${baseSpecialDamage} damage.${
-          effect.stunned ? ` The enemy is stunned.` : ""
-        }`
-      );
-      if (effect.stunned) {
+      const stunned = Math.random() < stunChance;
+      log(`🔥 <span class="player-name">${playerName.value}</span> casts ${specialName}, dealing ${baseSpecialDamage} damage.${stunned ? ` The enemy is stunned.` : ""}`);
+      if (stunned) {
         enemyIsStunned.value = true;
         enemyNextAction.value = null;
         skipEnemyCurrentTurn = true;
       }
     } else if (cls === "Rogue") {
-      effect = playerClass.value.specialEffect(enemyHP.value, DEFAULT_ENEMY_HP);
-      baseSpecialDamage = effect.rogueDamage;
+      if (tier === 1) {
+        baseSpecialDamage = 6;
+      } else if (tier === 2) {
+        baseSpecialDamage = 10;
+      } else {
+        baseSpecialDamage = 15;
+        enemyStatusEffects.value.push({ type: "bleed", damage: 1, duration: 2 });
+        log(`🩸 The shadows cut deep — the enemy begins to bleed.`);
+      }
       damageToEnemy = baseSpecialDamage;
-      damageToPlayer = 0;
       skipEnemyCurrentTurn = true;
-
-      log(
-        `🗡️ <span class="player-name">${playerName.value}</span> disappears and executes ${specialName} for ${baseSpecialDamage} damage.`
-      );
+      log(`🗡️ <span class="player-name">${playerName.value}</span> disappears and executes ${specialName} for ${baseSpecialDamage} damage.`);
     } else if (cls === "Paladin") {
-      baseSpecialDamage = 5;
+      let dmg, heal;
+      if (tier === 1) { dmg = 5; heal = 3; }
+      else if (tier === 2) { dmg = 8; heal = 7; }
+      else { dmg = 12; heal = effectiveMaxHP.value; } // full heal
+      baseSpecialDamage = dmg;
       damageToEnemy = baseSpecialDamage;
-
-      effect = playerClass.value.specialEffect(
-        enemyHP.value,
-        playerHP.value,
-        effectiveMaxHP.value
-      );
-      playerHP.value = effect.playerHP;
-
-      log(
-        `✨ <span class="player-name">${playerName.value}</span> calls upon ${specialName}, dealing ${baseSpecialDamage} damage and restoring HP.`
-      );
-    } else if (cls === "Cleric") {
-      baseSpecialDamage = 6;
-      damageToEnemy = baseSpecialDamage;
-      effect = playerClass.value.specialEffect(
-        enemyHP.value,
-        playerHP.value,
-        effectiveMaxHP.value
-      );
-      playerHP.value = effect.playerHP;
-
-      log(
-        `🙏 <span class="player-name">${playerName.value}</span> invokes ${specialName}, healing 5 HP and dealing ${baseSpecialDamage} damage.`
-      );
-    } else if (cls === "Sorcerer") {
-      baseSpecialDamage = 12;
-      damageToEnemy = baseSpecialDamage;
-      effect = playerClass.value.specialEffect(enemyHP.value, playerHP.value);
-
-      playerHP.value = effect.playerHP;
-
-      log(
-        `💥 <span class="player-name">${playerName.value}</span> unleashes ${specialName}, dealing ${baseSpecialDamage} damage but taking recoil.`
-      );
+      const newHP = tier === 3
+        ? effectiveMaxHP.value
+        : Math.min(playerHP.value + heal, effectiveMaxHP.value);
+      playerHP.value = newHP;
+      const healMsg = tier === 3 ? "fully restores HP" : `heals ${heal} HP`;
+      log(`✨ <span class="player-name">${playerName.value}</span> calls upon ${specialName}, dealing ${baseSpecialDamage} damage and ${healMsg}.`);
+    } else if (cls === "Mundane") {
+      if (tier === 1) {
+        baseSpecialDamage = 5;
+        damageToEnemy = baseSpecialDamage;
+        log(`🪨 <span class="player-name">${playerName.value}</span> hurls a rock for ${baseSpecialDamage} damage. The enemy looks almost offended.`);
+      } else if (tier === 2) {
+        baseSpecialDamage = 0;
+        damageToEnemy = 0;
+        skipEnemyCurrentTurn = true;
+        log(`🛡️ <span class="player-name">${playerName.value}</span> grits their teeth and braces — the enemy's attack glances off.`);
+      } else {
+        baseSpecialDamage = Math.max(5, (effectiveMaxHP.value - playerHP.value) + 5);
+        damageToEnemy = baseSpecialDamage;
+        log(`💢 <span class="player-name">${playerName.value}</span> channels pure desperation into a Grit Surge — ${baseSpecialDamage} damage!`);
+      }
     } else {
-      log(
-        `<span class="player-name">${playerName.value}</span> uses ${specialName}.`
-      );
+      log(`<span class="player-name">${playerName.value}</span> uses ${specialName}.`);
       if (playerClass.value.specialEffect) {
-        effect = playerClass.value.specialEffect(
+        const effect = playerClass.value.specialEffect(
           enemyHP.value,
           playerHP.value,
           effectiveMaxHP.value
@@ -249,16 +253,25 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
         log(`🪙 The Lucky Coin shines! <span class="player-name">${playerName.value}</span> escapes without fail.`);
         encounter.value = null;
         return;
-      } else if (Math.random() > 0.7) {
-        log(
-          `🏃 <span class="player-name">${playerName.value}</span> fled successfully.`
-        );
-        encounter.value = null;
-        return;
       } else {
-        log(
-          `<span class="player-name">${playerName.value}</span> failed to flee.`
-        );
+        const fleeRoll = Math.floor(Math.random() * 20) + 1;
+        const fleeThreshold = 7;
+        const fleeSucceeded = fleeRoll >= fleeThreshold;
+        utils.onDiceRoll?.({ roll: fleeRoll, rawRoll: fleeRoll, bonus: 0, threshold: fleeThreshold, didHit: fleeSucceeded });
+        const dieClass = fleeSucceeded ? "hit" : "miss";
+        const dieFace = `<span class="dice-face ${dieClass}">${fleeRoll}</span>`;
+        log(`🎲 ${dieFace} (need ${fleeThreshold}+) — ${fleeSucceeded ? "Escaped!" : "Caught!"}`);
+        if (fleeSucceeded) {
+          log(`🏃 <span class="player-name">${playerName.value}</span> fled successfully.`);
+          if (utils.onFleeSuccess) {
+            utils.onFleeSuccess();
+          } else {
+            encounter.value = null;
+          }
+          return;
+        } else {
+          log(`<span class="player-name">${playerName.value}</span> failed to flee.`);
+        }
       }
     }
   }

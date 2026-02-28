@@ -19,6 +19,14 @@
         />
         <button @click="randomizeName" class="randomize-name-button">🎲</button>
       </div>
+      <div class="goal-input-group">
+        <input
+          v-model="goal"
+          placeholder="What is your goal?"
+          class="name-input goal-input"
+        />
+        <button @click="randomizeGoal" class="randomize-name-button">🎲</button>
+      </div>
 
       <div class="journey-length-selection">
         <div class="journey-length-prompt"></div>
@@ -56,7 +64,31 @@ import randomNames from "@/assets/data/randomNames.json";
 import logo from "../assets/newlogo-nobg1.png";
 
 const name = ref("");
+const goal = ref("");
 const emit = defineEmits(["select", "show-tips"]);
+
+const randomGoals = [
+  "Survive the journey and live to tell the tale",
+  "Defeat every enemy that dares stand in your path",
+  "Uncover the ancient secret hidden within the archives",
+  "Earn enough gold to retire to a quiet village",
+  "Prove your worth to the guild masters",
+  "Find the legendary artifact at the end of the road",
+  "Complete the journey without a single defeat",
+  "Avenge a fallen comrade lost on a previous quest",
+  "Gather enough lore to write your own tome",
+  "Reach the final link without buying a single item",
+  "Master your class ability before the journey ends",
+  "Outwit every encounter through cunning and coin",
+  "Discover what lies beyond the final wiki passage",
+  "Return home with a story worth telling twice",
+  "Become a legend remembered in the old texts",
+  "Find glory in the darkest corners of knowledge",
+  "Reach the end with full HP — not a scratch taken",
+  "Complete the run without ever fleeing a fight",
+  "Leave every enemy defeated and every secret found",
+  "Carry only what you need and nothing more",
+];
 
 const journeyIntro = ref("");
 const journeyMiddle = ref("");
@@ -132,7 +164,13 @@ function selectClass(classKey) {
     classKey,
     name: name.value.trim(),
     journeyLength: selectedJourneyLength.value,
+    goal: goal.value.trim(),
   });
+}
+
+function randomizeGoal() {
+  const idx = Math.floor(Math.random() * randomGoals.length);
+  goal.value = randomGoals[idx];
 }
 
 function randomizeName() {
@@ -283,8 +321,16 @@ watch(
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1rem;
   margin-top: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.goal-input-group {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .name-input {
@@ -293,6 +339,12 @@ watch(
   border: 1px solid rgb(156, 4, 4);
   text-align: center;
   font-size: 18px;
+}
+
+.goal-input {
+  min-width: 260px;
+  font-size: 15px !important;
+  color: #555;
 }
 
 .class-grid {

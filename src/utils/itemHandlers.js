@@ -328,6 +328,21 @@ export const useHealthPotion = (
   }
 };
 
+export const useBreadcrumb = (playerState, utilityFunctions, itemConstants) => {
+  if (playerState.inventory.value.breadcrumbs > 0) {
+    playerState.inventory.value.breadcrumbs--;
+    playerState.playerHP.value = Math.min(
+      playerState.playerHP.value + itemConstants.BREADCRUMB_HEAL_AMOUNT,
+      playerState.effectiveMaxHP.value
+    );
+    utilityFunctions.log(
+      `🍞 You ate some Breadcrumbs and recovered ${itemConstants.BREADCRUMB_HEAL_AMOUNT} HP. Your HP is now ${playerState.playerHP.value}.`
+    );
+  } else {
+    utilityFunctions.log("You don't have any Breadcrumbs to use.");
+  }
+};
+
 export const useTurkeyLeg = (playerState, utilityFunctions, itemConstants) => {
   if (playerState.inventory.value.turkeyLegs > 0) {
     playerState.inventory.value.turkeyLegs--;

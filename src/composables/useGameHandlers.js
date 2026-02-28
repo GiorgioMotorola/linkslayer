@@ -78,6 +78,9 @@ export function useGameHandlers(deps) {
     shortRestsUsed,
     longRestsUsed,
     effectiveMaxHP,
+    specialTier,
+    offeringPot,
+    playerGoal,
   } = player;
 
   const {
@@ -202,6 +205,18 @@ export function useGameHandlers(deps) {
     diceRollTimer = setTimeout(() => {
       lastDiceRoll.value = null;
     }, DICE_TICKS * DICE_TICK_MS + DISPLAY_MS + bonusExtra);
+  }
+
+  function onFleeSuccess() {
+    const cardDelay = DICE_TICKS * DICE_TICK_MS + 400;
+    setTimeout(() => {
+      enemyTurnKey.value++;
+      enemyNextAction.value = "fled";
+      setTimeout(() => {
+        encounter.value = null;
+        enemyNextAction.value = null;
+      }, 1400);
+    }, cardDelay);
   }
 
   function onVictory() {
@@ -382,6 +397,7 @@ export function useGameHandlers(deps) {
         action: playerAction,
         effectiveMaxHP,
         totalSpecialsUsed,
+        specialTier,
       },
       enemy: {
         enemyHP,
@@ -409,6 +425,7 @@ export function useGameHandlers(deps) {
         onDiceRoll,
         onCombatResult,
         onVictory,
+        onFleeSuccess,
       },
       itemEffects: {
         serratedDaggerActive,
@@ -523,10 +540,11 @@ export function useGameHandlers(deps) {
   }
 
   // Class selection handler
-  function handleClassSelection({ classKey, name, journeyLength: selectedLen }) {
+  function handleClassSelection({ classKey, name, journeyLength: selectedLen, goal }) {
     playerClass.value = classes[classKey];
     playerHP.value = playerClass.value.maxHP;
     playerName.value = name;
+    playerGoal.value = goal || "";
     journeyLength.value = selectedLen;
 
     const newChain = getRandomChain(journeyLength.value);
@@ -574,6 +592,34 @@ export function useGameHandlers(deps) {
     log(`Player name: ${playerName.value}`);
     log(`Class selected: ${playerClass.value.name}`);
     log(`Journey length: ${journeyLength.value} articles.`);
+  }
+
+  // Offering / special tier upgrade handler
+  const OFFERING_COSTS = [[10, 15, 20], [25, 30, 50]];
+
+  function callHandleOffer() {
+    const tier = specialTier.value;
+    if (tier >= 3) return;
+
+    const cost = OFFERING_COSTS[tier - 1][offeringPot.value];
+    if (playerGold.value < cost) {
+      log(`🙏 You need ${cost}g to make this offering. You only have ${playerGold.value}g.`);
+      return;
+    }
+
+    playerGold.value -= cost;
+    offeringPot.value++;
+
+    if (offeringPot.value >= 3) {
+      specialTier.value++;
+      offeringPot.value = 0;
+      specialUsesLeft.value = 3;
+      const tierData = playerClass.value?.specialTiers?.[specialTier.value - 1];
+      const newName = tierData?.name ?? playerClass.value?.special;
+      log(`✨ The Gods have answered. Your class ability ascends to Tier ${specialTier.value}: <strong>${newName}</strong>! Special charges restored to 3.`);
+    } else {
+      log(`🙏 <span class="player-name">${playerName.value}</span> places ${cost}g in the offering bowl... (${offeringPot.value}/3)`);
+    }
   }
 
   // Assemble upgrade handler
@@ -641,6 +687,7 @@ export function useGameHandlers(deps) {
   return {
     callHandleClick,
     callHandleRest,
+    callHandleOffer,
     handleCombatActionWrapper,
     gotoEnemyTurn,
     callHandleEncounterOption,

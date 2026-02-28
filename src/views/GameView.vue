@@ -40,6 +40,8 @@
     :lastDiceRoll="lastDiceRoll"
     :lastDamageDealt="lastDamageDealt"
     :lastDamageTaken="lastDamageTaken"
+    :specialTier="specialTier"
+    :playerGoal="playerGoal"
   />
 
   <div class="main-content-wrapper">
@@ -118,8 +120,13 @@
         :weaponPieces="inventory.weaponPieces"
         :defensePieces="inventory.defensePieces"
         :restModalCount="restModalCount"
+        :specialTier="specialTier"
+        :offeringPot="offeringPot"
+        :playerGold="playerGold"
+        :nextOfferingCost="nextOfferingCost"
         @rest="callHandleRest"
         @assemble-upgrade="handleAssembleUpgradeWrapper"
+        @offer="callHandleOffer"
       />
 
       <ShopModal
@@ -248,7 +255,16 @@ const {
   shortRestsUsed,
   longRestsUsed,
   effectiveMaxHP,
+  specialTier,
+  offeringPot,
+  playerGoal,
 } = player;
+
+const OFFERING_COSTS = [[10, 15, 20], [25, 30, 50]];
+const nextOfferingCost = computed(() => {
+  if (specialTier.value >= 3) return null;
+  return OFFERING_COSTS[specialTier.value - 1][offeringPot.value];
+});
 
 const inventoryManager = useInventory();
 const {
@@ -334,6 +350,7 @@ watch(playerHP, (newVal) => {
 const {
   callHandleClick,
   callHandleRest,
+  callHandleOffer,
   handleCombatActionWrapper,
   callHandleEncounterOption,
   handleShopPurchase,
@@ -424,6 +441,8 @@ function handleUseInventoryItem(itemType) {
     itemHandlers.useCompass();
   } else if (itemType === "healthPotion") {
     itemHandlers.useHealthPotion();
+  } else if (itemType === "breadcrumb") {
+    itemHandlers.useBreadcrumb();
   } else if (itemType === "turkeyLeg") {
     itemHandlers.useTurkeyLeg();
   } else if (itemType === "invisibilityCloak") {
