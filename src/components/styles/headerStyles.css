@@ -1607,7 +1607,7 @@ button:hover {
   }
 
   .combat-hp-bar {
-    gap: 0.5rem;
+    gap: 2rem;
   }
 
   .combat-hp-player {
