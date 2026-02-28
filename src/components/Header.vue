@@ -52,7 +52,7 @@
               :disabled="combatLocked"
               @click="handleAction('attack_steady')"
             >
-              > Steady (100% Success | Normal dmg)
+              ⚔ Steady (100% Success | Normal dmg)
             </button>
 
             <button
@@ -60,7 +60,7 @@
               :disabled="combatLocked"
               @click="handleAction('attack_power')"
             >
-              > Power (70% Success | 1.5x dmg | miss -2hp)
+              ⚔ Power (70% Success | 1.5x dmg | miss -2hp)
             </button>
 
             <button
@@ -68,7 +68,7 @@
               :disabled="combatLocked"
               @click="handleAction('attack_reckless')"
             >
-              > Reckless (40% Success | 2x dmg | miss -3hp)
+              ⚔ Reckless (40% Success | 2x dmg | miss -3hp)
             </button>
 
             <button
@@ -76,7 +76,7 @@
               :disabled="combatLocked"
               @click="handleAction('defend')"
             >
-              > Defend
+              🛡 Defend
             </button>
 
             <button
@@ -84,7 +84,7 @@
               :disabled="combatLocked"
               @click="handleAction('flee')"
             >
-              > Flee
+              ↩ Flee
             </button>
 
             <button
@@ -92,7 +92,7 @@
               :disabled="combatLocked"
               @click="handleAction('special')"
             >
-              > {{ playerSpecialAbilityName }}
+              ✦ {{ playerSpecialAbilityName }}
             </button>
           </div>
         </div>
@@ -106,11 +106,11 @@
               :key="index"
               @click="emit('option-chosen', option)"
             >
-              > {{ option.text }}
+              ▸ {{ option.text }}
             </button>
           </div>
           <div v-else class="dialogue-options">
-            <button @click="emit('close')">> Continue</button>
+            <button @click="emit('close')">▸ Continue</button>
           </div>
         </div>
 
@@ -123,11 +123,11 @@
               :key="index"
               @click="emit('option-chosen', option)"
             >
-              > {{ option.text }}
+              ▸ {{ option.text }}
             </button>
           </div>
           <div v-else class="dialogue-options">
-            <button @click="emit('close')">> Continue</button>
+            <button @click="emit('close')">▸ Continue</button>
           </div>
         </div>
 

@@ -192,7 +192,7 @@ function selectItem(item) {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.829);
+  background: rgba(6, 10, 20, 0.9);
   display: flex;
   justify-content: center;
   align-items: start;
@@ -217,7 +217,7 @@ function selectItem(item) {
 
 .shop-title {
   margin-top: 0;
-  color: #b0b0b0;
+  color: #9ab2c8;
   font-size: 20px;
   margin-bottom: 10px;
   text-shadow: 2px 2px 4px #000;
@@ -228,8 +228,8 @@ function selectItem(item) {
 }
 
 .shop-header {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid #3a3a3a;
+  background: rgba(8, 14, 26, 0.5);
+  border: 1px solid #2e3e52;
   border-radius: 4px;
   padding: 5px 10px;
   margin-bottom: 20px;
@@ -238,7 +238,7 @@ function selectItem(item) {
 
 .shopkeeper-greeting {
   font-style: italic;
-  color: #c0c0c0;
+  color: #b0c4d8;
   margin-bottom: 5px;
   display: block;
   font-size: 17px;
@@ -260,8 +260,8 @@ function selectItem(item) {
 
 .shop-list-panel {
   flex: 2;
-  border: 1px solid #3a3a3a;
-  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #2e3e52;
+  background: rgba(8, 14, 26, 0.55);
   border-radius: 4px;
   overflow: hidden;
   display: flex;
@@ -291,33 +291,33 @@ function selectItem(item) {
   justify-content: space-between;
   align-items: center;
   padding: 7px 10px;
-  background: rgba(26, 26, 26, 0.6);
-  border: 1px solid #3a3a3a;
+  background: rgba(10, 16, 28, 0.6);
+  border: 1px solid #2e3e52;
   border-radius: 3px;
   font-size: 1em;
-  color: #e0e0e0;
+  color: #ccd8e8;
   cursor: pointer;
 }
 
 .item-slot:hover:not(.selected-item) {
-  background-color: rgba(58, 58, 58, 0.7);
-  border-color: #6a6a6a;
+  background-color: rgba(24, 36, 56, 0.7);
+  border-color: #4a6a8a;
   filter: none;
 }
 
 .item-slot.selected-item {
-  background-color: rgba(74, 74, 74, 0.8) !important;
-  border-color: #808080 !important;
-  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.1) !important;
-  color: #e0e0e0 !important;
+  background-color: rgba(24, 44, 74, 0.8) !important;
+  border-color: #4a7aaa !important;
+  box-shadow: inset 0 0 6px rgba(80, 140, 200, 0.15) !important;
+  color: #d8e8f8 !important;
   transform: scale(1) !important;
   will-change: background-color, border-color, box-shadow;
 }
 
 .item-slot.selected-item:hover {
-  background-color: rgba(74, 74, 74, 0.8) !important;
-  border-color: #808080 !important;
-  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.1) !important;
+  background-color: rgba(24, 44, 74, 0.8) !important;
+  border-color: #4a7aaa !important;
+  box-shadow: inset 0 0 6px rgba(80, 140, 200, 0.15) !important;
   transform: none !important;
 }
 
@@ -331,7 +331,7 @@ function selectItem(item) {
 .item-name {
   flex-grow: 1;
   text-align: left;
-  color: #c0c0c0;
+  color: #b8cce0;
   font-family: "IBM Plex Sans", sans-serif;
   font-weight: bold;
   display: block;
@@ -347,8 +347,8 @@ function selectItem(item) {
 
 .item-details-panel {
   flex: 1;
-  border: 1px solid #3a3a3a;
-  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #2e3e52;
+  background: rgba(8, 14, 26, 0.55);
   border-radius: 4px;
   padding: 15px;
   display: flex;
@@ -357,11 +357,11 @@ function selectItem(item) {
 }
 
 .details-title {
-  color: #b0b0b0;
+  color: #9ab2c8;
   font-size: 1.4em;
   margin-top: 0;
   margin-bottom: 15px;
-  border-bottom: 1px solid #3a3a3a;
+  border-bottom: 1px solid #2e3e52;
   padding-bottom: 5px;
   font-family: "IBM Plex Sans", sans-serif;
   text-transform: uppercase;
@@ -388,7 +388,7 @@ function selectItem(item) {
 .selected-item-name {
   font-size: 1.2em;
   font-weight: bold;
-  color: #e0e0e0;
+  color: #d0e0f0;
   margin-bottom: 5px;
   display: block;
 }
@@ -415,10 +415,10 @@ function selectItem(item) {
 }
 
 .buy-button-details {
-  background-color: #4a4a4a;
-  color: #e0e0e0;
+  background-color: rgba(18, 30, 50, 0.85);
+  color: #ccd8ec;
   padding: 10px 15px;
-  border: 1px solid #6a6a6a;
+  border: 1px solid #3a5a7a;
   border-radius: 3px;
   cursor: pointer;
   font-size: 1em;
@@ -431,20 +431,21 @@ function selectItem(item) {
 }
 
 .buy-button-details:hover {
-  background-color: #5a5a5a;
+  background-color: rgba(30, 50, 80, 0.9);
+  border-color: #5a7a9a;
   transform: translateY(-1px);
 }
 
 .buy-button-details:active {
-  background-color: #3a3a3a;
+  background-color: rgba(10, 20, 36, 0.9);
   transform: translateY(1px);
   box-shadow: 0 0 0px rgba(0, 0, 0, 0.4);
 }
 
 .buy-button-details:disabled {
-  background-color: #333;
-  color: #777;
-  border-color: #555;
+  background-color: rgba(10, 14, 22, 0.6);
+  color: #556070;
+  border-color: #2a3a4a;
   cursor: not-allowed;
   box-shadow: none;
 }
@@ -458,14 +459,13 @@ function selectItem(item) {
 }
 
 .close-button-game-style {
-  background-color: #3a3a3a;
-  color: #e0e0e0;
+  background-color: rgba(14, 22, 38, 0.85);
+  color: #b8cce0;
   padding: 12px 25px;
-  border: 2px solid #6a6a6a;
+  border: 2px solid #3a5a7a;
   border-radius: 5px;
   cursor: pointer;
   font-size: 1.1em;
-  /* margin-top: 25px; REMOVE THIS, it's now handled by .shop-footer-buttons */
   transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
   text-transform: uppercase;
   font-family: "IBM Plex Sans", sans-serif;
@@ -473,13 +473,14 @@ function selectItem(item) {
 }
 
 .close-button-game-style:hover {
-  background-color: #5a5a5a;
+  background-color: rgba(28, 46, 72, 0.9);
+  border-color: #5a7a9a;
   transform: translateY(-2px);
   box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.6);
 }
 
 .close-button-game-style:active {
-  background-color: #2a2a2a;
+  background-color: rgba(8, 14, 24, 0.9);
   transform: translateY(2px);
   box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
 }
@@ -580,12 +581,12 @@ function selectItem(item) {
   }
 
   .shop-footer-buttons {
-    flex-direction: column;
+    flex-direction: row;
     gap: 10px;
   }
 
   .close-button-game-style {
-    width: 100%;
+    flex: 1;
     padding: 10px 15px;
     font-size: 1em;
   }
@@ -707,17 +708,34 @@ function selectItem(item) {
   }
 
   .shop-footer-buttons {
-    flex-direction: column;
-    gap: 6px;
+    flex-direction: row;
+    gap: 8px;
     margin-top: 0;
     margin-bottom: 10px;
   }
 
   .close-button-game-style {
-    width: 100%;
-    padding: 8px 12px;
-    font-size: 13px;
+    flex: 1;
+    padding: 8px 10px;
+    font-size: 12px;
     box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+  }
+
+  .shop-items-container {
+    grid-template-columns: 1fr;
+  }
+
+  .haiku-container {
+    display: none;
+  }
+
+  .selected-item-description {
+    margin-bottom: 8px;
+  }
+
+  .details-content {
+    justify-content: flex-start;
+    gap: 0;
   }
 }
 </style>

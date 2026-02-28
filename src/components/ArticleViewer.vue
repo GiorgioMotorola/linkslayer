@@ -79,15 +79,35 @@ const skyPercent  = computed(() => (cyclePosition.value / 23) * 100);
 // Moon from 10 PM (pos 16) through pre-dawn; pos 23 wraps back to dawn
 const isNightTime = computed(() => cyclePosition.value >= 16);
 
+function hexToRgb(hex) {
+  return [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)];
+}
+function lerpColor(a, b, t) {
+  const [r1,g1,b1] = hexToRgb(a), [r2,g2,b2] = hexToRgb(b);
+  return `rgb(${Math.round(r1+(r2-r1)*t)},${Math.round(g1+(g2-g1)*t)},${Math.round(b1+(b2-b1)*t)})`;
+}
+
+const skyPhases = [
+  { pos: 0,  color: '#f07040' }, // 6 AM  sunrise
+  { pos: 2,  color: '#f0b838' }, // 8 AM  golden
+  { pos: 5,  color: '#70c8f0' }, // 11 AM bright sky
+  { pos: 11, color: '#4898d8' }, // 5 PM  afternoon
+  { pos: 14, color: '#e08828' }, // 8 PM  dusk
+  { pos: 16, color: '#7030a8' }, // 10 PM purple
+  { pos: 19, color: '#2a1848' }, // 1 AM  night
+  { pos: 23, color: '#2a1848' }, // 5 AM  night (end)
+];
+
 const skyColor = computed(() => {
   const pos = cyclePosition.value;
-  if (pos <= 1)    return '#f07040'; // 6–7 AM sunrise
-  if (pos <= 4)    return '#f0b838'; // 8–10 AM golden
-  if (pos <= 10)   return '#70c8f0'; // 11 AM–4 PM bright sky blue
-  if (pos <= 13)   return '#4898d8'; // 5–7 PM afternoon blue
-  if (pos <= 15)   return '#e08828'; // 8–9 PM dusk
-  if (pos <= 18)   return '#7030a8'; // 10 PM–midnight purple
-  return '#2a1848';                  // 1–5 AM night
+  for (let i = 0; i < skyPhases.length - 1; i++) {
+    const from = skyPhases[i], to = skyPhases[i + 1];
+    if (pos >= from.pos && pos <= to.pos) {
+      const t = (pos - from.pos) / (to.pos - from.pos);
+      return lerpColor(from.color, to.color, t);
+    }
+  }
+  return skyPhases[skyPhases.length - 1].color;
 });
 
 const skyTrackStyle = computed(() => ({

@@ -1,6 +1,8 @@
 <template>
-  <div class="rest-overlay" v-if="props.showRestModal">
-    <div class="rest-modal">
+  <div class="rest-overlay" :class="shouldShowLongRest ? 'overlay-night' : 'overlay-campfire'" v-if="props.showRestModal">
+    <div class="rest-modal" :class="shouldShowLongRest ? 'modal-night' : 'modal-campfire'">
+
+      <div class="rest-icon">{{ shouldShowLongRest ? '🌙' : '🔥' }}</div>
       <div class="rest-modal-phrase">{{ currentRestPhrase }}</div>
 
       <div v-if="shouldShowLongRest" class="danger-warning">
@@ -88,15 +90,7 @@ const shouldShowShortRest = computed(() => {
   font-optical-sizing: auto;
 }
 
-@keyframes fade-in-overlay {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
+/* ── Shared overlay ─────────────────────────────────────── */
 .rest-overlay {
   position: fixed;
   top: 0;
@@ -109,104 +103,175 @@ const shouldShowShortRest = computed(() => {
   justify-content: center;
   pointer-events: auto;
   animation: fade-in-overlay 1.25s ease-out forwards;
-  background-image: linear-gradient(
+}
+
+@keyframes fade-in-overlay {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Campfire overlay ───────────────────────────────────── */
+.overlay-campfire {
+  background: linear-gradient(
     to bottom,
-    rgba(8, 12, 17, 0.9),
-    rgba(17, 27, 37, 0.9),
-    rgba(13, 19, 26, 0.6)
+    rgba(18, 8, 2, 0.93),
+    rgba(38, 18, 6, 0.9),
+    rgba(22, 10, 3, 0.78)
   );
 }
+
+/* ── Night sky overlay ──────────────────────────────────── */
+.overlay-night {
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(255,255,200,0.07) 1px, transparent 1px),
+    radial-gradient(ellipse at 55% 8%,  rgba(255,255,200,0.06) 1px, transparent 1px),
+    radial-gradient(ellipse at 78% 20%, rgba(255,255,200,0.05) 1px, transparent 1px),
+    radial-gradient(ellipse at 35% 30%, rgba(255,255,200,0.04) 1px, transparent 1px),
+    radial-gradient(ellipse at 88% 12%, rgba(255,255,200,0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(4,6,22,0.96), rgba(8,12,38,0.93), rgba(6,9,28,0.82));
+}
+
+/* ── Shared modal card ──────────────────────────────────── */
 .rest-modal {
-  background: rgba(0, 0, 0, 0.342);
   padding: 2rem;
   border-radius: 12px;
   text-align: start;
   max-width: 700px;
   width: 90%;
-  box-shadow: 0 8px 24px rgba(37, 37, 37, 0.671);
   animation: pop-in 0.3s ease;
   z-index: 1000;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   position: relative;
-  border: #616060 1px solid;
 }
 
+@keyframes pop-in {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* ── Campfire modal ─────────────────────────────────────── */
+.modal-campfire {
+  background: rgba(28, 12, 4, 0.88);
+  border: 1px solid rgba(200, 95, 18, 0.55);
+  box-shadow: 0 0 35px rgba(200, 95, 18, 0.18), 0 8px 28px rgba(0,0,0,0.65);
+}
+
+.modal-campfire .rest-modal-phrase {
+  border-bottom-color: rgba(200, 95, 18, 0.4);
+}
+
+.modal-campfire button {
+  border-color: rgba(170, 80, 15, 0.5);
+  background: rgba(38, 16, 4, 0.65);
+  color: #e8c890;
+}
+
+.modal-campfire button:hover:not(:disabled) {
+  background: rgba(180, 85, 15, 0.22);
+  border-color: rgba(230, 130, 35, 0.75);
+  color: #f5d898;
+  opacity: 1;
+}
+
+/* ── Night sky modal ────────────────────────────────────── */
+.modal-night {
+  background: rgba(6, 10, 32, 0.9);
+  border: 1px solid rgba(80, 105, 210, 0.5);
+  box-shadow: 0 0 45px rgba(55, 80, 190, 0.18), 0 8px 28px rgba(0,0,0,0.75);
+}
+
+.modal-night .rest-modal-phrase {
+  border-bottom-color: rgba(80, 105, 210, 0.4);
+}
+
+.modal-night button {
+  border-color: rgba(70, 95, 190, 0.45);
+  background: rgba(10, 15, 45, 0.65);
+  color: #b0c4f0;
+}
+
+.modal-night button:hover:not(:disabled) {
+  background: rgba(60, 85, 190, 0.22);
+  border-color: rgba(110, 140, 230, 0.7);
+  color: #ccdaff;
+  opacity: 1;
+}
+
+/* ── Rest icon ──────────────────────────────────────────── */
+.rest-icon {
+  font-size: 38px;
+  text-align: center;
+}
+
+@keyframes flicker {
+  0%,100% { transform: scale(1)    rotate(-1deg); filter: drop-shadow(0 0 6px rgba(255,140,20,0.7)); }
+  25%     { transform: scale(1.08) rotate(2deg);  filter: drop-shadow(0 0 12px rgba(255,160,30,0.9)); }
+  50%     { transform: scale(0.95) rotate(-1deg); filter: drop-shadow(0 0 4px rgba(220,100,10,0.6)); }
+  75%     { transform: scale(1.05) rotate(1deg);  filter: drop-shadow(0 0 10px rgba(255,150,25,0.8)); }
+}
+
+.modal-campfire .rest-icon {
+  animation: flicker 2.2s ease-in-out infinite;
+}
+
+@keyframes moon-float {
+  0%,100% { transform: translateY(0);    filter: drop-shadow(0 0 8px rgba(140,165,255,0.65)); }
+  50%     { transform: translateY(-5px); filter: drop-shadow(0 0 14px rgba(160,185,255,0.85)); }
+}
+
+.modal-night .rest-icon {
+  animation: moon-float 3.5s ease-in-out infinite;
+}
+
+/* ── Shared phrase / text ───────────────────────────────── */
 .rest-modal-phrase {
   text-align: center;
-  margin-bottom: 0rem;
-  font-size: 22px;
-  animation: npc-drop 0.5s ease-out forwards;
-  color: rgb(7, 7, 7);
-  border-bottom: 1px solid rgb(155, 152, 152);
-  margin-left: 0px;
-  margin-right: 0px;
-  background: rgba(0, 0, 0, 0);
+  font-size: 18px;
   color: rgb(214, 215, 216);
-  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(150, 150, 150, 0.35);
+  padding-bottom: 1.2rem;
 }
 
+/* ── Shared button base ─────────────────────────────────── */
 button {
   display: flex;
   flex-direction: column;
   justify-content: start;
   align-items: flex-start;
   text-align: start;
-  border: 1px solid #616060;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.342);
   padding: 0.8rem 1rem;
-  font-size: 17px;
-  color: #303030;
+  font-size: 15px;
   font-weight: 400;
   cursor: pointer;
-  transition: all 0.1s ease-in-out;
-  color: rgb(214, 215, 216);
-}
-
-button:hover {
-  text-decoration: none;
-  opacity: 0.6;
-  background-color: #c5c1c144;
-  color: #000000;
-  border-color: #6e6e6e;
-  font-weight: 500;
+  transition: all 0.15s ease-in-out;
+  position: relative;
 }
 
 button:disabled {
-  text-decoration-line: line-through;
-  opacity: 0.6;
+  opacity: 0.35;
   cursor: not-allowed;
-  background-color: #c5c1c1;
-  color: #777;
-  border: 1px solid #616060;
+  filter: grayscale(0.4);
+}
+
+button:disabled::after {
+  content: '🚫';
+  position: absolute;
+  right: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1em;
+  opacity: 0.7;
 }
 
 button:disabled:hover {
-  color: #777;
   cursor: not-allowed;
+  opacity: 0.35;
 }
 
-@keyframes pop-in {
-  from {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.rest-modal-description,
-.crafting-description {
-  color: rgb(214, 215, 216);
-  margin-bottom: 15px;
-  line-height: 1.5;
-  font-size: 17px;
-}
-
+/* ── Danger warning ─────────────────────────────────────── */
 .danger-warning {
   color: #e08050;
   font-size: 15px;
@@ -216,60 +281,19 @@ button:disabled:hover {
   background: rgba(100, 40, 10, 0.25);
 }
 
-.rest-options,
-.crafting-buttons {
+/* ── Layout ─────────────────────────────────────────────── */
+.rest-options {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 20px;
+  gap: 0.8rem;
+  margin-bottom: 0.5rem;
 }
 
-.rest-modal-divider {
-  border: 0;
-  height: 1px;
-  background-color: rgb(155, 152, 152);
-  margin: 25px 0;
-}
-
-.crafting-title {
-  color: rgb(214, 215, 216);
-  margin-bottom: 15px;
-  font-size: 20px;
-  text-align: center;
-}
-
-.piece-count {
-  font-weight: 400;
-  color: #cacaca;
-  margin-bottom: 15px;
-  font-size: 20px;
-}
-
-.crafting-buttons button {
-  background: rgba(0, 0, 0, 0.442);
-}
-
-.crafting-buttons button:hover {
-  background-color: #c5c1c155;
-}
-
-.crafting-buttons button:nth-child(1) {
-  background: rgba(75, 75, 75, 0.4);
-}
-.crafting-buttons button:nth-child(1):hover:not(:disabled) {
-  background: rgba(75, 75, 75, 0.4);
-}
-
-.crafting-buttons button:nth-child(2) {
-  background: rgba(75, 75, 75, 0.4);
-}
-.crafting-buttons button:nth-child(2):hover:not(:disabled) {
-  background: rgba(75, 75, 75, 0.4);
-}
-
+/* ── Mobile ─────────────────────────────────────────────── */
 @media screen and (max-width: 600px) {
   .rest-overlay {
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
     overflow-y: auto;
     padding: 0.75rem 0.5rem;
     box-sizing: border-box;
@@ -282,9 +306,13 @@ button:disabled:hover {
     gap: 0.6rem;
   }
 
+  .rest-icon {
+    font-size: 28px;
+  }
+
   .rest-modal-phrase {
     font-size: 15px;
-    padding-bottom: 1rem;
+    padding-bottom: 0.8rem;
   }
 
   button {
@@ -295,8 +323,8 @@ button:disabled:hover {
   }
 
   .rest-options {
-    gap: 0.6rem;
-    margin-bottom: 10px;
+    gap: 1.2rem;
+    margin-bottom: 0.5rem;
   }
 }
 </style>
