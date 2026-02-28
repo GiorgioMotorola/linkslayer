@@ -122,6 +122,7 @@ export function useGameHandlers(deps) {
   let isDiceAnimating = false;
   let pendingDealt = null;
   let pendingTaken = null;
+  let pendingMissPenalty = null;
 
   const DICE_TICKS = 15;
   const DICE_TICK_MS = 80;
@@ -148,6 +149,7 @@ export function useGameHandlers(deps) {
     clearInterval(diceBonusInterval);
     pendingDealt = null;
     pendingTaken = null;
+    pendingMissPenalty = null;
     isDiceAnimating = true;
 
     const BONUS_TICK_MS = 300;
@@ -156,7 +158,13 @@ export function useGameHandlers(deps) {
       isDiceAnimating = false;
       const hasDealt = pendingDealt !== null;
       if (hasDealt) { showDealt(pendingDealt); pendingDealt = null; }
-      if (pendingTaken !== null) { showTaken(pendingTaken, hasDealt ? DEALT_TO_TAKEN_DELAY : 0); pendingTaken = null; }
+      const hasTaken = pendingTaken !== null;
+      const combined = (pendingTaken ?? 0) + (pendingMissPenalty ?? 0);
+      if (hasTaken || pendingMissPenalty !== null) {
+        showTaken(combined, hasDealt ? DEALT_TO_TAKEN_DELAY : 0);
+        pendingTaken = null;
+        pendingMissPenalty = null;
+      }
     }
 
     // Start cycling random numbers
@@ -217,13 +225,18 @@ export function useGameHandlers(deps) {
       // Buffer until dice lands
       if (type === "dealt") pendingDealt = amount;
       else if (type === "taken") pendingTaken = amount;
+      else if (type === "miss_penalty") pendingMissPenalty = amount;
       return;
     }
     // Steady attack — no dice, show immediately in sequence
     if (type === "dealt") {
       showDealt(amount);
     } else if (type === "taken") {
-      showTaken(amount, lastDamageDealt.value !== null ? DEALT_TO_TAKEN_DELAY : 0);
+      const combined = amount + (pendingMissPenalty ?? 0);
+      pendingMissPenalty = null;
+      showTaken(combined, lastDamageDealt.value !== null ? DEALT_TO_TAKEN_DELAY : 0);
+    } else if (type === "miss_penalty") {
+      pendingMissPenalty = amount;
     }
   }
 

@@ -116,8 +116,9 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       }
     } else {
       damageToEnemy = 0;
-      const missPenalty = playerAction === "attack_reckless" ? 2 : 1;
+      const missPenalty = playerAction === "attack_reckless" ? 3 : playerAction === "attack_power" ? 2 : 1;
       playerHP.value = Math.max(playerHP.value - missPenalty, 0);
+      utils.onCombatResult?.({ type: "miss_penalty", amount: missPenalty });
       log(
         `💨 <span class="player-name">${playerName.value}</span> ${attackName} but misses — ${formattedTitle} seizes the opening and deals ${missPenalty} damage.`
       );
@@ -310,7 +311,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
 
         damageToPlayer = Math.max(
           0,
-          damageToPlayer - Math.floor(shieldBonus.value / 2)
+          damageToPlayer - Math.floor(shieldBonus.value / 2.333)
         );
 
         if (playerDefendedThisTurn) {

@@ -60,7 +60,7 @@
               :disabled="combatLocked"
               @click="handleAction('attack_power')"
             >
-              > Power (70% Success | 1.5x dmg | miss -1hp)
+              > Power (70% Success | 1.5x dmg | miss -2hp)
             </button>
 
             <button
@@ -68,7 +68,7 @@
               :disabled="combatLocked"
               @click="handleAction('attack_reckless')"
             >
-              > Reckless (40% Success | 2x dmg | miss -2hp)
+              > Reckless (40% Success | 2x dmg | miss -3hp)
             </button>
 
             <button
