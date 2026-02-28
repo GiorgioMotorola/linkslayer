@@ -104,9 +104,9 @@
   text: "You come across a bubbling swamp. The steam from the swamp is apparent and the smell is sulfuric and strong. There does appear to be a way around, but if you cut through the swamp, you might get hurt. However, you will save some time."
   options:
     - text: Walk carefully to the other side through the swamp.
-      result: shortcut-damage
-      details: recover
-      responseText: "You make it across, saving time but also taking some damage as well."
+      result: inventoryItem
+      id: turkey_leg_consumable
+      responseText: "You make it across, clothes drenched and skin stinging. On a mossy rock at the far bank sits a Turkey Leg. Someone must have dropped it."
     - text: Walk around the left side of the swamp
       result: combat
       responseText: There was an enemy waiting to ambush you on the left side.

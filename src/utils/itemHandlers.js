@@ -114,6 +114,11 @@ export function handleShopPurchase(
           utilityFunctions.log(
             `😎 ${gameData.playerName.value} acquired a Cool Stick.`
           );
+        } else if (item.details === "coolerStickItem") {
+          playerState.inventory.value.coolerStickItem++;
+          utilityFunctions.log(
+            `🪄 ${gameData.playerName.value} acquired a Cooler Stick. +2 to all combat dice rolls.`
+          );
         } else if (item.details === "herbalPoultice") {
           playerState.inventory.value.herbalPoultices++;
           utilityFunctions.log(
@@ -782,6 +787,7 @@ export const useGoldPouch = (playerState, utilityFunctions, goldPouchData) => {
   const collected = goldPouchAccumulatedGold.value;
   playerGold.value += collected;
   goldPouchAccumulatedGold.value = 0;
+  inventory.value.goldPouches--;
   log(`👜 You collect ${collected} gold from your Gold Pouch.`);
   closeInventoryModal();
 };

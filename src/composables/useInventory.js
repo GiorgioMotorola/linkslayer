@@ -32,6 +32,7 @@ export function useInventory() {
     turkeyLegs: 0,
     invisibilityCloaks: 0,
     stickItem: 0,
+    coolerStickItem: 0,
     herbalPoultices: 0,
     barkTea: 0,
     frenchOnionSoups: 0,

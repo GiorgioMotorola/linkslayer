@@ -239,10 +239,9 @@
       },
       {
         "text": "Respond with 'grass?'",
-        "responseText": "The statue slowly moves to the south, revealing an entryway to an underground path. Above the archway that leads into the path reads another plaque that says 'Grass. I lied about the wheels'. The path appears to be a shortcut through the forest.",
-        "result": "shortcut",
-        "details": "clicks",
-        "amount": 6
+        "responseText": "The statue slowly moves to the south, revealing an entryway to an underground path. Above the archway reads another plaque: 'Grass. I lied about the wheels.' Inside the passage you find a Turkey Leg left as an offering.",
+        "result": "inventoryItem",
+        "id": "turkey_leg_consumable"
       }
     ]
   },
@@ -262,10 +261,9 @@
       },
       {
         "text": "Step on the Blue square",
-        "responseText": "The Blue square lights up, then dims. Then all the squares turn blue. You walk across the bridge safely.",
-        "result": "shortcut",
-        "details": "clicks",
-        "amount": 6
+        "responseText": "The Blue square lights up, then dims. Then all the squares turn blue. You walk across the bridge safely. On the other side, someone has left a Turkey Leg on a post.",
+        "result": "inventoryItem",
+        "id": "turkey_leg_consumable"
       },
       {
         "text": "Step on the Red square",
@@ -280,10 +278,9 @@
     "options": [
       {
         "text": "Step on the North square",
-        "responseText": "The North square lights up, then all 4 squares light up. Then they slowly dim and suddenly change into one large arrow pointing toward the end of the bridge allowing you to cross it safely.",
-        "result": "shortcut",
-        "details": "clicks",
-        "amount": 10
+        "responseText": "The North square lights up, then all 4 squares light up. They slowly dim and change into one large arrow pointing forward. You cross safely and find a Turkey Leg waiting at the far end.",
+        "result": "inventoryItem",
+        "id": "turkey_leg_consumable"
       },
       {
         "text": "Step on the South square",
@@ -336,9 +333,9 @@
     "options": [
       {
         "text": "Walk carefully to the other side through the swamp.",
-        "responseText": "You make it across, saving time but also taking some damage as well.",
-        "result": "shortcut-damage",
-        "details": "recover"
+        "responseText": "You make it across, clothes drenched and skin stinging. On a mossy rock at the far bank sits a Turkey Leg. Someone must have dropped it.",
+        "result": "inventoryItem",
+        "id": "turkey_leg_consumable"
       },
       {
         "text": "Walk around the left side of the swamp",

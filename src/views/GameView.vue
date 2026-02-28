@@ -107,6 +107,8 @@
         :fullChain="chain"
         :currentTargetIndex="currentTargetIndex"
         :isBlurred="blurClicksLeft > 0"
+        :clickCount="clickCount"
+        :longRestDismissCount="longRestDismissCount"
       />
 
       <RestModal
@@ -171,7 +173,7 @@
 </template>
 
 <script setup>
-import { watch, nextTick, onMounted, onUnmounted } from "vue";
+import { watch, computed, nextTick, onMounted, onUnmounted } from "vue";
 import ArticleViewer from "@/components/ArticleViewer.vue";
 import Header from "@/components/Header.vue";
 import VictoryModal from "@/components/VictoryModal.vue";
@@ -182,7 +184,7 @@ import ShopModal from "@/components/ShopModal.vue";
 import InventoryModal from "@/components/InventoryModal.vue";
 import MapModal from "@/components/MapModal.vue";
 
-import { shopItems } from "@/utils/shopItems";
+import { shopItems as allShopItems } from "@/utils/shopItems";
 import { isBoss } from "@/utils/bossGenerator";
 
 // Composables
@@ -228,6 +230,7 @@ const {
   isInventoryModalOpen,
   isMapModalOpen,
   restModalCount,
+  longRestDismissCount,
   openInventoryModal,
   closeInventoryModal,
 } = modals;
@@ -255,6 +258,16 @@ const {
   AMULET_ENEMY_DAMAGE,
   createItemHandlers,
 } = inventoryManager;
+
+const shopItems = computed(() =>
+  allShopItems.filter((item) => {
+    if (item.id === "gold_pouch" && inventory.value.goldPouches > 0) return false;
+    if (item.id === "stick_item" && (inventory.value.stickItem > 0 || inventory.value.coolerStickItem > 0)) return false;
+    if (item.id === "cooler_stick_item" && inventory.value.stickItem <= 0) return false;
+    if (item.id === "cooler_stick_item" && inventory.value.coolerStickItem > 0) return false;
+    return true;
+  })
+);
 
 const statusEffects = useStatusEffects();
 const {

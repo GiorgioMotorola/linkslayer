@@ -116,6 +116,7 @@ export function useGameHandlers(deps) {
 
   let diceRollTimer = null;
   let diceAnimInterval = null;
+  let diceBonusInterval = null;
   let dealtTimer = null;
   let takenTimer = null;
   let isDiceAnimating = false;
@@ -141,42 +142,58 @@ export function useGameHandlers(deps) {
     }, delay);
   }
 
-  function onDiceRoll({ roll, threshold, didHit }) {
+  function onDiceRoll({ roll, rawRoll = roll, bonus = 0, threshold, didHit }) {
     clearTimeout(diceRollTimer);
     clearInterval(diceAnimInterval);
+    clearInterval(diceBonusInterval);
     pendingDealt = null;
     pendingTaken = null;
     isDiceAnimating = true;
 
+    const BONUS_TICK_MS = 300;
+
+    function finishAndReveal() {
+      isDiceAnimating = false;
+      const hasDealt = pendingDealt !== null;
+      if (hasDealt) { showDealt(pendingDealt); pendingDealt = null; }
+      if (pendingTaken !== null) { showTaken(pendingTaken, hasDealt ? DEALT_TO_TAKEN_DELAY : 0); pendingTaken = null; }
+    }
+
     // Start cycling random numbers
-    lastDiceRoll.value = { roll: Math.floor(Math.random() * 20) + 1, threshold, didHit, isRolling: true };
+    lastDiceRoll.value = { roll: Math.floor(Math.random() * 20) + 1, threshold, didHit, isRolling: true, bonus: 0 };
 
     let ticks = 0;
     diceAnimInterval = setInterval(() => {
       ticks++;
       if (ticks >= DICE_TICKS) {
         clearInterval(diceAnimInterval);
-        isDiceAnimating = false;
-        lastDiceRoll.value = { roll, threshold, didHit, isRolling: false };
 
-        // Reveal buffered results sequentially
-        const hasDealt = pendingDealt !== null;
-        if (hasDealt) {
-          showDealt(pendingDealt);
-          pendingDealt = null;
-        }
-        if (pendingTaken !== null) {
-          showTaken(pendingTaken, hasDealt ? DEALT_TO_TAKEN_DELAY : 0);
-          pendingTaken = null;
+        if (bonus > 0) {
+          // Land on raw roll first, then tick up
+          lastDiceRoll.value = { roll: rawRoll, threshold, didHit, isRolling: false, isBonusing: true, bonus };
+          let current = rawRoll;
+          diceBonusInterval = setInterval(() => {
+            current++;
+            const done = current >= roll;
+            lastDiceRoll.value = { roll: current, threshold, didHit, isRolling: false, isBonusing: !done, bonus };
+            if (done) {
+              clearInterval(diceBonusInterval);
+              finishAndReveal();
+            }
+          }, BONUS_TICK_MS);
+        } else {
+          lastDiceRoll.value = { roll, threshold, didHit, isRolling: false, isBonusing: false, bonus: 0 };
+          finishAndReveal();
         }
       } else {
-        lastDiceRoll.value = { roll: Math.floor(Math.random() * 20) + 1, threshold, didHit, isRolling: true };
+        lastDiceRoll.value = { roll: Math.floor(Math.random() * 20) + 1, threshold, didHit, isRolling: true, bonus: 0 };
       }
     }, DICE_TICK_MS);
 
+    const bonusExtra = bonus > 0 ? bonus * BONUS_TICK_MS + 400 : 0;
     diceRollTimer = setTimeout(() => {
       lastDiceRoll.value = null;
-    }, DICE_TICKS * DICE_TICK_MS + DISPLAY_MS);
+    }, DICE_TICKS * DICE_TICK_MS + DISPLAY_MS + bonusExtra);
   }
 
   function onVictory() {
@@ -384,6 +401,7 @@ export function useGameHandlers(deps) {
         serratedDaggerActive,
         luckyFleeActive,
         wardingShieldHitsRemaining,
+        coolerStickBonus: inventory.value.coolerStickItem > 0 ? 2 : 0,
       },
     });
   }

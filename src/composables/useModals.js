@@ -9,11 +9,14 @@ export function useModals() {
   const isInventoryModalOpen = ref(false);
   const isMapModalOpen = ref(false);
   const restModalCount = ref(0);
+  const longRestDismissCount = ref(0);
 
-  // Track rest modal opens
+  // Track rest modal opens; count long rest dismissals (even restModalCount = long rest)
   watch(showRestModal, (newValue) => {
     if (newValue) {
       restModalCount.value++;
+    } else if (restModalCount.value > 0 && restModalCount.value % 2 === 0) {
+      longRestDismissCount.value++;
     }
   });
 
@@ -32,6 +35,7 @@ export function useModals() {
     isInventoryModalOpen,
     isMapModalOpen,
     restModalCount,
+    longRestDismissCount,
     openInventoryModal,
     closeInventoryModal,
   };

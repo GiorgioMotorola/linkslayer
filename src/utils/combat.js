@@ -26,6 +26,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     serratedDaggerActive,
     luckyFleeActive,
     wardingShieldHitsRemaining,
+    coolerStickBonus = 0,
   } = itemEffects;
 
   const {
@@ -91,13 +92,15 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
 
     let didHit = true;
     if (hitThreshold !== null) {
-      const roll = Math.floor(Math.random() * 20) + 1;
+      const rawRoll = Math.floor(Math.random() * 20) + 1;
+      const roll = rawRoll + coolerStickBonus;
       didHit = roll >= hitThreshold;
-      utils.onDiceRoll?.({ roll, threshold: hitThreshold, didHit });
+      utils.onDiceRoll?.({ roll, rawRoll, bonus: coolerStickBonus, threshold: hitThreshold, didHit });
       const dieClass = didHit ? "hit" : "miss";
       const dieFace = `<span class="dice-face ${dieClass}">${roll}</span>`;
+      const bonusNote = coolerStickBonus > 0 ? ` (+${coolerStickBonus} stick)` : "";
       log(
-        `🎲 ${dieFace} (need ${hitThreshold}+) — ${didHit ? "Hit!" : "Miss!"}`
+        `🎲 ${dieFace}${bonusNote} (need ${hitThreshold}+) — ${didHit ? "Hit!" : "Miss!"}`
       );
     }
 

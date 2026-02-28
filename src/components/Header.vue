@@ -39,6 +39,9 @@
               >
                 <div class="dice-number">{{ lastDiceRoll.roll }}</div>
                 <div class="dice-label" v-if="!lastDiceRoll.isRolling">need {{ lastDiceRoll.threshold }}+</div>
+                <transition name="dice-bonus-pop">
+                  <div class="dice-bonus" v-if="lastDiceRoll.isBonusing">+{{ lastDiceRoll.bonus }}</div>
+                </transition>
               </div>
             </transition>
           </Teleport>

@@ -11,10 +11,9 @@
       result: none
       responseText: Nothing happens.
     - text: "Respond with 'grass?'"
-      result: shortcut
-      details: clicks
-      amount: 6
-      responseText: "The statue slowly moves to the south, revealing an entryway to an underground path. Above the archway that leads into the path reads another plaque that says 'Grass. I lied about the wheels'. The path appears to be a shortcut through the forest."
+      result: inventoryItem
+      id: turkey_leg_consumable
+      responseText: "The statue slowly moves to the south, revealing an entryway to an underground path. Above the archway reads another plaque: 'Grass. I lied about the wheels.' Inside the passage you find a Turkey Leg left as an offering."
 
 - id: lore_010
   text: "There is a sturdy bridge ahead of you. The bridge may be short, but it appears to be made up of squares. Each square a different color. The first four squares are colored Red, White, Green, and Blue. Each square has 'Currents murmur my name, the daylight wears my face, sorrow drapes itself in my hue, and I wait beneath your next footfall' written on them respectively."
@@ -26,10 +25,9 @@
       result: damage
       responseText: "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage."
     - text: Step on the Blue square
-      result: shortcut
-      details: clicks
-      amount: 6
-      responseText: "The Blue square lights up, then dims. Then all the squares turn blue. You walk across the bridge safely."
+      result: inventoryItem
+      id: turkey_leg_consumable
+      responseText: "The Blue square lights up, then dims. Then all the squares turn blue. You walk across the bridge safely. On the other side, someone has left a Turkey Leg on a post."
     - text: Step on the Red square
       result: damage
       responseText: "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage."
@@ -38,10 +36,9 @@
   text: "There is a sturdy bridge ahead of you. The bridge may be short, but it appears to be made up of squares. These squares have arrows pointing North, South, East, and West. The squares have written on them 'You'll want warmth upon the road to me, The faithful star holds my name, The sky stretches on with my voice, And I lie just ahead, beneath your next step.'"
   options:
     - text: Step on the North square
-      result: shortcut
-      details: clicks
-      amount: 10
-      responseText: "The North square lights up, then all 4 squares light up. Then they slowly dim and suddenly change into one large arrow pointing toward the end of the bridge allowing you to cross it safely."
+      result: inventoryItem
+      id: turkey_leg_consumable
+      responseText: "The North square lights up, then all 4 squares light up. They slowly dim and change into one large arrow pointing forward. You cross safely and find a Turkey Leg waiting at the far end."
     - text: Step on the South square
       result: damage
       responseText: "The bridge shakes and crumbles beneath your feet. You fall into the ravine below and take -5 Damage."

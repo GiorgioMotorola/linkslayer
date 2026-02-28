@@ -25,7 +25,14 @@
       </div>
     </div>
     <div class="path-sub-bar">
-      <button class="path-map-hint" @click="emit('open-map')">See the Full Path in Map</button>
+      <div class="sky-bar">
+        <div class="sky-track" :style="skyTrackStyle">
+          <div class="sky-rest-mark" style="left: 47.83%"></div>
+          <div class="sky-indicator" :style="{ left: skyPercent + '%' }">
+            <span class="sky-icon">{{ isNightTime ? '🌙' : '☀️' }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="article" :class="{ 'blurred-content': isBlurred }">
@@ -59,7 +66,33 @@ const props = defineProps({
   inEncounter: Boolean,
   path: Array,
   isBlurred: Boolean,
+  clickCount: { type: Number, default: 0 },
+  longRestDismissCount: { type: Number, default: 0 },
 });
+
+
+const cyclePosition = computed(() => {
+  if (props.clickCount <= 0) return 0;
+  const adjusted = props.clickCount - props.longRestDismissCount * 24;
+  return adjusted <= 0 ? 0 : (adjusted - 1) % 24;
+});
+const skyPercent  = computed(() => (cyclePosition.value / 23) * 100);
+// Moon from 10 PM (pos 16) through pre-dawn; pos 23 wraps back to dawn
+const isNightTime = computed(() => cyclePosition.value >= 16);
+
+const skyColor = computed(() => {
+  const pos = cyclePosition.value;
+  if (pos <= 1)    return '#f07040'; // 6–7 AM sunrise
+  if (pos <= 4)    return '#f0b838'; // 8–10 AM golden
+  if (pos <= 13)   return '#4898d8'; // 11 AM–7 PM day
+  if (pos <= 15)   return '#e08828'; // 8–9 PM dusk
+  if (pos <= 18)   return '#7030a8'; // 10 PM–midnight purple
+  return '#2a1848';                  // 1–5 AM night
+});
+
+const skyTrackStyle = computed(() => ({
+  background: `radial-gradient(ellipse 15% 100% at ${skyPercent.value}% 50%, ${skyColor.value}, transparent), #1a1a1a`
+}));
 
 const emit = defineEmits(["link-clicked", "open-map"]);
 
@@ -277,12 +310,9 @@ onMounted(load);
 }
 
 .path-sub-bar {
-  background: #e5e5e6;
-  border-bottom: solid 1px black;
-  display: flex;
-  justify-content: center;
-  padding: 2px 12px;
+  border-bottom: solid 1px #222;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .path-logo {
@@ -351,26 +381,48 @@ onMounted(load);
   max-width: 280px;
 }
 
-.path-map-hint {
-  font-size: 13px;
-  color: #0e0d0d;
-  background: none;
-  border: none;
-  cursor: pointer;
-  white-space: nowrap;
-  padding: 0 6px 1px;
-  border-radius: 4px;
-  transition: color 0.15s, background 0.15s;
-  font-family: inherit;
-  align-self: center;
-  letter-spacing: 0.5px;
-  font-weight: 700;
+/* ── Sky bar ── */
+.sky-bar {
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.path-map-hint:hover {
-  color: #0645ad;
-  background: rgba(6, 69, 173, 0.07);
+.sky-track {
+  position: relative;
+  height: 26px;
+  border-radius: 0;
+  overflow: visible;
 }
+
+
+.sky-rest-mark {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+}
+
+.sky-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  z-index: 2;
+  transition: left 0.5s ease;
+}
+
+.sky-icon {
+  font-size: 15px;
+  line-height: 18px;
+  filter: drop-shadow(0 0 5px rgba(255, 210, 40, 0.9));
+}
+
 
 .error-message {
   position: fixed;
@@ -497,8 +549,13 @@ onMounted(load);
   }
 
   .path-sub-bar {
-    padding: 2px 8px;
+    padding: 0;
   }
+
+  .sky-icon {
+    font-size: 13px;
+  }
+
 
   .path-logo {
     height: 20px;
@@ -536,10 +593,6 @@ onMounted(load);
     width: 140px;
   }
 
-  .path-map-hint {
-    font-size: 9px;
-    padding: 1px 4px;
-  }
 
   /* Force all article content to stay within viewport */
   .article :deep(img) {

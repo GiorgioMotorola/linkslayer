@@ -41,10 +41,9 @@
   greeting: "DANIEL THE MAP GIVER: I give maps. Not much else."
   options:
     - text: Take a map from Daniel.
-      result: shortcut
-      details: clicks
-      amount: 3
-      responseText: It appears the map contains a shortcut through the upcoming brush. Your click count is reduced by 3.
+      result: inventoryItem
+      id: turkey_leg_consumable
+      responseText: "DANIEL THE MAP GIVER: Map's not much use anymore, the roads changed. But here, have this Turkey Leg. I've got plenty."
     - text: "'The only guidance I need is from the sun and the stars.'"
       result: none
       responseText: "DANIEL THE MAP SELLER: Cool."

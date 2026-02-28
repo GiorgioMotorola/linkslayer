@@ -280,6 +280,21 @@
           </div>
         </div>
 
+        <div v-if="inventory.coolerStickItem > 0" class="item-slot-wrapper">
+          <div class="item-details-box">
+            <div class="item-name-quantity">
+              <span class="item-name">A Cooler Stick</span>
+              <span class="item-count">x{{ inventory.coolerStickItem }}</span>
+            </div>
+            <div class="item-description">{{ itemDesc.coolerStickItem }}</div>
+          </div>
+          <div class="item-button-box">
+            <button class="buy-button-details disabled-placeholder" disabled>
+              Passive
+            </button>
+          </div>
+        </div>
+
         <div v-if="inventory.flashPowders > 0" class="item-slot-wrapper">
           <div class="item-details-box">
             <div class="item-name-quantity">

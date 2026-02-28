@@ -13,6 +13,17 @@ export const shopItems = [
     haikuThree: "A small, perfect thing.",
   },
   {
+    id: "cooler_stick_item",
+    name: "A Cooler Stick That I Found",
+    cost: 100,
+    effect: "inventoryItem",
+    details: "coolerStickItem",
+    description: "An upgrade to your original stick. Grants +2 to all combat dice rolls while in your inventory.",
+    haikuOne: "A finer branch, straight",
+    haikuTwo: "Two fortune added to rolls",
+    haikuThree: "The stick grows in power.",
+  },
+  {
     id: "adventurers_rations_consumable",
     name: "Adventurer's Rations",
     cost: 8,
