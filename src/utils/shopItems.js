@@ -24,6 +24,17 @@ export const shopItems = [
     haikuThree: "The stick grows in power.",
   },
   {
+    id: "even_cooler_stick_item",
+    name: "An Even Cooler Stick That I Found",
+    cost: 300,
+    effect: "inventoryItem",
+    details: "evenCoolerStickItem",
+    description: "An even more powerful upgrade. Grants an additional +3 to all combat dice rolls while in your inventory.",
+    haikuOne: "Ancient wood, etched runes",
+    haikuTwo: "Three more fortune bends to will",
+    haikuThree: "The stick ascends now.",
+  },
+  {
     id: "adventurers_rations_consumable",
     name: "Adventurer's Rations",
     cost: 8,

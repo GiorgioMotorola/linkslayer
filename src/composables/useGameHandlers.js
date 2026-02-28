@@ -436,7 +436,7 @@ export function useGameHandlers(deps) {
         serratedDaggerActive,
         luckyFleeActive,
         wardingShieldHitsRemaining,
-        coolerStickBonus: inventory.value.coolerStickItem > 0 ? 2 : 0,
+        coolerStickBonus: (inventory.value.coolerStickItem > 0 ? 2 : 0) + (inventory.value.evenCoolerStickItem > 0 ? 3 : 0),
       },
     });
   }

@@ -301,6 +301,8 @@ const shopItems = computed(() =>
     if (item.id === "stick_item" && (inventory.value.stickItem > 0 || inventory.value.coolerStickItem > 0)) return false;
     if (item.id === "cooler_stick_item" && inventory.value.stickItem <= 0) return false;
     if (item.id === "cooler_stick_item" && inventory.value.coolerStickItem > 0) return false;
+    if (item.id === "even_cooler_stick_item" && inventory.value.coolerStickItem <= 0) return false;
+    if (item.id === "even_cooler_stick_item" && inventory.value.evenCoolerStickItem > 0) return false;
     return true;
   })
 );

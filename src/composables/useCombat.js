@@ -1,6 +1,6 @@
 // src/composables/useCombat.js
 
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { isBoss } from "@/utils/bossGenerator";
 
 export function useCombat() {
@@ -51,6 +51,19 @@ export function useCombat() {
   const isBossEncounter = computed(
     () => isInCombat.value && isBoss(encounter.value.enemy)
   );
+
+  // Clear status effects when a new combat encounter starts (or encounter ends)
+  watch(encounter, (newEncounter, oldEncounter) => {
+    const wasInCombat = oldEncounter?.type === "combat";
+    const isNowInCombat = newEncounter?.type === "combat";
+    const isNewEnemy = isNowInCombat && newEncounter?.enemy !== oldEncounter?.enemy;
+    const combatEnded = wasInCombat && !isNowInCombat;
+
+    if (isNewEnemy || combatEnded) {
+      enemyStatusEffects.value = [];
+      enemyIsStunned.value = false;
+    }
+  });
 
   // Enemy AI decision
   function decideEnemyAction() {

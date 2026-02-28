@@ -35,6 +35,7 @@ export function useInventory() {
     invisibilityCloaks: 0,
     stickItem: 0,
     coolerStickItem: 0,
+    evenCoolerStickItem: 0,
     herbalPoultices: 0,
     barkTea: 0,
     frenchOnionSoups: 0,

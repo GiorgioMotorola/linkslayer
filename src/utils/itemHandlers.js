@@ -120,6 +120,11 @@ export function handleShopPurchase(
           utilityFunctions.log(
             `🪄 ${gameData.playerName.value} acquired a Cooler Stick. +2 to all combat dice rolls.`
           );
+        } else if (item.details === "evenCoolerStickItem") {
+          playerState.inventory.value.evenCoolerStickItem++;
+          utilityFunctions.log(
+            `🌟 ${gameData.playerName.value} acquired an Even Cooler Stick. +3 to all combat dice rolls.`
+          );
         } else if (item.details === "herbalPoultice") {
           playerState.inventory.value.herbalPoultices++;
           utilityFunctions.log(
