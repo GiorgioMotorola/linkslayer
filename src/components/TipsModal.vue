@@ -2,41 +2,51 @@
   <div class="modal-overlay" @click.self="$emit('close')">
     <div class="tips-modal-content">
       <button class="close-button" @click="$emit('close')">×</button>
-      <h2>Game Tips</h2>
+      <h2>How To Play</h2>
       <div class="tips-content">
+
+        <h3>What Is This Game?</h3>
         <p>
-          <span style="color: blue;">&#10011;</span> Even if you can get to your destinations quickly, it's best to look
-          around a bit. The final article will summon a boss and the boss can be
-          tough. taking your time and clicking on articles around your target
-          before you get to the last part can boost your HP or skills.
+          <strong>Linkslayer</strong> is a Tabletop RPG adventure played entirely through
+          Wikipedia. A chain of real Wikipedia articles is generated for you, and your goal is to
+          navigate from the first article to the next by clicking links within each page — just like
+          you would on Wikipedia itself. Along the way you will fight monsters, meet NPCs, discover
+          lore, loot gold, and face a final boss.
         </p>
+
+        <h3>Combat</h3>
+        <ul>
+          <li><strong>Steady Strike</strong> — a reliable auto-hit attack. Safe but modest damage.</li>
+          <li><strong>Power Strike</strong> — 1.5× damage, but you need a 7+ on a d20 to connect.</li>
+          <li><strong>Reckless Strike</strong> — 2× damage, but requires a 13+ and a miss deals damage to you.</li>
+          <li><strong>Class Ability</strong> — your class's unique skill. Powerful but limited uses.</li>
+          <li><strong>Defend</strong> — brace for impact, reducing incoming damage by 10%.</li>
+          <li><strong>Flee</strong> — roll a d20 (need 7+) to escape. Bosses cannot be fled from.</li>
+        </ul>
         <p>
-          <span style="color: blue;">&#10011;</span> Fighting enemies can be deadly. Fleeing is always a good option if the
-          dice are in your favor. However, enemies will often drop great loot
-          that could quickly build up your character.
+          Enemies can also do more than just attack. They may <strong>Defend</strong> (halving your damage),
+          <strong>Steal</strong> gold from you, <strong>Enrage</strong> to hit harder in future turns,
+          <strong>Confuse</strong> you to lock out one of your actions, or <strong>Summon</strong>
+          reinforcements to restore their HP. Keep an eye on the intent badge so you're never caught off guard.
         </p>
+
+        <h3>Classes</h3>
         <p>
-          <span style="color: blue;">&#10011;</span> If you are lost (on an article that doesn't seem at all close to your
-          next destination), why not try to "get to a higher ground to find
-          something familiar in the distance" (click on familiar things until
-          you find something that may connect to your next destination)? For
-          instance, you are on the article "King's German Legion" and you need
-          to get to The Grand Canyon. It might be advantageous to starting
-          clicking toward The United States via other Contients and Countries.
+          Your class determines your starting HP, your special ability, and some passive bonuses. Choose
+          carefully — each plays very differently:
         </p>
+        <ul>
+          <li><strong>Fighter</strong> — durable warrior with high damage specials and a stun at Tier 3.</li>
+          <li><strong>Wizard</strong> — glass cannon with random high-damage spells and a chance to stun.</li>
+          <li><strong>Rogue</strong> — assassin who always skips the enemy's counterattack after a special, with a critical hit chance on normal attacks.</li>
+          <li><strong>Paladin</strong> — balanced hybrid who deals damage and heals at the same time.</li>
+          <li><strong>Mundane</strong> — starts with nothing special, but unlocks a devastating Grit Surge at Tier 3 based on missing HP.</li>
+        </ul>
         <p>
-          <span style="color: blue;">&#10011;</span> There may be some options that appear to be the right choice, but
-          consider your choices carefully. For instance, taking a shortcut may
-          seem like a good idea, but it may cut your clicks down far enough to
-          prevent a short or long rest trigger. On the other hand, it may get
-          you closer...
+          Class abilities can be <strong>upgraded up to Tier 3</strong> by making offerings at shrine
+          encounters. Each tier makes the ability significantly more powerful.
         </p>
-        <p>
-          <span style="color: blue;">&#10011;</span> Consider how you think about directions in the real world. You have to
-          go down A Street and then turn on B Street, then turn down C Street,
-          and so on... If you need to get somewhere, try to think of where you
-          need to go several clicks before to get there.
-        </p>
+
       </div>
     </div>
   </div>

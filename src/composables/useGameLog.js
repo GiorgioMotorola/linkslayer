@@ -40,7 +40,7 @@ export function useGameLog(getFormattedTimer) {
         message = "🌀 Enemy readies a confounding strike.";
         break;
       case "summon":
-        message = "🪄 Enemy summons reinforcements!";
+        message = "💚 Enemy readies a heal.";
         break;
       default:
         message = "";

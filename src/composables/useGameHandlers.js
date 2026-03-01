@@ -117,6 +117,16 @@ export function useGameHandlers(deps) {
     handleCloseEncounter,
   } = combat;
 
+  // Counter result state (null | 'success' | 'fail')
+  const counterResult = ref(null);
+
+  function onCounterResult({ succeeded }) {
+    // Delay until after the dice animation lands
+    setTimeout(() => {
+      counterResult.value = succeeded ? 'success' : 'fail';
+    }, DICE_TICKS * DICE_TICK_MS + 150);
+  }
+
   // Dice roll display + damage notifications (sequenced)
   const lastDiceRoll = ref(null);
   const lastDamageDealt = ref(null);
@@ -436,6 +446,7 @@ export function useGameHandlers(deps) {
         bossOverlay: bossOverlay,
         onDiceRoll,
         onCombatResult,
+        onCounterResult,
         onVictory,
         onFleeSuccess,
       },
@@ -454,6 +465,7 @@ export function useGameHandlers(deps) {
     const hadDice = isDiceAnimating;
     const intentDelay = (hadDice ? DICE_TICKS * DICE_TICK_MS : 0) + DEALT_TO_TAKEN_DELAY + 400;
     setTimeout(() => {
+      counterResult.value = null;
       enemyTurnKey.value++;
       externalHandleEnemyTurn({
       enemyState: {
@@ -709,5 +721,6 @@ export function useGameHandlers(deps) {
     lastDiceRoll,
     lastDamageDealt,
     lastDamageTaken,
+    counterResult,
   };
 }

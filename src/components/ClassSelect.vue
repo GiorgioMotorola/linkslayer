@@ -60,7 +60,7 @@
           <div class="class-card-desc">{{ c.specialTiers[0].name }}: {{ c.specialTiers[0].description }}</div>
         </div>
       </div>
-      <button class="tips-button" @click="openModal">Game Tips</button>
+      <button class="tips-button" @click="openModal">How To Play</button>
       <TipsModal v-if="isModalOpen" @close="closeModal" />
     </div>
   </div>

@@ -40,6 +40,7 @@
     :lastDiceRoll="lastDiceRoll"
     :lastDamageDealt="lastDamageDealt"
     :lastDamageTaken="lastDamageTaken"
+    :counterResult="counterResult"
     :specialTier="specialTier"
     :playerGoal="playerGoal"
     :enemyStatusEffects="enemyStatusEffects"
@@ -400,6 +401,7 @@ const {
   lastDiceRoll,
   lastDamageDealt,
   lastDamageTaken,
+  counterResult,
 } = useGameHandlers({
   gameFlow,
   log,

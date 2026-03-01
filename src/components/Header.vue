@@ -90,11 +90,11 @@
             </button>
 
             <button
-              :class="{ 'btn-anim-defend': activeAction === 'defend' }"
+              :class="{ 'btn-anim-defend': activeAction === 'defend', 'btn-defend-counter': defendButtonLabel !== 'Defend' }"
               :disabled="combatLocked || confusedAction === 'defend'"
               @click="handleAction('defend')"
             >
-              🛡 Defend
+              🛡 {{ defendButtonLabel }}
             </button>
 
             <button
@@ -258,7 +258,7 @@
           <button class="tips-button" @click="copyLogToClipboard">
             Copy Log
           </button>
-          <button class="tips-button" @click="openModal">Game Tips</button>
+          <button class="tips-button" @click="openModal">How To Play</button>
           <TipsModal v-if="isModalOpen" @close="closeModal" />
         </div>
       </div>
@@ -350,6 +350,10 @@ const props = defineProps({
   confusedTurnsLeft: {
     type: Number,
     default: 0,
+  },
+  counterResult: {
+    type: String,
+    default: null,
   },
 });
 
@@ -474,6 +478,15 @@ const combatLocked = computed(() =>
   !!props.lastDiceRoll || props.lastDamageDealt !== null || props.lastDamageTaken !== null || props.enemyNextAction === "victory" || props.enemyNextAction === "fled"
 );
 
+const COUNTERABLE_LABELS = { steal: "Steal", enrage: "Enrage", confuse: "Confuse", summon: "Heal" };
+
+const defendButtonLabel = computed(() => {
+  const label = COUNTERABLE_LABELS[props.enemyNextAction];
+  return label ? `Defend ${label}` : "Defend";
+});
+
+
+
 const confusedActionLabel = computed(() => {
   switch (props.confusedAction) {
     case "attack": return "Attack actions";
@@ -588,7 +601,7 @@ const enemyIntentMessage = computed(() => {
     case "confuse":
       return "Enemy readies a confusion!";
     case "summon":
-      return "Enemy summons reinforcements!";
+      return "Enemy is healing!";
     case "victory":
       return "Path Cleared.";
     case "fled":
@@ -617,7 +630,7 @@ const enemyIntentIcon = computed(() => {
     case "confuse":
       return "🌀";
     case "summon":
-      return "🪄";
+      return "💚";
     case "victory":
       return "🏆";
     case "fled":
@@ -628,7 +641,10 @@ const enemyIntentIcon = computed(() => {
 });
 
 const enemyIntentClass = computed(() => {
-  return `intent-${props.enemyNextAction || 'default'}`;
+  const base = `intent-${props.enemyNextAction || 'default'}`;
+  if (props.counterResult === 'success') return `${base} intent-countered`;
+  if (props.counterResult === 'fail') return `${base} intent-counter-failed`;
+  return base;
 });
 
 // Typewriter for intent text
