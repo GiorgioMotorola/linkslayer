@@ -1,0 +1,47 @@
+- id: campfire_cliffside
+  name: Cliffside Campfire
+  greeting: "High on the cliffside, someone has built a fire in a ring of stones. The flames snap in the wind off the ridge. Below, the world stretches out in every direction. You could rest here. No one else is around."
+  options:
+    - text: Settle in and rest by the fire. Stay a full minute.
+      result: campfire_rest
+      campfireName: Cliffside Campfire
+      responseText: You lower yourself onto the cold stone near the fire. The heat finds your face immediately.
+    - text: Keep moving. The ridge looks like a good vantage point.
+      result: none
+      responseText: You pull yourself away from the warmth and follow the ridge. The fire shrinks behind you.
+
+- id: campfire_beach
+  name: Beach Campfire
+  greeting: "A fire burns low on the sand, above the tide line. The waves come in and pull back in a slow, even rhythm. Driftwood crackles and spits sparks into the dark. You haven't seen the ocean in a while. You could stop here."
+  options:
+    - text: Sit down by the fire. Let the sound of the waves do the rest.
+      result: campfire_rest
+      campfireName: Beach Campfire
+      responseText: You sink into the sand. The fire pops. The tide keeps its rhythm. For a moment, nothing is asked of you.
+    - text: Keep moving along the shore.
+      result: none
+      responseText: You walk on. The fire fades behind you, and then the sound of the waves fills the space it left.
+
+- id: campfire_valley
+  name: Valley Campfire
+  greeting: "The valley floor is sheltered from the wind and the campfire here burns steadily, almost perfectly. Someone left a bedroll and a pot that's still faintly warm. Stars are beginning to show above the ridge. You could rest here a while."
+  options:
+    - text: Sit by the fire. The valley is quiet. You have time.
+      result: campfire_rest
+      campfireName: Valley Campfire
+      responseText: You settle onto the bedroll. The stars are coming out one by one. The fire keeps burning without your help.
+    - text: Keep going while there's still light.
+      result: none
+      responseText: You leave the bedroll and the warm pot for whoever needs them next. The valley falls behind you.
+
+- id: campfire_riverside
+  name: Riverside Campfire
+  greeting: "A fire burns beside a river that moves fast and cold over smooth stones. The sound of the water fills the air completely. The ground near the bank is soft and the fire is big enough to see clearly by. You could stay here for a while."
+  options:
+    - text: Rest by the fire. Let the river do the talking.
+      result: campfire_rest
+      campfireName: Riverside Campfire
+      responseText: You sit. The river goes past without caring where you're headed. That is, for a moment, a relief.
+    - text: Cross the river and push on.
+      result: none
+      responseText: You wade through the shallows. The cold is immediate. The fire is already far behind you.

@@ -65,7 +65,7 @@ export function useGameHandlers(deps) {
     markBossDefeated,
   } = gameFlow;
 
-  const { showRestModal, showShopModal, showTipsModal, restModalCount } = modals;
+  const { showRestModal, showShopModal, showTipsModal, restModalCount, showCampfireOverlay, campfireReward } = modals;
 
   const {
     playerClass,
@@ -348,6 +348,7 @@ export function useGameHandlers(deps) {
         showRestModal,
         showShopModal,
         showTipsModal,
+        showCampfireOverlay,
         bossOverlay,
       },
       enemyState: {
@@ -534,6 +535,8 @@ export function useGameHandlers(deps) {
       },
       modalState: {
         bossOverlay,
+        showCampfireOverlay,
+        campfireReward,
       },
       utilityFunctions: {
         log,

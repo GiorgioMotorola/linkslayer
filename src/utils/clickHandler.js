@@ -2,9 +2,7 @@
 
 import { nextTick } from "vue";
 import { getRandomBoss, isBoss } from "@/utils/bossGenerator";
-import { rollEncounter, generateEnemy } from "@/utils/encounterGenerator";
-import friendlyEncounters from "@/assets/data/friendlyEncounters.json";
-import loreEncounters from "@/assets/data/loreEncounters.json";
+import { rollEncounter, generateEnemy, npcData, loreData } from "@/utils/encounterGenerator";
 
 export async function handleClick({
   title,
@@ -24,7 +22,8 @@ export async function handleClick({
     modalState.inEncounter.value ||
     modalState.showRestModal.value ||
     modalState.showShopModal.value ||
-    modalState.showTipsModal.value
+    modalState.showTipsModal.value ||
+    modalState.showCampfireOverlay?.value
   ) {
     return;
   }
@@ -132,7 +131,7 @@ export async function handleClick({
     // Encounter Beacon forces a friendly NPC encounter
     if (encounterBeaconActive?.value) {
       encounterBeaconActive.value = false;
-      const availableNPCs = friendlyEncounters.filter(
+      const availableNPCs = npcData.filter(
         (npc) => !gameData.seenNPCEncounters.value.includes(npc.id)
       );
       if (availableNPCs.length > 0) {
@@ -150,7 +149,7 @@ export async function handleClick({
     let fullEncounter = null;
 
     if (roll.type === "npc") {
-      const availableNPCs = friendlyEncounters.filter(
+      const availableNPCs = npcData.filter(
         (npc) => !gameData.seenNPCEncounters.value.includes(npc.id)
       );
       if (availableNPCs.length === 0) {
@@ -163,7 +162,7 @@ export async function handleClick({
         utilityFunctions.log(`${npc.greeting}`);
       }
     } else if (roll.type === "lore") {
-      const availableLore = loreEncounters.filter(
+      const availableLore = loreData.filter(
         (lore) => !gameData.seenLoreEncounters.value.includes(lore.id)
       );
       if (availableLore.length === 0) {

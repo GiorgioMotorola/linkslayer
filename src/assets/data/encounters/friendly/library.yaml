@@ -1,0 +1,156 @@
+- id: lib_001
+  name: The Grand Foyer
+  greeting: "THE ARCHIVIST: Ah. A traveler. Every traveler ends up here eventually. These volumes were left by adventurers who passed through before you. Some of them passed through under better circumstances than others. Take one."
+  options:
+    - text: "The Herbalist's Companion — dog-eared, smells of dried chamomile"
+      result: item
+      details: health
+      responseText: You open the book to a random page. A perfectly preserved sprig of dried herbs falls out. The Archivist stamps something on her ledger without looking up. You receive some Breadcrumbs.
+    - text: "Ledger of the Lost Caravan — a handful of gold coins fall out when you open it"
+      result: item
+      details: gold
+      amount: 15
+      responseText: "You open the ledger. Between pages 40 and 41, several gold coins fall to the floor. The Archivist doesn't flinch. 'Happens every time with that one,' she says. You pocket the coins."
+    - text: "A Blacksmith's Notes on Tempered Steel — full of weapon diagrams, marginalia everywhere"
+      result: item
+      details: weapon
+      amount: 1
+      responseText: You spend a few minutes reading the blacksmith's precise, obsessive notes. By the time you set the book down, you have a much better understanding of how to hit things harder. Weapon damage +1.
+    - text: "On Patience and the Virtue of Waiting — the longest, densest book in the foyer"
+      result: none
+      responseText: "You take the book and open it to page one. You read a single paragraph. You put the book back. The Archivist watches this with professional detachment. 'Most people last half a paragraph,' she says. 'You did well.'"
+
+- id: lib_002
+  name: The West Wing
+  greeting: "A figure materializes from between the shelves of the West Wing, which stretches impossibly far in every direction. She is pale, silent, and has been cataloguing the histories of fallen civilizations for longer than she will say. 'These shelves hold knowledge from kingdoms that no longer exist,' she says. 'Choose carefully. Some books carry their authors' fate.'"
+  options:
+    - text: "Chronicle of the Sunken Vault — treasure maps drawn in every margin"
+      result: item
+      details: gold
+      amount: 20
+      responseText: You flip through the chronicle. Dozens of hand-drawn maps fill the margins, each annotated with specific amounts. You tear out the most promising page. It leads you somewhere useful. You gain 20 Gold.
+    - text: "The Siege Engineer's Handbook — weapon schematics, some with brown stains on them"
+      result: item
+      details: weapon
+      amount: 1
+      responseText: The handbook is detailed, gruesome, and surprisingly practical. You absorb enough to improve how you hit things. Weapon damage +1. The Pale Librarian watches you read with an expression you can't quite identify.
+    - text: "Prayers of the Final Healer — warm to the touch, stained with something very old"
+      result: item
+      details: health
+      responseText: "The book is warm in your hands. You read a few lines. Something in the old words is comforting. You feel a little better. 'She was the last of her order,' the Librarian says quietly. You receive some Breadcrumbs."
+    - text: "Whispers from the Beneath — it hums faintly when you reach for it"
+      result: damage-minor
+      amount: 5
+      responseText: "You open the book. The hum gets louder. A single sentence is written on every page, in dozens of different handwritings, as though many people wrote the same sentence many times. You close it very quickly. You take 5 damage and are unwilling to discuss what you read."
+
+- id: lib_003
+  name: The East Wing
+  greeting: "A frantic scholar rushes past, dropping scrolls. He skids to a stop when he notices you. 'Oh! A visitor! I've been cataloguing the East Wing for — a while. Years, probably. Or centuries. The shelves keep moving. I have too many books. Please. Take one. I cannot carry them all.'"
+  options:
+    - text: "Practical Alchemy for the Impatient — smells faintly of sulfur, works anyway"
+      result: item
+      details: health
+      responseText: "The scholar thrusts the book into your hands. 'Chapter four is particularly useful. Don't read chapter seven.' You follow his advice. The remedy on page 94 turns out to be legitimate. You receive some Breadcrumbs."
+    - text: "Maps of Places That Moved — annotated in pencil, extensively second-guessed"
+      result: item
+      details: gold
+      amount: 15
+      responseText: The maps are outdated, but the handwritten notes about where valuables were stashed are extremely specific. The scholar doesn't remember writing them. You gain 15 Gold.
+    - text: "Field Notes on Living Armor — shell samples and scales still attached to the pages"
+      result: item
+      details: shield
+      amount: 1
+      responseText: "The field notes are dense with observations about how creatures defend themselves. You take the attached samples too. By the time you put the book down, your own defense has improved. Defense +1. 'Fascinating, isn't it?' the scholar says. He does not wait for an answer."
+    - text: "The Unfinished Theory of Everything — stops mid-sentence on page 12"
+      result: none
+      responseText: "You read the first twelve pages, which are genuinely extraordinary. Page 12 ends mid-sentence: 'And therefore the fundamental nature of reality is simply a matter of—' That's it. That's the book. The scholar looks embarrassed. 'I'll finish it eventually,' he says. You hand it back."
+
+- id: lib_004
+  name: The Courtyard
+  greeting: "The library's courtyard is a reading garden with hedges trimmed into the shapes of letters. A central fountain is perpetually overflowing. An elderly garden keeper rakes leaves that seem to fall from nowhere. 'The scholars always forget their books out here,' she says. 'I save what I can. You're welcome to one.'"
+  options:
+    - text: "Field Guide to Edible Mushrooms — a dried mushroom pressed inside the front cover"
+      result: item
+      details: health
+      responseText: "The garden keeper hands you the book with both hands, like it's a gift. 'That one saved my predecessor,' she says. You eat the pressed mushroom inside the cover. It seems fine. You receive some Breadcrumbs."
+    - text: "Meditations on the Nature of Gold — the author was very wealthy and did not understand why other people were not"
+      result: item
+      details: gold
+      amount: 15
+      responseText: "The book is written with baffling sincerity by someone who had never once worried about money. However, on the back inside cover, someone else has left a folded note with directions to a cache they apparently forgot. You gain 15 Gold."
+    - text: "The Soldier's Practical Compendium — worn spine, every page used, combat notes in the margins"
+      result: item
+      details: weapon
+      amount: 1
+      responseText: The compendium has been carried into combat by someone who knew what they were doing. Their notes are sharp and specific. You read carefully and feel your technique improve. Weapon damage +1.
+    - text: "Poetry of the Open Sky — three hundred and forty pages of verse about clouds"
+      result: none
+      responseText: "You sit on a bench and read for a while. The poetry is genuinely beautiful. A cloud passes overhead that looks exactly like the one described on page 212. You put the book back gently. Nothing useful has happened, but you feel strangely calm."
+
+- id: lib_005
+  name: The Side Entrance
+  greeting: "A hooded figure lingers near the library's side entrance, half in shadow. She catches your eye and tilts her head toward an alcove. 'I see you. You're not the Archivist, so we're fine. These came from the Restricted Section. She doesn't know. Better rewards, proportionally higher risk. You interested or not?'"
+  options:
+    - text: "Forbidden Remedies — handwriting is nearly illegible, works anyway"
+      result: item
+      details: health
+      responseText: "The figure slides the book across to you. 'Don't tell her where you got it.' The remedies inside are written in an urgent, cramped hand, as if the author was in a hurry and probably also in pain. They work. You receive some Breadcrumbs."
+    - text: "The Thief's Almanac — dog-eared at the chapter titled 'Where Treasures Hide'"
+      result: item
+      details: gold
+      amount: 25
+      responseText: "You open the almanac to the dog-eared chapter. The author has been very specific about where specific kinds of people keep their gold. You follow one of the simpler suggestions within the hour. You gain 25 Gold. The figure nods approvingly."
+    - text: "Treatise on Unsanctioned Blades — the pages are surprisingly sharp"
+      result: item
+      details: weapon
+      amount: 1
+      responseText: "The figure hands it over with visible reluctance. 'Careful with that one.' The treatise covers blade techniques that are, in several jurisdictions, illegal. They are also effective. Weapon damage +1. You cut your thumb on page 7."
+    - text: "Secrets of the Library Itself — begins with tremendous promise"
+      result: damage-minor
+      amount: 7
+      responseText: "You open the book. Page one is extraordinary — the library's true nature, laid bare. Page two is blank. Page three is blank. You flip to the end. All blank. The cover closes on its own. Something about the experience has cost you 7 HP. You don't know how to explain it. The figure shrugs. 'Yeah. That happens.'"
+
+- id: lib_006
+  name: The Back Stacks
+  greeting: "Deep in the back stacks, where the shelves stretch far beyond what should be architecturally possible, a young student sits on the floor surrounded by books. She looks exhausted. 'I've been lost back here since... I don't know. Tuesday. Or last Tuesday. Or the Tuesday before a different year.' She gestures at a pile. 'I found these on the floor. I don't need them anymore. I just want to find the exit.'"
+  options:
+    - text: "Forgotten First Aid — written in a shaky, extremely urgent hand"
+      result: item
+      details: health
+      responseText: "The student pushes the book toward you with her foot. 'Found it on shelf 40,000-something. It's good, I think.' You read the first few pages. The author was clearly in bad shape while writing it but knew what they were doing. You receive some Breadcrumbs."
+    - text: "An Incomplete History of Treasure — the final chapter is missing"
+      result: item
+      details: gold
+      amount: 15
+      responseText: "The student looks apologetic. 'The last chapter was apparently about where to find buried treasure. It was torn out before I got to it.' You flip through anyway. The detailed index alone is worth something to the right buyer. You gain 15 Gold."
+    - text: "Notes on Defensive Metalwork — half-finished, but what's there is solid"
+      result: item
+      details: shield
+      amount: 1
+      responseText: "The notes break off mid-thought on page 88, but everything up to that point is excellent. You spend a few minutes studying the diagrams. Your defense improves. Defense +1. The student seems pleased you took it. 'It was heavy,' she says."
+    - text: "How to Navigate Infinite Spaces — appears to be exactly what you need"
+      result: none
+      responseText: "You open the book with genuine hope. Chapter one refers you to Volume II. You look for Volume II. It refers you to Volume III. Volume III refers you to Volume I. You put the book down. The student watches. 'Yeah,' she says. 'I tried that one too.'"
+
+- id: lib_007
+  name: The Restricted Section
+  greeting: "Iron gates, locked from the inside. A tall figure in dark robes stands on the other side, not moving, not speaking, until you are very close. 'You shouldn't be here,' she says finally. 'But you are here. Knowledge denied is knowledge wasted. Take one volume. And do not come back.'"
+  options:
+    - text: "The Last Will of a Master Swordsmith — a folded weapon schematic tucked inside the cover"
+      result: item
+      details: weapon
+      amount: 2
+      responseText: "The Curator slides the book through the gate without touching the bars. Inside the front cover, a detailed weapon schematic is folded in thirds. It covers techniques that the swordsmith apparently took pains to ensure would not survive him. They have. Weapon damage +2."
+    - text: "The Healer Who Refused to Die — pressed flowers inside, still fresh after an unknowable number of years"
+      result: item
+      details: health
+      responseText: "The book is thin and old. The flowers inside are impossible — fresh, fragrant, the same as the day they were pressed. You hold one. Something passes between you and whoever left it here. You receive some Breadcrumbs, and feel unexpectedly well."
+    - text: "Inventory of a Dragon's Hoard — organized by category, annotated in a cramped hand"
+      result: item
+      details: gold
+      amount: 30
+      responseText: "The inventory is meticulous. Location markers, quantities, dates of last verified count. You follow the most recent annotation to a small cache that the dragon apparently forgot to update its records on. You gain 30 Gold. The Curator watches you go with no readable expression."
+    - text: "What the Library Knows About You — your name is written on page one"
+      result: damage-minor
+      amount: 10
+      responseText: "You open the book. Your name, precisely correct, is on page one. The next page contains a date. The page after that is blank. You close the book very quickly and slide it back through the gate. The Curator catches it without looking. You take 10 damage in the form of a cold sweat that doesn't fully go away."

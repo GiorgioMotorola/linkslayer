@@ -10,6 +10,8 @@ export function useModals() {
   const isMapModalOpen = ref(false);
   const restModalCount = ref(0);
   const longRestDismissCount = ref(0);
+  const showCampfireOverlay = ref(false);
+  const campfireReward = ref(null);
 
   // Track rest modal opens; count long rest dismissals (even restModalCount = long rest)
   watch(showRestModal, (newValue) => {
@@ -36,6 +38,8 @@ export function useModals() {
     isMapModalOpen,
     restModalCount,
     longRestDismissCount,
+    showCampfireOverlay,
+    campfireReward,
     openInventoryModal,
     closeInventoryModal,
   };

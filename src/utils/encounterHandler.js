@@ -403,6 +403,21 @@ export function handleEncounterOption({
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
+  if (option.result === "campfire_rest") {
+    const rewards = [
+      { type: "gold", amount: 50 },
+      { type: "weapon", amount: 1 },
+      { type: "shield", amount: 1 },
+      { type: "special", amount: 3 },
+    ];
+    const reward = rewards[Math.floor(Math.random() * rewards.length)];
+    modalState.campfireReward.value = { name: option.campfireName || "Campfire", ...reward };
+    modalState.showCampfireOverlay.value = true;
+    enemyState.encounter.value = null;
+    modalState.bossOverlay.value = false;
+    return;
+  }
+
   const isTerminalEffectResult = [
     "item",
     "inventoryItem",

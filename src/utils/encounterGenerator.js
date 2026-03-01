@@ -2,10 +2,10 @@
 import { ENEMY_TYPES } from "@/utils/enemies";
 
 const npcModules = import.meta.glob("@/assets/data/encounters/friendly/*.yaml", { eager: true });
-const npcData = Object.values(npcModules).flatMap((m) => m.default);
+export const npcData = Object.values(npcModules).flatMap((m) => m.default);
 
 const loreModules = import.meta.glob("@/assets/data/encounters/lore/*.yaml", { eager: true });
-const loreData = Object.values(loreModules).flatMap((m) => m.default);
+export const loreData = Object.values(loreModules).flatMap((m) => m.default);
 
 export function rollEncounter(difficultyLevel) {
   const roll = Math.floor(Math.random() * 20) + 1;

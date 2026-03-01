@@ -209,6 +209,12 @@
   </div>
 
   <div class="dim-overlay" :class="{ 'active-overlay': bossOverlay }"></div>
+
+  <CampfireOverlay
+    v-if="showCampfireOverlay && campfireReward"
+    :reward="campfireReward"
+    @done="handleCampfireReward"
+  />
 </template>
 
 <script setup>
@@ -223,6 +229,7 @@ import ShopModal from "@/components/ShopModal.vue";
 import InventoryModal from "@/components/InventoryModal.vue";
 import MapModal from "@/components/MapModal.vue";
 import DieSlayerModal from "@/components/DieSlayerModal.vue";
+import CampfireOverlay from "@/components/CampfireOverlay.vue";
 
 import { shopItems as allShopItems } from "@/utils/shopItems";
 import { isBoss } from "@/utils/bossGenerator";
@@ -273,6 +280,8 @@ const {
   isMapModalOpen,
   restModalCount,
   longRestDismissCount,
+  showCampfireOverlay,
+  campfireReward,
   openInventoryModal,
   closeInventoryModal,
 } = modals;
@@ -280,6 +289,16 @@ const {
 const showDieSlayer = ref(false);
 function handleDieSlayerGold(amount) {
   playerGold.value += amount;
+}
+
+function handleCampfireReward(reward) {
+  if (reward.type === "gold") playerGold.value += reward.amount;
+  else if (reward.type === "weapon") weaponBonus.value += reward.amount;
+  else if (reward.type === "shield") shieldBonus.value += reward.amount;
+  else if (reward.type === "special") specialUsesLeft.value += reward.amount;
+  log(`🔥 You rested at the ${reward.name} and feel restored.`);
+  showCampfireOverlay.value = false;
+  campfireReward.value = null;
 }
 
 const player = usePlayerState(hpCapBonus);
