@@ -96,6 +96,7 @@ export function useGameHandlers(deps) {
     wardingShieldHitsRemaining,
     wardStoneActive,
     encounterBeaconActive,
+    bountyScrollActive,
   } = statusEffects;
 
   const {
@@ -298,7 +299,7 @@ export function useGameHandlers(deps) {
     } else if (defeatedEnemyData.isMiniBoss) {
       handleMiniBossLootDrop(lootHandlerArgs);
     } else {
-      externalHandleLootDrop(lootHandlerArgs);
+      externalHandleLootDrop({ ...lootHandlerArgs, bountyScrollActive });
     }
   }
 

@@ -219,6 +219,12 @@ export function handleShopPurchase(
           utilityFunctions.log(
             `👜 ${gameData.playerName.value} acquired a Gold Pouch.`
           );
+        } else if (item.details === "bountyScroll") {
+          playerState.inventory.value.bountyScrolls =
+            Number(playerState.inventory.value.bountyScrolls || 0) + 1;
+          utilityFunctions.log(
+            `📜 ${gameData.playerName.value} acquired a Bounty Scroll.`
+          );
         }
         break;
 
@@ -789,6 +795,26 @@ export const useEncounterBeacon = (playerState, utilityFunctions, combatData) =>
   inventory.value.encounterBeacons--;
   encounterBeaconActive.value = true;
   log(`🏮 You light the Encounter Beacon. Your next encounter will be a friendly NPC.`);
+};
+
+// Bounty Scroll — next combat loot drop fires twice
+export const useBountyScroll = (playerState, utilityFunctions, combatData) => {
+  const { inventory } = playerState;
+  const { log, closeInventoryModal } = utilityFunctions;
+  const { bountyScrollActive } = combatData;
+
+  if (inventory.value.bountyScrolls <= 0) {
+    log(`You don't have any Bounty Scrolls.`);
+    return;
+  }
+  if (bountyScrollActive.value) {
+    log(`📜 A Bounty Scroll is already active.`);
+    return;
+  }
+  inventory.value.bountyScrolls--;
+  bountyScrollActive.value = true;
+  log(`📜 You unfurl the Bounty Scroll. Your next combat victory will drop loot twice.`);
+  closeInventoryModal();
 };
 
 // Gold Pouch — collect accumulated gold

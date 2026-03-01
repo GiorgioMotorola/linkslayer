@@ -252,6 +252,17 @@ export const shopItems = [
     haikuThree: "Fate awaits the cut.",
   },
       {
+    id: "bounty_scroll",
+    name: "Bounty Scroll",
+    cost: 20,
+    effect: "inventoryItem",
+    details: "bountyScroll",
+    description: "Your next combat victory drops loot twice. Consumable.",
+    haikuOne: "Ink dries on parchment",
+    haikuTwo: "Two prizes where once was one",
+    haikuThree: "Fortune pays in full.",
+  },
+  {
     id: "gold_pouch",
     name: "Gold Pouch",
     cost: 50,

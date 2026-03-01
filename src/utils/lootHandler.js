@@ -24,9 +24,15 @@ function dropOnce({ playerName, inventory, playerGold, log }) {
   }
 }
 
-export function handleLootDrop({ playerState, utilityFunctions }) {
+export function handleLootDrop({ playerState, utilityFunctions, bountyScrollActive }) {
   const { playerName, playerGold, inventory } = playerState;
   const { log } = utilityFunctions;
 
   dropOnce({ playerName, inventory, playerGold, log });
+
+  if (bountyScrollActive?.value) {
+    bountyScrollActive.value = false;
+    log(`📜 The Bounty Scroll shimmers — a second drop falls!`);
+    dropOnce({ playerName, inventory, playerGold, log });
+  }
 }

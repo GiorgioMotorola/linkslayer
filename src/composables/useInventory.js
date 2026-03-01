@@ -24,6 +24,7 @@ import {
   useWardStone as externalUseWardStone,
   useEncounterBeacon as externalUseEncounterBeacon,
   useGoldPouch as externalUseGoldPouch,
+  useBountyScroll as externalUseBountyScroll,
 } from "@/utils/itemHandlers";
 
 export function useInventory() {
@@ -55,6 +56,7 @@ export function useInventory() {
     wardStones: 0,
     encounterBeacons: 0,
     goldPouches: 0,
+    bountyScrolls: 0,
   });
 
   const goldPouchAccumulatedGold = ref(0);
@@ -400,6 +402,14 @@ export function useInventory() {
           { inventory, playerGold: playerState.playerGold },
           { log: utilityFunctions.log, closeInventoryModal: modalState.closeInventoryModal },
           { goldPouchAccumulatedGold }
+        );
+      },
+
+      useBountyScroll: () => {
+        externalUseBountyScroll(
+          { inventory },
+          { log: utilityFunctions.log, closeInventoryModal: modalState.closeInventoryModal },
+          { bountyScrollActive: statusEffects.bountyScrollActive }
         );
       },
     };

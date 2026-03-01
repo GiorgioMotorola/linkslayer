@@ -37,6 +37,9 @@ export function useStatusEffects() {
   // Encounter Beacon (force next encounter to be NPC)
   const encounterBeaconActive = ref(false);
 
+  // Bounty Scroll (double loot on next combat victory)
+  const bountyScrollActive = ref(false);
+
   // Computed properties
   const isPlayerPoisoned = computed(() => poisonedClicksLeft.value > 0);
   const isBlurred = computed(() => blurClicksLeft.value > 0);
@@ -232,6 +235,9 @@ export function useStatusEffects() {
 
     // Encounter Beacon
     encounterBeaconActive,
+
+    // Bounty Scroll
+    bountyScrollActive,
 
     // Setup
     setupClickWatcher,

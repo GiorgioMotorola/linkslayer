@@ -194,6 +194,7 @@
         :ward-stone-clicks-remaining="wardStoneClicksRemaining"
         :is-encounter-beacon-active="encounterBeaconActive"
         :gold-pouch-accumulated-gold="goldPouchAccumulatedGold"
+        :is-bounty-scroll-active="bountyScrollActive"
       />
 
       <MapModal
@@ -344,6 +345,7 @@ const {
   wardStoneActive,
   wardStoneClicksRemaining,
   encounterBeaconActive,
+  bountyScrollActive,
   setupClickWatcher,
 } = statusEffects;
 
@@ -479,6 +481,7 @@ const itemHandlers = createItemHandlers({
     wardStoneActive,
     wardStoneClicksRemaining,
     encounterBeaconActive,
+    bountyScrollActive,
   },
 });
 
@@ -537,6 +540,8 @@ function handleUseInventoryItem(itemType) {
     itemHandlers.useEncounterBeacon();
   } else if (itemType === "goldPouch") {
     itemHandlers.useGoldPouch();
+  } else if (itemType === "bountyScroll") {
+    itemHandlers.useBountyScroll();
   }
 }
 </script>

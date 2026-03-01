@@ -435,6 +435,22 @@
           </div>
         </div>
 
+        <div v-if="inventory.bountyScrolls > 0" class="item-slot-wrapper">
+          <div class="item-details-box">
+            <div class="item-name-quantity">
+              <span class="item-name">Bounty Scroll</span>
+              <span class="item-count">x{{ inventory.bountyScrolls }}</span>
+            </div>
+            <div class="item-description">
+              {{ itemDesc.bountyScroll }}
+              <template v-if="isBountyScrollActive"> (Active — next victory drops loot twice.)</template>
+            </div>
+          </div>
+          <div class="item-button-box">
+            <button class="buy-button-details" @click.stop="useItem('bountyScroll')" :disabled="isBountyScrollActive">Use</button>
+          </div>
+        </div>
+
         <div v-if="inventory.goldPouches > 0" class="item-slot-wrapper">
           <div class="item-details-box">
             <div class="item-name-quantity">
@@ -551,6 +567,10 @@ const props = defineProps({
   goldPouchAccumulatedGold: {
     type: Number,
     default: 0,
+  },
+  isBountyScrollActive: {
+    type: Boolean,
+    default: false,
   },
 });
 

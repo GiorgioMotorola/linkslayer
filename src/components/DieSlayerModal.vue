@@ -2,7 +2,10 @@
   <div class="die-slayer-overlay">
     <div class="die-slayer-modal">
 
-      <div class="ds-title">⚔ Die Slayer</div>
+      <div class="ds-title">
+        ⚔ Die Slayer
+        <span class="ds-gold-display">💰 {{ playerGold }}g</span>
+      </div>
 
       <!-- NPC greeting -->
       <div class="ds-npc-bar">
@@ -30,7 +33,7 @@
 
       <!-- SETUP PHASE -->
       <div v-if="phase === 'setup'" class="ds-phase">
-        <div class="ds-phase-label">Roll your dice — best of 3 rolls</div>
+        <div class="ds-phase-label">Roll your dice</div>
         <div class="ds-dice-row">
           <div
             v-for="(die, i) in playerDice"
@@ -464,6 +467,7 @@ onMounted(() => {
   padding: 24px 28px;
   width: 92%;
   max-width: 520px;
+  height: 520px;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -473,7 +477,10 @@ onMounted(() => {
 
 /* Title */
 .ds-title {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
   font-size: 20px;
   font-weight: 700;
   letter-spacing: 3px;
@@ -481,6 +488,15 @@ onMounted(() => {
   color: #e8d080;
   border-bottom: 1px solid #333;
   padding-bottom: 12px;
+}
+
+.ds-gold-display {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #c8a040;
+  text-transform: none;
+  white-space: nowrap;
 }
 
 /* NPC bar */
