@@ -92,6 +92,7 @@
         :specialTier="specialTier"
         @close="resetGame"
         :gameLog="gameLog"
+        :lastBattle="lastBattle"
       />
 
       <DefeatModal
@@ -116,6 +117,7 @@
         :specialTier="specialTier"
         @close="resetGame"
         :gameLog="gameLog"
+        :lastBattle="lastBattle"
       />
 
       <ArticleViewer
@@ -256,6 +258,7 @@ const {
   enemiesKilled,
   combatWinsSinceLastCapIncrease,
   hpCapBonus,
+  bossDefeated,
   resetGame,
 } = gameFlow;
 
@@ -378,6 +381,19 @@ setupClickWatcher({
   goldPouchAccumulatedGold,
 });
 
+// Track the last enemy fought (for defeat/victory modals).
+// Captured when combat starts so it's always available even after encounter is nulled.
+const lastBattle = ref({ enemyName: '', article: '' });
+
+watch(encounter, (newVal) => {
+  if (newVal?.type === 'combat' && newVal?.enemy) {
+    lastBattle.value = {
+      enemyName: newVal.enemy.name ?? '',
+      article: formattedTitle.value ?? '',
+    };
+  }
+});
+
 // Watch playerHP for defeat condition
 watch(playerHP, (newVal) => {
   if (playerClass.value && newVal <= 0 && !defeated.value) {
@@ -387,6 +403,16 @@ watch(playerHP, (newVal) => {
     defeated.value = true;
     clearInterval(timerInterval);
     encounter.value = null;
+  }
+});
+
+// Watch for boss defeat to capture victory enemy info
+watch(bossDefeated, (val) => {
+  if (val) {
+    lastBattle.value = {
+      enemyName: combat.currentEnemy?.value?.name ?? '',
+      article: formattedTitle.value ?? '',
+    };
   }
 });
 

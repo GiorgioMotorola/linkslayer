@@ -251,7 +251,7 @@ export const shopItems = [
     haikuTwo: "A hungry gleam now sharpens bright",
     haikuThree: "Fate awaits the cut.",
   },
-      {
+  {
     id: "bounty_scroll",
     name: "Bounty Scroll",
     cost: 20,

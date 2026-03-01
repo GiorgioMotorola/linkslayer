@@ -48,7 +48,10 @@
               <span class="trail-marker">
                 {{ index < currentTargetIndex ? "✓" : index === currentTargetIndex ? "▶" : "○" }}
               </span>
-              <span class="trail-name">{{ article.replaceAll("_", " ") }}</span>
+              <span class="trail-name">
+                <strong>{{ article.replaceAll("_", " ") }}</strong>
+                <span class="trail-location">{{ getLocation(article, index) }}</span>
+              </span>
             </div>
           </div>
         </div>
@@ -77,6 +80,31 @@ defineProps({
 });
 
 defineEmits(["close"]);
+
+const locationTypes = [
+  // Settlements
+  "Village", "Hamlet", "Town", "Borough", "Colony", "Settlement", "Outpost", "Encampment",
+  // Cities
+  "City", "Metropolis", "Capital", "Free City",
+  // Fortifications
+  "Castle", "Fortress", "Keep", "Stronghold", "Bastion", "Citadel", "Battlement", "Rampart",
+  // Wilds & Geography
+  "Isle", "Glen", "Hollow", "Gorge", "Pass", "Reach", "Expanse", "Crossing",
+  // Mystical / Dungeon
+  "Ruins", "Dungeon", "Cavern", "Crypt", "Barrow", "Tomb", "Lair", "Depths",
+  // Sacred
+  "Shrine", "Temple", "Monastery", "Sanctum", "Reliquary",
+  // Arcane
+  "Tower", "Spire", "Observatory", "Vault",
+];
+
+function getLocation(article, index) {
+  let hash = index * 31;
+  for (let i = 0; i < article.length; i++) {
+    hash = (hash * 17 + article.charCodeAt(i)) & 0xffff;
+  }
+  return locationTypes[Math.abs(hash) % locationTypes.length];
+}
 
 const pathCoordinates = [
   { x: 50, y: 90 },
@@ -277,6 +305,14 @@ const dotStyle = (index) => {
 
 .trail-upcoming .trail-marker { color: #9a8a6a; font-size: 9px; }
 .trail-upcoming .trail-name   { color: #5a5040; }
+
+.trail-location {
+  font-weight: 400;
+  font-style: italic;
+  opacity: 0.65;
+  margin-left: 3px;
+  font-size: 0.92em;
+}
 
 /* ── Close button ── */
 .close-button {

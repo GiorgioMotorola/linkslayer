@@ -12,6 +12,13 @@
         <span class="identity-class">{{ playerClass?.name ?? 'Adventurer' }}</span>
       </div>
 
+      <div v-if="lastBattle?.enemyName || lastBattle?.article" class="modal-battle-summary">
+        <span class="battle-player">{{ playerName }}</span>
+        <span class="battle-verb"> slayed the </span>
+        <span class="battle-article">{{ lastBattle.article }}</span>
+        <span v-if="lastBattle.enemyName" class="battle-enemy">&nbsp;{{ lastBattle.enemyName }}</span>
+      </div>
+
       <div v-if="playerGoal" class="modal-goal">"{{ playerGoal }}"</div>
 
       <div class="hero-stats">
@@ -72,6 +79,10 @@
         </div>
       </div>
 
+      <div class="modal-site-link">
+        <a href="https://linkslayer.org/" target="_blank" rel="noopener">linkslayer.org</a>
+      </div>
+
       <div class="modal-buttons">
         <button @click="share" class="modal-btn">⬆ Share Results</button>
         <button @click="copyLogToClipboard" class="modal-btn">📋 Copy Log</button>
@@ -109,13 +120,18 @@ const props = defineProps({
   goldSpent: Number,
   specialTier: Number,
   gameLog: Array,
+  lastBattle: { type: Object, default: () => ({ enemyName: '', article: '' }) },
 });
 
 const emit = defineEmits(["close"]);
 
 const share = () => {
+  const slayed = props.lastBattle?.article
+    ? `${props.lastBattle.article}${props.lastBattle.enemyName ? ' ' + props.lastBattle.enemyName : ''}`
+    : '';
   const summaryText =
     `🏆 VICTORY — ${props.playerName} the ${props.playerClass?.name ?? 'Adventurer'}\n` +
+    (slayed ? `Slayed: ${slayed}\n` : "") +
     (props.playerGoal ? `Goal: "${props.playerGoal}"\n` : "") +
     `\n` +
     `Time: ${props.timer}\n` +
@@ -129,7 +145,8 @@ const share = () => {
     (props.shieldBonus > 0 ? `Defense Bonus: +${props.shieldBonus}\n` : "") +
     `Special Tier: T${props.specialTier ?? 1}\n` +
     `Specials Used: ${props.specialsUsed}\n` +
-    `Short Rests: ${props.shortRestsUsed} | Long Rests: ${props.longRestsUsed}`;
+    `Short Rests: ${props.shortRestsUsed} | Long Rests: ${props.longRestsUsed}\n` +
+    `\nhttps://linkslayer.org/`;
 
   if (navigator.clipboard) {
     navigator.clipboard
@@ -264,6 +281,50 @@ function hideNotification() {
 .identity-class {
   font-style: italic;
   color: #d4aa60;
+}
+
+/* ── Battle summary ──────────────────────────────────────── */
+.modal-battle-summary {
+  font-size: 13px;
+  color: #b09050;
+  text-align: center;
+}
+
+.battle-player {
+  font-weight: 600;
+  color: #f0d888;
+}
+
+.battle-verb {
+  color: #a08040;
+}
+
+.battle-article {
+  font-weight: 700;
+  color: #e8c050;
+}
+
+.battle-enemy {
+  font-style: italic;
+  color: #c8a850;
+}
+
+/* ── Site link ───────────────────────────────────────────── */
+.modal-site-link {
+  font-size: 11px;
+  text-align: center;
+  opacity: 0.45;
+}
+
+.modal-site-link a {
+  color: #c8a840;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+
+.modal-site-link a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
 }
 
 /* ── Goal ────────────────────────────────────────────────── */
