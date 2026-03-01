@@ -75,6 +75,13 @@
         >
           Backpack
         </button>
+        <button
+          @click="$emit('open-die-slayer')"
+          class="close-button-game-style die-slayer-button"
+          :disabled="props.playerGold < 5"
+        >
+          ⚔ Die Slayer — 5g
+        </button>
         <button @click="$emit('close')" class="close-button-game-style">
           Done Shopping
         </button>
@@ -105,7 +112,7 @@ const props = defineProps({
   specialUsesLeft: Number,
 });
 
-const emit = defineEmits(["buy", "close", "open-backpack"]);
+const emit = defineEmits(["buy", "close", "open-backpack", "open-die-slayer"]);
 
 const toastMessage = ref(null);
 const isToastError = ref(false);
@@ -456,6 +463,16 @@ function selectItem(item) {
   gap: 20px;
   margin-top: 25px;
   width: 100%;
+}
+
+.die-slayer-button {
+  border-color: #7a4a2a !important;
+  color: #e8c070 !important;
+}
+
+.die-slayer-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 .close-button-game-style {

@@ -120,11 +120,11 @@ export function useGameHandlers(deps) {
   // Counter result state (null | 'success' | 'fail')
   const counterResult = ref(null);
 
-  function onCounterResult({ succeeded }) {
-    // Delay until after the dice animation lands
+  function onCounterResult({ succeeded, delay }) {
+    const ms = delay !== undefined ? delay : DICE_TICKS * DICE_TICK_MS + 150;
     setTimeout(() => {
       counterResult.value = succeeded ? 'success' : 'fail';
-    }, DICE_TICKS * DICE_TICK_MS + 150);
+    }, ms);
   }
 
   // Dice roll display + damage notifications (sequenced)

@@ -52,14 +52,14 @@
             </transition>
           </Teleport>
 
-          <div v-if="confusedAction && confusedTurnsLeft > 0" class="confused-notice">
+          <div v-if="confusedAction.length > 0 && confusedTurnsLeft > 0" class="confused-notice">
             🌀 <strong>{{ confusedActionLabel }}</strong> locked ({{ confusedTurnsLeft }} turn{{ confusedTurnsLeft === 1 ? '' : 's' }} remaining)
           </div>
 
           <div class="btn-group">
             <button
               :class="{ 'btn-anim-attack': activeAction === 'attack_steady' }"
-              :disabled="combatLocked || confusedAction === 'attack'"
+              :disabled="combatLocked || confusedAction.includes('attack_steady')"
               @click="handleAction('attack_steady')"
             >
               ⚔ Steady (100% Success | Normal dmg)
@@ -67,7 +67,7 @@
 
             <button
               :class="{ 'btn-anim-attack': activeAction === 'attack_power' }"
-              :disabled="combatLocked || confusedAction === 'attack'"
+              :disabled="combatLocked || confusedAction.includes('attack_power')"
               @click="handleAction('attack_power')"
             >
               ⚔ Power (70% Success | 1.5x dmg | miss -2hp)
@@ -75,7 +75,7 @@
 
             <button
               :class="{ 'btn-anim-attack': activeAction === 'attack_reckless' }"
-              :disabled="combatLocked || confusedAction === 'attack'"
+              :disabled="combatLocked || confusedAction.includes('attack_reckless')"
               @click="handleAction('attack_reckless')"
             >
               ⚔ Reckless (40% Success | 2x dmg | miss -3hp)
@@ -83,7 +83,7 @@
 
             <button
               :class="{ 'btn-anim-special': activeAction === 'special' }"
-              :disabled="combatLocked || confusedAction === 'special'"
+              :disabled="combatLocked || confusedAction.includes('special')"
               @click="handleAction('special')"
             >
               ✦ {{ playerSpecialAbilityName }}
@@ -91,7 +91,7 @@
 
             <button
               :class="{ 'btn-anim-defend': activeAction === 'defend', 'btn-defend-counter': defendButtonLabel !== 'Defend' }"
-              :disabled="combatLocked || confusedAction === 'defend'"
+              :disabled="combatLocked || confusedAction.includes('defend')"
               @click="handleAction('defend')"
             >
               🛡 {{ defendButtonLabel }}
@@ -99,7 +99,7 @@
 
             <button
               :class="{ 'btn-anim-flee': activeAction === 'flee' }"
-              :disabled="combatLocked || confusedAction === 'flee'"
+              :disabled="combatLocked || confusedAction.includes('flee')"
               @click="handleAction('flee')"
             >
               ↩ Flee
@@ -263,16 +263,18 @@
         </div>
       </div>
     </div>
-    <NotesModal
-      v-if="isNotesModalOpen"
-      @close="closeNotesModal"
-      :playerClass="props.playerClass"
-      :specialTier="props.specialTier ?? 1"
-      :playerName="props.playerName"
-      :weaponBonus="props.weaponBonus"
-      :shieldBonus="props.shieldBonus"
-      :playerGoal="props.playerGoal"
-    />
+    <Teleport to="body">
+      <NotesModal
+        v-if="isNotesModalOpen"
+        @close="closeNotesModal"
+        :playerClass="props.playerClass"
+        :specialTier="props.specialTier ?? 1"
+        :playerName="props.playerName"
+        :weaponBonus="props.weaponBonus"
+        :shieldBonus="props.shieldBonus"
+        :playerGoal="props.playerGoal"
+      />
+    </Teleport>
   </header>
 </template>
 
@@ -344,8 +346,8 @@ const props = defineProps({
     default: () => [],
   },
   confusedAction: {
-    type: String,
-    default: null,
+    type: Array,
+    default: () => [],
   },
   confusedTurnsLeft: {
     type: Number,
@@ -488,13 +490,8 @@ const defendButtonLabel = computed(() => {
 
 
 const confusedActionLabel = computed(() => {
-  switch (props.confusedAction) {
-    case "attack": return "Attack actions";
-    case "defend": return "Defend";
-    case "special": return props.playerClass?.special ?? "Special";
-    case "flee": return "Flee";
-    default: return "";
-  }
+  const labels = { attack_steady: "Steady", attack_power: "Power", attack_reckless: "Reckless", defend: "Defend", special: props.playerClass?.special ?? "Special", flee: "Flee" };
+  return props.confusedAction.map(a => labels[a] ?? a).join(" & ");
 });
 
 const activeAction = ref("");
@@ -591,21 +588,21 @@ const enemyIntentMessage = computed(() => {
     case "flee":
       return "Enemy about to flee";
     case "trip":
-      return "Enemy tripped — free attack!";
+      return "Enemy tripped";
     case "stunned":
-      return "Enemy is stunned!";
+      return "Enemy is stunned";
     case "steal":
-      return "Enemy going for your gold!";
+      return "Enemy is trying to steal your gold";
     case "enrage":
-      return "Enemy enrages!";
+      return "Enemy is getting Enraged";
     case "confuse":
-      return "Enemy readies a confusion!";
+      return "Enemy is trying to confuse you";
     case "summon":
-      return "Enemy is healing!";
+      return "Enemy is about to heal";
     case "victory":
       return "Path Cleared.";
     case "fled":
-      return "Escaped Successfully!";
+      return "Escaped Successfully";
     default:
       return "";
   }

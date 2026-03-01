@@ -151,7 +151,7 @@
       />
 
       <ShopModal
-        v-show="showShopModal"
+        v-show="showShopModal && !showDieSlayer"
         :playerGold="playerGold"
         @buy="handleShopPurchase"
         @close="showShopModal = false"
@@ -160,6 +160,14 @@
         :shieldBonus="shieldBonus"
         :specialUsesLeft="specialUsesLeft"
         @open-backpack="openInventoryModal"
+        @open-die-slayer="showDieSlayer = true"
+      />
+
+      <DieSlayerModal
+        v-if="showDieSlayer"
+        :playerGold="playerGold"
+        @gold-change="handleDieSlayerGold"
+        @leave="showDieSlayer = false; showShopModal = true"
       />
 
       <InventoryModal
@@ -211,6 +219,7 @@ import RestModal from "@/components/RestModal.vue";
 import ShopModal from "@/components/ShopModal.vue";
 import InventoryModal from "@/components/InventoryModal.vue";
 import MapModal from "@/components/MapModal.vue";
+import DieSlayerModal from "@/components/DieSlayerModal.vue";
 
 import { shopItems as allShopItems } from "@/utils/shopItems";
 import { isBoss } from "@/utils/bossGenerator";
@@ -263,6 +272,11 @@ const {
   openInventoryModal,
   closeInventoryModal,
 } = modals;
+
+const showDieSlayer = ref(false);
+function handleDieSlayerGold(amount) {
+  playerGold.value += amount;
+}
 
 const player = usePlayerState(hpCapBonus);
 const {

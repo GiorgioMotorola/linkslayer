@@ -19,7 +19,7 @@ export function useCombat() {
   const enrageBonus = ref(0);
 
   // Player debuff state
-  const confusedAction = ref(null);
+  const confusedAction = ref([]);
   const confusedTurnsLeft = ref(0);
 
   // Constants
@@ -68,7 +68,7 @@ export function useCombat() {
       enemyStatusEffects.value = [];
       enemyIsStunned.value = false;
       enrageBonus.value = 0;
-      confusedAction.value = null;
+      confusedAction.value = [];
       confusedTurnsLeft.value = 0;
     }
   });

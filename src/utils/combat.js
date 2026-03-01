@@ -56,11 +56,15 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     if ((confusedTurnsLeft?.value ?? 0) > 0) {
       confusedTurnsLeft.value--;
       if (confusedTurnsLeft.value <= 0 && confusedAction) {
-        confusedAction.value = null;
+        confusedAction.value = [];
         log(`🌀 The confusion fades.`);
       }
     }
   }
+
+  // Tick confusion at the start of the player's turn so newly-applied confusion
+  // isn't immediately cleared in the same turn it was set.
+  tickConfusion();
 
   let currentEnemyDamage = nextEnemyAttack.value;
   if (typeof currentEnemyDamage !== "number" || isNaN(currentEnemyDamage)) {
@@ -277,7 +281,6 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       if (guaranteedFlee) {
         luckyFleeActive.value = false;
         log(`🪙 The Lucky Coin shines! <span class="player-name">${playerName.value}</span> escapes without fail.`);
-        tickConfusion();
         encounter.value = null;
         return;
       } else {
@@ -290,7 +293,6 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
         log(`🎲 ${dieFace} (need ${fleeThreshold}+) — ${fleeSucceeded ? "Escaped!" : "Caught!"}`);
         if (fleeSucceeded) {
           log(`🏃 <span class="player-name">${playerName.value}</span> fled successfully.`);
-          tickConfusion();
           if (utils.onFleeSuccess) {
             utils.onFleeSuccess();
           } else {
@@ -411,14 +413,16 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
         if (enemyActionCountered) {
           log(`🛡️ <span class="player-name">${playerName.value}</span> resists the confusion!`);
         } else {
-          const actions = ["attack", "defend", "special", "flee"];
-          const blocked = actions[Math.floor(Math.random() * actions.length)];
+          const actions = ["attack_steady", "attack_power", "attack_reckless", "defend", "special", "flee"];
+          const shuffled = actions.sort(() => Math.random() - 0.5);
+          const blocked = shuffled.slice(0, 2);
           if (confusedAction) {
             confusedAction.value = blocked;
-            confusedTurnsLeft.value = 2;
+            confusedTurnsLeft.value = 1;
           }
-          const actionLabel = blocked.charAt(0).toUpperCase() + blocked.slice(1);
-          log(`🌀 ${formattedTitle} clouds <span class="player-name">${playerName.value}</span>'s mind! <strong>${actionLabel}</strong> is locked for 2 turns.`);
+          const labels = { attack_steady: "Steady", attack_power: "Power", attack_reckless: "Reckless", defend: "Defend", special: "Special", flee: "Flee" };
+          const lockedNames = blocked.map(a => `<strong>${labels[a]}</strong>`).join(" and ");
+          log(`🌀 ${formattedTitle} clouds <span class="player-name">${playerName.value}</span>'s mind! ${lockedNames} locked for 1 turn.`);
         }
         damageToPlayer = 0;
       } else if (enemyNextAction.value === "summon") {
@@ -457,6 +461,10 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     return;
   }
 
-  tickConfusion();
+  const counterableActions = ["steal", "enrage", "confuse", "summon"];
+  if (counterableActions.includes(enemyNextAction.value) && !enemyActionCountered) {
+    utils.onCounterResult?.({ succeeded: false, delay: 0 });
+  }
+
   gotoEnemyTurn();
 }
