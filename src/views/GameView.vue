@@ -210,11 +210,13 @@
 
   <div class="dim-overlay" :class="{ 'active-overlay': bossOverlay }"></div>
 
-  <CampfireOverlay
-    v-if="showCampfireOverlay && campfireReward"
-    :reward="campfireReward"
-    @done="handleCampfireReward"
-  />
+  <Transition name="campfire-fade">
+    <CampfireOverlay
+      v-if="showCampfireOverlay && campfireReward"
+      :reward="campfireReward"
+      @done="handleCampfireReward"
+    />
+  </Transition>
 </template>
 
 <script setup>
@@ -292,6 +294,7 @@ function handleDieSlayerGold(amount) {
 }
 
 function handleCampfireReward(reward) {
+  playerHP.value = Math.min(Number(playerHP.value) + 15, Number(effectiveMaxHP.value));
   if (reward.type === "gold") playerGold.value += reward.amount;
   else if (reward.type === "weapon") weaponBonus.value += reward.amount;
   else if (reward.type === "shield") shieldBonus.value += reward.amount;
@@ -608,6 +611,17 @@ function handleUseInventoryItem(itemType) {
 }
 .sleep-fade-enter-from,
 .sleep-fade-leave-to {
+  opacity: 0;
+}
+
+.campfire-fade-enter-active {
+  transition: opacity 1.4s ease;
+}
+.campfire-fade-leave-active {
+  transition: opacity 1.2s ease;
+}
+.campfire-fade-enter-from,
+.campfire-fade-leave-to {
   opacity: 0;
 }
 
