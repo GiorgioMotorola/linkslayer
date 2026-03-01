@@ -16,6 +16,11 @@ export function useCombat() {
   const currentEnemy = ref(null);
   const enemyStatusEffects = ref([]);
   const enemyIsStunned = ref(false);
+  const enrageBonus = ref(0);
+
+  // Player debuff state
+  const confusedAction = ref(null);
+  const confusedTurnsLeft = ref(0);
 
   // Constants
   const DEFAULT_ENEMY_HP = 25;
@@ -62,20 +67,27 @@ export function useCombat() {
     if (isNewEnemy || combatEnded) {
       enemyStatusEffects.value = [];
       enemyIsStunned.value = false;
+      enrageBonus.value = 0;
+      confusedAction.value = null;
+      confusedTurnsLeft.value = 0;
     }
   });
 
   // Enemy AI decision
   function decideEnemyAction() {
-    if (
-      !isBoss(encounter.value?.enemy) &&
-      enemyHP.value <= 5 &&
-      Math.random() < 0.02
-    ) {
+    const isCurrentBoss = isBoss(encounter.value?.enemy);
+
+    if (!isCurrentBoss && enemyHP.value <= 5 && Math.random() < 0.02) {
       return "flee";
     }
-    if (Math.random() < 0.2) return "defend";
-    return "attack";
+
+    const roll = Math.random();
+    if (!isCurrentBoss && roll < 0.03) return "summon";  // 3%, non-boss only
+    if (roll < 0.08) return "enrage";                    // 5%
+    if (roll < 0.13) return "steal";                     // 5%
+    if (roll < 0.17) return "confuse";                   // 4%
+    if (roll < 0.32) return "defend";                    // 15%
+    return "attack";                                      // 68%
   }
 
   // Close/clear encounter
@@ -114,7 +126,12 @@ export function useCombat() {
     currentEnemy,
     enemyStatusEffects,
     enemyIsStunned,
+    enrageBonus,
     DEFAULT_ENEMY_HP,
+
+    // Player debuffs
+    confusedAction,
+    confusedTurnsLeft,
 
     // Functions
     decideEnemyAction,

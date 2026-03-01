@@ -30,6 +30,18 @@ export function useGameLog(getFormattedTimer) {
       case "trip":
         message = "🤾 Enemy tripped. You get a free attack.";
         break;
+      case "steal":
+        message = "💰 Enemy eyes your gold with a wicked grin.";
+        break;
+      case "enrage":
+        message = "💢 Enemy enrages! Their attacks will grow stronger.";
+        break;
+      case "confuse":
+        message = "🌀 Enemy readies a confounding strike.";
+        break;
+      case "summon":
+        message = "🪄 Enemy summons reinforcements!";
+        break;
       default:
         message = "";
     }

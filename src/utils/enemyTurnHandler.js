@@ -16,6 +16,7 @@ export function handleEnemyTurn({
     enemyIsStunned,
     enemyNextAction,
     nextEnemyAttack,
+    enrageBonus,
   } = enemyState;
   const { playerName } = playerState;
   const { log } = utilityFunctions;
@@ -65,18 +66,19 @@ export function handleEnemyTurn({
 
     if (action === "attack") {
       const currentEnemyData = encounter.value?.enemy;
+      const bonus = enrageBonus?.value ?? 0;
 
       if (currentEnemyData) {
         nextEnemyAttack.value =
           Math.floor(
             Math.random() *
               (currentEnemyData.maxDamage - currentEnemyData.minDamage + 1)
-          ) + currentEnemyData.minDamage;
+          ) + currentEnemyData.minDamage + bonus;
       } else {
         console.warn(
           "Enemy data not found for attack. Defaulting to 1-3 damage."
         );
-        nextEnemyAttack.value = Math.floor(Math.random() * 3) + 1;
+        nextEnemyAttack.value = Math.floor(Math.random() * 3) + 1 + bonus;
       }
     } else {
       nextEnemyAttack.value = null;

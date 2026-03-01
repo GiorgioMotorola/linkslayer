@@ -561,6 +561,13 @@ header {
   opacity: 0;
 }
 
+.confused-notice {
+  font-size: 0.78em;
+  color: #c080ff;
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+
 .btn-group {
   margin-top: 20px;
 }
@@ -680,6 +687,27 @@ button:hover {
   color: #c8a8f0;
   box-shadow: 0 0 14px 3px rgba(155, 127, 212, 0.4);
   animation: victory-pulse 1.4s ease-in-out infinite alternate;
+}
+
+.intent-steal {
+  border-color: #a07000;
+  box-shadow: 0 0 10px 2px rgba(200, 150, 0, 0.4);
+}
+
+.intent-enrage {
+  border-color: #b03020;
+  box-shadow: 0 0 12px 3px rgba(220, 60, 30, 0.5);
+  animation: victory-pulse 0.8s ease-in-out infinite alternate;
+}
+
+.intent-confuse {
+  border-color: #7030a0;
+  box-shadow: 0 0 12px 3px rgba(140, 60, 200, 0.45);
+}
+
+.intent-summon {
+  border-color: #205080;
+  box-shadow: 0 0 10px 2px rgba(40, 100, 160, 0.4);
 }
 
 /* Red damage number inside attack intent */

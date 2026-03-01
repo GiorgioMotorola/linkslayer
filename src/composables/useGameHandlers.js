@@ -109,7 +109,10 @@ export function useGameHandlers(deps) {
     currentEnemy,
     enemyStatusEffects,
     enemyIsStunned,
+    enrageBonus,
     DEFAULT_ENEMY_HP,
+    confusedAction,
+    confusedTurnsLeft,
     decideEnemyAction,
     handleCloseEncounter,
   } = combat;
@@ -402,6 +405,7 @@ export function useGameHandlers(deps) {
         effectiveMaxHP,
         totalSpecialsUsed,
         specialTier,
+        playerGold,
       },
       enemy: {
         enemyHP,
@@ -410,6 +414,9 @@ export function useGameHandlers(deps) {
         enemyNextAction,
         enemyStatusEffects,
         enemyIsStunned,
+        enrageBonus,
+        confusedAction,
+        confusedTurnsLeft,
       },
       state: {
         log,
@@ -456,6 +463,7 @@ export function useGameHandlers(deps) {
         enemyIsStunned,
         enemyNextAction,
         nextEnemyAttack,
+        enrageBonus,
       },
       playerState: {
         playerName,

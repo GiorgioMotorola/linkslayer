@@ -95,7 +95,7 @@ export const classes = {
     startingShieldBonus: 0,
     startingHealthPotionBonus: 0,
     startingInvisibilityCloaks: 0,
-    startingPlayerGold: 450,
+    startingPlayerGold: 50,
   },
   Mundane: {
     name: "Mundane",

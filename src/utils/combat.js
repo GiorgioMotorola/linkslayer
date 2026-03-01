@@ -12,6 +12,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     effectiveMaxHP,
     totalSpecialsUsed,
     specialTier,
+    playerGold,
   } = player;
 
   const {
@@ -21,6 +22,9 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     enemyNextAction,
     enemyIsStunned,
     enemyStatusEffects,
+    enrageBonus,
+    confusedAction,
+    confusedTurnsLeft,
   } = enemy;
 
   const {
@@ -50,6 +54,17 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
   const isBossFromState = state.isBoss;
 
   const currentEffectiveMaxHP = player.effectiveMaxHP;
+
+  // Tick down confusion each turn the player successfully acts
+  function tickConfusion() {
+    if ((confusedTurnsLeft?.value ?? 0) > 0) {
+      confusedTurnsLeft.value--;
+      if (confusedTurnsLeft.value <= 0 && confusedAction) {
+        confusedAction.value = null;
+        log(`🌀 The confusion fades.`);
+      }
+    }
+  }
 
   let currentEnemyDamage = nextEnemyAttack.value;
   if (typeof currentEnemyDamage !== "number" || isNaN(currentEnemyDamage)) {
@@ -253,6 +268,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       if (guaranteedFlee) {
         luckyFleeActive.value = false;
         log(`🪙 The Lucky Coin shines! <span class="player-name">${playerName.value}</span> escapes without fail.`);
+        tickConfusion();
         encounter.value = null;
         return;
       } else {
@@ -265,6 +281,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
         log(`🎲 ${dieFace} (need ${fleeThreshold}+) — ${fleeSucceeded ? "Escaped!" : "Caught!"}`);
         if (fleeSucceeded) {
           log(`🏃 <span class="player-name">${playerName.value}</span> fled successfully.`);
+          tickConfusion();
           if (utils.onFleeSuccess) {
             utils.onFleeSuccess();
           } else {
@@ -357,6 +374,37 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
         return;
       } else if (enemyNextAction.value === "defend") {
         damageToPlayer = 0;
+      } else if (enemyNextAction.value === "steal") {
+        const stealAmount = Math.min(
+          playerGold?.value ?? 0,
+          Math.floor(Math.random() * 6) + 3
+        );
+        if (stealAmount > 0 && playerGold) {
+          playerGold.value -= stealAmount;
+          log(`💰 ${formattedTitle} snatches ${stealAmount} gold from <span class="player-name">${playerName.value}</span>!`);
+        } else {
+          log(`💰 ${formattedTitle} reaches for your gold — but finds nothing.`);
+        }
+        damageToPlayer = 0;
+      } else if (enemyNextAction.value === "enrage") {
+        if (enrageBonus) enrageBonus.value += 2;
+        log(`💢 ${formattedTitle} enrages! Future attacks will hit harder.`);
+        damageToPlayer = 0;
+      } else if (enemyNextAction.value === "confuse") {
+        const actions = ["attack", "defend", "special", "flee"];
+        const blocked = actions[Math.floor(Math.random() * actions.length)];
+        if (confusedAction) {
+          confusedAction.value = blocked;
+          confusedTurnsLeft.value = 2;
+        }
+        const actionLabel = blocked.charAt(0).toUpperCase() + blocked.slice(1);
+        log(`🌀 ${formattedTitle} clouds <span class="player-name">${playerName.value}</span>'s mind! <strong>${actionLabel}</strong> is locked for 2 turns.`);
+        damageToPlayer = 0;
+      } else if (enemyNextAction.value === "summon") {
+        const summonAmount = 12;
+        enemyHP.value += summonAmount;
+        log(`🪄 ${formattedTitle} summons reinforcements and recovers ${summonAmount} HP!`);
+        damageToPlayer = 0;
       }
     }
   } else {
@@ -384,5 +432,6 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     return;
   }
 
+  tickConfusion();
   gotoEnemyTurn();
 }

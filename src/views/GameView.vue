@@ -43,6 +43,8 @@
     :specialTier="specialTier"
     :playerGoal="playerGoal"
     :enemyStatusEffects="enemyStatusEffects"
+    :confusedAction="confusedAction"
+    :confusedTurnsLeft="confusedTurnsLeft"
   />
 
   <Transition name="sleep-fade">
@@ -342,6 +344,8 @@ const {
   enemyNextAction,
   enemyTurnKey,
   enemyStatusEffects,
+  confusedAction,
+  confusedTurnsLeft,
 } = combat;
 
 // Setup click watcher for status effects
