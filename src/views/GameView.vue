@@ -150,6 +150,8 @@
         @assemble-upgrade="handleAssembleUpgradeWrapper"
         @offer="callHandleOffer"
         @sleep="handleSleepTransition"
+        @order-beer="handleOrderBeer"
+        @open-die-slayer="openDieSlayerFromTavern"
       />
 
       <ShopModal
@@ -162,14 +164,14 @@
         :shieldBonus="shieldBonus"
         :specialUsesLeft="specialUsesLeft"
         @open-backpack="openInventoryModal"
-        @open-die-slayer="showDieSlayer = true"
+        @open-die-slayer="openDieSlayerFromShop"
       />
 
       <DieSlayerModal
         v-if="showDieSlayer"
         :playerGold="playerGold"
         @gold-change="handleDieSlayerGold"
-        @leave="showDieSlayer = false; showShopModal = true"
+        @leave="handleDieSlayerLeave"
       />
 
       <InventoryModal
@@ -289,8 +291,31 @@ const {
 } = modals;
 
 const showDieSlayer = ref(false);
+const dieSlayerSource = ref("shop");
+
+function openDieSlayerFromShop() {
+  dieSlayerSource.value = "shop";
+  showDieSlayer.value = true;
+}
+
+function openDieSlayerFromTavern() {
+  dieSlayerSource.value = "tavern";
+  showDieSlayer.value = true;
+}
+
+function handleDieSlayerLeave() {
+  showDieSlayer.value = false;
+  if (dieSlayerSource.value === "shop") {
+    showShopModal.value = true;
+  }
+}
+
 function handleDieSlayerGold(amount) {
   playerGold.value += amount;
+}
+
+function handleOrderBeer() {
+  playerGold.value -= 1;
 }
 
 function handleCampfireReward(reward) {

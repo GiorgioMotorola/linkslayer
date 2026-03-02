@@ -194,7 +194,7 @@
             {{ playerGold >= 1 ? 'Play Again' : 'Not Enough Gold' }}
           </button>
           <button class="ds-btn" @click="$emit('leave')">
-            Return to Shop
+            Return to the Bar
           </button>
         </div>
       </div>

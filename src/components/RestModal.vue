@@ -1,11 +1,12 @@
 <template>
-  <div class="rest-overlay" :class="shouldShowLongRest ? 'overlay-night' : 'overlay-campfire'" v-if="props.showRestModal">
-    <div class="rest-modal" :class="shouldShowLongRest ? 'modal-night' : 'modal-campfire'">
+  <div class="rest-overlay" :class="overlayClass" v-if="props.showRestModal">
+    <div class="transition-fade" :class="{ active: isTransitioning }"></div>
+    <div class="rest-modal" :class="modalClass">
 
-      <div class="rest-icon">{{ shouldShowLongRest ? '🌙' : '🔥' }}</div>
-      <div class="rest-modal-phrase">{{ currentRestPhrase }}</div>
+      <div class="rest-icon">{{ restIcon }}</div>
+      <div class="rest-modal-phrase">{{ displayPhrase }}</div>
 
-      <div v-if="shouldShowLongRest" class="danger-warning">
+      <div v-if="shouldShowLongRest && !tavernView" class="danger-warning">
         The wilderness grows uneasy. Enemies will be stronger when you wake up...
       </div>
 
@@ -40,36 +41,63 @@
           Continue On →
         </button>
 
-        <!-- ── LONG REST ───────────────────────────────── -->
-        <button
-          v-if="shouldShowLongRest"
-          @click="handleLongRest"
-          :disabled="longRestDone"
-        >
-          🌙 Long Rest — restore full HP and gain +1 class ability
-        </button>
+        <!-- ── LONG REST — TAVERN VIEW ─────────────────── -->
+        <template v-if="shouldShowLongRest && tavernView">
 
-        <button
-          v-if="shouldShowLongRest"
-          @click="handleAssemble('weapon')"
-          :disabled="(props.weaponPieces || 0) < 2"
-        >
-          🛠️ Assemble Weapon Upgrade
-          <span class="assemble-sub">{{ props.weaponPieces || 0 }} piece{{ (props.weaponPieces || 0) !== 1 ? 's' : '' }} — need 2</span>
-        </button>
+          <button v-if="!hasBeer" @click="orderBeer" :disabled="props.playerGold < 1">
+            🍺 Order a beer (1g)
+          </button>
 
-        <button
-          v-if="shouldShowLongRest"
-          @click="handleAssemble('defense')"
-          :disabled="(props.defensePieces || 0) < 2"
-        >
-          🛡️ Assemble Defense Upgrade
-          <span class="assemble-sub">{{ props.defensePieces || 0 }} piece{{ (props.defensePieces || 0) !== 1 ? 's' : '' }} — need 2</span>
-        </button>
+          <button v-if="hasBeer" @click="takeSip">
+            Take a sip
+            <span class="sip-sub">{{ sipsRemaining }} sip{{ sipsRemaining !== 1 ? 's' : '' }} remaining</span>
+          </button>
 
-        <button v-if="shouldShowLongRest" @click="handleSleep" class="close-action-btn sleep-btn">
-          Drift Off to Sleep…
-        </button>
+          <button @click="$emit('open-die-slayer')" :disabled="props.playerGold < 5">
+            🎲 Play Die Slayer
+          </button>
+
+          <button @click="returnToCampsite" class="close-action-btn">
+            ← Return to your campsite
+          </button>
+
+        </template>
+
+        <!-- ── LONG REST — CAMPSITE VIEW ───────────────── -->
+        <template v-if="shouldShowLongRest && !tavernView">
+
+          <button
+            @click="handleLongRest"
+            :disabled="longRestDone"
+          >
+            🌙 Long Rest — restore full HP and gain +1 class ability
+          </button>
+
+          <button
+            @click="handleAssemble('weapon')"
+            :disabled="(props.weaponPieces || 0) < 2"
+          >
+            🛠️ Assemble Weapon Upgrade
+            <span class="assemble-sub">{{ props.weaponPieces || 0 }} piece{{ (props.weaponPieces || 0) !== 1 ? 's' : '' }} — need 2</span>
+          </button>
+
+          <button
+            @click="handleAssemble('defense')"
+            :disabled="(props.defensePieces || 0) < 2"
+          >
+            🛡️ Assemble Defense Upgrade
+            <span class="assemble-sub">{{ props.defensePieces || 0 }} piece{{ (props.defensePieces || 0) !== 1 ? 's' : '' }} — need 2</span>
+          </button>
+
+          <button @click="handleSleep" class="close-action-btn sleep-btn">
+            Drift Off to Sleep…
+          </button>
+
+          <button @click="goToTavern" class="close-action-btn tavern-btn">
+            Head to the tavern →
+          </button>
+
+        </template>
 
       </div>
     </div>
@@ -78,7 +106,7 @@
 
 <script setup>
 import { ref, watch, computed } from "vue";
-import { getRandomRestPhrase } from "../utils/restPhrases.js";
+import { getRandomRestPhrase, getRandomTavernPhrase, getRandomSipPhrase } from "../utils/restPhrases.js";
 
 const props = defineProps({
   showRestModal: Boolean,
@@ -93,21 +121,32 @@ const props = defineProps({
   nextOfferingCost: { type: Number, default: 10 },
 });
 
-const emit = defineEmits(["rest", "assemble-upgrade", "offer", "sleep"]);
+const emit = defineEmits(["rest", "assemble-upgrade", "offer", "sleep", "order-beer", "open-die-slayer"]);
 
 const currentRestPhrase = ref("");
+const tavernPhrase = ref("");
+const currentSipScene = ref("");
 const hasOfferedThisRest = ref(false);
 const shortRestDone = ref(false);
 const longRestDone = ref(false);
+const tavernView = ref(false);
+const isTransitioning = ref(false);
+const hasBeer = ref(false);
+const sipsRemaining = ref(0);
 
 watch(
   () => props.showRestModal,
   (newValue) => {
     if (newValue) {
       currentRestPhrase.value = getRandomRestPhrase();
+      tavernPhrase.value = getRandomTavernPhrase();
+      currentSipScene.value = "";
       hasOfferedThisRest.value = false;
       shortRestDone.value = false;
       longRestDone.value = false;
+      tavernView.value = false;
+      hasBeer.value = false;
+      sipsRemaining.value = 0;
     }
   },
   { immediate: true }
@@ -115,6 +154,28 @@ watch(
 
 const shouldShowLongRest = computed(() => props.restModalCount % 2 === 0);
 const shouldShowShortRest = computed(() => props.restModalCount % 2 !== 0);
+
+const overlayClass = computed(() => {
+  if (shouldShowShortRest.value) return "overlay-campfire";
+  return tavernView.value ? "overlay-tavern" : "overlay-night";
+});
+
+const modalClass = computed(() => {
+  if (shouldShowShortRest.value) return "modal-campfire";
+  return tavernView.value ? "modal-tavern" : "modal-night";
+});
+
+const restIcon = computed(() => {
+  if (shouldShowShortRest.value) return "🔥";
+  return tavernView.value ? "🍺" : "🌙";
+});
+
+const displayPhrase = computed(() => {
+  if (!shouldShowLongRest.value) return currentRestPhrase.value;
+  if (!tavernView.value) return currentRestPhrase.value;
+  if (currentSipScene.value) return currentSipScene.value;
+  return tavernPhrase.value;
+});
 
 const handleShortRest = () => {
   shortRestDone.value = true;
@@ -141,6 +202,39 @@ const handleAssemble = (type) => {
 const handleOffer = () => {
   hasOfferedThisRest.value = true;
   emit("offer");
+};
+
+const orderBeer = () => {
+  hasBeer.value = true;
+  sipsRemaining.value = 10;
+  currentSipScene.value = "";
+  emit("order-beer");
+};
+
+const takeSip = () => {
+  currentSipScene.value = getRandomSipPhrase();
+  sipsRemaining.value--;
+  if (sipsRemaining.value === 0) {
+    hasBeer.value = false;
+  }
+};
+
+const goToTavern = async () => {
+  isTransitioning.value = true;
+  await new Promise(r => setTimeout(r, 350));
+  tavernView.value = true;
+  currentSipScene.value = "";
+  await new Promise(r => setTimeout(r, 30));
+  isTransitioning.value = false;
+};
+
+const returnToCampsite = async () => {
+  isTransitioning.value = true;
+  await new Promise(r => setTimeout(r, 350));
+  tavernView.value = false;
+  currentSipScene.value = "";
+  await new Promise(r => setTimeout(r, 30));
+  isTransitioning.value = false;
 };
 </script>
 
@@ -177,6 +271,16 @@ const handleOffer = () => {
     rgba(18, 8, 2, 0.93),
     rgba(38, 18, 6, 0.9),
     rgba(22, 10, 3, 0.78)
+  );
+}
+
+/* ── Tavern overlay ─────────────────────────────────────── */
+.overlay-tavern {
+  background: linear-gradient(
+    to bottom,
+    rgba(16, 8, 1, 0.95),
+    rgba(32, 17, 4, 0.92),
+    rgba(20, 10, 2, 0.84)
   );
 }
 
@@ -235,6 +339,35 @@ const handleOffer = () => {
   opacity: 1;
 }
 
+/* ── Tavern modal ───────────────────────────────────────── */
+.modal-tavern {
+  background: rgba(20, 10, 3, 0.92);
+  border: 1px solid rgba(170, 115, 28, 0.5);
+  box-shadow: 0 0 40px rgba(150, 95, 15, 0.16), 0 8px 28px rgba(0,0,0,0.65);
+}
+
+.modal-tavern .rest-modal-phrase {
+  border-bottom-color: rgba(170, 115, 28, 0.4);
+}
+
+.modal-tavern button {
+  border-color: rgba(150, 100, 22, 0.5);
+  background: rgba(35, 14, 3, 0.65);
+  color: #e8c890;
+}
+
+.modal-tavern button:hover:not(:disabled) {
+  background: rgba(165, 100, 18, 0.22);
+  border-color: rgba(210, 145, 38, 0.75);
+  color: #f5d898;
+  opacity: 1;
+}
+
+.modal-tavern .close-action-btn {
+  border-color: rgba(210, 145, 35, 0.7) !important;
+  color: #f5d060 !important;
+}
+
 /* ── Night sky modal ────────────────────────────────────── */
 .modal-night {
   background: rgba(6, 10, 32, 0.9);
@@ -274,6 +407,15 @@ const handleOffer = () => {
 
 .modal-campfire .rest-icon {
   animation: flicker 2.2s ease-in-out infinite;
+}
+
+@keyframes ale-bob {
+  0%,100% { transform: translateY(0);    filter: drop-shadow(0 0 6px rgba(200,140,20,0.5)); }
+  50%     { transform: translateY(-3px); filter: drop-shadow(0 0 10px rgba(220,160,30,0.7)); }
+}
+
+.modal-tavern .rest-icon {
+  animation: ale-bob 2.8s ease-in-out infinite;
 }
 
 @keyframes moon-float {
@@ -331,8 +473,9 @@ button:disabled:hover {
   opacity: 0.35;
 }
 
-/* ── Assemble sub-text ──────────────────────────────────── */
-.assemble-sub {
+/* ── Assemble / sip sub-text ────────────────────────────── */
+.assemble-sub,
+.sip-sub {
   font-size: 0.82em;
   opacity: 0.65;
   margin-top: 2px;
@@ -380,6 +523,27 @@ button:disabled:hover {
 
 .pot-dot.filled {
   opacity: 1;
+}
+
+/* ── Cross-fade transition overlay ─────────────────────── */
+.transition-fade {
+  position: absolute;
+  inset: 0;
+  background: black;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  z-index: 1002;
+}
+
+.transition-fade.active {
+  opacity: 1;
+}
+
+/* ── Tavern button ───────────────────────────────────────── */
+.modal-night .tavern-btn {
+  border-color: rgba(160, 100, 22, 0.6) !important;
+  color: #d4a84b !important;
 }
 
 /* ── Danger warning ─────────────────────────────────────── */
