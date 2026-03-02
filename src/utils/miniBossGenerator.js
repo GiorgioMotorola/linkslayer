@@ -163,6 +163,15 @@ export const MINI_BOSS_TYPES = [
     weaponReward: 1,
     defenseReward: 1,
   },
+    {
+    type: "Chef Robert, Retired Knights Gaurd and Hand of the King (Expert in Swordplay, has killed over 1000 Men and Beasts.)",
+    hp: 180,
+    minDamage: 5,
+    maxDamage: 10,
+    goldReward: 170,
+    weaponReward: 2,
+    defenseReward: 0,
+  },
 ];
 
 export function generateMiniBoss(specificType, difficultyLevel = 0) {

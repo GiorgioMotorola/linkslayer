@@ -37,23 +37,25 @@
       responseText: "OLD GUY ACCARDI: That's what's up. Thank you for looking out. Here is a finder's fee."
 
 - id: npc_008
-  name: Daniel the Map Seller
-  greeting: "DANIEL THE MAP GIVER: I give maps. Not much else."
+  name: Daniel the Selfless
+  greeting: "DANIEL THE SELFLESS: Hello, traveler. I am giving away all of my posessions in an attempt to live free. Please, take a look."
   options:
-    - text: Take a map from Daniel.
+    - text: Take a Turkey Leg from Daniel.
       result: inventoryItem
       id: turkey_leg_consumable
-      responseText: "DANIEL THE MAP GIVER: Map's not much use anymore, the roads changed. But here, have this Turkey Leg. I've got plenty."
-    - text: "'The only guidance I need is from the sun and the stars.'"
+      responseText: "DANIEL THE SELFLESS: Enjoy it."
+    - text: "'No, thank you.'"
       result: none
-      responseText: "DANIEL THE MAP SELLER: Cool."
-    - text: What about food?
-      result: none
-      responseText: "DANIEL THE MAP SELLER: Just maps."
-    - text: Give me that compass or else I will make you pay.
+      responseText: "DANIEL THE SELFLESS: Cool."
+    - text: Take his Gold
+      result: item
+      details: gold
+      amount: 15
+      responseText: "DANIEL THE SELFLESS: Spend in good health"
+    - text: Take the Compass
       result: inventoryItem
       id: arcane_compass
-      responseText: "DANIEL THE MAP SELLER: Ok, geeze... Here you go, man. Relax."
+      responseText: "DANIEL THE SELFLESS: Be careful with this."
 
 - id: npc_014
   name: Lord Bruenor Battlehammer

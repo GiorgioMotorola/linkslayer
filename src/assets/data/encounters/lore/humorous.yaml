@@ -1,4 +1,5 @@
 - id: lore_007
+  name: Uncle Junior's
   text: "You reach a vending machine with the branding 'Uncle Junior's Weapon Upgrades'. It appears it doesn't take any currency and just asks you to place your weapon on its shelf and press 'upgrade'."
   options:
     - text: "Place your weapon on the shelf and press 'upgrade'."
@@ -18,6 +19,7 @@
       responseText: The vending machine fires on and violently spits out a glass vial full of a green liquid. It shatters on your face. It appears to be poison.
 
 - id: lore_008
+  name: The Unlocked Chest
   text: "You come across a treasure chest. The lock appears to be busted."
   options:
     - text: Open the chest
@@ -36,6 +38,7 @@
       responseText: Your foot hurts now.
 
 - id: lore_012
+  name: The Wired Crate
   text: "There is a crate in front of you that appears to have a series of wires that loop around the outside and feed into the inside. A note sits beside the crate that says 'CAUTION: Do NOT cut the Red wire.'."
   options:
     - text: Cut the Red Wire
@@ -54,6 +57,7 @@
       responseText: Nothing happens.
 
 - id: lore_017
+  name: Tymora's Spinner
   text: "You come across a tavern that seems to be bustling with life. As you walk in, you see several patrons drinking and yelling in excitement. They appear to be surrounded by something called Tymora's Spinner. You ask one patron what is going on and they say 'I have lost 10 times in a row on this stupid game. Here, have my last gold piece. See if your luck is better than mine.' You accept the gold piece. After watching a couple of rounds, it appears you can spend 1 gold piece to bet on a range of numbers and if the ball lands in that range, you win."
   options:
     - text: Bet the gold piece on range 1-10

@@ -108,7 +108,7 @@
         </div>
 
         <div class="npc" v-else-if="encounter.type === 'npc'">
-          <div class="npc-name">{{ encounter.npc.name }} &#x1F5E8;</div>
+          <div class="npc-name">{{ encounter.npc.name }}</div>
           <div class="npc-greeting" v-html="typedGreeting"></div>
           <div v-if="currentDialogue && currentDialogue.options" class="dialogue-options">
             <button
@@ -125,7 +125,7 @@
         </div>
 
         <div class="lore" v-else-if="encounter.type === 'lore'">
-          <div class="lore-name">Discovery ⚲</div>
+          <div class="lore-name">{{ encounter.lore.name || 'Discovery' }}</div>
           <div class="lore-greeting" v-html="typedGreeting"></div>
           <div v-if="currentDialogue && currentDialogue.options" class="dialogue-options">
             <button

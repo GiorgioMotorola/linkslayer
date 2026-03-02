@@ -31,6 +31,31 @@
         </div>
       </div>
 
+      <!-- IDLE / BET PHASE -->
+      <div v-if="phase === 'idle'" class="ds-phase ds-idle-phase">
+        <div class="ds-phase-label">Place Your Bet</div>
+        <div class="ds-bet-display">{{ bet }}g</div>
+        <input
+          type="range"
+          class="ds-bet-slider"
+          v-model.number="bet"
+          min="1"
+          :max="playerGold"
+          step="1"
+        />
+        <div class="ds-bet-range-labels">
+          <span>1g</span>
+          <span>{{ playerGold }}g</span>
+        </div>
+        <button
+          class="ds-btn ds-btn-primary"
+          @click="startGame"
+          :disabled="playerGold < 1"
+        >
+          Enter Table — {{ bet }}g
+        </button>
+      </div>
+
       <!-- SETUP PHASE -->
       <div v-if="phase === 'setup'" class="ds-phase">
         <div class="ds-phase-label">Roll your dice</div>
@@ -157,16 +182,16 @@
           {{ gameWon ? '⚔ Victory!' : '💀 Defeated!' }}
         </div>
         <div class="ds-end-gold">
-          {{ gameWon ? '+10 Gold' : '-5 Gold' }}
+          {{ gameWon ? '+' + (bet * 2) + ' Gold' : '-' + bet + ' Gold' }}
         </div>
         <div class="ds-npc-dialog ds-end-dialog">{{ currentDialog }}</div>
         <div class="ds-end-buttons">
           <button
             class="ds-btn ds-btn-primary"
-            @click="startGame"
-            :disabled="playerGold < 5"
+            @click="resetToBet"
+            :disabled="playerGold < 1"
           >
-            {{ playerGold >= 5 ? 'Play Again — 5g' : 'Not Enough Gold' }}
+            {{ playerGold >= 1 ? 'Play Again' : 'Not Enough Gold' }}
           </button>
           <button class="ds-btn" @click="$emit('leave')">
             Return to Shop
@@ -180,7 +205,7 @@
           How to Play
         </button>
         <button class="ds-btn ds-btn-danger" v-if="phase !== 'end'" @click="leaveGame">
-          Leave Table (lose 5g)
+          {{ phase === 'idle' ? 'Leave Table' : 'Leave Table (lose ' + bet + 'g)' }}
         </button>
       </div>
 
@@ -189,12 +214,12 @@
         <div class="ds-htp-box">
           <div class="ds-htp-title">⚔ How to Play Die Slayer</div>
           <div class="ds-htp-body">
-            <p><strong>Entry:</strong> Costs 5 gold to play. Win and take home 10 gold.</p>
+            <p><strong>Entry:</strong> Bet between 1g and all your gold. Win and take home double your bet.</p>
             <p><strong>Setup:</strong> Roll your 3 dice. You get up to 3 rolls total — reroll as many times as you like, then lock in your best hand. Your opponent rolls secretly at the same time.</p>
             <p><strong>Battle:</strong> Each round, pick one of your dice to play. Your opponent picks one of theirs. Both are revealed at the same time — highest die wins the round.</p>
             <p><strong>Tie:</strong> If both dice match, both sides reroll that single die until the tie is broken.</p>
             <p><strong>Winning:</strong> First to win 2 out of 3 rounds takes the pot.</p>
-            <p><strong>Leaving:</strong> If you leave mid-game, your 5 gold entry fee is forfeit.</p>
+            <p><strong>Leaving:</strong> If you leave mid-game, your entry bet is forfeit.</p>
           </div>
           <button class="ds-btn ds-btn-primary" @click="showHowToPlay = false">Got it</button>
         </div>
@@ -269,6 +294,7 @@ const showHowToPlay = ref(false);
 const tiePendingPIdx = ref(null);
 const tiePendingNIdx = ref(null);
 const gameWon = ref(false);
+const bet = ref(5);
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 function rollD6() { return Math.floor(Math.random() * 6) + 1; }
@@ -281,8 +307,7 @@ function pickNpc() {
 
 // ── Game flow ─────────────────────────────────────────────────────────────
 function startGame() {
-  emit("gold-change", -5);
-  pickNpc();
+  emit("gold-change", -bet.value);
   rollsUsed.value = 0;
   playerDice.value = [0, 0, 0];
   roundResults.value = [null, null, null];
@@ -427,7 +452,7 @@ function executeTieReroll() {
 function endGame(won) {
   gameWon.value = won;
   if (won) {
-    emit("gold-change", 10);
+    emit("gold-change", bet.value * 2);
     currentDialog.value = pickRandom(NPC_DIALOG.lose);
   } else {
     currentDialog.value = pickRandom(NPC_DIALOG.win);
@@ -436,15 +461,19 @@ function endGame(won) {
 }
 
 function leaveGame() {
-  if (phase.value !== "end") {
-    // 5g already deducted on start, nothing extra to do
-  }
   emit("leave");
+}
+
+function resetToBet() {
+  pickNpc();
+  bet.value = Math.min(bet.value, props.playerGold);
+  phase.value = "idle";
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────
 onMounted(() => {
-  startGame();
+  pickNpc();
+  bet.value = Math.min(5, props.playerGold);
 });
 </script>
 
@@ -875,5 +904,34 @@ onMounted(() => {
 
 .ds-htp-body strong {
   color: #ddd;
+}
+
+/* Idle / bet phase */
+.ds-idle-phase {
+  align-items: center;
+}
+
+.ds-bet-display {
+  font-size: 36px;
+  font-weight: 700;
+  color: #e8d080;
+  letter-spacing: 3px;
+  text-align: center;
+}
+
+.ds-bet-slider {
+  width: 100%;
+  accent-color: #c89040;
+  cursor: pointer;
+  height: 6px;
+}
+
+.ds-bet-range-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 11px;
+  color: #666;
+  padding: 0 2px;
 }
 </style>

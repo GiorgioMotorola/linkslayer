@@ -80,7 +80,7 @@
           class="close-button-game-style die-slayer-button"
           :disabled="props.playerGold < 5"
         >
-          ⚔ Die Slayer — 5g
+          ⚔ Play Die Slayer
         </button>
         <button @click="$emit('close')" class="close-button-game-style">
           Done Shopping

@@ -295,11 +295,12 @@ function handleDieSlayerGold(amount) {
 
 function handleCampfireReward(reward) {
   playerHP.value = Math.min(Number(playerHP.value) + 15, Number(effectiveMaxHP.value));
+  const bonusLabels = { gold: `+${reward.amount} Gold`, weapon: `+${reward.amount} Weapon Damage`, shield: `+${reward.amount} Defense`, special: `+${reward.amount} Special Charges` };
   if (reward.type === "gold") playerGold.value += reward.amount;
   else if (reward.type === "weapon") weaponBonus.value += reward.amount;
   else if (reward.type === "shield") shieldBonus.value += reward.amount;
   else if (reward.type === "special") specialUsesLeft.value += reward.amount;
-  log(`🔥 You rested at the ${reward.name} and feel restored.`);
+  log(`🔥 You rested at the ${reward.name}. You gained +15 HP and ${bonusLabels[reward.type]}.`);
   showCampfireOverlay.value = false;
   campfireReward.value = null;
 }

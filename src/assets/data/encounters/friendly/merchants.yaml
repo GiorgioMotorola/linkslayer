@@ -207,3 +207,220 @@
         - text: "'I don't want any part of this. I am outta here.'"
           flow: dialogue_branch
           next_node_id: cave_entrance
+
+- id: npc_dinner_guests
+  name: The Dinner Guests
+  dialogueNodes:
+    start:
+      text: "A harried man in a stained chef's coat bursts out of a roadside kitchen and nearly knocks you over. 'Oh! A traveler. Good. I need help.' He straightens himself. 'I am Chef Robert and I have a situation.'"
+      options:
+        - text: "What kind of situation?"
+          flow: dialogue_branch
+          next_node_id: what_do_you_need
+        - text: "I don't do situations. Goodbye."
+          flow: close_encounter
+          responseText: "Chef Robert watches you walk away in disbelief. 'Fine! I'll figure it out myself!'"
+    what_do_you_need:
+      text: "Chef Robert pulls you into the kitchen doorway. 'My server called in sick. Hot Tub Foot. I have five dinner guests seated and waiting and no one to take their orders or serve them. If you do this for me, I will pay you well.'"
+      options:
+        - text: "Hot Tub Foot?"
+          flow: dialogue_branch
+          next_node_id: hot_tub_foot
+        - text: "I'll do it. What do I need to know?"
+          flow: dialogue_branch
+          next_node_id: take_orders_intro
+        - text: "This sounds like too much trouble. Goodbye."
+          flow: close_encounter
+          responseText: "Chef Robert grabs the doorframe and stares at the middle distance. 'Fine.'"
+        - text: "How about I just kill you and that the pay right now."
+          result: mini_boss_combat
+          miniBossType: "Chef Robert, Retired Knights Gaurd and Hand of the King (Expert in Swordplay, has killed over 1000 Men and Beasts.)"
+          responseText: "Chef Robert's expression shifts from desperate to deadly. He reaches behind him and produces a blade. 'I was hoping someone would try that today.'"
+    hot_tub_foot:
+      text: "'Hot Tub Foot.'"
+      options:
+       - text: "Hot Tub Foot?"
+         flow: dialogue_branch
+         next_node_id: hot_tub_foot
+       - text: "I'll do it. What do I need to know?"
+         flow: dialogue_branch
+         next_node_id: take_orders_intro
+       - text: "This sounds like too much trouble. Goodbye."
+         flow: close_encounter
+         responseText: "Chef Robert grabs the doorframe and stares at the middle distance. 'Fine.'"
+       - text: "How about I just kill you and take the pay right now."
+         result: mini_boss_combat
+         miniBossType: "Chef Robert, Retired Knights Gaurd and Hand of the King (Expert in Swordplay, has killed over 1000 Men and Beasts.)"
+         responseText: "'Very well, then...'"
+    take_orders_intro:
+      text: "Great! I see you have a journal on you already. I would put that to use. You DO NOT want to get the orders wrong.'"
+      options:
+        - text: "Go to the first Guest"
+          flow: dialogue_branch
+          next_node_id: order_1
+        - text: "This sucks. I'm outta here."
+          flow: close_encounter
+          responseText: "You walk out. Chef Robert watches from the doorway in silence."
+    order_1:
+      text: "Lord Cheesesteak. A portly man with a distinguished air and a small gravy stain on his collar that he seems completely unaware of. He peers at you over a pair of spectacles. 'Ah. A new face. I shall have the Stwde lumbarde.'"
+      options:
+        - text: "Move to the next guest."
+          flow: dialogue_branch
+          next_node_id: order_2
+          responseText: "Lord Cheesesteak returns to adjusting his spectacles. You move on."
+        - text: "This sucks. I'm outta here."
+          flow: close_encounter
+          responseText: "You walk out. Chef Robert watches from the doorway in silence."
+    order_2:
+      text: "Lady Grippos. An elegant woman with rings on every finger. She is examining her reflection in the back of a spoon and barely acknowledges your arrival. 'Conyngges rosted. And quickly, if you don't mind. I have a full evening.'"
+      options:
+        - text: "Move to the next guest."
+          flow: dialogue_branch
+          next_node_id: order_3
+          responseText: "Lady Grippos has already gone back to the spoon. You move on."
+        - text: "This sucks. I'm outta here."
+          flow: close_encounter
+          responseText: "You walk out. Chef Robert watches from the doorway in silence."
+    order_3:
+      text: "Lord Hamburger. A barrel-chested man who has already eaten the entire bread basket and is eyeing the centerpiece. 'Venison with Furmenty, lad! And tell the chef I want a real portion, not one of his little paintings on a plate.'"
+      options:
+        - text: "Move to the next guest."
+          flow: dialogue_branch
+          next_node_id: order_4
+          responseText: "Lord Hamburger turns immediately toward the kitchen and shouts 'AND DON'T FORGET THE PORTIONS.' You move on."
+        - text: "This sucks. I'm outta here."
+          flow: close_encounter
+          responseText: "You walk out. Chef Robert watches from the doorway in silence."
+    order_4:
+      text: "Lord Katsu. A thin, precisely groomed man sitting with his hands folded perfectly on the table. He does not speak. He instead slides a small card across the table toward you. It reads: 'A Dissh of Gely.' He then slides the card back and folds his hands again."
+      options:
+        - text: "Move to the next guest."
+          flow: dialogue_branch
+          next_node_id: order_5
+          responseText: "Lord Katsu refolds his hands and stares forward. You move on."
+        - text: "This sucks. I'm outta here."
+          flow: close_encounter
+          responseText: "You walk out. Chef Robert watches from the doorway in silence."
+    order_5:
+      text: "Lady Hot Dog. A woman wearing an enormous hat adorned, inexplicably, with a small taxidermied dog in a running pose. She gestures grandly. 'Crustade lumbard in paste, darling. And please be careful around the hat. It is irreplaceable.'"
+      options:
+        - text: "Report back to Chef Robert."
+          flow: dialogue_branch
+          next_node_id: serve_intro
+          responseText: "Lady Hot Dog turns back to the hat and begins making small adjustments. You head back to Chef Robert."
+        - text: "This sucks. I'm outta here."
+          flow: close_encounter
+          responseText: "You walk out. Chef Robert watches from the doorway in silence."
+    serve_intro:
+      text: "CHEF ROBERT: 'Good. Now listen carefully. Service order is everything. Bring the wrong dish to anyone and dinner is ruined. Are you ready?'"
+      options:
+        - text: "Begin serving."
+          flow: dialogue_branch
+          next_node_id: serve_1
+        - text: "This sucks. I'm outta here."
+          flow: close_encounter
+          responseText: "You walk out. Chef Robert watches from the doorway in silence."
+    serve_1:
+      text: "First up: Lord Hamburger. He is already looking toward the kitchen with expectant eyes. Which dish do you bring him?"
+      options:
+        - text: "Conyngges rosted"
+          flow: close_encounter
+          responseText: "Lord Hamburger squints at the plate. 'What is this.' He is already turning to shout for Chef Robert before you can explain."
+        - text: "Crustade lumbard in paste"
+          flow: close_encounter
+          responseText: "Lord Hamburger pushes the plate firmly back toward you with one finger. 'Wrong.' The word lands like a stone. Chef Robert appears behind you."
+        - text: "Stwde lumbarde"
+          flow: close_encounter
+          responseText: "Lord Hamburger recoils as if struck. 'What in the— THIS IS NOT WHAT I ORDERED.' Chef Robert materializes from the kitchen with a look that ends your employment immediately."
+        - text: "A Dissh of Gely"
+          flow: close_encounter
+          responseText: "Lord Hamburger stares at the wobbling plate for a long moment. 'I ordered venison. This is not venison.' Chef Robert is already walking out of the kitchen."
+        - text: "Venison with Furmenty"
+          flow: dialogue_branch
+          next_node_id: serve_2
+          responseText: "Lord Hamburger's face lights up. 'NOW that is a portion!' He is eating before you finish setting it down. A strong start."
+    serve_2:
+      text: "Next: Lady Hot Dog. She is carefully repositioning her hat. Which dish do you bring her?"
+      options:
+        - text: "Stwde lumbarde"
+          flow: close_encounter
+          responseText: "Lady Hot Dog gasps audibly and clutches the hat with both hands as though bracing for impact. 'That is NOT— CHEF ROBERT.' He arrives promptly."
+        - text: "Conyngges rosted"
+          flow: close_encounter
+          responseText: "Lady Hot Dog recoils and looks at the plate as though it has personally offended her. 'What is this. CHEF ROBERT.' He arrives promptly."
+        - text: "Venison with Furmenty"
+          flow: close_encounter
+          responseText: "Lady Hot Dog stares at the plate, then very slowly looks up at you. 'I did not order this.' She does not raise her voice. She does not need to. Chef Robert appears."
+        - text: "A Dissh of Gely"
+          flow: close_encounter
+          responseText: "Lady Hot Dog tilts her head. 'CHEF ROBERT.' He arrives promptly."
+        - text: "Crustade lumbard in paste"
+          flow: dialogue_branch
+          next_node_id: serve_3
+          responseText: "Lady Hot Dog claps her hands together once. 'Wonderful! And not a single crumb near the hat.' She glances at the dog approvingly. Two down."
+    serve_3:
+      text: "Next: Lord Cheesesteak. He is tapping his fork on the table in a slow, patient rhythm, Which dish do you bring him?"
+      options:
+        - text: "Stwde lumbarde"
+          flow: dialogue_branch
+          next_node_id: serve_4
+          responseText: "Lord Cheesesteak inhales the aroma, sets his fork down precisely, and gives one deliberate nod. 'Just as I ordered. Carry on.' Three down."
+        - text: "Conyngges rosted"
+          flow: close_encounter
+          responseText: "Lord Cheesesteak's tapping stops. He looks at the plate. He looks at you. 'This is not Stwde lumbarde.' Chef Robert is already on his way over."
+        - text: "Venison with Furmenty"
+          flow: close_encounter
+          responseText: "Lord Cheesesteak looks at the plate with the measured grief of a man who has been wronged before. 'I ordered Stwde lumbarde.' Chef Robert appears."
+        - text: "A Dissh of Gely"
+          flow: close_encounter
+          responseText: "Lord Cheesesteak places his fork down with great care. 'No.' Just the one word. Chef Robert appears."
+        - text: "Crustade lumbard in paste"
+          flow: close_encounter
+          responseText: "Lord Cheesesteak tilts his head slightly. 'That is not what I ordered.' He does not seem angry. Just tired. Chef Robert appears."
+    serve_4:
+      text: "Next: Lord Katsu. His hands are still folded on the table. He has not moved a centimeter since you took his order. Which dish do you bring him?"
+      options:
+        - text: "Stwde lumbarde"
+          flow: close_encounter
+          responseText: "Lord Katsu's left eye twitches once. 'Incorrect.' He does not move. Chef Robert appears."
+        - text: "Conyngges rosted"
+          flow: close_encounter
+          responseText: "Lord Katsu's jaw tightens by a fraction. 'Incorrect.' He does not move. Chef Robert appears."
+        - text: "Venison with Furmenty"
+          flow: close_encounter
+          responseText: "Lord Katsu looks at the plate. Then at you. 'Incorrect.' He does not move. Chef Robert appears."
+        - text: "A Dissh of Gely"
+          flow: dialogue_branch
+          next_node_id: serve_5
+          responseText: "Lord Katsu unfolds his hands, repositions the dish to its precise correct coordinates, refolds his hands, and gives one nod. 'Acceptable.' Coming from Lord Katsu, this is exceptional. Four down."
+        - text: "Crustade lumbard in paste"
+          flow: close_encounter
+          responseText: "Lord Katsu inhales slowly through his nose. 'Incorrect.' He does not move. Chef Robert appears."
+    serve_5:
+      text: "Last guest: Lady Grippos. She is still examining herself in the spoon. Which dish do you bring her?"
+      options:
+        - text: "Stwde lumbarde"
+          flow: close_encounter
+          responseText: "Lady Grippos looks at the plate, then slowly sets the spoon down and looks up at you with an expression of profound personal disappointment. 'Chef Robert.' He arrives."
+        - text: "Conyngges rosted"
+          flow: dialogue_branch
+          next_node_id: reward
+          responseText: "Lady Grippos barely glances at the plate. 'Yes, yes. That'll do.' She picks up the spoon again. From Lady Grippos, that is a standing ovation. All five guests served."
+        - text: "Venison with Furmenty"
+          flow: close_encounter
+          responseText: "Lady Grippos inhales sharply through her nose. 'This is not what I ordered.' She sets the spoon face-down on the table. 'Chef Robert.' He arrives."
+        - text: "A Dissh of Gely"
+          flow: close_encounter
+          responseText: "Lady Grippos looks at the plate with great personal offense. 'Chef Robert.' She does not elaborate. Chef Robert arrives."
+        - text: "Crustade lumbard in paste"
+          flow: close_encounter
+          responseText: "Lady Grippos sets down the spoon. 'That is not mine.' She folds her hands on the table. 'Chef Robert.' He arrives."
+    reward:
+      text: "All five guests are served correctly. Chef Robert emerges from the kitchen and surveys the dining room with an expression of quiet disbelief. He walks over to you slowly. 'You actually did it. Every order, correct, in sequence. Not one complaint.' He pauses. 'Well. Lady Grippos said that'll do, but for her that's a standing ovation.' He reaches into his coat and produces a heavy purse."
+      options:
+        - text: "Accept the payment and leave."
+          effect: item
+          details: gold
+          amount: 100
+          flow: close_encounter
+          responseText: "Chef Robert presses 100 gold into your hand with both of his. 'Well earned. If you're ever back this way and need honest work — or an excellent meal — you know where to find me.'"

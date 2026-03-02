@@ -1,4 +1,5 @@
 - id: lore_001
+  name: The Warning
   text: "Etched into a cave wall: 'Beware the one-eyed owl who guards the dusk.'"
   options:
     - text: Poke the owl in the eye
@@ -15,6 +16,7 @@
       responseText: "The forest remains silent, but you feel the eye glaring at you."
 
 - id: lore_002
+  name: The Pit
   text: "There is what looks like a deep, dark pit about 10 feet ahead of you. As you step closer, you can hear the sound of rustling."
   options:
     - text: Jump in the hole. Fortune favors the bold.
@@ -31,6 +33,7 @@
       responseText: "You hear the snarling intensify and see a creature climb up the pit. Before you know it, the creature is in front of you, looking deep into your eyes."
 
 - id: lore_003
+  name: The Glowing Herb
   text: There is a glowing herb sprouting from a crack in the rock.
   options:
     - text: Pick it out of the crack and use it for a glowing herb stew
@@ -49,6 +52,7 @@
       responseText: Nothing happens. Do you feel tough?
 
 - id: lore_004
+  name: The Overlook Rock
   text: You have reached a smooth rock overlooking the forest ahead.
   options:
     - text: Sit at the rock and contemplate your journey so far and plan for the journey ahead.
@@ -67,6 +71,7 @@
       responseText: The sky grants temporary shade from the sun and you feel comforted.
 
 - id: lore_005
+  name: The Artifact
   text: "There is a large clearing in the forest that leads to a small lake where the sun's light dances endlessly. There is a small glowing artifact sticking out of the rocks and sand. It seems to shake harder the closer it is to a weapon..."
   options:
     - text: Pick it up and touch it to your weapon
@@ -84,6 +89,7 @@
       responseText: "'I have no use for violently shaking rocks, to be quite honest.'"
 
 - id: lore_006
+  name: The Abandoned Forge
   text: "You find a pile of steel, an anvil, and a kiln all under a lean-to. It appears to be an old blacksmithing site that has since been abandoned. Everything under the lean-to seems to still be in working order."
   options:
     - text: Use the things under the lean-to on your weapon.
@@ -101,6 +107,7 @@
       responseText: Why?
 
 - id: lore_013
+  name: The Swamp
   text: "You come across a bubbling swamp. The steam from the swamp is apparent and the smell is sulfuric and strong. There does appear to be a way around, but if you cut through the swamp, you might get hurt. However, you will save some time."
   options:
     - text: Walk carefully to the other side through the swamp.
@@ -120,6 +127,7 @@
       responseText: That was painful.
 
 - id: lore_027_twin_trunked_oak
+  name: The Twin-Trunked Oak
   dialogueNodes:
     start:
       text: "You find yourself at a section of the Silent River, flowing gently. The air is fresh, and the sound of distant birds fills the quiet. You notice several prominent landmarks nearby."

@@ -1,4 +1,5 @@
 - id: lore_018
+  name: The Speaking Stone
   text: "There appears to be a stone block with a hole carved into it. The hole appears to be worn away while the rest of the block seems to be smooth. While staring at the block, you hear the sound of a voice that shouts 'Halt, trespasser. If you come any closer, you better tell me how fast you want to die.'"
   options:
     - text: Test the voice and take one small step forward.
@@ -24,6 +25,7 @@
       responseText: "The voice yells 'Yeah, you better walk away.'"
 
 - id: lore_021_whispering_well
+  name: The Whispering Well
   dialogueNodes:
     start:
       text: "You discover an ancient stone well, strangely overgrown with a gnarled, moss-covered tree that seems to sprout directly from its depths."
@@ -96,6 +98,7 @@
           responseText: "You emerge from the tunnel, blinking in the sunlight, ready for your next adventure."
 
 - id: lore_023_abandoned_campfire
+  name: The Abandoned Camp
   dialogueNodes:
     start:
       text: "You find the remains of a recently abandoned campfire. Embers glow faintly beneath a pile of ash, and a worn leather journal lies beside a half-eaten, petrified meal. It looks like it was left in a hurry."
