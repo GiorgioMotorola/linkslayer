@@ -79,26 +79,12 @@ const goal = ref("");
 const emit = defineEmits(["select", "show-tips"]);
 
 const randomGoals = [
-  "Survive the journey and live to tell the tale",
-  "Defeat every enemy that dares stand in your path",
-  "Uncover the ancient secret hidden within the archives",
-  "Earn enough gold to retire to a quiet village",
-  "Prove your worth to the guild masters",
-  "Find the legendary artifact at the end of the road",
-  "Complete the journey without a single defeat",
-  "Avenge a fallen comrade lost on a previous quest",
-  "Gather enough lore to write your own tome",
-  "Reach the final link without buying a single item",
-  "Master your class ability before the journey ends",
-  "Outwit every encounter through cunning and coin",
-  "Discover what lies beyond the final wiki passage",
-  "Return home with a story worth telling twice",
-  "Become a legend remembered in the old texts",
-  "Find glory in the darkest corners of knowledge",
-  "Reach the end with full HP — not a scratch taken",
-  "Complete the run without ever fleeing a fight",
-  "Leave every enemy defeated and every secret found",
-  "Carry only what you need and nothing more",
+"Kill all evil",
+"Find lost treasures",
+"Eat and drink",
+"Become the greatest to ever do it",
+"I don't have a goal",
+"Find a new home to live out the rest of my days"
 ];
 
 const journeyIntro = ref("");
