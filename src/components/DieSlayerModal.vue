@@ -16,7 +16,7 @@
       <!-- Round tracker -->
       <div class="ds-round-tracker">
         <div
-          v-for="r in 3"
+          v-for="r in 5"
           :key="r"
           class="ds-round-slot"
           :class="{
@@ -66,7 +66,7 @@
             class="ds-die ds-die-player"
             :class="{ 'ds-die-rolling': isRolling }"
           >
-            {{ isRolling ? '?' : die }}
+            {{ isRolling || rollsUsed === 0 ? '?' : die }}
           </div>
         </div>
         <div class="ds-roll-info">Rolls used: {{ rollsUsed }} / 3</div>
@@ -102,41 +102,11 @@
                 class="ds-die ds-die-player"
                 :class="{
                   'ds-die-selected': selectedDieIndex === i,
+                  'ds-die-played': hiddenPlayerDieIndex === i,
                 }"
                 @click="selectDie(i)"
               >
                 {{ die }}
-              </div>
-            </div>
-          </div>
-
-          <!-- Reveal area -->
-          <div class="ds-reveal-area" v-if="revealedPlayerDie !== null || revealedNpcDie !== null">
-            <div class="ds-reveal-col">
-              <div class="ds-reveal-label">You</div>
-              <div
-                class="ds-die ds-die-revealed"
-                :class="{
-                  'ds-die-win': roundOutcome === 'win',
-                  'ds-die-lose': roundOutcome === 'lose',
-                  'ds-die-rolling': tieRolling,
-                }"
-              >
-                {{ revealedPlayerDie ?? '?' }}
-              </div>
-            </div>
-            <div class="ds-vs">VS</div>
-            <div class="ds-reveal-col">
-              <div class="ds-reveal-label">{{ npc.name }}</div>
-              <div
-                class="ds-die ds-die-revealed ds-die-npc"
-                :class="{
-                  'ds-die-win': roundOutcome === 'lose',
-                  'ds-die-lose': roundOutcome === 'win',
-                  'ds-die-rolling': tieRolling,
-                }"
-              >
-                {{ revealedNpcDie !== null ? revealedNpcDie : '?' }}
               </div>
             </div>
           </div>
@@ -157,11 +127,46 @@
 
         </div>
 
-        <div class="ds-battle-buttons" v-if="battleSubPhase === 'select'">
+        <!-- Staging area: always visible, fixed height -->
+        <div class="ds-staging-row">
+          <div class="ds-staging-col">
+            <div class="ds-staging-label">You</div>
+            <div class="ds-staging-box">
+              <div
+                v-if="revealedPlayerDie !== null"
+                class="ds-die ds-die-revealed ds-die-staged"
+                :class="{
+                  'ds-die-win': roundOutcome === 'win',
+                  'ds-die-lose': roundOutcome === 'lose',
+                  'ds-die-rolling': tieRolling,
+                }"
+              >{{ revealedPlayerDie }}</div>
+            </div>
+          </div>
+          <div class="ds-staging-vs">
+            <span v-if="revealedPlayerDie !== null && revealedNpcDie !== null" class="ds-vs">VS</span>
+          </div>
+          <div class="ds-staging-col">
+            <div class="ds-staging-label">{{ npc.name }}</div>
+            <div class="ds-staging-box">
+              <div
+                v-if="revealedNpcDie !== null"
+                class="ds-die ds-die-revealed ds-die-npc ds-die-staged"
+                :class="{
+                  'ds-die-win': roundOutcome === 'lose',
+                  'ds-die-lose': roundOutcome === 'win',
+                  'ds-die-rolling': tieRolling,
+                }"
+              >{{ revealedNpcDie }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ds-battle-buttons">
           <button
             class="ds-btn ds-btn-primary"
             @click="playDie"
-            :disabled="selectedDieIndex === null"
+            :disabled="selectedDieIndex === null || battleSubPhase !== 'select'"
           >
             Play Die
           </button>
@@ -215,10 +220,10 @@
           <div class="ds-htp-title">⚔ How to Play Die Slayer</div>
           <div class="ds-htp-body">
             <p><strong>Entry:</strong> Bet between 1g and all your gold. Win and take home double your bet.</p>
-            <p><strong>Setup:</strong> Roll your 3 dice. You get up to 3 rolls total — reroll as many times as you like, then lock in your best hand. Your opponent rolls secretly at the same time.</p>
+            <p><strong>Setup:</strong> Roll your 5 dice. You get up to 3 rolls total — reroll as many times as you like, then lock in your best hand. Your opponent rolls secretly at the same time.</p>
             <p><strong>Battle:</strong> Each round, pick one of your dice to play. Your opponent picks one of theirs. Both are revealed at the same time — highest die wins the round.</p>
             <p><strong>Tie:</strong> If both dice match, both sides reroll that single die until the tie is broken.</p>
-            <p><strong>Winning:</strong> First to win 2 out of 3 rounds takes the pot.</p>
+            <p><strong>Winning:</strong> First to win 3 out of 5 rounds takes the pot.</p>
             <p><strong>Leaving:</strong> If you leave mid-game, your entry bet is forfeit.</p>
           </div>
           <button class="ds-btn ds-btn-primary" @click="showHowToPlay = false">Got it</button>
@@ -274,19 +279,20 @@ const npc = ref({ name: "" });
 const currentDialog = ref("");
 const phase = ref("idle"); // idle | setup | battle | end
 
-const playerDice = ref([0, 0, 0]);
+const playerDice = ref([0, 0, 0, 0, 0]);
 const playerRemainingDice = ref([]);
-const npcDice = ref([0, 0, 0]);
+const npcDice = ref([0, 0, 0, 0, 0]);
 const npcRemainingDice = ref([]);
 
 const rollsUsed = ref(0);
 const isRolling = ref(false);
 
 const selectedDieIndex = ref(null);
+const hiddenPlayerDieIndex = ref(null);
 const revealedPlayerDie = ref(null);
 const revealedNpcDie = ref(null);
 const roundOutcome = ref(null); // 'win' | 'lose' | null
-const roundResults = ref([null, null, null]);
+const roundResults = ref([null, null, null, null, null]);
 const battleSubPhase = ref("select"); // select | revealing | resolved
 const tieRolling = ref(false);
 const tieWaitingForClick = ref(false);
@@ -309,8 +315,8 @@ function pickNpc() {
 function startGame() {
   emit("gold-change", -bet.value);
   rollsUsed.value = 0;
-  playerDice.value = [0, 0, 0];
-  roundResults.value = [null, null, null];
+  playerDice.value = [0, 0, 0, 0, 0];
+  roundResults.value = [null, null, null, null, null];
   selectedDieIndex.value = null;
   revealedPlayerDie.value = null;
   revealedNpcDie.value = null;
@@ -320,9 +326,9 @@ function startGame() {
 
   // NPC pre-rolls silently
   const npcRolls = Math.floor(Math.random() * 3) + 1;
-  let npcResult = [rollD6(), rollD6(), rollD6()];
+  let npcResult = [rollD6(), rollD6(), rollD6(), rollD6(), rollD6()];
   for (let i = 1; i < npcRolls; i++) {
-    npcResult = [rollD6(), rollD6(), rollD6()];
+    npcResult = [rollD6(), rollD6(), rollD6(), rollD6(), rollD6()];
   }
   npcDice.value = npcResult;
 }
@@ -334,7 +340,7 @@ function rollDice() {
   // Animate rolling
   let ticks = 0;
   const interval = setInterval(() => {
-    playerDice.value = [rollD6(), rollD6(), rollD6()];
+    playerDice.value = [rollD6(), rollD6(), rollD6(), rollD6(), rollD6()];
     ticks++;
     if (ticks >= 8) {
       clearInterval(interval);
@@ -365,16 +371,19 @@ function playDie() {
   if (selectedDieIndex.value === null) return;
   battleSubPhase.value = "revealing";
 
-  const pDie = playerRemainingDice.value[selectedDieIndex.value];
+  const pIdx = selectedDieIndex.value;
+  const pDie = playerRemainingDice.value[pIdx];
   const npcIdx = Math.floor(Math.random() * npcRemainingDice.value.length);
   const nDie = npcRemainingDice.value[npcIdx];
 
   revealedPlayerDie.value = pDie;
+  hiddenPlayerDieIndex.value = pIdx;
+  selectedDieIndex.value = null;
 
   // Pause then reveal NPC die
   setTimeout(() => {
     revealedNpcDie.value = nDie;
-    resolveRound(pDie, nDie, selectedDieIndex.value, npcIdx);
+    resolveRound(pDie, nDie, pIdx, npcIdx);
   }, 1800);
 }
 
@@ -393,6 +402,7 @@ function resolveRound(pDie, nDie, pIdx, nIdx) {
 
   playerRemainingDice.value.splice(pIdx, 1);
   npcRemainingDice.value.splice(nIdx, 1);
+  hiddenPlayerDieIndex.value = null;
 
   const wins = roundResults.value.filter(r => r === "win").length;
   const losses = roundResults.value.filter(r => r === "lose").length;
@@ -403,8 +413,8 @@ function resolveRound(pDie, nDie, pIdx, nIdx) {
     roundOutcome.value = null;
     selectedDieIndex.value = null;
 
-    if (wins >= 2 || losses >= 2 || roundResults.value.every(r => r !== null)) {
-      endGame(wins >= 2);
+    if (wins >= 3 || losses >= 3 || roundResults.value.every(r => r !== null)) {
+      endGame(wins >= 3);
     } else {
       battleSubPhase.value = "select";
     }
@@ -583,19 +593,19 @@ onMounted(() => {
 /* Dice */
 .ds-dice-row {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .ds-die {
-  width: 52px;
-  height: 52px;
-  border-radius: 8px;
+  width: 42px;
+  height: 42px;
+  border-radius: 7px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   cursor: default;
   transition: transform 0.1s, box-shadow 0.2s, border-color 0.2s;
@@ -644,9 +654,9 @@ onMounted(() => {
 }
 
 .ds-die-revealed {
-  width: 60px;
-  height: 60px;
-  font-size: 26px;
+  width: 50px;
+  height: 50px;
+  font-size: 22px;
   cursor: default;
 }
 
@@ -720,6 +730,67 @@ onMounted(() => {
   color: #555;
   font-weight: 700;
   letter-spacing: 2px;
+}
+
+/* Staging area */
+.ds-staging-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.ds-staging-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.ds-staging-label {
+  font-size: 10px;
+  color: #555;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ds-staging-box {
+  width: 50px;
+  height: 50px;
+  border: 1px dashed #2a2a2a;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ds-staging-vs {
+  width: 30px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ds-die-played {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ds-die-staged {
+  animation: die-pop-in 0.25s ease;
+}
+
+@keyframes die-pop-in {
+  from {
+    transform: scale(0.3) translateY(-16px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
 }
 
 .ds-tie-notice {
