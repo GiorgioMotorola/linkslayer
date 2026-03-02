@@ -34,6 +34,10 @@
 
       <div class="stat-grid">
         <div class="stat-cell">
+          <div class="stat-cell-label">Days</div>
+          <div class="stat-cell-value">{{ daysCount }}</div>
+        </div>
+        <div class="stat-cell">
           <div class="stat-cell-label">Clicks</div>
           <div class="stat-cell-value">{{ clicks }}</div>
         </div>
@@ -102,6 +106,7 @@ import { nextTick } from "vue";
 
 const props = defineProps({
   clicks: Number,
+  daysCount: { type: Number, default: 1 },
   path: Array,
   timer: String,
   targets: Array,
@@ -136,6 +141,7 @@ const share = () => {
     `\n` +
     `Time: ${props.timer}\n` +
     `HP Remaining: ${props.playerHP}\n` +
+    `Days: ${props.daysCount}\n` +
     `Clicks: ${props.clicks}\n` +
     `Enemies Killed: ${props.enemiesKilled ?? 0}\n` +
     `Encounters: ${props.combatEncountersFought}\n` +

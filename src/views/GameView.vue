@@ -3,6 +3,7 @@
     :start="chain[currentTargetIndex]"
     :targets="chain[currentTargetIndex + 1]"
     :clicks="clickCount"
+    :daysCount="daysCount"
     :path="path"
     :playerClass="playerClass"
     :specialUsesLeft="specialUsesLeft"
@@ -73,6 +74,7 @@
       <VictoryModal
         v-if="isGameComplete"
         :clicks="clickCount"
+        :daysCount="daysCount"
         :path="path"
         :timer="formattedTimer"
         :targets="chain"
@@ -98,6 +100,7 @@
       <DefeatModal
         v-if="defeated"
         :clicks="clickCount"
+        :daysCount="daysCount"
         :path="path"
         :timer="formattedTimer"
         :targets="chain"
@@ -498,6 +501,7 @@ const {
   lastDamageDealt,
   lastDamageTaken,
   counterResult,
+  daysCount,
 } = useGameHandlers({
   gameFlow,
   log,

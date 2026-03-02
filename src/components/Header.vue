@@ -223,8 +223,8 @@
         </div>
 
         <div class="stat-column-clicks">
-          <div class="stat-label">Clicks</div>
-          <div class="stat-value" :class="clicksAnimClass">{{ clicks }}</div>
+          <div class="stat-label">Day</div>
+          <div class="stat-value">{{ daysCount }}</div>
         </div>
       </div>
       <div class="game-log">
@@ -288,6 +288,7 @@ const props = defineProps({
   start: String,
   targets: String,
   clicks: Number,
+  daysCount: { type: Number, default: 1 },
   path: Array,
   playerClass: Object,
   specialUsesLeft: Number,

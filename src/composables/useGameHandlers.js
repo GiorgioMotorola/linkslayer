@@ -14,6 +14,7 @@ import { handleShopPurchase as externalHandleShopPurchase } from "@/utils/itemHa
 import { getRandomChain } from "@/utils/randomPair";
 
 export function useGameHandlers(deps) {
+  const daysCount = ref(1);
   const {
     // Game Flow
     gameFlow,
@@ -399,6 +400,7 @@ export function useGameHandlers(deps) {
 
   function callHandleSleep() {
     enemyDifficultyLevel.value = enemyDifficultyLevel.value + 1;
+    daysCount.value = daysCount.value + 1;
     log(`⚔️ The world gets ${enemyDifficultyLevel.value} times more dangerous.`);
     showRestModal.value = false;
   }
@@ -726,5 +728,6 @@ export function useGameHandlers(deps) {
     lastDamageDealt,
     lastDamageTaken,
     counterResult,
+    daysCount,
   };
 }
