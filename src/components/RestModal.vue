@@ -7,7 +7,7 @@
       <div class="rest-modal-phrase">{{ displayPhrase }}</div>
 
       <div v-if="shouldShowLongRest && !tavernView" class="danger-warning">
-        The wilderness grows uneasy. Enemies will be stronger when you wake up...
+        Enemies will be stronger when you wake up...
       </div>
 
       <div class="rest-options">
@@ -94,7 +94,7 @@
           </button>
 
           <button @click="goToTavern" class="close-action-btn tavern-btn">
-            Head to the tavern →
+            Head to The Lighthouse Tavern →
           </button>
 
         </template>

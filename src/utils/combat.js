@@ -263,13 +263,15 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     playerDefendedThisTurn = true;
     const counterableActions = ["steal", "enrage", "confuse", "summon"];
     if (counterableActions.includes(enemyNextAction.value)) {
-      const roll = Math.floor(Math.random() * 20) + 1;
+      const rawRoll = Math.floor(Math.random() * 20) + 1;
+      const roll = rawRoll + coolerStickBonus;
       const threshold = 11;
       const succeeded = roll >= threshold;
-      utils.onDiceRoll?.({ roll, rawRoll: roll, bonus: 0, threshold, didHit: succeeded });
+      utils.onDiceRoll?.({ roll, rawRoll, bonus: coolerStickBonus, threshold, didHit: succeeded });
       const dieClass = succeeded ? "hit" : "miss";
       const dieFace = `<span class="dice-face ${dieClass}">${roll}</span>`;
-      log(`🎲 ${dieFace} (need ${threshold}+) — ${succeeded ? "Countered!" : "Failed to counter!"}`);
+      const bonusNote = coolerStickBonus > 0 ? ` (+${coolerStickBonus} stick)` : "";
+      log(`🎲 ${dieFace}${bonusNote} (need ${threshold}+) — ${succeeded ? "Countered!" : "Failed to counter!"}`);
       enemyActionCountered = succeeded;
       utils.onCounterResult?.({ succeeded });
     }
