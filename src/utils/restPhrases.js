@@ -67,6 +67,23 @@ const REST_PHRASES = [
     "Surrounded by the natural beauty of the land, you find repose.",
 ];
 
+const TAVERN_MEALS = [
+  { name: "Roast Pork with Onion Gravy", desc: "A thick slab of salted pork, slow-roasted and served in a dark onion gravy. The fat has rendered down to nothing." },
+  { name: "Mutton Stew", desc: "Heavy and brown. The mutton has been stewing since morning. The bread that comes with it is yesterday's." },
+  { name: "Eel Pie", desc: "A wedge of pastry crust filled with braised eel in a parsley sauce. It arrives hot. You eat it quickly." },
+  { name: "Spiced Beef and Turnip", desc: "Cubed beef, simmered with turnips and a handful of dried spices. The pepper in it is more than you expected." },
+  { name: "Roasted Chicken with Herbs", desc: "Half a bird, crisp-skinned and fragrant with rosemary. The leg falls off the bone before you touch it." },
+  { name: "Barley and Smoked Ham", desc: "A deep bowl of barley porridge with thick cuts of smoked ham stirred in. Simple. It fills you completely." },
+  { name: "Venison with Dried Fruit", desc: "A slice of venison served alongside a small dish of stewed dried plums and pears. The sweetness cuts the gamey meat." },
+  { name: "Poached Fish in Broth", desc: "A white fish, poached in a thin broth with leeks and dill. Lighter than the rest of the menu would suggest." },
+  { name: "Stuffed Cabbage Leaves", desc: "Dark cabbage leaves wrapped around minced pork and oats, baked until the outside chars slightly. Four of them." },
+  { name: "Kidney and Mushroom Pudding", desc: "A suet pudding, cut open at the table to let the filling breathe. Kidney, mushroom, and something darker you can't identify." },
+];
+
+export function getRandomTavernMeal() {
+  return TAVERN_MEALS[Math.floor(Math.random() * TAVERN_MEALS.length)];
+}
+
 export function getRandomRestPhrase() {
   const randomIndex = Math.floor(Math.random() * REST_PHRASES.length);
   return `"${REST_PHRASES[randomIndex]}"`;

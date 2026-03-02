@@ -151,6 +151,7 @@
         @offer="callHandleOffer"
         @sleep="handleSleepTransition"
         @order-beer="handleOrderBeer"
+        @order-meal="handleOrderMeal"
         @open-die-slayer="openDieSlayerFromTavern"
       />
 
@@ -315,7 +316,12 @@ function handleDieSlayerGold(amount) {
 }
 
 function handleOrderBeer() {
-  playerGold.value -= 1;
+  playerGold.value -= 10;
+}
+
+function handleOrderMeal() {
+  playerGold.value -= 15;
+  playerHP.value = Math.min(playerHP.value + 25, effectiveMaxHP.value);
 }
 
 function handleCampfireReward(reward) {

@@ -44,13 +44,22 @@
         <!-- ── LONG REST — TAVERN VIEW ─────────────────── -->
         <template v-if="shouldShowLongRest && tavernView">
 
-          <button v-if="!hasBeer" @click="orderBeer" :disabled="props.playerGold < 1">
-            🍺 Order a beer (1g)
+          <button v-if="!hasBeer" @click="orderBeer" :disabled="props.playerGold < 10">
+            🍺 Order a beer (10g)
           </button>
 
           <button v-if="hasBeer" @click="takeSip">
             Take a sip
             <span class="sip-sub">{{ sipsRemaining }} sip{{ sipsRemaining !== 1 ? 's' : '' }} remaining</span>
+          </button>
+
+          <button
+            v-if="currentMeal"
+            @click="orderMeal"
+            :disabled="mealOrdered || props.playerGold < 15"
+          >
+            🍽️ {{ currentMeal.name }} (15g)
+            <span class="assemble-sub">{{ mealOrdered ? 'You\'ve already eaten.' : currentMeal.desc }}</span>
           </button>
 
           <button @click="$emit('open-die-slayer')" :disabled="props.playerGold < 5">
@@ -70,7 +79,7 @@
             @click="handleLongRest"
             :disabled="longRestDone"
           >
-            🌙 Long Rest — restore full HP and gain +1 class ability
+            🌙 Long Rest — restore 35 HP and gain +1 class ability
           </button>
 
           <button
@@ -106,7 +115,7 @@
 
 <script setup>
 import { ref, watch, computed } from "vue";
-import { getRandomRestPhrase, getRandomTavernPhrase, getRandomSipPhrase } from "../utils/restPhrases.js";
+import { getRandomRestPhrase, getRandomTavernPhrase, getRandomSipPhrase, getRandomTavernMeal } from "../utils/restPhrases.js";
 
 const props = defineProps({
   showRestModal: Boolean,
@@ -121,7 +130,7 @@ const props = defineProps({
   nextOfferingCost: { type: Number, default: 10 },
 });
 
-const emit = defineEmits(["rest", "assemble-upgrade", "offer", "sleep", "order-beer", "open-die-slayer"]);
+const emit = defineEmits(["rest", "assemble-upgrade", "offer", "sleep", "order-beer", "order-meal", "open-die-slayer"]);
 
 const currentRestPhrase = ref("");
 const tavernPhrase = ref("");
@@ -133,6 +142,8 @@ const tavernView = ref(false);
 const isTransitioning = ref(false);
 const hasBeer = ref(false);
 const sipsRemaining = ref(0);
+const currentMeal = ref(null);
+const mealOrdered = ref(false);
 
 watch(
   () => props.showRestModal,
@@ -147,6 +158,8 @@ watch(
       tavernView.value = false;
       hasBeer.value = false;
       sipsRemaining.value = 0;
+      currentMeal.value = getRandomTavernMeal();
+      mealOrdered.value = false;
     }
   },
   { immediate: true }
@@ -209,6 +222,11 @@ const orderBeer = () => {
   sipsRemaining.value = 10;
   currentSipScene.value = "";
   emit("order-beer");
+};
+
+const orderMeal = () => {
+  mealOrdered.value = true;
+  emit("order-meal");
 };
 
 const takeSip = () => {
