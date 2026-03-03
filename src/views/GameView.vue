@@ -815,17 +815,24 @@ function restoreGameState(s) {
   questTurnedIn.value = s.questTurnedIn ?? false;
 }
 
-onMounted(async () => {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return;
+async function loadSave(userId) {
   isLoadingGame.value = true;
   const { data } = await supabase
     .from("saves")
     .select("game_state")
-    .eq("user_id", user.id)
+    .eq("user_id", userId)
     .single();
   if (data?.game_state) restoreGameState(data.game_state);
   isLoadingGame.value = false;
+}
+
+onMounted(async () => {
+  const { data: { user: currentUser } } = await supabase.auth.getUser();
+  if (currentUser) await loadSave(currentUser.id);
+});
+
+watch(user, async (newUser, oldUser) => {
+  if (newUser && !oldUser) await loadSave(newUser.id);
 });
 </script>
 
