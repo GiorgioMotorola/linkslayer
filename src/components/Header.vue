@@ -167,6 +167,9 @@
           </button>
           <button @click="openNotesModal" class="notes-button">Journal</button>
           <button @click="emit('open-map-modal')" class="map-button">Map</button>
+          <button v-if="props.isLoggedIn" @click="handleSave" class="save-button" :class="{ 'save-confirmed': savedFeedback }">
+            {{ savedFeedback ? 'Saved ✓' : 'Save' }}
+          </button>
         </div>
       </div>
 
@@ -358,6 +361,10 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  isLoggedIn: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits([
@@ -372,7 +379,16 @@ const emit = defineEmits([
   "use-compass",
   "open-inventory-modal",
   "open-map-modal",
+  "save",
 ]);
+
+const savedFeedback = ref(false);
+
+function handleSave() {
+  emit("save");
+  savedFeedback.value = true;
+  setTimeout(() => { savedFeedback.value = false; }, 2000);
+}
 
 const headerEl = ref(null);
 const headerHeight = ref(300);

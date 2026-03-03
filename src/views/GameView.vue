@@ -47,6 +47,8 @@
     :enemyStatusEffects="enemyStatusEffects"
     :confusedAction="confusedAction"
     :confusedTurnsLeft="confusedTurnsLeft"
+    :isLoggedIn="!!user"
+    @save="saveGame"
   />
 
   <Transition name="sleep-fade">
@@ -262,6 +264,7 @@ import { generateMiniBoss } from "@/utils/miniBossGenerator";
 import { QUESTS } from "@/utils/quests";
 import { classes } from "@/utils/classes";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/composables/useAuth";
 
 // Composables
 import { useGameFlow } from "@/composables/useGameFlow";
@@ -298,6 +301,8 @@ const {
   enemyDifficultyLevel,
   resetGame,
 } = gameFlow;
+
+const { user } = useAuth();
 
 const { gameLog, log, logEnemyAction } = useGameLog(() => formattedTimer.value);
 

@@ -311,6 +311,32 @@ header {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.save-button {
+  background-color: transparent;
+  color: #2c3e50;
+  border: 3px solid #2c3e50;
+  border-radius: 0.3rem;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.save-button:hover {
+  background-color: rgba(44, 62, 80, 0.08);
+  color: #1a2b3b;
+  border-color: #34495e;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.save-confirmed {
+  color: #27ae60 !important;
+  border-color: #27ae60 !important;
+  background-color: rgba(39, 174, 96, 0.08) !important;
+}
+
 .current-path {
   margin-top: 0.1rem;
   margin-bottom: 1rem;
@@ -1566,7 +1592,8 @@ button:hover {
   .backpack-button,
   .inventory-button,
   .map-button,
-  .notes-button {
+  .notes-button,
+  .save-button {
     border: 1px solid #2c3e50;
     border-radius: 0.3rem;
     padding: 0.4rem 0.6rem;
