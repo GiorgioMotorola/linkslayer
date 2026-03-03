@@ -1,12 +1,12 @@
 // src/composables/useGameFlow.js
 
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { getRandomChain } from "@/utils/randomPair";
 
 export function useGameFlow() {
   // Journey & Chain
   const journeyLength = ref(3);
-  const chain = getRandomChain(journeyLength.value);
+  const chain = reactive(getRandomChain(journeyLength.value));
   const current = ref(chain[0]);
   const currentTargetIndex = ref(0);
   const path = ref([current.value]);

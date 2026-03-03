@@ -283,6 +283,7 @@ const {
   current,
   currentTargetIndex,
   path,
+  journeyLength,
   formattedStart,
   formattedTitle,
   clickCount,
@@ -786,6 +787,11 @@ async function saveGame() {
       questTaken: questTaken.value,
       questComplete: questComplete.value,
       questTurnedIn: questTurnedIn.value,
+      chain: [...chain],
+      current: current.value,
+      currentTargetIndex: currentTargetIndex.value,
+      path: [...path.value],
+      journeyLength: journeyLength.value,
     },
   }, { onConflict: 'user_id' });
 }
@@ -813,6 +819,11 @@ function restoreGameState(s) {
   questTaken.value = s.questTaken ?? false;
   questComplete.value = s.questComplete ?? false;
   questTurnedIn.value = s.questTurnedIn ?? false;
+  if (s.chain?.length) chain.splice(0, chain.length, ...s.chain);
+  if (s.current) current.value = s.current;
+  if (s.currentTargetIndex != null) currentTargetIndex.value = s.currentTargetIndex;
+  if (s.path?.length) path.value = s.path;
+  if (s.journeyLength) journeyLength.value = s.journeyLength;
 }
 
 async function loadSave(userId) {
