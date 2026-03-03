@@ -158,7 +158,9 @@
         @offer="callHandleOffer"
         @sleep="handleSleepTransition"
         @order-beer="handleOrderBeer"
+        @sip-beer="handleSipBeer"
         @order-meal="handleOrderMeal"
+        @bite-meal="handleBiteMeal"
         @open-die-slayer="openDieSlayerFromTavern"
         @take-quest="handleTakeQuest"
         @turn-in-quest="handleTurnInQuest"
@@ -340,9 +342,16 @@ function handleOrderBeer() {
   playerGold.value -= 10;
 }
 
+function handleSipBeer() {
+  playerHP.value = Math.min(playerHP.value + 1, effectiveMaxHP.value);
+}
+
 function handleOrderMeal() {
   playerGold.value -= 15;
-  playerHP.value = Math.min(playerHP.value + 25, effectiveMaxHP.value);
+}
+
+function handleBiteMeal() {
+  playerHP.value = Math.min(playerHP.value + 12, effectiveMaxHP.value);
 }
 
 function handleCampfireReward(reward) {

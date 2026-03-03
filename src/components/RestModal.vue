@@ -48,18 +48,43 @@
             🍺 Order a beer (10g)
           </button>
 
-          <button v-if="hasBeer" @click="takeSip">
+          <button
+            v-if="hasBeer"
+            @click="takeSip"
+            class="sip-button"
+            :class="{ 'sip-cooling': sipCooldown }"
+            :style="sipFillStyle"
+            :disabled="sipCooldown"
+          >
             Take a sip
-            <span class="sip-sub">{{ sipsRemaining }} sip{{ sipsRemaining !== 1 ? 's' : '' }} remaining</span>
+            <span class="sip-sub">
+              <template v-if="sipCooldown">...</template>
+              <template v-else>+1 HP · {{ sipsRemaining }} sip{{ sipsRemaining !== 1 ? 's' : '' }} remaining</template>
+            </span>
           </button>
 
           <button
-            v-if="currentMeal"
+            v-if="currentMeal && !mealOrdered"
             @click="orderMeal"
-            :disabled="mealOrdered || props.playerGold < 15"
+            :disabled="props.playerGold < 15"
           >
             🍽️ {{ currentMeal.name }} (15g)
-            <span class="assemble-sub">{{ mealOrdered ? 'You\'ve already eaten.' : currentMeal.desc }}</span>
+            <span class="assemble-sub">{{ currentMeal.desc }}</span>
+          </button>
+
+          <button
+            v-if="mealOrdered && mealBitesRemaining > 0"
+            @click="takeBite"
+            class="sip-button"
+            :class="{ 'sip-cooling': mealCooldown }"
+            :style="mealFillStyle"
+            :disabled="mealCooldown"
+          >
+            Take a bite
+            <span class="sip-sub">
+              <template v-if="mealCooldown">...</template>
+              <template v-else>+12 HP · {{ mealBitesRemaining }} bite{{ mealBitesRemaining !== 1 ? 's' : '' }} remaining</template>
+            </span>
           </button>
 
           <button @click="$emit('open-die-slayer')" :disabled="props.playerGold < 5">
@@ -168,7 +193,7 @@ const props = defineProps({
   questTurnedIn: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(["rest", "assemble-upgrade", "offer", "sleep", "order-beer", "order-meal", "open-die-slayer", "take-quest", "turn-in-quest"]);
+const emit = defineEmits(["rest", "assemble-upgrade", "offer", "sleep", "order-beer", "order-meal", "open-die-slayer", "take-quest", "turn-in-quest", "sip-beer", "bite-meal"]);
 
 const currentRestPhrase = ref("");
 const tavernPhrase = ref("");
@@ -180,8 +205,25 @@ const tavernView = ref(false);
 const isTransitioning = ref(false);
 const hasBeer = ref(false);
 const sipsRemaining = ref(0);
+const sipCooldown = ref(false);
 const currentMeal = ref(null);
 const mealOrdered = ref(false);
+const mealBitesRemaining = ref(0);
+const mealCooldown = ref(false);
+
+const sipFillStyle = computed(() => {
+  const pct = (sipsRemaining.value / 10) * 100;
+  return {
+    background: `linear-gradient(to right, rgba(195, 130, 15, 0.38) 0%, rgba(195, 130, 15, 0.38) ${pct}%, rgba(35, 14, 3, 0.65) ${pct}%, rgba(35, 14, 3, 0.65) 100%)`,
+  };
+});
+
+const mealFillStyle = computed(() => {
+  const pct = (mealBitesRemaining.value / 2) * 100;
+  return {
+    background: `linear-gradient(to right, rgba(160, 80, 20, 0.40) 0%, rgba(160, 80, 20, 0.40) ${pct}%, rgba(35, 14, 3, 0.65) ${pct}%, rgba(35, 14, 3, 0.65) 100%)`,
+  };
+});
 
 watch(
   () => props.showRestModal,
@@ -196,8 +238,11 @@ watch(
       tavernView.value = false;
       hasBeer.value = false;
       sipsRemaining.value = 0;
+      sipCooldown.value = false;
       currentMeal.value = getRandomTavernMeal();
       mealOrdered.value = false;
+      mealBitesRemaining.value = 0;
+      mealCooldown.value = false;
     }
   },
   { immediate: true }
@@ -264,15 +309,28 @@ const orderBeer = () => {
 
 const orderMeal = () => {
   mealOrdered.value = true;
+  mealBitesRemaining.value = 2;
   emit("order-meal");
 };
 
+const takeBite = () => {
+  emit("bite-meal");
+  mealBitesRemaining.value--;
+  if (mealBitesRemaining.value === 0) return;
+  mealCooldown.value = true;
+  setTimeout(() => { mealCooldown.value = false; }, 3000);
+};
+
 const takeSip = () => {
+  emit("sip-beer");
   currentSipScene.value = getRandomSipPhrase();
   sipsRemaining.value--;
   if (sipsRemaining.value === 0) {
     hasBeer.value = false;
+    return;
   }
+  sipCooldown.value = true;
+  setTimeout(() => { sipCooldown.value = false; }, 3000);
 };
 
 const goToTavern = async () => {
@@ -531,6 +589,19 @@ button:disabled::after {
 button:disabled:hover {
   cursor: not-allowed;
   opacity: 0.35;
+}
+
+/* ── Sip button fill / cooldown ─────────────────────────── */
+.sip-button {
+  transition: background 0.5s ease, opacity 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+.sip-cooling {
+  opacity: 0.5;
+}
+
+.sip-cooling::after {
+  content: none !important;
 }
 
 /* ── Assemble / sip sub-text ────────────────────────────── */
