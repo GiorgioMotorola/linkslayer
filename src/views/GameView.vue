@@ -300,12 +300,14 @@ const {
   hpCapBonus,
   bossDefeated,
   enemyDifficultyLevel,
+  seenLoreEncounters,
+  seenNPCEncounters,
   resetGame,
 } = gameFlow;
 
 const { user } = useAuth();
 
-const { gameLog, log, logEnemyAction } = useGameLog(() => formattedTimer.value);
+const { gameLog, log, logEnemyAction, restoreLog } = useGameLog(() => formattedTimer.value);
 
 const modals = useModals();
 const {
@@ -792,6 +794,14 @@ async function saveGame() {
       currentTargetIndex: currentTargetIndex.value,
       path: [...path.value],
       journeyLength: journeyLength.value,
+      clickCount: clickCount.value,
+      longRestDismissCount: longRestDismissCount.value,
+      playerGoal: playerGoal.value,
+      bossDefeated: bossDefeated.value,
+      seenLoreEncounters: [...seenLoreEncounters.value],
+      seenNPCEncounters: [...seenNPCEncounters.value],
+      enemyDifficultyLevel: enemyDifficultyLevel.value,
+      gameLog: gameLog.value,
     },
   }, { onConflict: 'user_id' });
 }
@@ -824,6 +834,14 @@ function restoreGameState(s) {
   if (s.currentTargetIndex != null) currentTargetIndex.value = s.currentTargetIndex;
   if (s.path?.length) path.value = s.path;
   if (s.journeyLength) journeyLength.value = s.journeyLength;
+  if (s.clickCount != null) clickCount.value = s.clickCount;
+  if (s.longRestDismissCount != null) longRestDismissCount.value = s.longRestDismissCount;
+  if (s.playerGoal) playerGoal.value = s.playerGoal;
+  if (s.bossDefeated != null) bossDefeated.value = s.bossDefeated;
+  if (s.seenLoreEncounters?.length) seenLoreEncounters.value = s.seenLoreEncounters;
+  if (s.seenNPCEncounters?.length) seenNPCEncounters.value = s.seenNPCEncounters;
+  if (s.enemyDifficultyLevel != null) enemyDifficultyLevel.value = s.enemyDifficultyLevel;
+  if (s.gameLog?.length) restoreLog(s.gameLog);
 }
 
 async function loadSave(userId) {

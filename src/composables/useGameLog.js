@@ -48,9 +48,15 @@ export function useGameLog(getFormattedTimer) {
     if (message) log(message);
   }
 
+  function restoreLog(entries) {
+    gameLog.value = entries;
+    logId = entries.length > 0 ? entries[entries.length - 1].id : 0;
+  }
+
   return {
     gameLog,
     log,
     logEnemyAction,
+    restoreLog,
   };
 }
