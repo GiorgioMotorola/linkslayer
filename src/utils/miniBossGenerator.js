@@ -172,6 +172,15 @@ export const MINI_BOSS_TYPES = [
     weaponReward: 2,
     defenseReward: 0,
   },
+  {
+    type: "Brown Bear",
+    hp: 100,
+    minDamage: 5,
+    maxDamage: 9,
+    goldReward: 50,
+    weaponReward: 1,
+    defenseReward: 1,
+  },
 ];
 
 export function generateMiniBoss(specificType, difficultyLevel = 0) {

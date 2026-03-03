@@ -464,6 +464,25 @@
           </div>
         </div>
 
+        <div v-if="inventory.questScrolls > 0" class="item-slot-wrapper">
+          <div class="item-details-box">
+            <div class="item-name-quantity">
+              <span class="item-name">Quest Scroll — The Growling Dark</span>
+              <span class="item-count">x{{ inventory.questScrolls }}</span>
+            </div>
+            <div class="item-description">A rolled parchment sealed with wax. Use it when you're ready to venture into the cave. Must be opened while idle.</div>
+          </div>
+          <div class="item-button-box">
+            <button
+              class="buy-button-details"
+              @click.stop="useItem('questScroll')"
+              :disabled="!isIdle"
+            >
+              Use
+            </button>
+          </div>
+        </div>
+
         <div
           v-if="isInventoryEmpty"
           class="item-slot-wrapper no-items-message-wrapper"
@@ -569,6 +588,10 @@ const props = defineProps({
     default: 0,
   },
   isBountyScrollActive: {
+    type: Boolean,
+    default: false,
+  },
+  isIdle: {
     type: Boolean,
     default: false,
   },

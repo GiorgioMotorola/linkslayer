@@ -18,7 +18,7 @@
     :enemyTurnKey="enemyTurnKey"
     :message="encounterMessage"
     @action="handleCombatActionWrapper"
-    @option-chosen="callHandleEncounterOption"
+    @option-chosen="handleOptionChosen"
     @close="handleCloseEncounterWrapper"
     :playerName="playerName"
     @log-line="log"
@@ -149,6 +149,10 @@
         :offeringPot="offeringPot"
         :playerGold="playerGold"
         :nextOfferingCost="nextOfferingCost"
+        :questScrolls="inventory.questScrolls"
+        :questTaken="questTaken"
+        :questComplete="questComplete"
+        :questTurnedIn="questTurnedIn"
         @rest="callHandleRest"
         @assemble-upgrade="handleAssembleUpgradeWrapper"
         @offer="callHandleOffer"
@@ -156,6 +160,8 @@
         @order-beer="handleOrderBeer"
         @order-meal="handleOrderMeal"
         @open-die-slayer="openDieSlayerFromTavern"
+        @take-quest="handleTakeQuest"
+        @turn-in-quest="handleTurnInQuest"
       />
 
       <ShopModal
@@ -203,6 +209,7 @@
         :is-encounter-beacon-active="encounterBeaconActive"
         :gold-pouch-accumulated-gold="goldPouchAccumulatedGold"
         :is-bounty-scroll-active="bountyScrollActive"
+        :isIdle="isIdle"
       />
 
       <MapModal
@@ -211,8 +218,16 @@
         :currentTargetIndex="currentTargetIndex"
         @close="isMapModalOpen = false"
       />
+
     </div>
   </div>
+
+  <Transition name="quest-notif-fade">
+    <div v-if="showQuestNotification" class="quest-notification">
+      <div class="quest-notif-label">Quest Started</div>
+      <div class="quest-notif-name">The Growling Dark</div>
+    </div>
+  </Transition>
 
   <div class="dim-overlay" :class="{ 'active-overlay': bossOverlay }"></div>
 
@@ -241,6 +256,8 @@ import CampfireOverlay from "@/components/CampfireOverlay.vue";
 
 import { shopItems as allShopItems } from "@/utils/shopItems";
 import { isBoss } from "@/utils/bossGenerator";
+import { generateMiniBoss } from "@/utils/miniBossGenerator";
+import { QUESTS } from "@/utils/quests";
 
 // Composables
 import { useGameFlow } from "@/composables/useGameFlow";
@@ -274,6 +291,7 @@ const {
   combatWinsSinceLastCapIncrease,
   hpCapBonus,
   bossDefeated,
+  enemyDifficultyLevel,
   resetGame,
 } = gameFlow;
 
@@ -578,6 +596,91 @@ const handleBeforeUnload = (e) => {
 onMounted(() => window.addEventListener("beforeunload", handleBeforeUnload));
 onUnmounted(() => window.removeEventListener("beforeunload", handleBeforeUnload));
 
+// ── Quest system ──────────────────────────────────────────
+const showQuestNotification = ref(false);
+const questTaken = ref(false);
+const questCombatActive = ref(false);
+const questComplete = ref(false);
+const questTurnedIn = ref(false);
+
+const isIdle = computed(() =>
+  !isInCombat.value &&
+  !encounter.value &&
+  !showRestModal.value &&
+  !showShopModal.value
+);
+
+function handleTakeQuest() {
+  inventory.value.questScrolls++;
+  questTaken.value = true;
+  log("📜 You take the quest scroll from the notice board.");
+}
+
+function handleTurnInQuest() {
+  playerGold.value += 50;
+  questTurnedIn.value = true;
+  log("📜 You recount your deed at the bar. The innkeeper slides 50g across the counter. <em>The Growling Dark</em> — complete.");
+}
+
+function advanceQuestStep(stepIndex) {
+  const quest = QUESTS[0];
+  const step = quest.steps[stepIndex];
+  encounter.value = {
+    type: "npc",
+    npc: {
+      id: `quest_cave_step_${stepIndex}`,
+      name: quest.name,
+      greeting: step.scene,
+      options: step.choices.map(c => ({ text: c.text, questStep: c.next })),
+    },
+  };
+}
+
+function handleOptionChosen(option) {
+  if (option.questStep !== undefined) {
+    if (option.questStep === "combat") {
+      startQuestCombat(QUESTS[0].combatType);
+    } else if (option.questStep === "leave") {
+      encounter.value = null;
+      questTaken.value = false;
+      log("📜 You step back from the cave. The notice remains on the board if you wish to return.");
+    } else {
+      advanceQuestStep(option.questStep);
+    }
+    return;
+  }
+  callHandleEncounterOption(option);
+}
+
+function startQuestCombat(bossType) {
+  const boss = generateMiniBoss(bossType, enemyDifficultyLevel.value);
+  encounter.value = { type: "combat", enemy: boss };
+  enemyHP.value = boss.currentHP;
+  nextEnemyAttack.value =
+    Math.floor(Math.random() * (boss.maxDamage - boss.minDamage + 1)) + boss.minDamage;
+  enemyNextAction.value = "attack";
+  combatEncountersFought.value++;
+  questCombatActive.value = true;
+  log(`🐻 A massive <strong>${boss.name}</strong> emerges from the darkness! What do you do?`);
+  logEnemyAction(enemyNextAction, nextEnemyAttack);
+}
+
+// Detect quest completion or flight when Brown Bear combat ends
+watch(encounter, (newVal, oldVal) => {
+  if (!questCombatActive.value) return;
+  if (oldVal?.type === "combat" && oldVal?.enemy?.name === "Brown Bear" && newVal === null) {
+    questCombatActive.value = false;
+    if (!defeated.value && enemyHP.value <= 0) {
+      questComplete.value = true;
+      log("📜 You've slain the bear. Return to The Lighthouse Tavern to claim your reward.");
+    } else if (!defeated.value) {
+      // Player fled — let them re-attempt
+      questTaken.value = false;
+      log("📜 You retreat from the cave. The notice remains on the board if you wish to return.");
+    }
+  }
+});
+
 // Inventory item usage handler
 function handleUseInventoryItem(itemType) {
   if (itemType === "compass") {
@@ -626,6 +729,12 @@ function handleUseInventoryItem(itemType) {
     itemHandlers.useGoldPouch();
   } else if (itemType === "bountyScroll") {
     itemHandlers.useBountyScroll();
+  } else if (itemType === "questScroll") {
+    inventory.value.questScrolls--;
+    closeInventoryModal();
+    advanceQuestStep(0);
+    showQuestNotification.value = true;
+    setTimeout(() => { showQuestNotification.value = false; }, 3000);
   }
 }
 </script>
@@ -659,6 +768,57 @@ function handleUseInventoryItem(itemType) {
 .campfire-fade-enter-from,
 .campfire-fade-leave-to {
   opacity: 0;
+}
+
+/* ── Quest notification banner ──────────────────────────── */
+.quest-notification {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  text-align: center;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  background: black;
+  padding: 1.2rem 2.4rem;
+  border-radius: 6px;
+}
+
+.quest-notif-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(200, 140, 40, 0.75);
+  font-family: "IBM Plex Sans", sans-serif;
+}
+
+.quest-notif-name {
+  font-size: 26px;
+  font-weight: 500;
+  color: #e8c870;
+  font-family: "IBM Plex Sans", sans-serif;
+  text-shadow: 0 0 30px rgba(220, 160, 30, 0.6), 0 0 60px rgba(180, 110, 10, 0.3);
+  letter-spacing: 1px;
+}
+
+.quest-notif-fade-enter-active {
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.quest-notif-fade-leave-active {
+  transition: opacity 1s ease, transform 1s ease;
+}
+.quest-notif-fade-enter-from {
+  opacity: 0;
+  transform: translate(-50%, -44%);
+}
+.quest-notif-fade-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -60%);
 }
 
 .timer {

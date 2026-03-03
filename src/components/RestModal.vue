@@ -66,6 +66,40 @@
             🎲 Play Die Slayer
           </button>
 
+          <!-- Quest: turn-in available -->
+          <button
+            v-if="props.questComplete && !props.questTurnedIn"
+            @click="$emit('turn-in-quest')"
+            class="quest-turnin-btn"
+          >
+            📜 Turn In: The Growling Dark
+            <span class="assemble-sub">You've slain the bear. Claim your 50g reward.</span>
+          </button>
+
+          <!-- Quest: already turned in -->
+          <div v-else-if="props.questTurnedIn" class="quest-taken-note">
+            ✓ The Growling Dark — complete.
+          </div>
+
+          <!-- Quest: scroll in backpack -->
+          <div v-else-if="props.questScrolls > 0" class="quest-taken-note">
+            📜 Quest scroll is in your backpack.
+          </div>
+
+          <!-- Quest: taken but not yet complete (scroll used, in progress) -->
+          <div v-else-if="props.questTaken && !props.questComplete" class="quest-taken-note">
+            📜 Quest in progress...
+          </div>
+
+          <!-- Quest: available to take -->
+          <button
+            v-else
+            @click="takeQuest"
+          >
+            📜 The Growling Dark
+            <span class="assemble-sub">A weathered notice tacked to the wall. Something stirs in the cave near town...</span>
+          </button>
+
           <button @click="returnToCampsite" class="close-action-btn">
             ← Return to your campsite
           </button>
@@ -128,9 +162,13 @@ const props = defineProps({
   offeringPot: { type: Number, default: 0 },
   playerGold: { type: Number, default: 0 },
   nextOfferingCost: { type: Number, default: 10 },
+  questScrolls: { type: Number, default: 0 },
+  questTaken: { type: Boolean, default: false },
+  questComplete: { type: Boolean, default: false },
+  questTurnedIn: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(["rest", "assemble-upgrade", "offer", "sleep", "order-beer", "order-meal", "open-die-slayer"]);
+const emit = defineEmits(["rest", "assemble-upgrade", "offer", "sleep", "order-beer", "order-meal", "open-die-slayer", "take-quest", "turn-in-quest"]);
 
 const currentRestPhrase = ref("");
 const tavernPhrase = ref("");
@@ -244,6 +282,10 @@ const goToTavern = async () => {
   currentSipScene.value = "";
   await new Promise(r => setTimeout(r, 30));
   isTransitioning.value = false;
+};
+
+const takeQuest = () => {
+  emit("take-quest");
 };
 
 const returnToCampsite = async () => {
@@ -562,6 +604,29 @@ button:disabled:hover {
 .modal-night .tavern-btn {
   border-color: rgba(160, 100, 22, 0.6) !important;
   color: #d4a84b !important;
+}
+
+/* ── Quest taken note ───────────────────────────────────── */
+.quest-taken-note {
+  font-size: 14px;
+  opacity: 0.55;
+  padding: 0.5rem 0.2rem;
+  font-style: italic;
+  color: white;
+}
+
+/* ── Quest turn-in button ───────────────────────────────── */
+.quest-turnin-btn {
+  border-color: rgba(80, 160, 60, 0.55) !important;
+  background: rgba(20, 50, 15, 0.6) !important;
+  color: #a8e090 !important;
+}
+
+.quest-turnin-btn:hover:not(:disabled) {
+  background: rgba(40, 100, 25, 0.3) !important;
+  border-color: rgba(100, 200, 70, 0.8) !important;
+  color: #c4f0a0 !important;
+  opacity: 1 !important;
 }
 
 /* ── Danger warning ─────────────────────────────────────── */

@@ -57,6 +57,7 @@ export function useInventory() {
     encounterBeacons: 0,
     goldPouches: 0,
     bountyScrolls: 0,
+    questScrolls: 0,
   });
 
   const goldPouchAccumulatedGold = ref(0);
