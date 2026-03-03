@@ -787,7 +787,7 @@ async function saveGame() {
       questComplete: questComplete.value,
       questTurnedIn: questTurnedIn.value,
     },
-  });
+  }, { onConflict: 'user_id' });
 }
 
 function restoreGameState(s) {
