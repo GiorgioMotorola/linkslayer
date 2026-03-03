@@ -1,6 +1,28 @@
 <template>
   <div class="modal">
     <div class="class-select">
+      <div class="cs-auth-widget">
+        <template v-if="user">
+          <span class="cs-auth-name">{{ userLabel }}</span>
+          <button class="cs-auth-link" @click="handleSignOut">Sign out</button>
+        </template>
+        <template v-else>
+          <button class="cs-auth-link" @click="toggleForm('signin')">Sign in</button>
+          <span class="cs-auth-sep">·</span>
+          <button class="cs-auth-link" @click="toggleForm('signup')">Sign up</button>
+        </template>
+        <div v-if="showForm" class="cs-auth-dropdown">
+          <div class="cs-auth-dropdown-title">{{ showForm === 'signup' ? 'Create Account' : 'Sign In' }}</div>
+          <input v-model="authEmail" type="email" placeholder="Email" class="cs-auth-input" @keyup.enter="submitAuth" />
+          <input v-model="authPassword" type="password" placeholder="Password" class="cs-auth-input" @keyup.enter="submitAuth" />
+          <div v-if="authError" class="cs-auth-error">{{ authError }}</div>
+          <div v-if="authSuccess" class="cs-auth-success">{{ authSuccess }}</div>
+          <button class="cs-auth-submit" @click="submitAuth" :disabled="authLoading">
+            {{ authLoading ? '...' : showForm === 'signup' ? 'Create Account' : 'Sign In' }}
+          </button>
+        </div>
+      </div>
+
       <div class="game-title">
         <div class="game-name">LINK</div>
         <div class="game-name">SLAYER</div>
@@ -67,12 +89,63 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick } from "vue";
+import { ref, watch, nextTick, computed } from "vue";
 import { classes } from "@/utils/classes";
 import prompts from "@/assets/data/prompts.json";
 import TipsModal from "./TipsModal.vue";
 import randomNames from "@/assets/data/randomNames.json";
 import logo from "../assets/newlogo-nobg1.png";
+import { useAuth } from "@/composables/useAuth";
+
+const { user, signIn, signUp, signOut } = useAuth();
+
+const showForm = ref(null); // null | 'signin' | 'signup'
+const authEmail = ref("");
+const authPassword = ref("");
+const authError = ref("");
+const authLoading = ref(false);
+const authSuccess = ref("");
+
+const userLabel = computed(() => user.value?.email?.split("@")[0] ?? "");
+
+function toggleForm(mode) {
+  showForm.value = showForm.value === mode ? null : mode;
+  authEmail.value = "";
+  authPassword.value = "";
+  authError.value = "";
+  authSuccess.value = "";
+}
+
+async function submitAuth() {
+  if (!authEmail.value || !authPassword.value) {
+    authError.value = "Please enter email and password.";
+    return;
+  }
+  authLoading.value = true;
+  authError.value = "";
+  authSuccess.value = "";
+  try {
+    if (showForm.value === "signup") {
+      const data = await signUp(authEmail.value, authPassword.value);
+      if (data.session) {
+        showForm.value = null;
+      } else {
+        authSuccess.value = "Check your email to confirm your account.";
+      }
+    } else {
+      await signIn(authEmail.value, authPassword.value);
+      showForm.value = null;
+    }
+  } catch (err) {
+    authError.value = err.message ?? "Something went wrong.";
+  } finally {
+    authLoading.value = false;
+  }
+}
+
+async function handleSignOut() {
+  await signOut();
+}
 
 const name = ref("");
 const goal = ref("");
@@ -307,6 +380,117 @@ watch(
   animation: pop-in 0.3s ease;
   border: 1px solid black;
   box-sizing: border-box;
+  position: relative;
+}
+
+.cs-auth-widget {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-family: "IBM Plex Sans", sans-serif;
+  z-index: 10;
+}
+
+.cs-auth-name {
+  color: #555;
+  font-size: 12px;
+}
+
+.cs-auth-sep {
+  color: #aaa;
+  font-size: 12px;
+}
+
+.cs-auth-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12px;
+  color: #0645ad;
+  cursor: pointer;
+  font-family: "IBM Plex Sans", sans-serif;
+  text-decoration: underline;
+}
+
+.cs-auth-link:hover {
+  color: #003380;
+}
+
+.cs-auth-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  width: 220px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  z-index: 100;
+}
+
+.cs-auth-dropdown-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #eee;
+}
+
+.cs-auth-input {
+  padding: 5px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: "IBM Plex Sans", sans-serif;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.cs-auth-input:focus {
+  border-color: #0645ad;
+}
+
+.cs-auth-error {
+  font-size: 11px;
+  color: #c0392b;
+  text-align: center;
+}
+
+.cs-auth-success {
+  font-size: 11px;
+  color: #27ae60;
+  text-align: center;
+}
+
+.cs-auth-submit {
+  padding: 5px 10px;
+  background: #0645ad;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: "IBM Plex Sans", sans-serif;
+  cursor: pointer;
+  width: 100%;
+}
+
+.cs-auth-submit:hover:not(:disabled) {
+  background: #003380;
+}
+
+.cs-auth-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .who-are-you-div {

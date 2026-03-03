@@ -23,6 +23,32 @@
           <span class="path-goal">{{ props.fullChain[props.currentTargetIndex + 1]?.replaceAll("_", " ") }}</span>
         </div>
       </div>
+
+      <!-- ── Auth widget ── -->
+      <div class="auth-widget">
+        <template v-if="!user">
+          <button class="auth-link" @click="toggleForm('signin')">Sign in</button>
+          <span class="auth-sep">·</span>
+          <button class="auth-link" @click="toggleForm('signup')">Sign up</button>
+        </template>
+        <template v-else>
+          <span class="auth-username">{{ userLabel }}</span>
+          <span class="auth-sep">·</span>
+          <button class="auth-link" @click="handleSignOut">Sign out</button>
+        </template>
+
+        <div v-if="showForm" class="auth-dropdown">
+          <div class="auth-dropdown-title">{{ showForm === 'signin' ? 'Sign In' : 'Create Account' }}</div>
+          <input v-model="authEmail" type="email" placeholder="Email" class="auth-input" @keyup.enter="submitAuth" />
+          <input v-model="authPassword" type="password" placeholder="Password" class="auth-input" @keyup.enter="submitAuth" />
+          <div v-if="authError" class="auth-dropdown-error">{{ authError }}</div>
+          <div v-if="authSuccess" class="auth-dropdown-success">{{ authSuccess }}</div>
+          <button class="auth-dropdown-submit" @click="submitAuth" :disabled="authLoading">
+            {{ authLoading ? '...' : showForm === 'signin' ? 'Sign In' : 'Create Account' }}
+          </button>
+        </div>
+      </div>
+
     </div>
     <div class="path-sub-bar">
       <div class="sky-bar">
@@ -55,6 +81,60 @@
 import { ref, watch, onMounted, computed } from "vue";
 import { fetchWikipediaArticle } from "@/utils/wikipediaApi";
 import logo from "../assets/newlogo-nobg1.png";
+import { useAuth } from "@/composables/useAuth";
+
+const { user, signIn, signUp, signOut } = useAuth();
+
+const showForm = ref(null); // null | 'signin' | 'signup'
+const authEmail = ref("");
+const authPassword = ref("");
+const authError = ref("");
+const authLoading = ref(false);
+const authSuccess = ref("");
+
+const userLabel = computed(() => {
+  const email = user.value?.email ?? "";
+  return email.split("@")[0];
+});
+
+function toggleForm(mode) {
+  showForm.value = showForm.value === mode ? null : mode;
+  authEmail.value = "";
+  authPassword.value = "";
+  authError.value = "";
+  authSuccess.value = "";
+}
+
+async function submitAuth() {
+  if (!authEmail.value || !authPassword.value) {
+    authError.value = "Email and password required.";
+    return;
+  }
+  authLoading.value = true;
+  authError.value = "";
+  authSuccess.value = "";
+  try {
+    if (showForm.value === "signup") {
+      const data = await signUp(authEmail.value, authPassword.value);
+      if (data.session) {
+        showForm.value = null;
+      } else {
+        authSuccess.value = "Check your email to confirm your account.";
+      }
+    } else {
+      await signIn(authEmail.value, authPassword.value);
+      showForm.value = null;
+    }
+  } catch (err) {
+    authError.value = err.message ?? "Something went wrong.";
+  } finally {
+    authLoading.value = false;
+  }
+}
+
+async function handleSignOut() {
+  await signOut();
+}
 
 const props = defineProps({
   articleTitle: String,
@@ -536,6 +616,117 @@ onMounted(load);
   height: 40px;
   animation: spin 1s linear infinite;
   margin: 0 auto 15px;
+}
+
+/* ── Auth widget ─────────────────────────────────────────── */
+.auth-widget {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+}
+
+.auth-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 11px;
+  color: #0645ad;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  text-decoration: underline;
+}
+
+.auth-link:hover {
+  color: #0b0080;
+}
+
+.auth-sep {
+  color: #aaa;
+  font-size: 11px;
+}
+
+.auth-username {
+  font-size: 11px;
+  color: #555;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auth-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 220px;
+  z-index: 500;
+}
+
+.auth-dropdown-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.auth-input {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 6px 8px;
+  font-size: 13px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.auth-input:focus {
+  border-color: #0645ad;
+}
+
+.auth-dropdown-submit {
+  padding: 6px 10px;
+  border-radius: 5px;
+  border: 1px solid #0645ad;
+  background: #0645ad;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  transition: background 0.15s;
+}
+
+.auth-dropdown-submit:hover:not(:disabled) {
+  background: #0b0080;
+}
+
+.auth-dropdown-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.auth-dropdown-error {
+  font-size: 11px;
+  color: #c00;
+}
+
+.auth-dropdown-success {
+  font-size: 11px;
+  color: #080;
 }
 
 @media screen and (max-width: 600px) {

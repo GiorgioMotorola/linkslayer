@@ -260,6 +260,8 @@ import { shopItems as allShopItems } from "@/utils/shopItems";
 import { isBoss } from "@/utils/bossGenerator";
 import { generateMiniBoss } from "@/utils/miniBossGenerator";
 import { QUESTS } from "@/utils/quests";
+import { classes } from "@/utils/classes";
+import { supabase } from "@/lib/supabase";
 
 // Composables
 import { useGameFlow } from "@/composables/useGameFlow";
@@ -505,8 +507,9 @@ const isSleeping = ref(false);
 
 function handleSleepTransition() {
   isSleeping.value = true;
-  setTimeout(() => {
+  setTimeout(async () => {
     callHandleSleep();
+    await saveGame();
     setTimeout(() => {
       isSleeping.value = false;
     }, 900);
@@ -746,6 +749,79 @@ function handleUseInventoryItem(itemType) {
     setTimeout(() => { showQuestNotification.value = false; }, 3000);
   }
 }
+
+// ── Supabase save / load ─────────────────────────────────
+
+async function saveGame() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase.from("saves").upsert({
+    user_id: user.id,
+    updated_at: new Date().toISOString(),
+    game_state: {
+      playerClassName: playerClass.value?.name,
+      playerName: playerName.value,
+      playerHP: playerHP.value,
+      specialUsesLeft: specialUsesLeft.value,
+      totalSpecialsUsed: totalSpecialsUsed.value,
+      weaponBonus: weaponBonus.value,
+      shieldBonus: shieldBonus.value,
+      playerGold: playerGold.value,
+      goldSpent: goldSpent.value,
+      shortRestsUsed: shortRestsUsed.value,
+      longRestsUsed: longRestsUsed.value,
+      specialTier: specialTier.value,
+      offeringPot: offeringPot.value,
+      daysCount: daysCount.value,
+      combatEncountersFought: combatEncountersFought.value,
+      enemiesKilled: enemiesKilled.value,
+      hpCapBonus: hpCapBonus.value,
+      combatWinsSinceLastCapIncrease: combatWinsSinceLastCapIncrease.value,
+      inventory: { ...inventory.value },
+      questTaken: questTaken.value,
+      questComplete: questComplete.value,
+      questTurnedIn: questTurnedIn.value,
+    },
+  });
+}
+
+function restoreGameState(s) {
+  if (s.playerClassName) playerClass.value = classes[s.playerClassName];
+  playerName.value = s.playerName ?? "";
+  playerHP.value = s.playerHP ?? 0;
+  specialUsesLeft.value = s.specialUsesLeft ?? 3;
+  totalSpecialsUsed.value = s.totalSpecialsUsed ?? 0;
+  weaponBonus.value = s.weaponBonus ?? 0;
+  shieldBonus.value = s.shieldBonus ?? 0;
+  playerGold.value = s.playerGold ?? 0;
+  goldSpent.value = s.goldSpent ?? 0;
+  shortRestsUsed.value = s.shortRestsUsed ?? 0;
+  longRestsUsed.value = s.longRestsUsed ?? 0;
+  specialTier.value = s.specialTier ?? 1;
+  offeringPot.value = s.offeringPot ?? 0;
+  daysCount.value = s.daysCount ?? 1;
+  combatEncountersFought.value = s.combatEncountersFought ?? 0;
+  enemiesKilled.value = s.enemiesKilled ?? 0;
+  hpCapBonus.value = s.hpCapBonus ?? 0;
+  combatWinsSinceLastCapIncrease.value = s.combatWinsSinceLastCapIncrease ?? 0;
+  if (s.inventory) Object.assign(inventory.value, s.inventory);
+  questTaken.value = s.questTaken ?? false;
+  questComplete.value = s.questComplete ?? false;
+  questTurnedIn.value = s.questTurnedIn ?? false;
+}
+
+onMounted(async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  isLoadingGame.value = true;
+  const { data } = await supabase
+    .from("saves")
+    .select("game_state")
+    .eq("user_id", user.id)
+    .single();
+  if (data?.game_state) restoreGameState(data.game_state);
+  isLoadingGame.value = false;
+});
 </script>
 
 <style scoped>

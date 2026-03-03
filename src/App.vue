@@ -8,7 +8,6 @@
 
 <script setup>
 import GameView from "./views/GameView.vue";
-import scenicLogo from "@/assets/scenic-logo.png";
 </script>
 
 <style scoped>
@@ -21,22 +20,12 @@ body {
   overflow-x: hidden;
   max-width: 100vw;
 }
+
 .app-container {
   max-width: 2000px;
   margin: auto;
   overflow-x: hidden;
   box-sizing: border-box;
-}
-
-.logo {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
-.how-to {
-  font-size: 15px;
-  text-align: center;
 }
 
 @media screen and (max-width: 600px) {
@@ -53,17 +42,6 @@ body {
     overflow-x: hidden;
     width: 100%;
     max-width: 100vw;
-  }
-
-  .logo {
-    max-width: 50px;
-  }
-
-  .how-to {
-    font-size: 12px;
-    text-align: center;
-    margin-right: 2.5rem;
-    margin-left: 2.5rem;
   }
 }
 </style>
