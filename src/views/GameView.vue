@@ -47,7 +47,7 @@
     :enemyStatusEffects="enemyStatusEffects"
     :confusedAction="confusedAction"
     :confusedTurnsLeft="confusedTurnsLeft"
-    @save="saveGame"
+    :autoSaveFeedback="autoSaveFeedback"
     @restart="handleRestart"
   />
 
@@ -613,8 +613,15 @@ const handleBeforeUnload = (e) => {
     e.preventDefault();
   }
 };
-onMounted(() => window.addEventListener("beforeunload", handleBeforeUnload));
-onUnmounted(() => window.removeEventListener("beforeunload", handleBeforeUnload));
+const handleVisibilityChange = () => { if (document.visibilityState === "hidden") saveGame(); };
+onMounted(() => {
+  window.addEventListener("beforeunload", handleBeforeUnload);
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+});
+onUnmounted(() => {
+  window.removeEventListener("beforeunload", handleBeforeUnload);
+  document.removeEventListener("visibilitychange", handleVisibilityChange);
+});
 
 // ── Quest system ──────────────────────────────────────────
 const showQuestNotification = ref(false);
@@ -759,6 +766,28 @@ function handleUseInventoryItem(itemType) {
 }
 
 // ── Supabase save / load ─────────────────────────────────
+
+const autoSaveFeedback = ref(false);
+let autoSaveFeedbackTimer = null;
+let inventoryAutoSaveTimer = null;
+
+async function triggerAutoSave() {
+  await saveGame();
+  clearTimeout(autoSaveFeedbackTimer);
+  autoSaveFeedback.value = true;
+  autoSaveFeedbackTimer = setTimeout(() => { autoSaveFeedback.value = false; }, 2000);
+}
+
+// Save when encounter closes
+watch(encounter, (newVal, oldVal) => {
+  if (newVal === null && oldVal !== null) triggerAutoSave();
+});
+
+// Save when inventory changes (shop buys, item use) — debounced
+watch(inventory, () => {
+  clearTimeout(inventoryAutoSaveTimer);
+  inventoryAutoSaveTimer = setTimeout(() => triggerAutoSave(), 500);
+}, { deep: true });
 
 async function saveGame() {
   const { data: { user } } = await supabase.auth.getUser();

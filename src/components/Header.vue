@@ -252,9 +252,7 @@
           </div>
         </div>
         <div class="hbb-actions">
-          <button v-if="authUser" @click="handleSave" class="hbb-save" :class="{ 'hbb-save-confirmed': savedFeedback }">
-            {{ savedFeedback ? 'Saved ✓' : 'Save' }}
-          </button>
+          <span v-if="authUser && props.autoSaveFeedback" class="hbb-save-confirmed">Auto-saved ✓</span>
           <button @click="handleRestart" class="hbb-restart">New Game</button>
         </div>
       </div>
@@ -391,6 +389,10 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  autoSaveFeedback: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits([
@@ -405,7 +407,6 @@ const emit = defineEmits([
   "use-compass",
   "open-inventory-modal",
   "open-map-modal",
-  "save",
   "restart",
 ]);
 
@@ -454,14 +455,6 @@ async function submitAuth() {
 
 async function handleSignOutAuth() {
   await signOut();
-}
-
-const savedFeedback = ref(false);
-
-function handleSave() {
-  emit("save");
-  savedFeedback.value = true;
-  setTimeout(() => { savedFeedback.value = false; }, 2000);
 }
 
 function handleRestart() {
