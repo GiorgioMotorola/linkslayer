@@ -834,6 +834,15 @@ async function saveGame() {
       enemyDifficultyLevel: enemyDifficultyLevel.value,
       enlightenmentFishAccumulatedHP: enlightenmentFishAccumulatedHP.value,
       gameLog: gameLog.value,
+      poisonedClicksLeft: poisonedClicksLeft.value,
+      poisonDamagePerClick: poisonDamagePerClick.value,
+      cloakClicksRemaining: cloakClicksRemaining.value,
+      blurClicksLeft: blurClicksLeft.value,
+      healthRegenClicksRemaining: healthRegenClicksRemaining.value,
+      healthRegenHealedCount: healthRegenHealedCount.value,
+      luckyFleeActive: luckyFleeActive.value,
+      encounterBeaconActive: encounterBeaconActive.value,
+      bountyScrollActive: bountyScrollActive.value
     },
   }, { onConflict: 'user_id' });
 }
@@ -875,6 +884,16 @@ function restoreGameState(s) {
   if (s.seenNPCEncounters?.length) seenNPCEncounters.value = s.seenNPCEncounters;
   if (s.enemyDifficultyLevel != null) enemyDifficultyLevel.value = s.enemyDifficultyLevel;
   if (s.gameLog?.length) restoreLog(s.gameLog);
+poisonedClicksLeft.value = s.poisonedClicksLeft ?? 0;
+  poisonDamagePerClick.value = s.poisonDamagePerClick ?? 0;
+  cloakClicksRemaining.value = s.cloakClicksRemaining ?? 0;
+  blurClicksLeft.value = s.blurClicksLeft ?? 0;
+  healthRegenClicksRemaining.value = s.healthRegenClicksRemaining ?? 0;
+  healthRegenHealedCount.value = s.healthRegenHealedCount ?? 0;
+  luckyFleeActive.value = s.luckyFleeActive ?? false;
+  encounterBeaconActive.value = s.encounterBeaconActive ?? false;
+  bountyScrollActive.value = s.bountyScrollActive ?? false;
+  
 }
 
 async function handleRestart() {
