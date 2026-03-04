@@ -1,5 +1,3 @@
-// src/utils/encounterHandler.js
-
 import { generateEnemy } from "@/utils/encounterGenerator";
 import { generateMiniBoss } from "@/utils/miniBossGenerator";
 

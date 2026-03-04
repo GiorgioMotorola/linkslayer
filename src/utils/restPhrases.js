@@ -1,5 +1,3 @@
-// src/utils/restPhrases.js
-
 const TAVERN_PHRASES = [
   "The inn is warm. The road was not.",
   "Someone here has had a worse day than you. Probably.",

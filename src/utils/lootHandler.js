@@ -1,5 +1,3 @@
-// src/utils/lootHandler.js
-
 function dropOnce({ playerName, inventory, playerGold, log }) {
   const lootOptions = ["weaponPiece", "defensePiece", "gold"];
   const selectedLoot = lootOptions[Math.floor(Math.random() * lootOptions.length)];

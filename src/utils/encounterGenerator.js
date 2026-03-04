@@ -1,4 +1,3 @@
-// utils/encounterGenerator.js
 import { ENEMY_TYPES } from "@/utils/enemies";
 
 const npcModules = import.meta.glob("@/assets/data/encounters/friendly/*.yaml", { eager: true });

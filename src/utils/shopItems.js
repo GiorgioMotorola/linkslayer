@@ -1,5 +1,3 @@
-// src/utils/shopItems.js
-
 export const shopItems = [
   {
     id: "stick_item",

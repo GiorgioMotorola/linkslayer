@@ -1,5 +1,3 @@
-// src/utils/miniBossLootHandler.js
-
 export function handleMiniBossLootDrop({
   playerState,
   utilityFunctions,

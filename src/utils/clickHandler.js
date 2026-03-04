@@ -1,5 +1,3 @@
-// src/utils/clickHandler.js
-
 import { nextTick } from "vue";
 import { getRandomBoss, isBoss } from "@/utils/bossGenerator";
 import { rollEncounter, generateEnemy, npcData, loreData } from "@/utils/encounterGenerator";
@@ -128,7 +126,6 @@ export async function handleClick({
     !encounterPreventedByCloak &&
     (encounterBeaconActive?.value || Math.random() < 0.4)
   ) {
-    // Encounter Beacon forces a friendly NPC encounter
     if (encounterBeaconActive?.value) {
       encounterBeaconActive.value = false;
       const availableNPCs = npcData.filter(

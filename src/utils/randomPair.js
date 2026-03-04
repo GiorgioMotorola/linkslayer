@@ -1,5 +1,3 @@
-// randomPair.js
-
 const WIKI_ARTICLES = [
   "Universal_Studios_Hollywood",
   "Statue_of_Liberty",

@@ -268,7 +268,6 @@ import { classes } from "@/utils/classes";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/composables/useAuth";
 
-// Composables
 import { useGameFlow } from "@/composables/useGameFlow";
 import { useGameLog } from "@/composables/useGameLog";
 import { useModals } from "@/composables/useModals";
@@ -278,7 +277,6 @@ import { useStatusEffects } from "@/composables/useStatusEffects";
 import { useCombat } from "@/composables/useCombat";
 import { useGameHandlers } from "@/composables/useGameHandlers";
 
-// Initialize composables
 const gameFlow = useGameFlow();
 const {
   chain,
@@ -464,7 +462,6 @@ const {
   confusedTurnsLeft,
 } = combat;
 
-// Setup click watcher for status effects
 setupClickWatcher({
   clickCount,
   playerHP,
@@ -477,8 +474,6 @@ setupClickWatcher({
   goldPouchAccumulatedGold,
 });
 
-// Track the last enemy fought (for defeat/victory modals).
-// Captured when combat starts so it's always available even after encounter is nulled.
 const lastBattle = ref({ enemyName: '', article: '' });
 
 watch(encounter, (newVal) => {
@@ -490,7 +485,6 @@ watch(encounter, (newVal) => {
   }
 });
 
-// Watch playerHP for defeat condition
 watch(playerHP, (newVal) => {
   if (playerClass.value && newVal <= 0 && !defeated.value) {
     log(
@@ -502,7 +496,6 @@ watch(playerHP, (newVal) => {
   }
 });
 
-// Watch for boss defeat to capture victory enemy info
 watch(bossDefeated, (val) => {
   if (val) {
     lastBattle.value = {
@@ -512,7 +505,6 @@ watch(bossDefeated, (val) => {
   }
 });
 
-// Initialize game handlers
 const isSleeping = ref(false);
 
 function handleSleepTransition() {
@@ -554,7 +546,6 @@ const {
   statusEffects,
 });
 
-// Create item handlers with dependencies
 const itemHandlers = createItemHandlers({
   playerState: {
     playerHP,
@@ -579,7 +570,7 @@ const itemHandlers = createItemHandlers({
     log,
     isBoss,
     nextTick,
-    handleLootDrop: () => {}, // Provided by useGameHandlers, stub for now
+    handleLootDrop: () => {},
     handleCloseEncounter: handleCloseEncounterWrapper,
   },
   combatData: {
@@ -609,7 +600,6 @@ const itemHandlers = createItemHandlers({
   },
 });
 
-// Warn on refresh/close while game is in progress
 const handleBeforeUnload = (e) => {
   if (playerClass.value) {
     e.preventDefault();
@@ -625,7 +615,6 @@ onUnmounted(() => {
   document.removeEventListener("visibilitychange", handleVisibilityChange);
 });
 
-// ── Quest system ──────────────────────────────────────────
 const showQuestNotification = ref(false);
 const questTaken = ref(false);
 const questCombatActive = ref(false);
@@ -694,7 +683,6 @@ function startQuestCombat(bossType) {
   logEnemyAction(enemyNextAction, nextEnemyAttack);
 }
 
-// Detect quest completion or flight when Brown Bear combat ends
 watch(encounter, (newVal, oldVal) => {
   if (!questCombatActive.value) return;
   if (oldVal?.type === "combat" && oldVal?.enemy?.name === "Brown Bear" && newVal === null) {
@@ -703,14 +691,12 @@ watch(encounter, (newVal, oldVal) => {
       questComplete.value = true;
       log("📜 You've slain the bear. Return to The Lighthouse Tavern to claim your reward.");
     } else if (!defeated.value) {
-      // Player fled — let them re-attempt
       questTaken.value = false;
       log("📜 You retreat from the cave. The notice remains on the board if you wish to return.");
     }
   }
 });
 
-// Inventory item usage handler
 function handleUseInventoryItem(itemType) {
   if (itemType === "compass") {
     itemHandlers.useCompass();
@@ -767,8 +753,6 @@ function handleUseInventoryItem(itemType) {
   }
 }
 
-// ── Supabase save / load ─────────────────────────────────
-
 const autoSaveFeedback = ref(false);
 let autoSaveFeedbackTimer = null;
 let inventoryAutoSaveTimer = null;
@@ -780,12 +764,10 @@ async function triggerAutoSave() {
   autoSaveFeedbackTimer = setTimeout(() => { autoSaveFeedback.value = false; }, 2000);
 }
 
-// Save when encounter closes
 watch(encounter, (newVal, oldVal) => {
   if (newVal === null && oldVal !== null) triggerAutoSave();
 });
 
-// Save when inventory changes (shop buys, item use) — debounced
 watch(inventory, () => {
   clearTimeout(inventoryAutoSaveTimer);
   inventoryAutoSaveTimer = setTimeout(() => triggerAutoSave(), 500);
@@ -960,7 +942,6 @@ watch(user, async (newUser, oldUser) => {
   opacity: 0;
 }
 
-/* ── Quest notification banner ──────────────────────────── */
 .quest-notification {
   position: fixed;
   top: 30%;

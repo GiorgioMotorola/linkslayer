@@ -1,4 +1,3 @@
-// src/utils/itemHandlers.js
 import { shopItems } from "@/utils/shopItems";
 
 export function handleShopPurchase(
@@ -650,7 +649,6 @@ export const useMinorHealthPotion = (
   }
 };
 
-// Flash Powder — stuns enemy for 1 turn (combat only)
 export const useFlashPowder = (playerState, utilityFunctions, combatData) => {
   const { inventory } = playerState;
   const { log, closeInventoryModal } = utilityFunctions;
@@ -670,7 +668,6 @@ export const useFlashPowder = (playerState, utilityFunctions, combatData) => {
   closeInventoryModal();
 };
 
-// Venom Vial — poisons enemy for N turns in combat
 export const useVenomVial = (playerState, utilityFunctions, combatData) => {
   const { inventory } = playerState;
   const { log, closeInventoryModal } = utilityFunctions;
@@ -690,7 +687,6 @@ export const useVenomVial = (playerState, utilityFunctions, combatData) => {
   closeInventoryModal();
 };
 
-// Serrated Dagger — next attack applies bleed
 export const useSerratedDagger = (playerState, utilityFunctions, combatData) => {
   const { inventory } = playerState;
   const { log, closeInventoryModal } = utilityFunctions;
@@ -714,7 +710,6 @@ export const useSerratedDagger = (playerState, utilityFunctions, combatData) => 
   closeInventoryModal();
 };
 
-// Lucky Coin — guarantees next flee succeeds
 export const useLuckyCoin = (playerState, utilityFunctions, combatData) => {
   const { inventory } = playerState;
   const { log, closeInventoryModal } = utilityFunctions;
@@ -738,7 +733,6 @@ export const useLuckyCoin = (playerState, utilityFunctions, combatData) => {
   closeInventoryModal();
 };
 
-// Warding Shield — halves incoming damage for next 3 hits
 export const useWardingShield = (playerState, utilityFunctions, combatData) => {
   const { inventory } = playerState;
   const { log, closeInventoryModal } = utilityFunctions;
@@ -758,7 +752,6 @@ export const useWardingShield = (playerState, utilityFunctions, combatData) => {
   closeInventoryModal();
 };
 
-// Ward Stone — suppresses encounters for 5 clicks
 export const useWardStone = (playerState, utilityFunctions, combatData) => {
   const { inventory } = playerState;
   const { log } = utilityFunctions;
@@ -778,7 +771,6 @@ export const useWardStone = (playerState, utilityFunctions, combatData) => {
   log(`🪨 You activate the Ward Stone. Non-boss encounters suppressed for 5 clicks.`);
 };
 
-// Encounter Beacon — forces next encounter to be friendly NPC
 export const useEncounterBeacon = (playerState, utilityFunctions, combatData) => {
   const { inventory } = playerState;
   const { log } = utilityFunctions;
@@ -797,7 +789,6 @@ export const useEncounterBeacon = (playerState, utilityFunctions, combatData) =>
   log(`🏮 You light the Encounter Beacon. Your next encounter will be a friendly NPC.`);
 };
 
-// Bounty Scroll — next combat loot drop fires twice
 export const useBountyScroll = (playerState, utilityFunctions, combatData) => {
   const { inventory } = playerState;
   const { log, closeInventoryModal } = utilityFunctions;
@@ -817,7 +808,6 @@ export const useBountyScroll = (playerState, utilityFunctions, combatData) => {
   closeInventoryModal();
 };
 
-// Gold Pouch — collect accumulated gold
 export const useGoldPouch = (playerState, utilityFunctions, goldPouchData) => {
   const { inventory, playerGold } = playerState;
   const { log, closeInventoryModal } = utilityFunctions;

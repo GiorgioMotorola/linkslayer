@@ -1,5 +1,3 @@
-// utils/bossGenerator.js
-
 const BOSS_TYPES = [
   {
     type: "Dragon",

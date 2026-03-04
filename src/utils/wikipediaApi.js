@@ -1,7 +1,4 @@
-// Cache for fetched articles (in-memory)
 const articleCache = new Map();
-
-// Track pending requests to prevent duplicate fetches
 const pendingRequests = new Map();
 
 export async function fetchWikipediaArticle(title) {
@@ -10,19 +7,16 @@ export async function fetchWikipediaArticle(title) {
     return null;
   }
 
-  // Check cache first
   if (articleCache.has(title)) {
     console.log("✅ Cache hit for:", title);
     return articleCache.get(title);
   }
 
-  // Check if request is already pending
   if (pendingRequests.has(title)) {
     console.log("⏳ Waiting for pending request:", title);
     return pendingRequests.get(title);
   }
 
-  // Create new request
   const requestPromise = (async () => {
     const url = `https://en.wikipedia.org/api/rest_v1/page/html/${encodeURIComponent(
       title
@@ -50,7 +44,6 @@ export async function fetchWikipediaArticle(title) {
       html = html.slice(0, refIndex);
     }
 
-    // Store in cache
     articleCache.set(title, html);
     pendingRequests.delete(title);
 
@@ -59,13 +52,11 @@ export async function fetchWikipediaArticle(title) {
     return html;
   })();
 
-  // Store pending request
   pendingRequests.set(title, requestPromise);
 
   return requestPromise;
 }
 
-// Optional: Clear cache if needed (useful for debugging)
 export function clearArticleCache() {
   articleCache.clear();
   pendingRequests.clear();

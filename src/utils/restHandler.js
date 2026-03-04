@@ -1,5 +1,3 @@
-// src/utils/restHandler.js
-
 export function handleRest({ player, state, utils }) {
   const { playerHP, playerClass, specialUsesLeft, playerName, effectiveMaxHP } =
     player;

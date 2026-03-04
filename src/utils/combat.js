@@ -1,5 +1,3 @@
-// combat.js
-
 export function handleCombatAction({ player, enemy, state, utils, itemEffects = {} }) {
   const {
     playerHP,
@@ -51,7 +49,6 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
 
   const isBossFromState = state.isBoss;
 
-  // Tick down confusion each turn the player successfully acts
   function tickConfusion() {
     if ((confusedTurnsLeft?.value ?? 0) > 0) {
       confusedTurnsLeft.value--;
@@ -61,9 +58,6 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       }
     }
   }
-
-  // Tick confusion at the start of the player's turn so newly-applied confusion
-  // isn't immediately cleared in the same turn it was set.
   tickConfusion();
 
   let currentEnemyDamage = nextEnemyAttack.value;
@@ -96,16 +90,16 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
 
     let damageMultiplier = 1.0;
     let attackName = "strikes";
-    let hitThreshold = null; // null = auto-hit (steady)
+    let hitThreshold = null;
 
     if (playerAction === "attack_power") {
       damageMultiplier = 1.5;
       attackName = "lands a power strike";
-      hitThreshold = 7; // needs 7+ on d20 (70%)
+      hitThreshold = 7;
     } else if (playerAction === "attack_reckless") {
       damageMultiplier = 2.0;
       attackName = "swings recklessly";
-      hitThreshold = 13; // needs 13+ on d20 (40%)
+      hitThreshold = 13;
     }
 
     let didHit = true;
@@ -209,7 +203,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       let dmg, heal;
       if (tier === 1) { dmg = 5; heal = 3; }
       else if (tier === 2) { dmg = 8; heal = 7; }
-      else { dmg = 12; heal = effectiveMaxHP.value; } // full heal
+      else { dmg = 12; heal = effectiveMaxHP.value; }
       baseSpecialDamage = dmg;
       damageToEnemy = baseSpecialDamage;
       const newHP = tier === 3

@@ -1,5 +1,3 @@
-// src/utils/shopKeeperPhrases.js
-
 const SHOP_PHRASES = [
   "Some may call these treasures. Me, I call them junk.",
   "Looking to improve your gear, eh? Good. Plenty here for a strong adventurer.",

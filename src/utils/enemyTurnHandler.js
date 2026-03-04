@@ -1,5 +1,3 @@
-// src/utils/enemyTurnHandler.js
-
 import { handleLootDrop } from "@/utils/lootHandler";
 
 export function handleEnemyTurn({

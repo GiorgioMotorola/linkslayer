@@ -1,5 +1,3 @@
-// src/utils/miniBossGenerator.js
-
 export const MINI_BOSS_TYPES = [
   {
     type: "Dragon Whelp",

@@ -1,4 +1,3 @@
-// utils/classes.js
 export const classes = {
   Fighter: {
     name: "Fighter",
