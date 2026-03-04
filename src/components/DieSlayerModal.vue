@@ -147,7 +147,7 @@
             <span v-if="revealedPlayerDie !== null && revealedNpcDie !== null" class="ds-vs">VS</span>
           </div>
           <div class="ds-staging-col">
-            <div class="ds-staging-label">{{ npc.name }}</div>
+            <div class="ds-staging-label">Them</div>
             <div class="ds-staging-box">
               <div
                 v-if="revealedNpcDie !== null"
