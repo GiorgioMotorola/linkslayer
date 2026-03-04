@@ -409,11 +409,12 @@ watch(
   background: none;
   border: none;
   padding: 0;
-  font-size: 12px;
+  font-size: 14px;
   color: #0645ad;
   cursor: pointer;
   font-family: "IBM Plex Sans", sans-serif;
-  text-decoration: underline;
+  text-decoration: none;
+  font-weight: 500;
 }
 
 .cs-auth-link:hover {
