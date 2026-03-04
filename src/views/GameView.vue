@@ -856,6 +856,7 @@ function restoreGameState(s) {
   enemiesKilled.value = s.enemiesKilled ?? 0;
   hpCapBonus.value = s.hpCapBonus ?? 0;
   combatWinsSinceLastCapIncrease.value = s.combatWinsSinceLastCapIncrease ?? 0;
+  enlightenmentFishAccumulatedHP.value = s.enlightenmentFishAccumulatedHP ?? 0;
   if (s.inventory) Object.assign(inventory.value, s.inventory);
   questTaken.value = s.questTaken ?? false;
   questComplete.value = s.questComplete ?? false;
