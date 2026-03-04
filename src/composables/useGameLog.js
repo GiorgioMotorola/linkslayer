@@ -1,5 +1,3 @@
-// src/composables/useGameLog.js
-
 import { ref } from "vue";
 
 export function useGameLog(getFormattedTimer) {

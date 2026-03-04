@@ -1,4 +1,3 @@
-// src/composables/useAuth.js
 import { ref } from "vue";
 import { supabase } from "@/lib/supabase";
 

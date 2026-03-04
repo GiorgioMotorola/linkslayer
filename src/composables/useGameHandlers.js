@@ -1,5 +1,3 @@
-// src/composables/useGameHandlers.js
-
 import { ref } from "vue";
 import { classes } from "@/utils/classes";
 import { isBoss } from "@/utils/bossGenerator";
@@ -16,31 +14,17 @@ import { getRandomChain } from "@/utils/randomPair";
 export function useGameHandlers(deps) {
   const daysCount = ref(1);
   const {
-    // Game Flow
     gameFlow,
-
-    // Logging
     log,
     logEnemyAction,
-
-    // Modals
     modals,
-
-    // Player
     player,
-
-    // Inventory
     inventory,
     enlightenmentFishAccumulatedHP,
-
-    // Combat
     combat,
-
-    // Status Effects
     statusEffects,
   } = deps;
 
-  // Destructure what we need from each
   const {
     journeyLength,
     chain,
@@ -119,7 +103,6 @@ export function useGameHandlers(deps) {
     handleCloseEncounter,
   } = combat;
 
-  // Counter result state (null | 'success' | 'fail')
   const counterResult = ref(null);
 
   function onCounterResult({ succeeded, delay }) {
@@ -129,7 +112,6 @@ export function useGameHandlers(deps) {
     }, ms);
   }
 
-  // Dice roll display + damage notifications (sequenced)
   const lastDiceRoll = ref(null);
   const lastDamageDealt = ref(null);
   const lastDamageTaken = ref(null);
@@ -187,7 +169,6 @@ export function useGameHandlers(deps) {
       }
     }
 
-    // Start cycling random numbers
     lastDiceRoll.value = { roll: Math.floor(Math.random() * 20) + 1, threshold, didHit, isRolling: true, bonus: 0 };
 
     let ticks = 0;
@@ -197,7 +178,6 @@ export function useGameHandlers(deps) {
         clearInterval(diceAnimInterval);
 
         if (bonus > 0) {
-          // Land on raw roll first, then tick up
           lastDiceRoll.value = { roll: rawRoll, threshold, didHit, isRolling: false, isBonusing: true, bonus };
           let current = rawRoll;
           diceBonusInterval = setInterval(() => {
@@ -237,7 +217,6 @@ export function useGameHandlers(deps) {
   }
 
   function onVictory() {
-    // Wait for dice animation + damage badge to finish, then show "Path Cleared."
     const victoryDelay = isDiceAnimating
       ? DICE_TICKS * DICE_TICK_MS + DISPLAY_MS
       : DISPLAY_MS;
@@ -254,13 +233,11 @@ export function useGameHandlers(deps) {
   function onCombatResult({ type, amount }) {
     if (!amount || amount <= 0) return;
     if (isDiceAnimating) {
-      // Buffer until dice lands
       if (type === "dealt") pendingDealt = amount;
       else if (type === "taken") pendingTaken = amount;
       else if (type === "miss_penalty") pendingMissPenalty = amount;
       return;
     }
-    // Steady attack — no dice, show immediately in sequence
     if (type === "dealt") {
       showDealt(amount);
     } else if (type === "taken") {
@@ -272,7 +249,6 @@ export function useGameHandlers(deps) {
     }
   }
 
-  // Loot handler
   function handleLoot(defeatedEnemyData) {
     const lootHandlerArgs = {
       playerState: {
@@ -304,7 +280,6 @@ export function useGameHandlers(deps) {
     }
   }
 
-  // Close encounter wrapper
   function handleCloseEncounterWrapper() {
     handleCloseEncounter({
       bossDefeated,
@@ -317,7 +292,6 @@ export function useGameHandlers(deps) {
     });
   }
 
-  // Click handler
   async function callHandleClick(title) {
     const finalTarget = chain[journeyLength.value - 1];
 
@@ -373,7 +347,6 @@ export function useGameHandlers(deps) {
     });
   }
 
-  // Rest handler
   function callHandleRest(choice) {
     handleRest({
       player: {
@@ -405,7 +378,6 @@ export function useGameHandlers(deps) {
     showRestModal.value = false;
   }
 
-  // Combat action handler
   function handleCombatActionWrapper(playerAction) {
     handleCombatAction({
       player: {
@@ -463,9 +435,7 @@ export function useGameHandlers(deps) {
     });
   }
 
-  // Enemy turn handler
   function gotoEnemyTurn() {
-    // Delay showing the new enemy intent until current dice + damage animations finish
     const hadDice = isDiceAnimating;
     const intentDelay = (hadDice ? DICE_TICKS * DICE_TICK_MS : 0) + DEALT_TO_TAKEN_DELAY + 400;
     setTimeout(() => {
@@ -499,7 +469,6 @@ export function useGameHandlers(deps) {
     }, intentDelay);
   }
 
-  // Encounter option handler
   async function callHandleEncounterOption(option) {
     await externalHandleEncounterOption({
       option,
@@ -546,7 +515,6 @@ export function useGameHandlers(deps) {
     });
   }
 
-  // Shop purchase handler
   function handleShopPurchase(item) {
     externalHandleShopPurchase(
       item,
@@ -572,7 +540,6 @@ export function useGameHandlers(deps) {
     );
   }
 
-  // Class selection handler
   function handleClassSelection({ classKey, name, journeyLength: selectedLen, goal }) {
     playerClass.value = classes[classKey];
     playerHP.value = playerClass.value.maxHP;
@@ -627,7 +594,6 @@ export function useGameHandlers(deps) {
     log(`Journey length: ${journeyLength.value} articles.`);
   }
 
-  // Offering / special tier upgrade handler
   const OFFERING_COSTS = [[10, 15, 20], [25, 30, 50]];
 
   function callHandleOffer() {
@@ -657,7 +623,6 @@ export function useGameHandlers(deps) {
     }
   }
 
-  // Assemble upgrade handler
   function handleAssembleUpgrade({
     inventory,
     playerName,

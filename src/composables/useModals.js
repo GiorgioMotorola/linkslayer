@@ -1,5 +1,3 @@
-// src/composables/useModals.js
-
 import { ref, watch } from "vue";
 
 export function useModals() {
@@ -13,7 +11,6 @@ export function useModals() {
   const showCampfireOverlay = ref(false);
   const campfireReward = ref(null);
 
-  // Track rest modal opens; count long rest dismissals (even restModalCount = long rest)
   watch(showRestModal, (newValue) => {
     if (newValue) {
       restModalCount.value++;

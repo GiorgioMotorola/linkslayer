@@ -1,5 +1,3 @@
-// src/composables/useInventory.js
-
 import { ref, computed } from "vue";
 import {
   useCompass as externalUseCompass,
@@ -61,11 +59,7 @@ export function useInventory() {
   });
 
   const goldPouchAccumulatedGold = ref(0);
-
-  // Item-specific state
   const enlightenmentFishAccumulatedHP = ref(0);
-
-  // Item heal constants
   const HEALTH_POTION_HEAL_AMOUNT = 25;
   const TURKEY_LEG_HEAL_AMOUNT = 6;
   const BREADCRUMB_HEAL_AMOUNT = 5;
@@ -78,8 +72,6 @@ export function useInventory() {
   const AMULET_PLAYER_DAMAGE = 25;
   const CLOAK_DURATION = 10;
 
-  // Item usage wrapper functions
-  // These will be called with appropriate state from GameView
   function createItemHandlers(deps) {
     const {
       playerState,

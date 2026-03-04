@@ -1,14 +1,10 @@
-// src/composables/useCombat.js
-
 import { ref, computed, watch } from "vue";
 import { isBoss } from "@/utils/bossGenerator";
 
 export function useCombat() {
-  // Encounter state
   const encounter = ref(null);
   const encounterMessage = ref("");
 
-  // Enemy state
   const enemyHP = ref(25);
   const nextEnemyAttack = ref(null);
   const enemyNextAction = ref("attack");
@@ -18,14 +14,11 @@ export function useCombat() {
   const enemyIsStunned = ref(false);
   const enrageBonus = ref(0);
 
-  // Player debuff state
   const confusedAction = ref([]);
   const confusedTurnsLeft = ref(0);
 
-  // Constants
   const DEFAULT_ENEMY_HP = 25;
 
-  // Computed properties
   const inEncounter = computed(() => {
     const e = encounter.value;
     if (!e || typeof e !== "object") return false;
@@ -57,7 +50,6 @@ export function useCombat() {
     () => isInCombat.value && isBoss(encounter.value.enemy)
   );
 
-  // Clear status effects when a new combat encounter starts (or encounter ends)
   watch(encounter, (newEncounter, oldEncounter) => {
     const wasInCombat = oldEncounter?.type === "combat";
     const isNowInCombat = newEncounter?.type === "combat";
@@ -73,7 +65,6 @@ export function useCombat() {
     }
   });
 
-  // Enemy AI decision
   function decideEnemyAction() {
     const isCurrentBoss = isBoss(encounter.value?.enemy);
 
@@ -82,15 +73,14 @@ export function useCombat() {
     }
 
     const roll = Math.random();
-    if (!isCurrentBoss && roll < 0.03) return "summon";  // 3%, non-boss only
-    if (roll < 0.08) return "enrage";                    // 5%
-    if (roll < 0.13) return "steal";                     // 5%
-    if (roll < 0.17) return "confuse";                   // 4%
-    if (roll < 0.32) return "defend";                    // 15%
-    return "attack";                                      // 68%
+    if (!isCurrentBoss && roll < 0.03) return "summon";
+    if (roll < 0.08) return "enrage";
+    if (roll < 0.13) return "steal";
+    if (roll < 0.17) return "confuse";
+    if (roll < 0.32) return "defend";
+    return "attack";
   }
 
-  // Close/clear encounter
   function handleCloseEncounter(deps) {
     const { bossDefeated, current, chain, journeyLength, currentTargetIndex, path, timerInterval } = deps;
 
@@ -111,14 +101,12 @@ export function useCombat() {
   }
 
   return {
-    // Encounter
     encounter,
     encounterMessage,
     inEncounter,
     isInCombat,
     isBossEncounter,
 
-    // Enemy
     enemyHP,
     nextEnemyAttack,
     enemyNextAction,
@@ -129,11 +117,9 @@ export function useCombat() {
     enrageBonus,
     DEFAULT_ENEMY_HP,
 
-    // Player debuffs
     confusedAction,
     confusedTurnsLeft,
 
-    // Functions
     decideEnemyAction,
     handleCloseEncounter,
   };

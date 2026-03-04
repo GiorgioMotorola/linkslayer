@@ -1,53 +1,26 @@
-// src/composables/useStatusEffects.js
-
 import { ref, computed, watch } from "vue";
 
 export function useStatusEffects() {
-  // Poison
   const poisonedClicksLeft = ref(0);
   const poisonDamagePerClick = ref(0);
-
-  // Invisibility Cloak
   const isCloakActive = ref(false);
   const cloakClicksRemaining = ref(0);
-
-  // Blur (drunk)
   const blurClicksLeft = ref(0);
-
-  // Health Regeneration (Herbal Poultice)
   const healthRegenActive = ref(false);
   const healthRegenAmount = ref(0);
   const healthRegenClicksRemaining = ref(0);
   const healthRegenMaxHeal = ref(0);
   const healthRegenHealedCount = ref(0);
-
-  // Serrated Dagger (next attack applies bleed)
   const serratedDaggerActive = ref(false);
-
-  // Lucky Coin (next flee auto-succeeds)
   const luckyFleeActive = ref(false);
-
-  // Warding Shield (halve incoming damage for N hits)
   const wardingShieldHitsRemaining = ref(0);
-
-  // Ward Stone (suppress encounters for N clicks)
   const wardStoneActive = ref(false);
   const wardStoneClicksRemaining = ref(0);
-
-  // Encounter Beacon (force next encounter to be NPC)
   const encounterBeaconActive = ref(false);
-
-  // Bounty Scroll (double loot on next combat victory)
   const bountyScrollActive = ref(false);
-
-  // Computed properties
   const isPlayerPoisoned = computed(() => poisonedClicksLeft.value > 0);
   const isBlurred = computed(() => blurClicksLeft.value > 0);
 
-  /**
-   * Setup watcher for click count to handle status effects
-   * Should be called from GameView after all composables are initialized
-   */
   function setupClickWatcher(deps) {
     const {
       clickCount,
@@ -60,18 +33,15 @@ export function useStatusEffects() {
     } = deps;
 
     watch(clickCount, (newClicks) => {
-      // Show rest modal every 12 clicks
       if (newClicks > 0 && newClicks % 12 === 0) {
         showRestModal.value = true;
       }
-      // Show shop modal every 10 clicks (if not rest modal)
       if (newClicks > 0 && newClicks % 10 === 0 && !showRestModal.value) {
         showShopModal.value = true;
       }
 
       let netHealthChange = 0;
 
-      // Handle poison damage
       if (poisonedClicksLeft.value > 0) {
         const effectivePoisonDamage = Number(poisonDamagePerClick.value);
         if (isNaN(effectivePoisonDamage)) {
@@ -94,7 +64,6 @@ export function useStatusEffects() {
         }
       }
 
-      // Handle health regeneration
       if (healthRegenActive.value) {
         if (
           healthRegenClicksRemaining.value > 0 &&
@@ -143,13 +112,11 @@ export function useStatusEffects() {
         }
       }
 
-      // Apply net health change
       playerHP.value = Math.min(
         effectiveMaxHP.value,
         Math.max(0, playerHP.value + netHealthChange)
       );
 
-      // Handle invisibility cloak
       if (isCloakActive.value) {
         cloakClicksRemaining.value--;
         log(
@@ -162,7 +129,6 @@ export function useStatusEffects() {
         }
       }
 
-      // Handle blur effect
       if (blurClicksLeft.value > 0) {
         blurClicksLeft.value--;
         log(
@@ -170,7 +136,6 @@ export function useStatusEffects() {
         );
       }
 
-      // Handle enlightenment fish accumulation
       if (inventory.value.enlightenmentFish > 0) {
         const { enlightenmentFishAccumulatedHP } = deps;
         enlightenmentFishAccumulatedHP.value++;
@@ -179,7 +144,6 @@ export function useStatusEffects() {
         );
       }
 
-      // Handle ward stone countdown
       if (wardStoneActive.value) {
         wardStoneClicksRemaining.value--;
         log(`🪨 Ward Stone active: ${wardStoneClicksRemaining.value} clicks remaining.`);
@@ -190,7 +154,6 @@ export function useStatusEffects() {
         }
       }
 
-      // Handle gold pouch accumulation
       if (inventory.value.goldPouches > 0) {
         const { goldPouchAccumulatedGold } = deps;
         goldPouchAccumulatedGold.value++;
@@ -200,46 +163,25 @@ export function useStatusEffects() {
   }
 
   return {
-    // Poison
     poisonedClicksLeft,
     poisonDamagePerClick,
     isPlayerPoisoned,
-
-    // Cloak
     isCloakActive,
     cloakClicksRemaining,
-
-    // Blur
     blurClicksLeft,
     isBlurred,
-
-    // Health Regen
     healthRegenActive,
     healthRegenAmount,
     healthRegenClicksRemaining,
     healthRegenMaxHeal,
     healthRegenHealedCount,
-
-    // Serrated Dagger
     serratedDaggerActive,
-
-    // Lucky Coin
     luckyFleeActive,
-
-    // Warding Shield
     wardingShieldHitsRemaining,
-
-    // Ward Stone
     wardStoneActive,
     wardStoneClicksRemaining,
-
-    // Encounter Beacon
     encounterBeaconActive,
-
-    // Bounty Scroll
     bountyScrollActive,
-
-    // Setup
     setupClickWatcher,
   };
 }
