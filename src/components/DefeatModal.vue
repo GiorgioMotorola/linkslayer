@@ -90,7 +90,7 @@
       <div class="modal-buttons">
         <button @click="share" class="modal-btn">⬆ Share Results</button>
         <button @click="copyLogToClipboard" class="modal-btn">📋 Copy Log</button>
-        <button @click="$emit('close')" class="modal-btn modal-btn-primary">↩ Play Again</button>
+        <button @click="handleRestart" class="modal-btn modal-btn-primary">↩ Play Again</button>
       </div>
 
     </div>
@@ -195,6 +195,11 @@ function hideNotification() {
     banner.classList.remove("show");
     if (notificationTimeoutId) { clearTimeout(notificationTimeoutId); notificationTimeoutId = null; }
   }
+}
+
+function handleRestart() {
+  if (!window.confirm("Start a new game? Your current save will be deleted.")) return;
+  emit("restart");
 }
 </script>
 
