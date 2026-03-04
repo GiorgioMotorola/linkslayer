@@ -39,11 +39,7 @@
     <div v-if="inEncounter" class="overlay"></div>
     <div class="title">{{ formattedTitle }}</div>
     <div v-if="isLoading" class="loader-overlay">
-      <!-- <div class="loader-content">
-        <div class="spinner"></div>
-        <p>Loading article...</p>
-      </div> -->
-    </div>
+  </div>
     <div
       v-html="articleHtml"
       @click.prevent="handleLinkClick"
@@ -77,7 +73,6 @@ const cyclePosition = computed(() => {
   return adjusted <= 0 ? 0 : (adjusted - 1) % 24;
 });
 const skyPercent  = computed(() => (cyclePosition.value / 23) * 100);
-// Moon from 10 PM (pos 16) through pre-dawn; pos 23 wraps back to dawn
 const isNightTime = computed(() => cyclePosition.value >= 16);
 
 function hexToRgb(hex) {
@@ -89,14 +84,14 @@ function lerpColor(a, b, t) {
 }
 
 const skyPhases = [
-  { pos: 0,  color: '#f07040' }, // 6 AM  sunrise
-  { pos: 2,  color: '#f0b838' }, // 8 AM  golden
-  { pos: 5,  color: '#70c8f0' }, // 11 AM bright sky
-  { pos: 11, color: '#4898d8' }, // 5 PM  afternoon
-  { pos: 14, color: '#e08828' }, // 8 PM  dusk
-  { pos: 16, color: '#7030a8' }, // 10 PM purple
-  { pos: 19, color: '#2a1848' }, // 1 AM  night
-  { pos: 23, color: '#2a1848' }, // 5 AM  night (end)
+  { pos: 0,  color: '#f07040' },
+  { pos: 2,  color: '#f0b838' },
+  { pos: 5,  color: '#70c8f0' },
+  { pos: 11, color: '#4898d8' },
+  { pos: 14, color: '#e08828' },
+  { pos: 16, color: '#7030a8' },
+  { pos: 19, color: '#2a1848' },
+  { pos: 23, color: '#2a1848' },
 ];
 
 const skyColor = computed(() => {
@@ -402,7 +397,6 @@ onMounted(load);
   max-width: 280px;
 }
 
-/* ── Sky bar ── */
 .sky-bar {
   width: 100%;
   padding: 0;
@@ -606,8 +600,6 @@ onMounted(load);
     width: 140px;
   }
 
-
-  /* Force all article content to stay within viewport */
   .article :deep(img) {
     max-width: 100% !important;
     height: auto !important;

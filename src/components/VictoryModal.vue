@@ -209,7 +209,6 @@ function handleRestart() {
   font-optical-sizing: auto;
 }
 
-/* ── Overlay ─────────────────────────────────────────────── */
 @keyframes fade-in-overlay {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -231,7 +230,6 @@ function handleRestart() {
     linear-gradient(to bottom, rgba(10, 7, 2, 0.96), rgba(28, 18, 4, 0.93), rgba(14, 9, 2, 0.85));
 }
 
-/* ── Card ────────────────────────────────────────────────── */
 @keyframes pop-in {
   from { transform: scale(0.85); opacity: 0; }
   to   { transform: scale(1);    opacity: 1; }
@@ -253,7 +251,6 @@ function handleRestart() {
   gap: 0.9rem;
 }
 
-/* ── Icon ────────────────────────────────────────────────── */
 @keyframes victory-pulse {
   0%,100% { transform: scale(1);    filter: drop-shadow(0 0 8px rgba(255,200,40,0.7)); }
   50%     { transform: scale(1.12); filter: drop-shadow(0 0 18px rgba(255,220,60,0.95)); }
@@ -264,7 +261,6 @@ function handleRestart() {
   animation: victory-pulse 2.5s ease-in-out infinite;
 }
 
-/* ── Title ───────────────────────────────────────────────── */
 .modal-title {
   font-size: 30px;
   font-weight: 700;
@@ -273,7 +269,6 @@ function handleRestart() {
   text-align: center;
 }
 
-/* ── Identity ────────────────────────────────────────────── */
 .modal-identity {
   font-size: 16px;
   color: #d4b870;
@@ -294,7 +289,6 @@ function handleRestart() {
   color: #d4aa60;
 }
 
-/* ── Battle summary ──────────────────────────────────────── */
 .modal-battle-summary {
   font-size: 13px;
   color: #b09050;
@@ -320,7 +314,6 @@ function handleRestart() {
   color: #c8a850;
 }
 
-/* ── Site link ───────────────────────────────────────────── */
 .modal-site-link {
   font-size: 11px;
   text-align: center;
@@ -338,7 +331,6 @@ function handleRestart() {
   text-decoration: underline;
 }
 
-/* ── Goal ────────────────────────────────────────────────── */
 .modal-goal {
   font-size: 13px;
   font-style: italic;
@@ -351,7 +343,6 @@ function handleRestart() {
   box-sizing: border-box;
 }
 
-/* ── Hero stats ──────────────────────────────────────────── */
 .hero-stats {
   display: flex;
   gap: 1rem;
@@ -386,7 +377,6 @@ function handleRestart() {
   color: #e86060;
 }
 
-/* ── Stat grid ───────────────────────────────────────────── */
 .stat-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -416,7 +406,6 @@ function handleRestart() {
   color: #e8c870;
 }
 
-/* ── Buttons ─────────────────────────────────────────────── */
 .modal-buttons {
   display: flex;
   flex-direction: column;
@@ -454,7 +443,6 @@ function handleRestart() {
   letter-spacing: 0.4px;
 }
 
-/* ── Notification banner ─────────────────────────────────── */
 .notification-banner {
   position: fixed;
   top: 20px;
@@ -494,7 +482,6 @@ function handleRestart() {
   flex-shrink: 0;
 }
 
-/* ── Mobile ──────────────────────────────────────────────── */
 @media screen and (max-width: 600px) {
   .game-modal-content {
     padding: 1.2rem;

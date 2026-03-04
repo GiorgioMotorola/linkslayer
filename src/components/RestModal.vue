@@ -11,8 +11,6 @@
       </div>
 
       <div class="rest-options">
-
-        <!-- ── SHORT REST ──────────────────────────────── -->
         <button
           v-if="shouldShowShortRest"
           @click="handleShortRest"
@@ -40,8 +38,6 @@
         <button v-if="shouldShowShortRest" @click="handleContinue" class="close-action-btn">
           Continue On →
         </button>
-
-        <!-- ── LONG REST — TAVERN VIEW ─────────────────── -->
         <template v-if="shouldShowLongRest && tavernView">
 
           <button v-if="!hasBeer" @click="orderBeer" :disabled="props.playerGold < 10">
@@ -90,8 +86,6 @@
           <button @click="$emit('open-die-slayer')" :disabled="props.playerGold < 5">
             🎲 Play Die Slayer
           </button>
-
-          <!-- Quest: turn-in available -->
           <button
             v-if="props.questComplete && !props.questTurnedIn"
             @click="$emit('turn-in-quest')"
@@ -101,22 +95,18 @@
             <span class="assemble-sub">You've slain the bear. Claim your 50g reward.</span>
           </button>
 
-          <!-- Quest: already turned in -->
           <div v-else-if="props.questTurnedIn" class="quest-taken-note">
             ✓ The Growling Dark — complete.
           </div>
 
-          <!-- Quest: scroll in backpack -->
           <div v-else-if="props.questScrolls > 0" class="quest-taken-note">
             📜 Quest scroll is in your backpack.
           </div>
 
-          <!-- Quest: taken but not yet complete (scroll used, in progress) -->
           <div v-else-if="props.questTaken && !props.questComplete" class="quest-taken-note">
             📜 Quest in progress...
           </div>
 
-          <!-- Quest: available to take -->
           <button
             v-else
             @click="takeQuest"
@@ -131,7 +121,6 @@
 
         </template>
 
-        <!-- ── LONG REST — CAMPSITE VIEW ───────────────── -->
         <template v-if="shouldShowLongRest && !tavernView">
 
           <button
@@ -362,7 +351,6 @@ const returnToCampsite = async () => {
   font-optical-sizing: auto;
 }
 
-/* ── Shared overlay ─────────────────────────────────────── */
 .rest-overlay {
   position: fixed;
   top: 0;
@@ -382,7 +370,6 @@ const returnToCampsite = async () => {
   to   { opacity: 1; }
 }
 
-/* ── Campfire overlay ───────────────────────────────────── */
 .overlay-campfire {
   background: linear-gradient(
     to bottom,
@@ -392,7 +379,6 @@ const returnToCampsite = async () => {
   );
 }
 
-/* ── Tavern overlay ─────────────────────────────────────── */
 .overlay-tavern {
   background: linear-gradient(
     to bottom,
@@ -402,7 +388,6 @@ const returnToCampsite = async () => {
   );
 }
 
-/* ── Night sky overlay ──────────────────────────────────── */
 .overlay-night {
   background:
     radial-gradient(ellipse at 20% 15%, rgba(255,255,200,0.07) 1px, transparent 1px),
@@ -413,7 +398,6 @@ const returnToCampsite = async () => {
     linear-gradient(to bottom, rgba(4,6,22,0.96), rgba(8,12,38,0.93), rgba(6,9,28,0.82));
 }
 
-/* ── Shared modal card ──────────────────────────────────── */
 .rest-modal {
   padding: 2rem;
   border-radius: 12px;
@@ -433,7 +417,6 @@ const returnToCampsite = async () => {
   to   { transform: scale(1);    opacity: 1; }
 }
 
-/* ── Campfire modal ─────────────────────────────────────── */
 .modal-campfire {
   background: rgba(28, 12, 4, 0.88);
   border: 1px solid rgba(200, 95, 18, 0.55);
@@ -457,7 +440,6 @@ const returnToCampsite = async () => {
   opacity: 1;
 }
 
-/* ── Tavern modal ───────────────────────────────────────── */
 .modal-tavern {
   background: rgba(20, 10, 3, 0.92);
   border: 1px solid rgba(170, 115, 28, 0.5);
@@ -486,7 +468,6 @@ const returnToCampsite = async () => {
   color: #f5d060 !important;
 }
 
-/* ── Night sky modal ────────────────────────────────────── */
 .modal-night {
   background: rgba(6, 10, 32, 0.9);
   border: 1px solid rgba(80, 105, 210, 0.5);
@@ -510,7 +491,6 @@ const returnToCampsite = async () => {
   opacity: 1;
 }
 
-/* ── Rest icon ──────────────────────────────────────────── */
 .rest-icon {
   font-size: 38px;
   text-align: center;
@@ -545,7 +525,6 @@ const returnToCampsite = async () => {
   animation: moon-float 3.5s ease-in-out infinite;
 }
 
-/* ── Shared phrase / text ───────────────────────────────── */
 .rest-modal-phrase {
   text-align: center;
   font-size: 18px;
@@ -554,7 +533,6 @@ const returnToCampsite = async () => {
   padding-bottom: 1.2rem;
 }
 
-/* ── Shared button base ─────────────────────────────────── */
 button {
   display: flex;
   flex-direction: column;
@@ -591,7 +569,6 @@ button:disabled:hover {
   opacity: 0.35;
 }
 
-/* ── Sip button fill / cooldown ─────────────────────────── */
 .sip-button {
   transition: background 0.5s ease, opacity 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
 }
@@ -604,7 +581,6 @@ button:disabled:hover {
   content: none !important;
 }
 
-/* ── Assemble / sip sub-text ────────────────────────────── */
 .assemble-sub,
 .sip-sub {
   font-size: 0.82em;
@@ -612,7 +588,6 @@ button:disabled:hover {
   margin-top: 2px;
 }
 
-/* ── Close / continue buttons ───────────────────────────── */
 .close-action-btn {
   margin-top: 0.4rem;
   font-weight: 600;
@@ -633,7 +608,6 @@ button:disabled:hover {
   font-style: italic;
 }
 
-/* ── Offering button ────────────────────────────────────── */
 .offering-button {
   gap: 0.3rem;
 }
@@ -656,7 +630,6 @@ button:disabled:hover {
   opacity: 1;
 }
 
-/* ── Cross-fade transition overlay ─────────────────────── */
 .transition-fade {
   position: absolute;
   inset: 0;
@@ -671,13 +644,11 @@ button:disabled:hover {
   opacity: 1;
 }
 
-/* ── Tavern button ───────────────────────────────────────── */
 .modal-night .tavern-btn {
   border-color: rgba(160, 100, 22, 0.6) !important;
   color: #d4a84b !important;
 }
 
-/* ── Quest taken note ───────────────────────────────────── */
 .quest-taken-note {
   font-size: 14px;
   opacity: 0.55;
@@ -686,7 +657,6 @@ button:disabled:hover {
   color: white;
 }
 
-/* ── Quest turn-in button ───────────────────────────────── */
 .quest-turnin-btn {
   border-color: rgba(80, 160, 60, 0.55) !important;
   background: rgba(20, 50, 15, 0.6) !important;
@@ -700,7 +670,6 @@ button:disabled:hover {
   opacity: 1 !important;
 }
 
-/* ── Danger warning ─────────────────────────────────────── */
 .danger-warning {
   color: #e08050;
   font-size: 15px;
@@ -710,7 +679,6 @@ button:disabled:hover {
   background: rgba(100, 40, 10, 0.25);
 }
 
-/* ── Layout ─────────────────────────────────────────────── */
 .rest-options {
   display: flex;
   flex-direction: column;
@@ -718,7 +686,6 @@ button:disabled:hover {
   margin-bottom: 0.5rem;
 }
 
-/* ── Mobile ─────────────────────────────────────────────── */
 @media screen and (max-width: 600px) {
   .rest-overlay {
     align-items: center;

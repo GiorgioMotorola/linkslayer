@@ -656,7 +656,6 @@ header {
   transform: translateX(-50%) scale(0.6);
 }
 
-/* Damage badges */
 .hp-delta {
   font-size: 0.75em;
   font-weight: 700;
@@ -740,7 +739,6 @@ button:hover {
   margin-bottom: 1rem;
 }
 
-/* Enemy Intent Display */
 .enemy-intent {
   position: fixed;
   left: 50%;
@@ -770,13 +768,11 @@ button:hover {
   letter-spacing: 0.5px;
 }
 
-/* Base intent box: black background, white text */
 .enemy-intent {
   background: #0d0d0d;
   color: #f0f0f0;
 }
 
-/* Intent Type Colors — border + glow only */
 .intent-attack {
   border-color: #7a1a1a;
   box-shadow: 0 0 10px 2px rgba(180, 30, 30, 0.4);
@@ -844,7 +840,6 @@ button:hover {
   box-shadow: 0 0 10px 2px rgba(40, 100, 160, 0.4);
 }
 
-/* Red damage number inside attack intent */
 .intent-damage {
   color: #e53935;
   font-weight: 700;
@@ -855,7 +850,6 @@ button:hover {
   to   { box-shadow: 0 0 20px 6px rgba(201, 162, 39, 0.65); }
 }
 
-/* Animations */
 @keyframes pulse-glow {
   0%, 100% {
     transform: scale(1);
@@ -887,7 +881,6 @@ button:hover {
   }
 }
 
-/* Dark mode styles */
 .darkened-header .enemy-intent {
   filter: brightness(0.85);
 }
@@ -1754,7 +1747,6 @@ button:hover {
     font-size: 13px;
   }
 
-  /* Enemy Intent Display - Mobile Optimized */
   .enemy-intent {
     left: 50%;
     transform: translateX(-50%);

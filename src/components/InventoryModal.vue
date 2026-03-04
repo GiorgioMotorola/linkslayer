@@ -501,7 +501,6 @@
 import { defineProps, defineEmits, computed } from "vue";
 import { shopItems } from "@/utils/shopItems.js";
 
-// Single source of truth: descriptions keyed by the item's `details` field
 const itemDesc = Object.fromEntries(
   shopItems.filter((i) => i.details && i.description).map((i) => [i.details, i.description])
 );
@@ -718,7 +717,6 @@ function useItem(itemType) {
 }
 
 .item-details-box {
-  /* border: 2px solid #3a3a3a; */
   border-radius: 3px;
   padding: 10px 15px;
   flex-grow: 1;

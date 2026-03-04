@@ -26,7 +26,6 @@
           </div>
           <div class="attack-line" v-html="typedLine"></div>
 
-          <!-- Enemy Intent Display -->
           <Teleport to="body">
             <div v-if="enemyIntentMessage" class="enemy-intent" :class="enemyIntentClass" :style="badgeBottomStyle">
               <div class="intent-icon">{{ enemyIntentIcon }}</div>
@@ -34,7 +33,6 @@
             </div>
           </Teleport>
 
-          <!-- Dice Roll Display -->
           <Teleport to="body">
             <transition name="dice-roll-fade">
               <div
@@ -202,20 +200,6 @@
             {{ specialUsesLeft }}
           </div>
         </div>
-
-        <!-- <div class="stat-column">
-          <div class="stat-label">Short Rest</div>
-          <div class="stat-value" :class="shortRestAnimClass">
-            {{ 4 - shortRestsUsedCount }}
-          </div>
-        </div>
-
-        <div class="stat-column">
-          <div class="stat-label">Long Rest</div>
-          <div class="stat-value" :class="longRestAnimClass">
-            {{ 2 - longRestsUsedCount }}
-          </div>
-        </div> -->
 
         <div class="stat-column">
           <div class="stat-label">Gold</div>
@@ -482,7 +466,6 @@ onUnmounted(() => {
   if (enemyHpAnimInterval) clearInterval(enemyHpAnimInterval);
 });
 
-// ── HP countdown animation ──────────────────────────────────────────────────
 const displayedPlayerHP = ref(props.playerHP);
 const displayedEnemyHP = ref(props.enemyHP ?? 0);
 const isPlayerHpAnimating = ref(false);
@@ -490,7 +473,6 @@ const isEnemyHpAnimating = ref(false);
 let playerHpAnimInterval = null;
 let enemyHpAnimInterval = null;
 
-// Snap player HP when it increases (healing) or when outside combat
 watch(() => props.playerHP, (newVal, oldVal) => {
   if (newVal >= (oldVal ?? newVal) || !props.encounter || props.encounter.type !== "combat") {
     if (playerHpAnimInterval) { clearInterval(playerHpAnimInterval); playerHpAnimInterval = null; }
@@ -499,7 +481,6 @@ watch(() => props.playerHP, (newVal, oldVal) => {
   }
 });
 
-// Snap enemy HP for new enemy / HP increase / outside combat
 watch(() => props.enemyHP, (newVal, oldVal) => {
   if ((newVal ?? 0) >= (oldVal ?? 0) || !props.encounter || props.encounter.type !== "combat") {
     if (enemyHpAnimInterval) { clearInterval(enemyHpAnimInterval); enemyHpAnimInterval = null; }
@@ -508,7 +489,6 @@ watch(() => props.enemyHP, (newVal, oldVal) => {
   }
 });
 
-// When "dealt" badge appears → count enemy HP down
 watch(() => props.lastDamageDealt, (newVal) => {
   if (newVal !== null && newVal !== undefined && newVal > 0) {
     if (enemyHpAnimInterval) clearInterval(enemyHpAnimInterval);
@@ -528,7 +508,6 @@ watch(() => props.lastDamageDealt, (newVal) => {
   }
 });
 
-// When "taken" badge appears → count player HP down
 watch(() => props.lastDamageTaken, (newVal) => {
   if (newVal !== null && newVal !== undefined && newVal > 0) {
     if (playerHpAnimInterval) clearInterval(playerHpAnimInterval);
@@ -547,7 +526,6 @@ watch(() => props.lastDamageTaken, (newVal) => {
     }, 100);
   }
 });
-// ───────────────────────────────────────────────────────────────────────────
 
 const badgeBottomStyle = computed(() => ({
   bottom: `${headerHeight.value + 8}px`,
@@ -665,7 +643,6 @@ const playerSpecialAbilityName = computed(() => {
   return tierData?.name ?? props.playerClass?.special ?? "Special";
 });
 
-// Enemy Intent Display
 const enemyIntentMessage = computed(() => {
   if (!props.enemyNextAction) return "";
 
@@ -733,7 +710,6 @@ const enemyIntentClass = computed(() => {
   return base;
 });
 
-// Typewriter for intent text
 const displayedIntentHTML = ref("");
 let intentTypingInterval = null;
 let lastTypedKey = -1;
@@ -745,7 +721,6 @@ function startIntentTypewriter() {
   const fullText = enemyIntentMessage.value;
   if (!fullText) return;
 
-  // Find where the damage number starts so we can colour it red as it types
   const damageStart =
     newAction === "attack" && props.nextEnemyAttack
       ? fullText.indexOf(String(props.nextEnemyAttack))
@@ -767,14 +742,11 @@ function startIntentTypewriter() {
   }, 35);
 }
 
-// Primary trigger: fires every turn (including same action/damage repeats)
 watch(() => props.enemyTurnKey, () => {
   lastTypedKey = props.enemyTurnKey;
   startIntentTypewriter();
 });
 
-// Fallback: handles cases where enemyNextAction changes but enemyTurnKey didn't
-// (e.g. first combat turn before gotoEnemyTurn syncs, or edge cases)
 watch(() => props.enemyNextAction, () => {
   if (!props.enemyNextAction) {
     clearInterval(intentTypingInterval);
@@ -878,7 +850,6 @@ watch(
       currentDialogueNodeId.value = newEncounter.lore.currentNodeId || "start";
       fullText = currentDialogue.value?.text || newEncounter.lore.text || "";
     } else if (newEncounter.type === "combat") {
-      // Show initial intent statically (no typewriter) after props settle
       displayedIntentHTML.value = "";
       lastTypedKey = -1;
       nextTick(() => {
@@ -892,7 +863,7 @@ watch(
         } else {
           displayedIntentHTML.value = fullText;
         }
-        lastTypedKey = props.enemyTurnKey; // prevent fallback watch from re-firing
+        lastTypedKey = props.enemyTurnKey; 
       });
 
       console.log("--- Combat Encounter Debug ---");

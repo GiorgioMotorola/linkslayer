@@ -209,7 +209,6 @@ function handleRestart() {
   font-optical-sizing: auto;
 }
 
-/* ── Overlay ─────────────────────────────────────────────── */
 @keyframes fade-in-overlay {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -227,7 +226,6 @@ function handleRestart() {
   background: linear-gradient(to bottom, rgba(12, 3, 3, 0.96), rgba(22, 6, 6, 0.93), rgba(14, 4, 4, 0.86));
 }
 
-/* ── Card ────────────────────────────────────────────────── */
 @keyframes pop-in {
   from { transform: scale(0.85); opacity: 0; }
   to   { transform: scale(1);    opacity: 1; }
@@ -249,7 +247,6 @@ function handleRestart() {
   gap: 0.9rem;
 }
 
-/* ── Icon ────────────────────────────────────────────────── */
 @keyframes skull-shake {
   0%,100% { transform: rotate(0deg); }
   15%     { transform: rotate(-8deg); }
@@ -265,7 +262,6 @@ function handleRestart() {
   filter: drop-shadow(0 0 8px rgba(200, 40, 40, 0.5));
 }
 
-/* ── Title ───────────────────────────────────────────────── */
 .modal-title {
   font-size: 30px;
   font-weight: 700;
@@ -274,7 +270,6 @@ function handleRestart() {
   text-align: center;
 }
 
-/* ── Identity ────────────────────────────────────────────── */
 .modal-identity {
   font-size: 16px;
   color: #c07070;
@@ -295,7 +290,6 @@ function handleRestart() {
   color: #c06060;
 }
 
-/* ── Battle summary ──────────────────────────────────────── */
 .modal-battle-summary {
   font-size: 13px;
   color: #a06060;
@@ -321,7 +315,6 @@ function handleRestart() {
   color: #b06060;
 }
 
-/* ── Site link ───────────────────────────────────────────── */
 .modal-site-link {
   font-size: 11px;
   text-align: center;
@@ -339,7 +332,6 @@ function handleRestart() {
   text-decoration: underline;
 }
 
-/* ── Goal ────────────────────────────────────────────────── */
 .modal-goal {
   font-size: 13px;
   font-style: italic;
@@ -352,7 +344,6 @@ function handleRestart() {
   box-sizing: border-box;
 }
 
-/* ── Hero stats ──────────────────────────────────────────── */
 .hero-stats {
   display: flex;
   gap: 1rem;
@@ -387,7 +378,6 @@ function handleRestart() {
   color: #e06060;
 }
 
-/* ── Stat grid ───────────────────────────────────────────── */
 .stat-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -417,7 +407,6 @@ function handleRestart() {
   color: #d08080;
 }
 
-/* ── Buttons ─────────────────────────────────────────────── */
 .modal-buttons {
   display: flex;
   flex-direction: column;
@@ -455,7 +444,6 @@ function handleRestart() {
   letter-spacing: 0.4px;
 }
 
-/* ── Notification banner ─────────────────────────────────── */
 .notification-banner {
   position: fixed;
   top: 20px;
@@ -495,7 +483,6 @@ function handleRestart() {
   flex-shrink: 0;
 }
 
-/* ── Mobile ──────────────────────────────────────────────── */
 @media screen and (max-width: 600px) {
   .game-modal-content {
     padding: 1.2rem;

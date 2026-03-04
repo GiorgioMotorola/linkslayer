@@ -50,8 +50,6 @@ async function choose(choice) {
     emit("close");
     return;
   }
-
-  // Animate transition to next step
   isTransitioning.value = true;
   await new Promise(r => setTimeout(r, 300));
   stepIndex.value = choice.next;
@@ -187,7 +185,6 @@ async function choose(choice) {
   border-color: rgba(150, 100, 20, 0.6);
 }
 
-/* ── Cross-fade transition overlay ─────────────────────── */
 .transition-fade {
   position: absolute;
   inset: 0;
@@ -202,7 +199,6 @@ async function choose(choice) {
   opacity: 1;
 }
 
-/* ── Mobile ─────────────────────────────────────────────── */
 @media screen and (max-width: 600px) {
   .quest-overlay {
     align-items: center;

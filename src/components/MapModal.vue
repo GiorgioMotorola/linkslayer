@@ -82,19 +82,12 @@ defineProps({
 defineEmits(["close"]);
 
 const locationTypes = [
-  // Settlements
   "Village", "Hamlet", "Town", "Borough", "Colony", "Settlement", "Outpost", "Encampment",
-  // Cities
   "City", "Metropolis", "Capital", "Free City",
-  // Fortifications
   "Castle", "Fortress", "Keep", "Stronghold", "Bastion", "Citadel", "Battlement", "Rampart",
-  // Wilds & Geography
   "Isle", "Glen", "Hollow", "Gorge", "Pass", "Reach", "Expanse", "Crossing",
-  // Mystical / Dungeon
   "Ruins", "Dungeon", "Cavern", "Crypt", "Barrow", "Tomb", "Lair", "Depths",
-  // Sacred
   "Shrine", "Temple", "Monastery", "Sanctum", "Reliquary",
-  // Arcane
   "Tower", "Spire", "Observatory", "Vault",
 ];
 
@@ -162,7 +155,6 @@ const dotStyle = (index) => {
     inset 0 0 50px rgba(0, 0, 0, 0.07);
 }
 
-/* ── Header ── */
 .modal-header {
   display: flex;
   align-items: center;
@@ -187,14 +179,12 @@ const dotStyle = (index) => {
   opacity: 0.8;
 }
 
-/* ── Body layout ── */
 .modal-body {
   display: flex;
   gap: 22px;
   align-items: flex-start;
 }
 
-/* ── Map ── */
 .map-container {
   position: relative;
   flex: 0 0 56%;
@@ -206,7 +196,6 @@ const dotStyle = (index) => {
   height: auto;
 }
 
-/* ── Dots ── */
 .dot {
   position: absolute;
   border-radius: 50%;
@@ -238,7 +227,6 @@ const dotStyle = (index) => {
   animation: pulse-dot 1.5s ease-in-out infinite;
 }
 
-/* ── Journey Trail ── */
 .journey-trail {
   flex: 1;
   min-width: 0;
@@ -314,7 +302,6 @@ const dotStyle = (index) => {
   font-size: 0.92em;
 }
 
-/* ── Close button ── */
 .close-button {
   display: block;
   margin: 18px auto 0;
@@ -336,7 +323,6 @@ const dotStyle = (index) => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-/* ── Mobile ── */
 @media (max-width: 600px) {
   .modal-content {
     width: 94%;
@@ -390,7 +376,6 @@ const dotStyle = (index) => {
   }
 }
 
-/* ── Animations ── */
 @keyframes pulse-dot {
   0%   { box-shadow: 0 0 8px 2px rgba(210, 20, 10, 0.55); transform: translate(-50%, -50%) scale(1); }
   50%  { box-shadow: 0 0 18px 6px rgba(210, 20, 10, 0.75); transform: translate(-50%, -50%) scale(1.18); }

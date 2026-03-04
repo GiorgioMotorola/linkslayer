@@ -629,7 +629,6 @@ function selectItem(item) {
     font-size: 13px;
   }
 
-  /* Flatten the layout so all sections can be freely ordered */
   .shop-main-layout {
     display: contents;
   }

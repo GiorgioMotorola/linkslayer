@@ -117,7 +117,6 @@ const closeModal = () => {
   z-index: 2000;
 }
 
-/* Leather cover */
 .modal-content {
   background: #1e1510;
   background-image:
@@ -137,7 +136,6 @@ const closeModal = () => {
   gap: 14px;
 }
 
-/* ── Header ── */
 .modal-header {
   display: flex;
   align-items: center;
@@ -160,7 +158,6 @@ const closeModal = () => {
   opacity: 0.75;
 }
 
-/* ── Character sheet ── */
 .char-sheet {
   background: rgba(255, 230, 160, 0.06);
   border: 1px solid rgba(180, 130, 40, 0.3);
@@ -207,7 +204,6 @@ const closeModal = () => {
   line-height: 1.4;
 }
 
-/* ── Class Special info pane ── */
 .special-info-pane {
   background: rgba(255, 230, 160, 0.08);
   border: 1px solid rgba(180, 130, 40, 0.35);
@@ -283,7 +279,6 @@ const closeModal = () => {
   box-shadow: 0 0 6px rgba(210, 160, 30, 0.4);
 }
 
-/* ── Aged paper wrapper ── */
 .paper-wrapper {
   border: 1px solid #c4a87a;
   border-radius: 3px;
@@ -293,7 +288,6 @@ const closeModal = () => {
   overflow: hidden;
 }
 
-/* ── Lined textarea ── */
 .notes-textarea {
   display: block;
   width: 100%;
@@ -304,7 +298,6 @@ const closeModal = () => {
   outline: none;
   resize: vertical;
 
-  /* Aged paper */
   background-color: #f5ecd0;
   line-height: 1.6;
   padding-top: 13px;
@@ -319,7 +312,6 @@ const closeModal = () => {
   font-style: italic;
 }
 
-/* ── Footer ── */
 .modal-footer {
   display: flex;
   justify-content: space-between;
@@ -345,7 +337,6 @@ const closeModal = () => {
   letter-spacing: 0.5px;
 }
 
-/* ── Close button ── */
 .close-button {
   display: block;
   margin: 2px auto 0;

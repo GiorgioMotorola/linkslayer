@@ -99,7 +99,7 @@ import { useAuth } from "@/composables/useAuth";
 
 const { user, signIn, signUp, signOut } = useAuth();
 
-const showForm = ref(null); // null | 'signin' | 'signup'
+const showForm = ref(null);
 const authEmail = ref("");
 const authPassword = ref("");
 const authError = ref("");

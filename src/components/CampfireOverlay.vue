@@ -52,7 +52,6 @@ onUnmounted(() => {
   background: rgba(5, 2, 0, 0.92);
 }
 
-/* Outer amber glow */
 .campfire-glow {
   position: absolute;
   inset: 0;
@@ -66,7 +65,6 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-/* Inner tighter glow */
 .campfire-glow-inner {
   position: absolute;
   inset: 0;

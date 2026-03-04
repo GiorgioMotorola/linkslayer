@@ -7,13 +7,11 @@
         <span class="ds-gold-display">💰 {{ playerGold }}g</span>
       </div>
 
-      <!-- NPC greeting -->
       <div class="ds-npc-bar">
         <span class="ds-npc-name">{{ npc.name }}</span>
         <span class="ds-npc-dialog">{{ currentDialog }}</span>
       </div>
 
-      <!-- Round tracker -->
       <div class="ds-round-tracker">
         <div
           v-for="r in 5"
@@ -31,7 +29,6 @@
         </div>
       </div>
 
-      <!-- IDLE / BET PHASE -->
       <div v-if="phase === 'idle'" class="ds-phase ds-idle-phase">
         <div class="ds-phase-label">Place Your Bet</div>
         <div class="ds-bet-display">{{ bet }}g</div>
@@ -56,7 +53,6 @@
         </button>
       </div>
 
-      <!-- SETUP PHASE -->
       <div v-if="phase === 'setup'" class="ds-phase">
         <div class="ds-phase-label">Roll your dice</div>
         <div class="ds-dice-row">
@@ -88,11 +84,9 @@
         </div>
       </div>
 
-      <!-- BATTLE PHASE -->
       <div v-if="phase === 'battle'" class="ds-phase">
         <div class="ds-battle-arena">
 
-          <!-- Player dice -->
           <div class="ds-arena-side">
             <div class="ds-arena-label">You</div>
             <div class="ds-dice-row">
@@ -111,7 +105,6 @@
             </div>
           </div>
 
-          <!-- NPC dice (face down) -->
           <div class="ds-arena-side">
             <div class="ds-arena-label">{{ npc.name }}</div>
             <div class="ds-dice-row">
@@ -127,7 +120,6 @@
 
         </div>
 
-        <!-- Staging area: always visible, fixed height -->
         <div class="ds-staging-row">
           <div class="ds-staging-col">
             <div class="ds-staging-label">You</div>
@@ -181,7 +173,6 @@
         </div>
       </div>
 
-      <!-- END PHASE -->
       <div v-if="phase === 'end'" class="ds-phase ds-end-phase">
         <div class="ds-end-result" :class="gameWon ? 'ds-result-win' : 'ds-result-lose'">
           {{ gameWon ? '⚔ Victory!' : '💀 Defeated!' }}
@@ -204,7 +195,6 @@
         </div>
       </div>
 
-      <!-- Footer -->
       <div class="ds-footer">
         <button class="ds-btn ds-btn-help" @click="showHowToPlay = true">
           How to Play
@@ -214,7 +204,6 @@
         </button>
       </div>
 
-      <!-- How to Play overlay -->
       <div v-if="showHowToPlay" class="ds-htp-overlay" @click.self="showHowToPlay = false">
         <div class="ds-htp-box">
           <div class="ds-htp-title">⚔ How to Play Die Slayer</div>
@@ -243,7 +232,6 @@ const props = defineProps({
 
 const emit = defineEmits(["gold-change", "leave"]);
 
-// ── NPC data ──────────────────────────────────────────────────────────────
 const NPC_NAMES = [
   "Will Baters", "Joe The Party", "Knife The Knife Flynn", "J.T. the T.J.",
   "Chris Guyman", "Connor Conhead", "Jacob Potatoes", "Ron Von Zarovich",
@@ -274,10 +262,9 @@ const NPC_DIALOG = {
   ],
 };
 
-// ── State ─────────────────────────────────────────────────────────────────
 const npc = ref({ name: "" });
 const currentDialog = ref("");
-const phase = ref("idle"); // idle | setup | battle | end
+const phase = ref("idle"); 
 
 const playerDice = ref([0, 0, 0, 0, 0]);
 const playerRemainingDice = ref([]);
@@ -291,9 +278,9 @@ const selectedDieIndex = ref(null);
 const hiddenPlayerDieIndex = ref(null);
 const revealedPlayerDie = ref(null);
 const revealedNpcDie = ref(null);
-const roundOutcome = ref(null); // 'win' | 'lose' | null
+const roundOutcome = ref(null);
 const roundResults = ref([null, null, null, null, null]);
-const battleSubPhase = ref("select"); // select | revealing | resolved
+const battleSubPhase = ref("select");
 const tieRolling = ref(false);
 const tieWaitingForClick = ref(false);
 const showHowToPlay = ref(false);
@@ -302,7 +289,6 @@ const tiePendingNIdx = ref(null);
 const gameWon = ref(false);
 const bet = ref(5);
 
-// ── Helpers ───────────────────────────────────────────────────────────────
 function rollD6() { return Math.floor(Math.random() * 6) + 1; }
 function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
@@ -311,7 +297,6 @@ function pickNpc() {
   currentDialog.value = pickRandom(NPC_DIALOG.greeting);
 }
 
-// ── Game flow ─────────────────────────────────────────────────────────────
 function startGame() {
   emit("gold-change", -bet.value);
   rollsUsed.value = 0;
@@ -324,7 +309,6 @@ function startGame() {
   battleSubPhase.value = "select";
   phase.value = "setup";
 
-  // NPC pre-rolls silently
   const npcRolls = Math.floor(Math.random() * 3) + 1;
   let npcResult = [rollD6(), rollD6(), rollD6(), rollD6(), rollD6()];
   for (let i = 1; i < npcRolls; i++) {
@@ -337,7 +321,6 @@ function rollDice() {
   if (isRolling.value || rollsUsed.value >= 3) return;
   isRolling.value = true;
 
-  // Animate rolling
   let ticks = 0;
   const interval = setInterval(() => {
     playerDice.value = [rollD6(), rollD6(), rollD6(), rollD6(), rollD6()];
@@ -361,7 +344,6 @@ function lockIn() {
   phase.value = "battle";
 }
 
-// ── Battle ────────────────────────────────────────────────────────────────
 function selectDie(i) {
   if (battleSubPhase.value !== "select") return;
   selectedDieIndex.value = i;
@@ -380,7 +362,6 @@ function playDie() {
   hiddenPlayerDieIndex.value = pIdx;
   selectedDieIndex.value = null;
 
-  // Pause then reveal NPC die
   setTimeout(() => {
     revealedNpcDie.value = nDie;
     resolveRound(pDie, nDie, pIdx, npcIdx);
@@ -389,7 +370,6 @@ function playDie() {
 
 function resolveRound(pDie, nDie, pIdx, nIdx) {
   if (pDie === nDie) {
-    // Tie — reroll both
     handleTie(pIdx, nIdx);
     return;
   }
@@ -422,7 +402,6 @@ function resolveRound(pDie, nDie, pIdx, nIdx) {
 }
 
 function handleTie(pIdx, nIdx) {
-  // Pause and wait for player to click Reroll
   tieWaitingForClick.value = true;
   tiePendingPIdx.value = pIdx;
   tiePendingNIdx.value = nIdx;
@@ -446,7 +425,6 @@ function executeTieReroll() {
       tieRolling.value = false;
 
       if (pNew === nNew) {
-        // Still tied — ask player to reroll again
         playerRemainingDice.value[pIdx] = pNew;
         npcRemainingDice.value[nIdx] = nNew;
         handleTie(pIdx, nIdx);
@@ -480,7 +458,6 @@ function resetToBet() {
   phase.value = "idle";
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────
 onMounted(() => {
   pickNpc();
   bet.value = Math.min(5, props.playerGold);
@@ -514,7 +491,6 @@ onMounted(() => {
   font-family: inherit;
 }
 
-/* Title */
 .ds-title {
   display: flex;
   align-items: center;
@@ -538,7 +514,6 @@ onMounted(() => {
   white-space: nowrap;
 }
 
-/* NPC bar */
 .ds-npc-bar {
   display: flex;
   align-items: center;
@@ -557,7 +532,6 @@ onMounted(() => {
   font-style: italic;
 }
 
-/* Round tracker */
 .ds-round-tracker {
   display: flex;
   justify-content: center;
@@ -590,7 +564,6 @@ onMounted(() => {
   color: #e53935;
 }
 
-/* Dice */
 .ds-dice-row {
   display: flex;
   gap: 8px;
@@ -665,7 +638,6 @@ onMounted(() => {
   50%       { transform: rotate(4deg); }
 }
 
-/* Phase label */
 .ds-phase-label {
   text-align: center;
   font-size: 12px;
@@ -680,7 +652,6 @@ onMounted(() => {
   color: #666;
 }
 
-/* Battle arena */
 .ds-battle-arena {
   display: flex;
   align-items: center;
@@ -732,7 +703,6 @@ onMounted(() => {
   letter-spacing: 2px;
 }
 
-/* Staging area */
 .ds-staging-row {
   display: flex;
   align-items: center;
@@ -808,7 +778,6 @@ onMounted(() => {
   to   { opacity: 1; }
 }
 
-/* Buttons */
 .ds-setup-buttons,
 .ds-battle-buttons,
 .ds-end-buttons {
@@ -861,7 +830,6 @@ onMounted(() => {
   background: #2a1a1a;
 }
 
-/* End phase */
 .ds-end-phase {
   align-items: center;
   display: flex;
@@ -888,7 +856,6 @@ onMounted(() => {
   font-size: 13px;
 }
 
-/* Footer */
 .ds-footer {
   display: flex;
   justify-content: center;
@@ -902,7 +869,6 @@ onMounted(() => {
   gap: 14px;
 }
 
-/* Footer */
 .ds-footer {
   display: flex;
   justify-content: center;
@@ -925,7 +891,6 @@ onMounted(() => {
   border-color: #555;
 }
 
-/* How to Play overlay */
 .ds-htp-overlay {
   position: absolute;
   inset: 0;
@@ -977,7 +942,6 @@ onMounted(() => {
   color: #ddd;
 }
 
-/* Idle / bet phase */
 .ds-idle-phase {
   align-items: center;
 }
