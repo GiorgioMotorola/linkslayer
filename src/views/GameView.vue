@@ -123,6 +123,7 @@
         @close="resetGame"
         :gameLog="gameLog"
         :lastBattle="lastBattle"
+        @restart="handleRestart"
       />
 
       <ArticleViewer

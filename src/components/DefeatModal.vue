@@ -128,7 +128,7 @@ const props = defineProps({
   lastBattle: { type: Object, default: () => ({ enemyName: '', article: '' }) },
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "restart"]);
 
 const share = () => {
   const killedBy = props.lastBattle?.article
