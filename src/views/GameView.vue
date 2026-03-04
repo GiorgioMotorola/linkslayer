@@ -832,6 +832,7 @@ async function saveGame() {
       seenLoreEncounters: [...seenLoreEncounters.value],
       seenNPCEncounters: [...seenNPCEncounters.value],
       enemyDifficultyLevel: enemyDifficultyLevel.value,
+      enlightenmentFishAccumulatedHP: enlightenmentFishAccumulatedHP.value,
       gameLog: gameLog.value,
     },
   }, { onConflict: 'user_id' });
