@@ -47,8 +47,8 @@
     :enemyStatusEffects="enemyStatusEffects"
     :confusedAction="confusedAction"
     :confusedTurnsLeft="confusedTurnsLeft"
-    :isLoggedIn="!!user"
     @save="saveGame"
+    @restart="handleRestart"
   />
 
   <Transition name="sleep-fade">
@@ -842,6 +842,14 @@ function restoreGameState(s) {
   if (s.seenNPCEncounters?.length) seenNPCEncounters.value = s.seenNPCEncounters;
   if (s.enemyDifficultyLevel != null) enemyDifficultyLevel.value = s.enemyDifficultyLevel;
   if (s.gameLog?.length) restoreLog(s.gameLog);
+}
+
+async function handleRestart() {
+  const { data: { user: currentUser } } = await supabase.auth.getUser();
+  if (currentUser) {
+    await supabase.from("saves").delete().eq("user_id", currentUser.id);
+  }
+  location.reload();
 }
 
 async function loadSave(userId) {

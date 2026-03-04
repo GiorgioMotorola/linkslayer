@@ -167,9 +167,6 @@
           </button>
           <button @click="openNotesModal" class="notes-button">Journal</button>
           <button @click="emit('open-map-modal')" class="map-button">Map</button>
-          <button v-if="props.isLoggedIn" @click="handleSave" class="save-button" :class="{ 'save-confirmed': savedFeedback }">
-            {{ savedFeedback ? 'Saved ✓' : 'Save' }}
-          </button>
         </div>
       </div>
 
@@ -230,6 +227,38 @@
           <div class="stat-value">{{ daysCount }}</div>
         </div>
       </div>
+
+      <div class="header-bottom-bar">
+        <div class="hbb-auth">
+          <template v-if="authUser">
+            <span class="hbb-username">{{ userLabel }}</span>
+            <span class="hbb-sep">·</span>
+            <button class="hbb-link" @click="handleSignOutAuth">Sign out</button>
+          </template>
+          <template v-else>
+            <button class="hbb-link" @click="toggleForm('signin')">Sign in</button>
+            <span class="hbb-sep">·</span>
+            <button class="hbb-link" @click="toggleForm('signup')">Sign up</button>
+          </template>
+          <div v-if="showForm" class="hbb-dropdown">
+            <div class="hbb-dropdown-title">{{ showForm === 'signup' ? 'Create Account' : 'Sign In' }}</div>
+            <input v-model="authEmail" type="email" placeholder="Email" class="hbb-input" @keyup.enter="submitAuth" />
+            <input v-model="authPassword" type="password" placeholder="Password" class="hbb-input" @keyup.enter="submitAuth" />
+            <div v-if="authError" class="hbb-error">{{ authError }}</div>
+            <div v-if="authSuccess" class="hbb-success">{{ authSuccess }}</div>
+            <button class="hbb-submit" @click="submitAuth" :disabled="authLoading">
+              {{ authLoading ? '...' : showForm === 'signup' ? 'Create Account' : 'Sign In' }}
+            </button>
+          </div>
+        </div>
+        <div class="hbb-actions">
+          <button v-if="authUser" @click="handleSave" class="hbb-save" :class="{ 'hbb-save-confirmed': savedFeedback }">
+            {{ savedFeedback ? 'Saved ✓' : 'Save' }}
+          </button>
+          <button @click="handleRestart" class="hbb-restart">New Game</button>
+        </div>
+      </div>
+
       <div class="game-log">
         <div class="log"></div>
         <div
@@ -286,6 +315,7 @@ import { ref, computed, watch, nextTick, onMounted, onUnmounted } from "vue";
 import TipsModal from "./TipsModal.vue";
 import "./styles/headerStyles.css";
 import NotesModal from "./NotesModal.vue";
+import { useAuth } from "@/composables/useAuth";
 
 const props = defineProps({
   start: String,
@@ -361,10 +391,6 @@ const props = defineProps({
     type: String,
     default: null,
   },
-  isLoggedIn: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const emit = defineEmits([
@@ -380,7 +406,55 @@ const emit = defineEmits([
   "open-inventory-modal",
   "open-map-modal",
   "save",
+  "restart",
 ]);
+
+const { user: authUser, signIn, signUp, signOut } = useAuth();
+
+const showForm = ref(null);
+const authEmail = ref("");
+const authPassword = ref("");
+const authError = ref("");
+const authLoading = ref(false);
+const authSuccess = ref("");
+
+const userLabel = computed(() => authUser.value?.email?.split("@")[0] ?? "");
+
+function toggleForm(mode) {
+  showForm.value = showForm.value === mode ? null : mode;
+  authEmail.value = "";
+  authPassword.value = "";
+  authError.value = "";
+  authSuccess.value = "";
+}
+
+async function submitAuth() {
+  if (!authEmail.value || !authPassword.value) {
+    authError.value = "Email and password required.";
+    return;
+  }
+  authLoading.value = true;
+  authError.value = "";
+  authSuccess.value = "";
+  try {
+    if (showForm.value === "signup") {
+      const data = await signUp(authEmail.value, authPassword.value);
+      if (data.session) { showForm.value = null; }
+      else { authSuccess.value = "Check your email to confirm."; }
+    } else {
+      await signIn(authEmail.value, authPassword.value);
+      showForm.value = null;
+    }
+  } catch (err) {
+    authError.value = err.message ?? "Something went wrong.";
+  } finally {
+    authLoading.value = false;
+  }
+}
+
+async function handleSignOutAuth() {
+  await signOut();
+}
 
 const savedFeedback = ref(false);
 
@@ -388,6 +462,11 @@ function handleSave() {
   emit("save");
   savedFeedback.value = true;
   setTimeout(() => { savedFeedback.value = false; }, 2000);
+}
+
+function handleRestart() {
+  if (!window.confirm("Start a new game? Your current save will be deleted.")) return;
+  emit("restart");
 }
 
 const headerEl = ref(null);
