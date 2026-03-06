@@ -9,7 +9,7 @@ export const loreData = Object.values(loreModules).flatMap((m) => m.default);
 export function rollEncounter(difficultyLevel) {
   const roll = Math.floor(Math.random() * 20) + 1;
 
-  if (roll <= 18) {
+  if (roll <= 8) {
     // Lore encounter
     const lore = loreData[Math.floor(Math.random() * loreData.length)];
     return {
@@ -21,7 +21,7 @@ export function rollEncounter(difficultyLevel) {
     };
   }
 
-  if (roll <= 19) {
+  if (roll <= 15) {
     // Friendly NPC encounter
     const npc = npcData[Math.floor(Math.random() * npcData.length)];
     return {
