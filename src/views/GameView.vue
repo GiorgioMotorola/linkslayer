@@ -140,6 +140,7 @@
         :isBlurred="blurClicksLeft > 0"
         :clickCount="clickCount"
         :longRestDismissCount="longRestDismissCount"
+        :autoSaveFeedback="autoSaveFeedback"
       />
 
       <RestModal
@@ -765,7 +766,7 @@ async function triggerAutoSave() {
 }
 
 async function handleLinkClicked(...args) {
-  callHandleClick(...args);
+  await callHandleClick(...args);
   await triggerAutoSave();
 }
 
@@ -828,10 +829,18 @@ async function saveGame() {
       gameLog: gameLog.value,
       poisonedClicksLeft: poisonedClicksLeft.value,
       poisonDamagePerClick: poisonDamagePerClick.value,
+      isCloakActive: isCloakActive.value,
       cloakClicksRemaining: cloakClicksRemaining.value,
       blurClicksLeft: blurClicksLeft.value,
+      healthRegenActive: healthRegenActive.value,
+      healthRegenAmount: healthRegenAmount.value,
       healthRegenClicksRemaining: healthRegenClicksRemaining.value,
+      healthRegenMaxHeal: healthRegenMaxHeal.value,
       healthRegenHealedCount: healthRegenHealedCount.value,
+      serratedDaggerActive: serratedDaggerActive.value,
+      wardingShieldHitsRemaining: wardingShieldHitsRemaining.value,
+      wardStoneActive: wardStoneActive.value,
+      wardStoneClicksRemaining: wardStoneClicksRemaining.value,
       luckyFleeActive: luckyFleeActive.value,
       encounterBeaconActive: encounterBeaconActive.value,
       bountyScrollActive: bountyScrollActive.value,
@@ -880,10 +889,18 @@ function restoreGameState(s) {
     if (s.gameLog?.length) restoreLog(s.gameLog);
   poisonedClicksLeft.value = s.poisonedClicksLeft ?? 0;
   poisonDamagePerClick.value = s.poisonDamagePerClick ?? 0;
+  isCloakActive.value = s.isCloakActive ?? false;
   cloakClicksRemaining.value = s.cloakClicksRemaining ?? 0;
   blurClicksLeft.value = s.blurClicksLeft ?? 0;
+  healthRegenActive.value = s.healthRegenActive ?? false;
+  healthRegenAmount.value = s.healthRegenAmount ?? 0;
   healthRegenClicksRemaining.value = s.healthRegenClicksRemaining ?? 0;
+  healthRegenMaxHeal.value = s.healthRegenMaxHeal ?? 0;
   healthRegenHealedCount.value = s.healthRegenHealedCount ?? 0;
+  serratedDaggerActive.value = s.serratedDaggerActive ?? false;
+  wardingShieldHitsRemaining.value = s.wardingShieldHitsRemaining ?? 0;
+  wardStoneActive.value = s.wardStoneActive ?? false;
+  wardStoneClicksRemaining.value = s.wardStoneClicksRemaining ?? 0;
   luckyFleeActive.value = s.luckyFleeActive ?? false;
   encounterBeaconActive.value = s.encounterBeaconActive ?? false;
   bountyScrollActive.value = s.bountyScrollActive ?? false;

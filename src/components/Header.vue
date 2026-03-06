@@ -236,8 +236,7 @@
           </div>
         </div>
         <div class="hbb-actions">
-          <span v-if="authUser && props.autoSaveFeedback" class="hbb-save-confirmed">Auto-saved ✓</span>
-          <button @click="handleRestart" class="hbb-restart">New Game</button>
+<button @click="handleRestart" class="hbb-restart">New Game</button>
         </div>
       </div>
 

@@ -9,6 +9,9 @@
     <div class="loading-spinner"></div>
     <span>Loading Wikipedia article...</span>
   </div>
+  <div v-if="autoSaveFeedback" class="save-notification">
+    <span>💾 Saved</span>
+  </div>
   <div v-if="inEncounter" class="overlay"></div>
   <div class="path-wrapper">
     <div class="path-display">
@@ -64,6 +67,7 @@ const props = defineProps({
   isBlurred: Boolean,
   clickCount: { type: Number, default: 0 },
   longRestDismissCount: { type: Number, default: 0 },
+  autoSaveFeedback: { type: Boolean, default: false },
 });
 
 
@@ -470,6 +474,25 @@ onMounted(load);
 
 .loading-notification span {
   color: #fff;
+}
+
+.save-notification {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  background: #111;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  z-index: 999;
+  font-size: 0.8em;
+  animation: slideInLeft 0.2s ease-out;
+  letter-spacing: 0.3px;
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 .loading-spinner {
