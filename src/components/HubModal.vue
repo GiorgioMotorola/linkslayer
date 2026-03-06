@@ -61,10 +61,10 @@ const props = defineProps({
 
 const tabs = computed(() => {
   const base = [
-    { id: 'backpack', label: '🎒 Backpack' },
-    { id: 'map',      label: '🗺 Map' },
-    { id: 'journal',  label: '📖 Journal' },
-    { id: 'quests',   label: '📜 Quests' },
+    { id: 'backpack', label: 'Backpack' },
+    { id: 'map',      label: 'Map' },
+    { id: 'journal',  label: 'Journal' },
+    { id: 'quests',   label: 'Quests' },
   ];
   if (props.isLoggedIn) base.push({ id: 'newgame', label: '⚔ New Game' });
   return base;
