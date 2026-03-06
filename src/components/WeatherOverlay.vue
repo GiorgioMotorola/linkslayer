@@ -1,5 +1,8 @@
 <template>
-  <div v-if="weather === 'snow'" class="snowflakes" aria-hidden="true">
+  <div v-if="weather === 'clear'" class="butterflies" aria-hidden="true">
+    <div v-for="i in 3" :key="i" class="butterfly"><div class="inner">🦋</div></div>
+  </div>
+  <div v-else-if="weather === 'snow'" class="snowflakes" aria-hidden="true">
     <div v-for="i in 12" :key="i" class="snowflake"><div class="inner">❅</div></div>
   </div>
   <div v-else-if="weather === 'rain'" class="raindrops" aria-hidden="true">
@@ -7,6 +10,9 @@
   </div>
   <div v-else-if="weather === 'leaves'" class="leaffall" aria-hidden="true">
     <div v-for="i in 10" :key="i" class="leaf"><div class="inner">🍂</div></div>
+  </div>
+  <div v-else-if="weather === 'blossom'" class="blossomfall" aria-hidden="true">
+    <div v-for="i in 10" :key="i" class="blossom"><div class="inner">🌸</div></div>
   </div>
 </template>
 
@@ -17,6 +23,35 @@ defineProps({
 </script>
 
 <style scoped>
+/* ── BUTTERFLIES (clear) ───────────────────────── */
+@keyframes butterfly-cross {
+  0%   { transform: translateX(-60px); }
+  100% { transform: translateX(calc(100vw + 60px)); }
+}
+@keyframes butterfly-flutter {
+  0%, 100% { transform: translateY(0); }
+  25%       { transform: translateY(-14px); }
+  75%       { transform: translateY(8px); }
+}
+
+.butterfly {
+  position: fixed;
+  left: 0;
+  z-index: 50;
+  user-select: none;
+  pointer-events: none;
+  animation: butterfly-cross ease-in-out infinite;
+}
+.butterfly .inner {
+  animation: butterfly-flutter ease-in-out infinite;
+  font-size: 1.1em;
+  opacity: 0.8;
+}
+
+.butterfly:nth-child(1) { top: 8%; animation-duration: 40s; animation-delay:  0s; } .butterfly:nth-child(1) .inner { animation-duration: 1.4s; }
+.butterfly:nth-child(2) { top: 10%; animation-duration: 55s; animation-delay: 11s; } .butterfly:nth-child(2) .inner { animation-duration: 1.1s; }
+.butterfly:nth-child(3) { top: 12%; animation-duration: 45s; animation-delay:  6s; } .butterfly:nth-child(3) .inner { animation-duration: 1.6s; }
+
 /* ── SNOW ─────────────────────────────────────── */
 @keyframes snowflakes-fall {
   0%   { transform: translateY(0); }
@@ -135,4 +170,40 @@ defineProps({
 .leaf:nth-child(8)  { left: 77%; animation-delay: 2.0s; } .leaf:nth-child(8)  .inner { animation-delay: 2.5s; }
 .leaf:nth-child(9)  { left: 86%; animation-delay: 0.3s; } .leaf:nth-child(9)  .inner { animation-delay: 6.5s; }
 .leaf:nth-child(10) { left: 95%; animation-delay: 1.8s; } .leaf:nth-child(10) .inner { animation-delay: 3.0s; }
+
+/* ── CHERRY BLOSSOMS ──────────────────────────── */
+@keyframes blossom-fall {
+  0%   { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(110vh) rotate(270deg); }
+}
+@keyframes blossom-drift {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(60px); }
+  75%       { transform: translateX(-30px); }
+}
+
+.blossom {
+  position: fixed;
+  top: -10%;
+  z-index: 50;
+  user-select: none;
+  pointer-events: none;
+  animation: blossom-drift 6s ease-in-out infinite;
+}
+.blossom .inner {
+  animation: blossom-fall 11s linear infinite;
+  font-size: 1.1em;
+  opacity: 0.9;
+}
+
+.blossom:nth-child(1)  { left:  4%; animation-delay:   0s; } .blossom:nth-child(1)  .inner { animation-delay:   0s; }
+.blossom:nth-child(2)  { left: 13%; animation-delay: 2.0s; } .blossom:nth-child(2)  .inner { animation-delay: 3.0s; }
+.blossom:nth-child(3)  { left: 26%; animation-delay: 0.5s; } .blossom:nth-child(3)  .inner { animation-delay: 6.0s; }
+.blossom:nth-child(4)  { left: 38%; animation-delay: 3.5s; } .blossom:nth-child(4)  .inner { animation-delay: 1.5s; }
+.blossom:nth-child(5)  { left: 50%; animation-delay: 1.0s; } .blossom:nth-child(5)  .inner { animation-delay: 8.0s; }
+.blossom:nth-child(6)  { left: 61%; animation-delay: 2.5s; } .blossom:nth-child(6)  .inner { animation-delay: 4.5s; }
+.blossom:nth-child(7)  { left: 72%; animation-delay: 0.8s; } .blossom:nth-child(7)  .inner { animation-delay: 2.0s; }
+.blossom:nth-child(8)  { left: 81%; animation-delay: 4.0s; } .blossom:nth-child(8)  .inner { animation-delay: 5.5s; }
+.blossom:nth-child(9)  { left: 89%; animation-delay: 1.5s; } .blossom:nth-child(9)  .inner { animation-delay: 7.0s; }
+.blossom:nth-child(10) { left: 96%; animation-delay: 3.0s; } .blossom:nth-child(10) .inner { animation-delay: 1.0s; }
 </style>

@@ -79,10 +79,11 @@ function dayWeather(day) {
   h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
   h = h ^ (h >>> 16);
   const r = (h >>> 0) % 100;
-  if (r < 25) return 'clear';   // 25%
-  if (r < 50) return 'snow';    // 25%
-  if (r < 75) return 'rain';    // 25%
-  return 'leaves';              // 25%
+  if (r < 20) return 'clear';    // 20%
+  if (r < 40) return 'snow';    // 20%
+  if (r < 60) return 'rain';    // 20%
+  if (r < 80) return 'leaves';  // 20%
+  return 'blossom';             // 20%
 }
 
 const weatherType = computed(() => dayWeather(props.daysCount));
