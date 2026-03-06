@@ -296,6 +296,13 @@
       @done="handleCampfireReward"
     />
   </Transition>
+
+  <RuneCacheModal
+    v-if="showRuneCacheModal"
+    :tier="runeCacheReward?.tier ?? 1"
+    @close="showRuneCacheModal = false"
+    @reward="handleRuneCacheReward"
+  />
 </template>
 
 <script setup>
@@ -313,6 +320,7 @@ import NotesModal from "@/components/NotesModal.vue";
 import HubModal from "@/components/HubModal.vue";
 import DieSlayerModal from "@/components/DieSlayerModal.vue";
 import CampfireOverlay from "@/components/CampfireOverlay.vue";
+import RuneCacheModal from "@/components/RuneCacheModal.vue";
 
 import { shopItems as allShopItems } from "@/utils/shopItems";
 import { isBoss } from "@/utils/bossGenerator";
@@ -373,6 +381,8 @@ const {
   longRestDismissCount,
   showCampfireOverlay,
   campfireReward,
+  showRuneCacheModal,
+  runeCacheReward,
   openInventoryModal,
   closeInventoryModal,
 } = modals;
@@ -430,6 +440,24 @@ function handleCampfireReward(reward) {
   log(`🔥 You rested at the ${reward.name}. You gained +15 HP and ${bonusLabels[reward.type]}.`);
   showCampfireOverlay.value = false;
   campfireReward.value = null;
+}
+
+function handleRuneCacheReward(reward) {
+  if (reward.type === "gold") {
+    playerGold.value += reward.amount;
+    log(`✦ The cache yields ${reward.amount} gold.`);
+  } else if (reward.type === "health_potion") {
+    inventory.value.healthPotions++;
+    log(`✦ The cache yields a Health Potion.`);
+  } else if (reward.type === "weapon") {
+    weaponBonus.value += reward.amount;
+    log(`✦ The cache yields a weapon upgrade. +${reward.amount} Weapon Damage.`);
+  } else if (reward.type === "shield") {
+    shieldBonus.value += reward.amount;
+    log(`✦ The cache yields a defensive ward. +${reward.amount} Defense.`);
+  }
+  showRuneCacheModal.value = false;
+  runeCacheReward.value = null;
 }
 
 const player = usePlayerState(hpCapBonus);

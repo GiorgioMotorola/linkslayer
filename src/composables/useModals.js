@@ -10,6 +10,8 @@ export function useModals() {
   const longRestDismissCount = ref(0);
   const showCampfireOverlay = ref(false);
   const campfireReward = ref(null);
+  const showRuneCacheModal = ref(false);
+  const runeCacheReward = ref(null);
 
   watch(showRestModal, (newValue) => {
     if (newValue) {
@@ -37,6 +39,8 @@ export function useModals() {
     longRestDismissCount,
     showCampfireOverlay,
     campfireReward,
+    showRuneCacheModal,
+    runeCacheReward,
     openInventoryModal,
     closeInventoryModal,
   };

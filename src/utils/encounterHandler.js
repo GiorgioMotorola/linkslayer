@@ -407,6 +407,14 @@ export function handleEncounterOption({
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
+  if (option.result === "rune_cache") {
+    modalState.runeCacheReward.value = { tier: option.tier || 1 };
+    modalState.showRuneCacheModal.value = true;
+    enemyState.encounter.value = null;
+    modalState.bossOverlay.value = false;
+    return;
+  }
+
   if (option.result === "campfire_rest") {
     const rewards = [
       { type: "gold", amount: 50 },

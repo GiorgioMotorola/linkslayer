@@ -261,3 +261,75 @@
         - text: Descend the stairs and leave the tower.
           flow: close_encounter
           responseText: "You decide the top floor is too dangerous for now. You carefully descend and leave the tower."
+
+- id: lore_028_rune_cache_common
+  name: The Stone Cache
+  text: "Half-buried in the earth beside a crumbled wall, you spot a small stone chest sealed with a panel of glowing runes. The runes pulse faintly in sequence, as if waiting for someone who still remembers the old language."
+  options:
+    - text: "Study the rune sequence and attempt to unlock it."
+      result: rune_cache
+      tier: 1
+    - text: "Leave it. You don't trust old magic."
+      result: none
+      flow: close_encounter
+      responseText: "You step away from the chest. The runes continue their slow, patient pulse."
+
+- id: lore_029_rune_cache_uncommon
+  name: The Sealed Reliquary
+  text: "Tucked into a collapsed archway, you find a carved stone reliquary sealed with ancient runes etched across its face. The symbols light up one by one in a repeating pattern — an old cipher, perhaps a key known only to the order that placed it here."
+  options:
+    - text: "Trace the rune sequence and try to open it."
+      result: rune_cache
+      tier: 2
+    - text: "Too risky. Move on."
+      result: none
+      flow: close_encounter
+      responseText: "You leave the reliquary undisturbed. Its runes fade as you walk away."
+
+- id: lore_030_rune_cache_ancient
+  name: The Ancient Vault
+  text: "Set into the base of a moss-covered obelisk, a heavy iron vault door bears a complex rune panel. The runes glow a deep amber and cycle through an intricate sequence. Whatever is inside has been kept safe for a very long time."
+  options:
+    - text: "Commit the sequence to memory and attempt the unlock."
+      result: rune_cache
+      tier: 3
+    - text: "Some things are better left sealed."
+      result: none
+      flow: close_encounter
+      responseText: "You step back from the vault. The obelisk hums faintly as the runes cycle on."
+
+- id: lore_031_rune_cache_ancient
+  name: The Ancient Vault
+  text: "Set into a massive crumbled pillar, a heavy iron vault door bears a complex rune panel. The runes glow a deep amber and cycle through an intricate sequence. Whatever is inside has been kept safe for a very long time."
+  options:
+    - text: "Commit the sequence to memory and attempt the unlock."
+      result: rune_cache
+      tier: 4
+    - text: "Some things are better left sealed."
+      result: none
+      flow: close_encounter
+      responseText: "You step back from the vault. The obelisk hums faintly as the runes cycle on."
+
+- id: lore_032_rune_cache_ancient
+  name: The Ancient Vault
+  text: "Set on top of the stone statue of a giant head, a heavy iron vault door bears a complex rune panel. The runes glow a deep amber and cycle through an intricate sequence. Whatever is inside has been kept safe for a very long time."
+  options:
+    - text: "Commit the sequence to memory and attempt the unlock."
+      result: rune_cache
+      tier: 5
+    - text: "Some things are better left sealed."
+      result: none
+      flow: close_encounter
+      responseText: "You step back from the vault. The obelisk hums faintly as the runes cycle on."
+
+- id: lore_033_rune_cache_ancient
+  name: The Ancient Vault
+  text: "Set behind a violent waterfall, a heavy iron vault door bears a complex rune panel. The runes glow a deep amber and cycle through an intricate sequence. Whatever is inside has been kept safe for a very long time."
+  options:
+    - text: "Commit the sequence to memory and attempt the unlock."
+      result: rune_cache
+      tier: 6
+    - text: "Some things are better left sealed."
+      result: none
+      flow: close_encounter
+      responseText: "You step back from the vault. The obelisk hums faintly as the runes cycle on."
