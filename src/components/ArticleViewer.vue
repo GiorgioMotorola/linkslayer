@@ -10,7 +10,7 @@
     <span>Loading Wikipedia article...</span>
   </div>
   <div v-if="autoSaveFeedback" class="save-notification">
-    <span>💾 Saved</span>
+    <span>💾</span>
   </div>
   <div v-if="inEncounter" class="overlay"></div>
   <div class="path-wrapper">
@@ -480,7 +480,7 @@ onMounted(load);
   position: fixed;
   top: 12px;
   left: 12px;
-  background: #111;
+  background: #070707;
   color: #fff;
   padding: 8px 14px;
   border-radius: 6px;
