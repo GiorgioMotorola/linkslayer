@@ -31,6 +31,12 @@
             <button class="hub-close-btn" @click="$emit('close')">⎯ &nbsp; Close Inventory &nbsp; ⎯</button>
           </div>
         </div>
+        <div v-else-if="activeTab === 'quests'" class="hub-tab-pane">
+          <slot name="quests" />
+          <div class="hub-close-bar">
+            <button class="hub-close-btn" @click="$emit('close')">⎯ &nbsp; Close Inventory &nbsp; ⎯</button>
+          </div>
+        </div>
         <div v-else-if="activeTab === 'newgame'" class="hub-tab-pane hub-newgame-pane">
           <div class="hub-newgame-center">
             <p class="hub-newgame-warning">Starting a new game will delete your current save.</p>
@@ -58,6 +64,7 @@ const tabs = computed(() => {
     { id: 'backpack', label: '🎒 Backpack' },
     { id: 'map',      label: '🗺 Map' },
     { id: 'journal',  label: '📖 Journal' },
+    { id: 'quests',   label: '📜 Quests' },
   ];
   if (props.isLoggedIn) base.push({ id: 'newgame', label: '⚔ New Game' });
   return base;

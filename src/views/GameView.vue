@@ -278,6 +278,18 @@
         :playerGoal="playerGoal"
       />
     </template>
+    <template #quests>
+      <div class="hub-quest-pane">
+        <div v-if="inventory.questScrolls > 0" class="hub-quest-item">
+          <div class="hub-quest-info">
+            <span class="hub-quest-name">The Growling Dark</span>
+            <span class="hub-quest-desc">A rolled parchment sealed with wax. Venture into the cave and slay what lurks within. Must be opened while idle.</span>
+          </div>
+          <button class="hub-quest-btn" @click="handleUseInventoryItem('questScroll')" :disabled="!isIdle">Begin Quest</button>
+        </div>
+        <div v-else class="hub-quest-empty">No active quests.</div>
+      </div>
+    </template>
   </HubModal>
 
   <Transition name="quest-notif-fade">
@@ -1173,5 +1185,82 @@ watch(user, async (newUser, oldUser) => {
     font-size: 13px;
     margin-top: 0.1rem;
   }
+}
+
+.hub-quest-pane {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.hub-quest-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(80, 110, 160, 0.25);
+  border-radius: 6px;
+}
+
+.hub-quest-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+
+.hub-quest-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #c8dcf4;
+  letter-spacing: 0.3px;
+}
+
+.hub-quest-desc {
+  font-size: 12px;
+  color: #6a80a0;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.hub-quest-btn {
+  background: transparent;
+  border: 1px solid rgba(80, 110, 160, 0.45);
+  border-radius: 4px;
+  color: #7a90b0;
+  font-size: 11px;
+  font-family: "IBM Plex Sans", sans-serif;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.hub-quest-btn:hover {
+  color: #b0c8e8;
+  border-color: rgba(80, 110, 160, 0.7);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.hub-quest-btn:disabled {
+  color: #3a4a5a;
+  border-color: rgba(60, 80, 110, 0.3);
+  cursor: not-allowed;
+}
+
+.hub-quest-empty {
+  font-size: 13px;
+  color: #3a4a5a;
+  font-style: italic;
+  text-align: center;
+  padding: 40px 0;
 }
 </style>

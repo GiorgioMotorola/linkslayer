@@ -464,25 +464,6 @@
           </div>
         </div>
 
-        <div v-if="inventory.questScrolls > 0" class="item-slot-wrapper">
-          <div class="item-details-box">
-            <div class="item-name-quantity">
-              <span class="item-name">Quest Scroll — The Growling Dark</span>
-              <span class="item-count">x{{ inventory.questScrolls }}</span>
-            </div>
-            <div class="item-description">A rolled parchment sealed with wax. Use it when you're ready to venture into the cave. Must be opened while idle.</div>
-          </div>
-          <div class="item-button-box">
-            <button
-              class="buy-button-details"
-              @click.stop="useItem('questScroll')"
-              :disabled="!isIdle"
-            >
-              Use
-            </button>
-          </div>
-        </div>
-
         <div
           v-if="isInventoryEmpty"
           class="item-slot-wrapper no-items-message-wrapper"
@@ -491,7 +472,7 @@
             <span>Your Backpack is empty.</span>
           </div>
         </div>
-      </div>
+      </div><!-- end backpack tab -->
 
     </div>
   </div>
@@ -600,14 +581,14 @@ const props = defineProps({
 const emit = defineEmits(["close", "use-item"]);
 
 const isInventoryEmpty = computed(() => {
+  const skip = new Set(["questScrolls"]);
   for (const key in props.inventory) {
+    if (skip.has(key)) continue;
     if (
       Object.prototype.hasOwnProperty.call(props.inventory, key) &&
       typeof props.inventory[key] === "number"
     ) {
-      if (props.inventory[key] > 0) {
-        return false;
-      }
+      if (props.inventory[key] > 0) return false;
     }
   }
   return true;
@@ -662,6 +643,34 @@ function useItem(itemType) {
   display: flex;
   flex-direction: column;
   font-family: "IBM Plex Sans", sans-serif;
+}
+
+.inv-tabs {
+  display: flex;
+  border-bottom: 1px solid #4a4a4a;
+  margin-bottom: 14px;
+  flex-shrink: 0;
+}
+
+.inv-tab {
+  flex: 1;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-family: "IBM Plex Sans", sans-serif;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #7a7a7a;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.inv-tab:hover { color: #b0b0b0; }
+
+.inv-tab-active {
+  color: #c0c0c0;
+  border-bottom-color: #6a6a6a;
 }
 
 .inventory-title {
