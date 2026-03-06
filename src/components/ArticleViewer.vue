@@ -480,7 +480,7 @@ onMounted(load);
   position: fixed;
   top: 12px;
   left: 12px;
-  background: #070707;
+  background: transparent;
   color: #fff;
   padding: 8px 14px;
   border-radius: 6px;
