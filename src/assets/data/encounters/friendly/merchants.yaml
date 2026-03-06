@@ -19,7 +19,7 @@
   greeting: "As you push open the heavy wooden door, the warm, boisterous air of 'The Drunken Dragon Inn' washes over you. Laughter, clinking tankards, and the murmur of countless conversations fill the room. Travelers and dock workers alike are gathered, sharing tales and drinks. The barkeep nods a greeting from behind a polished counter."
   dialogueNodes:
     start:
-      text: "The Drunken Dragon Inn is a lively place. The smell of roasted meat and ale hangs heavy in the air. What's your pleasure?"
+      text: "The Drunken Dragon Inn is a lively place. The smell of roasted meat and ale hangs heavy in the air."
       options:
         - text: Order a hearty ale and find a quiet corner to listen.
           effect: item

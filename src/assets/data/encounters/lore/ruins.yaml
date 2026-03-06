@@ -202,7 +202,7 @@
       options:
         - text: Pick up the vial.
           result: item
-          details: health
+          details: healthPotion
           responseText: "You pick up the vial. It's a Health Potion. A lucky find. You continue on."
           flow: dialogue_branch
           next_node_id: dead_end_left

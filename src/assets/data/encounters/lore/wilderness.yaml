@@ -120,7 +120,7 @@
     - text: Walk around the right side of the swamp
       effect: item
       details: gold
-      amount: 58
+      amount: 30
       responseText: "You make it safely to the other side of the putrid swamp. While walking, you find a bag with 30 gold pieces in it."
     - text: "Take off all of your clothes, wrap them in your travel blanket, tie the blanket to your ankle, and swim like a graceful dolphin through the swamp."
       result: damage-major

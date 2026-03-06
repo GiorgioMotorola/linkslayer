@@ -132,7 +132,7 @@
         :start="chain[0]"
         :targets="chain[currentTargetIndex + 1]"
         :inEncounter="inEncounter"
-        @link-clicked="callHandleClick"
+        @link-clicked="handleLinkClicked"
         @open-map="isMapModalOpen = true"
         :path="path"
         :fullChain="chain"
@@ -157,7 +157,7 @@
         :questTaken="questTaken"
         :questComplete="questComplete"
         :questTurnedIn="questTurnedIn"
-        @rest="callHandleRest"
+        @rest="handleRest"
         @assemble-upgrade="handleAssembleUpgradeWrapper"
         @offer="callHandleOffer"
         @sleep="handleSleepTransition"
@@ -762,6 +762,16 @@ async function triggerAutoSave() {
   clearTimeout(autoSaveFeedbackTimer);
   autoSaveFeedback.value = true;
   autoSaveFeedbackTimer = setTimeout(() => { autoSaveFeedback.value = false; }, 2000);
+}
+
+async function handleLinkClicked(...args) {
+  callHandleClick(...args);
+  await triggerAutoSave();
+}
+
+async function handleRest(...args) {
+  callHandleRest(...args);
+  await triggerAutoSave();
 }
 
 watch(encounter, (newVal, oldVal) => {

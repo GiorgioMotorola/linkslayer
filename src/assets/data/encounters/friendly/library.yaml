@@ -4,8 +4,8 @@
   options:
     - text: "The Herbalist's Companion — dog-eared, smells of dried chamomile"
       result: item
-      details: health
-      responseText: You open the book to a random page. A perfectly preserved sprig of dried herbs falls out. The Archivist stamps something on her ledger without looking up. You receive some Breadcrumbs.
+      details: health_potion_consumable
+      responseText: You open the book to a random page. A perfectly preserved sprig of dried herbs falls out. The Archivist stamps something on her ledger without looking up. You receive A Health Potion.
     - text: "Ledger of the Lost Caravan — a handful of gold coins fall out when you open it"
       result: item
       details: gold
@@ -36,8 +36,8 @@
       responseText: The handbook is detailed, gruesome, and surprisingly practical. You absorb enough to improve how you hit things. Weapon damage +1. The Pale Librarian watches you read with an expression you can't quite identify.
     - text: "Prayers of the Final Healer — warm to the touch, stained with something very old"
       result: item
-      details: health
-      responseText: "The book is warm in your hands. You read a few lines. Something in the old words is comforting. You feel a little better. 'She was the last of her order,' the Librarian says quietly. You receive some Breadcrumbs."
+      details: health_potion_consumable
+      responseText: "The book is warm in your hands. You read a few lines. Something in the old words is comforting. You feel a little better. 'She was the last of her order,' the Librarian says quietly. You receive A Health Potion."
     - text: "Whispers from the Beneath — it hums faintly when you reach for it"
       result: damage-minor
       amount: 5
@@ -49,8 +49,8 @@
   options:
     - text: "Practical Alchemy for the Impatient — smells faintly of sulfur, works anyway"
       result: item
-      details: health
-      responseText: "The scholar thrusts the book into your hands. 'Chapter four is particularly useful. Don't read chapter seven.' You follow his advice. The remedy on page 94 turns out to be legitimate. You receive some Breadcrumbs."
+      details: health_potion_consumable
+      responseText: "The scholar thrusts the book into your hands. 'Chapter four is particularly useful. Don't read chapter seven.' You follow his advice. The remedy on page 94 turns out to be legitimate. You receive A Health Potion."
     - text: "Maps of Places That Moved — annotated in pencil, extensively second-guessed"
       result: item
       details: gold
@@ -71,8 +71,8 @@
   options:
     - text: "Field Guide to Edible Mushrooms — a dried mushroom pressed inside the front cover"
       result: item
-      details: health
-      responseText: "The garden keeper hands you the book with both hands, like it's a gift. 'That one saved my predecessor,' she says. You eat the pressed mushroom inside the cover. It seems fine. You receive some Breadcrumbs."
+      details: health_potion_consumable
+      responseText: "The garden keeper hands you the book with both hands, like it's a gift. 'That one saved my predecessor,' she says. You eat the pressed mushroom inside the cover. It seems fine. You receive A Health Potion."
     - text: "Meditations on the Nature of Gold — the author was very wealthy and did not understand why other people were not"
       result: item
       details: gold
@@ -93,8 +93,8 @@
   options:
     - text: "Forbidden Remedies — handwriting is nearly illegible, works anyway"
       result: item
-      details: health
-      responseText: "The figure slides the book across to you. 'Don't tell her where you got it.' The remedies inside are written in an urgent, cramped hand, as if the author was in a hurry and probably also in pain. They work. You receive some Breadcrumbs."
+      details: health_potion_consumable
+      responseText: "The figure slides the book across to you. 'Don't tell her where you got it.' The remedies inside are written in an urgent, cramped hand, as if the author was in a hurry and probably also in pain. They work. You receive A Health Potion."
     - text: "The Thief's Almanac — dog-eared at the chapter titled 'Where Treasures Hide'"
       result: item
       details: gold
@@ -116,8 +116,8 @@
   options:
     - text: "Forgotten First Aid — written in a shaky, extremely urgent hand"
       result: item
-      details: health
-      responseText: "The student pushes the book toward you with her foot. 'Found it on shelf 40,000-something. It's good, I think.' You read the first few pages. The author was clearly in bad shape while writing it but knew what they were doing. You receive some Breadcrumbs."
+      details: health_potion_consumable
+      responseText: "The student pushes the book toward you with her foot. 'Found it on shelf 40,000-something. It's good, I think.' You read the first few pages. The author was clearly in bad shape while writing it but knew what they were doing. You receive A Health Potion."
     - text: "An Incomplete History of Treasure — the final chapter is missing"
       result: item
       details: gold
@@ -143,8 +143,8 @@
       responseText: "The Curator slides the book through the gate without touching the bars. Inside the front cover, a detailed weapon schematic is folded in thirds. It covers techniques that the swordsmith apparently took pains to ensure would not survive him. They have. Weapon damage +2."
     - text: "The Healer Who Refused to Die — pressed flowers inside, still fresh after an unknowable number of years"
       result: item
-      details: health
-      responseText: "The book is thin and old. The flowers inside are impossible — fresh, fragrant, the same as the day they were pressed. You hold one. Something passes between you and whoever left it here. You receive some Breadcrumbs, and feel unexpectedly well."
+      details: health_potion_consumable
+      responseText: "The book is thin and old. The flowers inside are impossible — fresh, fragrant, the same as the day they were pressed. You hold one. Something passes between you and whoever left it here. You receive A Health Potion."
     - text: "Inventory of a Dragon's Hoard — organized by category, annotated in a cramped hand"
       result: item
       details: gold

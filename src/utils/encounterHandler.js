@@ -25,6 +25,12 @@ function applyOptionEffects({
 
   switch (effectType) {
     case "item":
+      if (option.details === "health_potion_consumable") {
+        inventory.value.healthPotions++;
+        log(
+          `➕ <span class="player-name">${playerName.value}</span> found a Health Potion. It's been added to your backpack.`
+        );
+      }
       if (option.details === "health") {
         inventory.value.breadcrumbs++;
         log(
