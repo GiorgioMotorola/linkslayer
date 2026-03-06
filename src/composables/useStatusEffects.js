@@ -29,15 +29,11 @@ export function useStatusEffects() {
       inventory,
       log,
       showRestModal,
-      showShopModal,
     } = deps;
 
     watch(clickCount, (newClicks) => {
       if (newClicks > 0 && newClicks % 12 === 0) {
         showRestModal.value = true;
-      }
-      if (newClicks > 0 && newClicks % 10 === 0 && !showRestModal.value) {
-        showShopModal.value = true;
       }
 
       let netHealthChange = 0;

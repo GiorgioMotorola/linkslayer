@@ -35,6 +35,10 @@
           </span>
         </button>
 
+        <button v-if="shouldShowShortRest" @click="$emit('open-shop')" class="close-action-btn shop-btn">
+          🛒 Visit the Shop →
+        </button>
+
         <button v-if="shouldShowShortRest" @click="handleContinue" class="close-action-btn">
           Continue On →
         </button>
@@ -182,7 +186,7 @@ const props = defineProps({
   questTurnedIn: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(["rest", "assemble-upgrade", "offer", "sleep", "order-beer", "order-meal", "open-die-slayer", "take-quest", "turn-in-quest", "sip-beer", "bite-meal"]);
+const emit = defineEmits(["rest", "assemble-upgrade", "offer", "sleep", "order-beer", "order-meal", "open-die-slayer", "take-quest", "turn-in-quest", "sip-beer", "bite-meal", "open-shop"]);
 
 const currentRestPhrase = ref("");
 const tavernPhrase = ref("");
@@ -597,6 +601,17 @@ button:disabled:hover {
 .modal-campfire .close-action-btn {
   border-color: rgba(220, 130, 30, 0.7) !important;
   color: #f5d070 !important;
+}
+
+.modal-campfire .shop-btn {
+  border-color: rgba(100, 160, 220, 0.55) !important;
+  color: #a8ccee !important;
+}
+
+.modal-campfire .shop-btn:hover:not(:disabled) {
+  background: rgba(40, 80, 140, 0.22) !important;
+  border-color: rgba(130, 190, 240, 0.75) !important;
+  color: #c8e0f8 !important;
 }
 
 .modal-night .close-action-btn {

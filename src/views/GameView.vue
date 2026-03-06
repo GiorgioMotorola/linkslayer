@@ -169,6 +169,7 @@
         @open-die-slayer="openDieSlayerFromTavern"
         @take-quest="handleTakeQuest"
         @turn-in-quest="handleTurnInQuest"
+        @open-shop="showShopModal = true"
       />
 
       <ShopModal
@@ -470,7 +471,6 @@ setupClickWatcher({
   inventory,
   log,
   showRestModal,
-  showShopModal,
   enlightenmentFishAccumulatedHP,
   goldPouchAccumulatedGold,
 });

@@ -111,17 +111,6 @@ export async function handleClick({
     return;
   }
   if (
-    playerState.clickCount.value > 0 &&
-    playerState.clickCount.value % 10 === 0 &&
-    !modalState.showRestModal.value &&
-    !encounterPreventedByCloak &&
-    !isBossClick
-  ) {
-    modalState.showShopModal.value = true;
-    return;
-  }
-
-  if (
     title !== finalTarget &&
     !encounterPreventedByCloak &&
     (encounterBeaconActive?.value || Math.random() < 0.4)
