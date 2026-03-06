@@ -478,8 +478,8 @@ onMounted(load);
 
 .save-notification {
   position: fixed;
-  top: 30px;
-  left: 6px;
+  top: 50px;
+  left: 1px;
   background: transparent;
   color: #fff;
   padding: 8px 14px;
