@@ -66,7 +66,7 @@ const tabs = computed(() => {
     { id: 'journal',  label: 'Journal' },
     { id: 'quests',   label: 'Quests' },
   ];
-  if (props.isLoggedIn) base.push({ id: 'newgame', label: '⚔ New Game' });
+  if (props.isLoggedIn) base.push({ id: 'newgame', label: 'Game' });
   return base;
 });
 
