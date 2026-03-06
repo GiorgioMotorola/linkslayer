@@ -12,6 +12,7 @@
   <div v-if="autoSaveFeedback" class="save-notification">
     <span>💾</span>
   </div>
+  <WeatherOverlay :weather="weatherType" />
   <div v-if="inEncounter" class="overlay"></div>
   <div class="path-wrapper">
     <div class="path-display">
@@ -55,6 +56,7 @@
 import { ref, watch, onMounted, computed } from "vue";
 import { fetchWikipediaArticle } from "@/utils/wikipediaApi";
 import logo from "../assets/newlogo-nobg1.png";
+import WeatherOverlay from "./WeatherOverlay.vue";
 
 const props = defineProps({
   articleTitle: String,
@@ -68,7 +70,22 @@ const props = defineProps({
   clickCount: { type: Number, default: 0 },
   longRestDismissCount: { type: Number, default: 0 },
   autoSaveFeedback: { type: Boolean, default: false },
+  daysCount: { type: Number, default: 1 },
 });
+
+function dayWeather(day) {
+  let h = (day + 0x9e3779b9) | 0;
+  h = Math.imul(h ^ (h >>> 16), 0x85ebca6b);
+  h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
+  h = h ^ (h >>> 16);
+  const r = (h >>> 0) % 100;
+  if (r < 25) return 'clear';   // 25%
+  if (r < 50) return 'snow';    // 25%
+  if (r < 75) return 'rain';    // 25%
+  return 'leaves';              // 25%
+}
+
+const weatherType = computed(() => dayWeather(props.daysCount));
 
 
 const cyclePosition = computed(() => {

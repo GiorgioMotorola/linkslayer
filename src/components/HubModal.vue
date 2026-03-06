@@ -46,15 +46,21 @@
 </template>
 
 <script setup>
-const tabs = [
-  { id: 'backpack', label: '🎒 Backpack' },
-  { id: 'map',      label: '🗺 Map' },
-  { id: 'journal',  label: '📖 Journal' },
-  { id: 'newgame',  label: '⚔ New Game' },
-];
+import { computed } from 'vue';
 
-defineProps({
+const props = defineProps({
   activeTab: { type: String, default: 'backpack' },
+  isLoggedIn: { type: Boolean, default: false },
+});
+
+const tabs = computed(() => {
+  const base = [
+    { id: 'backpack', label: '🎒 Backpack' },
+    { id: 'map',      label: '🗺 Map' },
+    { id: 'journal',  label: '📖 Journal' },
+  ];
+  if (props.isLoggedIn) base.push({ id: 'newgame', label: '⚔ New Game' });
+  return base;
 });
 
 defineEmits(['close', 'change-tab', 'restart']);

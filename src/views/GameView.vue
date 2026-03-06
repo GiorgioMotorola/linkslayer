@@ -141,6 +141,7 @@
         :clickCount="clickCount"
         :longRestDismissCount="longRestDismissCount"
         :autoSaveFeedback="autoSaveFeedback"
+        :daysCount="daysCount"
       />
 
       <RestModal
@@ -226,6 +227,7 @@
   <HubModal
     v-if="hubOpen"
     :activeTab="hubTab"
+    :isLoggedIn="!!user"
     @change-tab="hubTab = $event"
     @close="hubOpen = false"
     @restart="handleRestart"
@@ -962,13 +964,9 @@ function restoreGameState(s) {
 }
 
 async function handleRestart() {
-  try {
-    const { data: { user: currentUser } } = await supabase.auth.getUser();
-    if (currentUser) {
-      await supabase.from("saves").delete().eq("user_id", currentUser.id);
-    }
-  } catch (e) {
-    // ignore auth errors
+  const { data: { user: currentUser } } = await supabase.auth.getUser();
+  if (currentUser) {
+    await supabase.from("saves").delete().eq("user_id", currentUser.id);
   }
   location.reload();
 }
