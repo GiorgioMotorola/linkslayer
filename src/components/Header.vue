@@ -157,14 +157,7 @@
           </div>
         </div>
         <div class="player-buttons-right">
-          <button
-            @click="emit('open-inventory-modal')"
-            class="inventory-button"
-          >
-            Backpack
-          </button>
-          <button @click="openNotesModal" class="notes-button">Journal</button>
-          <button @click="emit('open-map-modal')" class="map-button">Map</button>
+          <button @click="emit('open-hub')" class="inventory-button">Inventory</button>
         </div>
       </div>
 
@@ -236,7 +229,6 @@
           </div>
         </div>
         <div class="hbb-actions">
-<button @click="handleRestart" class="hbb-restart">New Game</button>
         </div>
       </div>
 
@@ -276,18 +268,6 @@
         </div>
       </div>
     </div>
-    <Teleport to="body">
-      <NotesModal
-        v-if="isNotesModalOpen"
-        @close="closeNotesModal"
-        :playerClass="props.playerClass"
-        :specialTier="props.specialTier ?? 1"
-        :playerName="props.playerName"
-        :weaponBonus="props.weaponBonus"
-        :shieldBonus="props.shieldBonus"
-        :playerGoal="props.playerGoal"
-      />
-    </Teleport>
   </header>
 </template>
 
@@ -295,7 +275,7 @@
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from "vue";
 import TipsModal from "./TipsModal.vue";
 import "./styles/headerStyles.css";
-import NotesModal from "./NotesModal.vue";
+
 import { useAuth } from "@/composables/useAuth";
 
 const props = defineProps({
@@ -388,9 +368,7 @@ const emit = defineEmits([
   "log-line",
   "show-tips",
   "use-compass",
-  "open-inventory-modal",
-  "open-map-modal",
-  "restart",
+  "open-hub",
 ]);
 
 const { user: authUser, signIn, signUp, signOut } = useAuth();
@@ -440,10 +418,6 @@ async function handleSignOutAuth() {
   await signOut();
 }
 
-function handleRestart() {
-  if (!window.confirm("Start a new game? Your current save will be deleted.")) return;
-  emit("restart");
-}
 
 const headerEl = ref(null);
 const headerHeight = ref(300);
@@ -588,13 +562,6 @@ const openModal = () => {
 
 const closeModal = () => {
   isModalOpen.value = false;
-};
-const isNotesModalOpen = ref(false);
-const openNotesModal = () => {
-  isNotesModalOpen.value = true;
-};
-const closeNotesModal = () => {
-  isNotesModalOpen.value = false;
 };
 
 

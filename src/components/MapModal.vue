@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-overlay" @click.self="$emit('close')">
+  <div :class="props.embedded ? 'map-embedded' : 'modal-overlay'" @click.self="props.embedded ? null : $emit('close')">
     <div class="modal-content">
 
       <div class="modal-header">
@@ -57,7 +57,7 @@
         </div>
       </div>
 
-      <button class="close-button" @click="$emit('close')">
+      <button v-if="!props.embedded" class="close-button" @click="$emit('close')">
         ⎯ &nbsp; Put away the map &nbsp; ⎯
       </button>
 
@@ -68,7 +68,8 @@
 <script setup>
 import { defineProps, defineEmits } from "vue";
 
-defineProps({
+const props = defineProps({
+  embedded: { type: Boolean, default: false },
   fullChain: {
     type: Array,
     default: () => [],
@@ -124,6 +125,14 @@ const dotStyle = (index) => {
 </script>
 
 <style scoped>
+.map-embedded {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;

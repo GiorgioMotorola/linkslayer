@@ -1,7 +1,7 @@
 <template>
-  <div class="inventory-overlay" @click.self="closeModal">
+  <div :class="props.embedded ? 'inventory-embedded' : 'inventory-overlay'" @click.self="props.embedded ? null : closeModal">
     <div class="inventory-content-game-style">
-      <button @click="closeModal" class="close-button-game-style">⎯ &nbsp; Close Backpack &nbsp; ⎯</button>
+      <button v-if="!props.embedded" @click="closeModal" class="close-button-game-style">⎯ &nbsp; Close Backpack &nbsp; ⎯</button>
       <h2 class="inventory-title">Backpack</h2>
 
       <div class="inventory-items-container">
@@ -506,6 +506,7 @@ const itemDesc = Object.fromEntries(
 );
 
 const props = defineProps({
+  embedded: { type: Boolean, default: false },
   inventory: {
     type: Object,
     required: true,
@@ -622,6 +623,14 @@ function useItem(itemType) {
 </script>
 
 <style scoped>
+.inventory-embedded {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
 .inventory-overlay {
   position: fixed;
   top: 0;

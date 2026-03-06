@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-overlay" @click.self="closeModal">
+  <div :class="props.embedded ? 'notes-embedded' : 'modal-overlay'" @click.self="props.embedded ? null : closeModal">
     <div class="modal-content">
 
       <div class="modal-header">
@@ -52,7 +52,7 @@
         <span class="char-count">{{ notesContent.length }} characters</span>
       </div>
 
-      <button class="close-button" @click="closeModal">
+      <button v-if="!props.embedded" class="close-button" @click="closeModal">
         ⎯ &nbsp; Close Journal &nbsp; ⎯
       </button>
 
@@ -64,6 +64,7 @@
 import { ref, computed, onMounted, watch } from "vue";
 
 const props = defineProps({
+  embedded: { type: Boolean, default: false },
   playerClass: { type: Object, default: null },
   specialTier: { type: Number, default: 1 },
   playerName: { type: String, default: "" },
@@ -104,6 +105,14 @@ const closeModal = () => {
 </script>
 
 <style scoped>
+.notes-embedded {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;

@@ -31,13 +31,13 @@
     :playerGold="playerGold"
     @show-tips="showTipsModal = true"
     :game-chain="chain"
-    @open-inventory-modal="openInventoryModal"
+    @open-hub="hubOpen = true; hubTab = 'backpack'"
     :is-cloak-active="isCloakActive"
     :cloak-clicks-remaining="cloakClicksRemaining"
     :combatWinsSinceLastCapIncrease="combatWinsSinceLastCapIncrease"
     :hpCapBonus="hpCapBonus"
     :formattedTitle="formattedTitle"
-    @open-map-modal="isMapModalOpen = true"
+    @open-map-modal="hubOpen = true; hubTab = 'map'"
     :lastDiceRoll="lastDiceRoll"
     :lastDamageDealt="lastDamageDealt"
     :lastDamageTaken="lastDamageTaken"
@@ -133,7 +133,7 @@
         :targets="chain[currentTargetIndex + 1]"
         :inEncounter="inEncounter"
         @link-clicked="handleLinkClicked"
-        @open-map="isMapModalOpen = true"
+        @open-map="hubOpen = true; hubTab = 'map'"
         :path="path"
         :fullChain="chain"
         :currentTargetIndex="currentTargetIndex"
@@ -220,15 +220,63 @@
         :isIdle="isIdle"
       />
 
-      <MapModal
-        v-if="isMapModalOpen"
-        :fullChain="chain"
-        :currentTargetIndex="currentTargetIndex"
-        @close="isMapModalOpen = false"
-      />
-
     </div>
   </div>
+
+  <HubModal
+    v-if="hubOpen"
+    :activeTab="hubTab"
+    @change-tab="hubTab = $event"
+    @close="hubOpen = false"
+    @restart="handleRestart"
+  >
+    <template #backpack>
+      <InventoryModal
+        embedded
+        :inventory="inventory"
+        @use-item="handleUseInventoryItem"
+        :is-cloak-active="isCloakActive"
+        :cloak-clicks-remaining="cloakClicksRemaining"
+        :is-health-regen-active="healthRegenActive"
+        :is-poisoned="isPlayerPoisoned"
+        :is-in-combat="isInCombat"
+        :is-boss-encounter="isBossEncounter"
+        :playerHP="playerHP"
+        :effectiveMaxHP="effectiveMaxHP"
+        :is-blurred="isBlurred"
+        :enlightenment-fish-hp="enlightenmentFishAccumulatedHP"
+        :amulet-of-shared-suffering-damage="AMULET_ENEMY_DAMAGE"
+        :health-regen-clicks-remaining="healthRegenClicksRemaining"
+        :is-serrated-dagger-active="serratedDaggerActive"
+        :is-lucky-flee-active="luckyFleeActive"
+        :warding-shield-hits-remaining="wardingShieldHitsRemaining"
+        :is-ward-stone-active="wardStoneActive"
+        :ward-stone-clicks-remaining="wardStoneClicksRemaining"
+        :is-encounter-beacon-active="encounterBeaconActive"
+        :gold-pouch-accumulated-gold="goldPouchAccumulatedGold"
+        :is-bounty-scroll-active="bountyScrollActive"
+        :isIdle="isIdle"
+      />
+    </template>
+    <template #map>
+      <MapModal
+        embedded
+        :fullChain="chain"
+        :currentTargetIndex="currentTargetIndex"
+      />
+    </template>
+    <template #journal>
+      <NotesModal
+        embedded
+        :playerClass="playerClass"
+        :specialTier="specialTier"
+        :playerName="playerName"
+        :weaponBonus="weaponBonus"
+        :shieldBonus="shieldBonus"
+        :playerGoal="playerGoal"
+      />
+    </template>
+  </HubModal>
 
   <Transition name="quest-notif-fade">
     <div v-if="showQuestNotification" class="quest-notification">
@@ -259,6 +307,8 @@ import RestModal from "@/components/RestModal.vue";
 import ShopModal from "@/components/ShopModal.vue";
 import InventoryModal from "@/components/InventoryModal.vue";
 import MapModal from "@/components/MapModal.vue";
+import NotesModal from "@/components/NotesModal.vue";
+import HubModal from "@/components/HubModal.vue";
 import DieSlayerModal from "@/components/DieSlayerModal.vue";
 import CampfireOverlay from "@/components/CampfireOverlay.vue";
 
@@ -317,7 +367,6 @@ const {
   showShopModal,
   showTipsModal,
   isInventoryModalOpen,
-  isMapModalOpen,
   restModalCount,
   longRestDismissCount,
   showCampfireOverlay,
@@ -325,6 +374,9 @@ const {
   openInventoryModal,
   closeInventoryModal,
 } = modals;
+
+const hubOpen = ref(false);
+const hubTab = ref("backpack");
 
 const showDieSlayer = ref(false);
 const dieSlayerSource = ref("shop");
@@ -910,9 +962,13 @@ function restoreGameState(s) {
 }
 
 async function handleRestart() {
-  const { data: { user: currentUser } } = await supabase.auth.getUser();
-  if (currentUser) {
-    await supabase.from("saves").delete().eq("user_id", currentUser.id);
+  try {
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    if (currentUser) {
+      await supabase.from("saves").delete().eq("user_id", currentUser.id);
+    }
+  } catch (e) {
+    // ignore auth errors
   }
   location.reload();
 }
