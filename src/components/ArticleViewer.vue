@@ -478,14 +478,14 @@ onMounted(load);
 
 .save-notification {
   position: fixed;
-  top: 12px;
-  left: 12px;
+  top: 30px;
+  left: 6px;
   background: transparent;
   color: #fff;
   padding: 8px 14px;
   border-radius: 6px;
   z-index: 999;
-  font-size: 0.8em;
+  font-size: 1.5em;
   animation: slideInLeft 0.2s ease-out;
   letter-spacing: 0.3px;
 }
