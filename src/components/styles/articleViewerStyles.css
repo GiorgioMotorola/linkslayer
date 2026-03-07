@@ -1,0 +1,388 @@
+.article {
+  position: relative;
+  border-radius: 5px;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  max-width: 2000px;
+  margin-bottom: 25rem;
+  margin-top: 4.5rem;
+  z-index: 10;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0);
+  background: rgba(0, 0, 0, 0);
+  pointer-events: all;
+  cursor: not-allowed;
+}
+
+.title {
+  font-size: 30px;
+  font-weight: 400;
+  border-bottom: 1px solid black;
+}
+
+.path {
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-family: "Roboto", sans-serif;
+}
+
+.path-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.path-display {
+  background: #e8ecee;
+  border-bottom: solid 1px #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 12px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.path-sub-bar {
+  border-bottom: solid 1px #222;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.path-logo {
+  height: 28px;
+  width: auto;
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.path-crumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #555;
+}
+
+.path-group {
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+}
+
+.path-group-from {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.path-group-to {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.path-label {
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #888;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.path-label-goal {
+  color: #888;
+}
+
+.path-reading {
+  color: #0645ad;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+
+.path-goal {
+  font-weight: 600;
+  color: #b05a00;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+.sky-bar {
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.sky-track {
+  position: relative;
+  height: 26px;
+  border-radius: 0;
+  overflow: visible;
+}
+
+
+.sky-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  z-index: 2;
+  transition: left 0.5s ease;
+}
+
+.sky-icon {
+  font-size: 15px;
+  line-height: 18px;
+  filter: drop-shadow(0 0 5px rgba(255, 210, 40, 0.9));
+}
+
+
+.error-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(184, 29, 29, 0.986);
+  color: white;
+  padding: 15px 30px;
+  border-radius: 8px;
+  z-index: 1000;
+  box-shadow: 0 44px 15px rgba(0, 0, 0, 0.2);
+  font-size: 1.1em;
+  text-align: center;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.error-message.fade-out {
+  opacity: 0;
+}
+
+.loading-notification {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  background: #111;
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  z-index: 999;
+  font-size: 0.8em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: slideInRight 0.2s ease-out;
+  letter-spacing: 0.3px;
+}
+
+.loading-notification span {
+  color: #fff;
+}
+
+.save-notification {
+  position: fixed;
+  top: 50px;
+  left: 1px;
+  background: transparent;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  z-index: 999;
+  font-size: 1.5em;
+  animation: slideInLeft 0.2s ease-out;
+  letter-spacing: 0.3px;
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.loading-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.blurred-content {
+  filter: blur(5px);
+}
+
+.loader-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  flex-direction: column;
+  backdrop-filter: blur(2px);
+}
+
+.loader-content {
+  text-align: center;
+  color: #333;
+  font-size: 1.2em;
+}
+
+.loader-content .spinner {
+  border: 4px solid rgba(74, 144, 226, 0.2);
+  border-top: 4px solid #4a90e2;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
+}
+
+
+@media screen and (max-width: 600px) {
+  .article {
+    padding: 0.5rem;
+    max-width: 100vw;
+    width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-size: 14px;
+  }
+  .title {
+    font-size: 22px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  .path-display {
+    padding: 4px 8px;
+    gap: 4px;
+  }
+
+  .path-sub-bar {
+    padding: 0;
+  }
+
+  .sky-icon {
+    font-size: 13px;
+  }
+
+
+  .path-logo {
+    height: 20px;
+  }
+
+  .path-label {
+    font-size: 7px;
+    letter-spacing: 1px;
+    margin-bottom: 1px;
+  }
+
+  .path-reading {
+    max-width: none;
+    font-size: 11px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-word;
+  }
+
+  .path-goal {
+    max-width: none;
+    font-size: 11px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-word;
+  }
+
+  .path-crumb {
+    gap: 8px;
+  }
+
+  .path-group {
+    width: 140px;
+  }
+
+  .article :deep(img) {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .article :deep(table) {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    display: block !important;
+  }
+
+  .article :deep(pre) {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+  }
+
+  .article :deep(*) {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .loading-notification {
+    top: 8px;
+    right: 8px;
+    padding: 6px 10px;
+    font-size: 0.75em;
+    gap: 6px;
+  }
+
+  .loading-spinner {
+    width: 12px;
+    height: 12px;
+  }
+}
+

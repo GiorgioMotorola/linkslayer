@@ -69,6 +69,7 @@ export function useGameHandlers(deps) {
     offeringPot,
     playerGoal,
     dogName,
+    campTier,
   } = player;
 
   const {
@@ -364,6 +365,7 @@ export function useGameHandlers(deps) {
         restChoice: choice,
         shortRestsUsed,
         longRestsUsed,
+        campTier,
       },
       utils: {
         log,

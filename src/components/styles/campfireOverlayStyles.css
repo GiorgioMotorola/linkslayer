@@ -1,0 +1,114 @@
+.campfire-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 2, 0, 0.92);
+}
+
+.campfire-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 70% 50% at 50% 65%,
+    rgba(255, 110, 20, 0.22) 0%,
+    rgba(200, 55, 8, 0.1) 45%,
+    transparent 70%
+  );
+  animation: flicker-outer 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.campfire-glow-inner {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 35% 25% at 50% 65%,
+    rgba(255, 160, 40, 0.18) 0%,
+    rgba(255, 80, 10, 0.07) 50%,
+    transparent 70%
+  );
+  animation: flicker-inner 3.2s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes flicker-outer {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  25%       { opacity: 1;    transform: scale(1.04); }
+  55%       { opacity: 0.8;  transform: scale(0.97); }
+  80%       { opacity: 1;    transform: scale(1.02); }
+}
+
+@keyframes flicker-inner {
+  0%   { opacity: 0.7;  transform: scale(0.96); }
+  50%  { opacity: 1;    transform: scale(1.05); }
+  100% { opacity: 0.85; transform: scale(1); }
+}
+
+.campfire-card {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 44px 52px 40px;
+  max-width: 420px;
+  width: 90%;
+}
+
+.campfire-name {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #c88a40;
+  margin-bottom: 18px;
+  opacity: 0.85;
+}
+
+.campfire-fire {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 22px;
+  filter: drop-shadow(0 0 18px rgba(255, 120, 20, 0.7));
+  animation: fire-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes fire-pulse {
+  0%, 100% { filter: drop-shadow(0 0 14px rgba(255, 120, 20, 0.6)); transform: scale(1); }
+  50%       { filter: drop-shadow(0 0 28px rgba(255, 160, 40, 0.9)); transform: scale(1.06); }
+}
+
+.campfire-tagline {
+  font-size: 14px;
+  color: #c89050;
+  font-style: italic;
+  margin: 0 0 28px;
+}
+
+.campfire-continue-btn {
+  display: block;
+  margin: 0 auto;
+  padding: 10px 28px;
+  background: linear-gradient(135deg, #7a5020 0%, #4a2e0a 100%);
+  border: 1px solid #a07040;
+  border-radius: 3px;
+  color: #f0d898;
+  font-size: 12px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(200, 100, 20, 0.15);
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+  animation: btn-appear 0.4s ease;
+}
+
+.campfire-continue-btn:hover {
+  background: linear-gradient(135deg, #8a6030 0%, #5a3e1a 100%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 28px rgba(200, 100, 20, 0.25);
+}
+
+@keyframes btn-appear {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

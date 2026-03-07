@@ -1,0 +1,150 @@
+.tshop-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  backdrop-filter: blur(4px);
+}
+
+.tshop-modal {
+  background: rgba(20, 10, 3, 0.96);
+  border: 1px solid rgba(170, 115, 28, 0.55);
+  box-shadow: 0 0 40px rgba(150, 95, 15, 0.2), 0 8px 28px rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  font-family: "IBM Plex Sans", sans-serif;
+  animation: pop-in 0.25s ease;
+}
+
+@keyframes pop-in {
+  from { transform: scale(0.88); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.tshop-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #e8c890;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(170, 115, 28, 0.4);
+  padding-bottom: 0.6rem;
+}
+
+.tshop-gold {
+  font-size: 12px;
+  color: #b8a060;
+}
+
+.tshop-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.tshop-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(150, 100, 22, 0.4);
+  border-radius: 6px;
+  background: rgba(35, 14, 3, 0.55);
+}
+
+.tshop-item-owned {
+  border-color: rgba(80, 140, 80, 0.35);
+  background: rgba(20, 40, 20, 0.4);
+}
+
+.tshop-item-locked {
+  opacity: 0.4;
+}
+
+.tshop-item-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tshop-item-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e8c890;
+}
+
+.tshop-item-owned .tshop-item-name {
+  color: #88b888;
+}
+
+.tshop-item-desc {
+  font-size: 11px;
+  color: #8a7040;
+  line-height: 1.4;
+}
+
+.tshop-item-right {
+  flex-shrink: 0;
+}
+
+.tshop-owned {
+  font-size: 11px;
+  color: #5a9a5a;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.tshop-locked {
+  font-size: 11px;
+  color: #5a4a30;
+}
+
+.tshop-buy-btn {
+  background: rgba(38, 16, 4, 0.7);
+  border: 1px solid rgba(170, 115, 28, 0.55);
+  border-radius: 4px;
+  color: #e8c890;
+  font-size: 12px;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 600;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.tshop-buy-btn:hover:not(:disabled) {
+  background: rgba(165, 100, 18, 0.25);
+  border-color: rgba(210, 145, 38, 0.8);
+  color: #f5d898;
+}
+
+.tshop-buy-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.tshop-close-btn {
+  background: transparent;
+  border: 1px solid rgba(210, 145, 35, 0.55);
+  border-radius: 4px;
+  color: #f5d060;
+  font-size: 12px;
+  font-family: "IBM Plex Sans", sans-serif;
+  padding: 7px 14px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.tshop-close-btn:hover {
+  background: rgba(165, 120, 20, 0.15);
+  border-color: rgba(210, 145, 35, 0.8);
+}

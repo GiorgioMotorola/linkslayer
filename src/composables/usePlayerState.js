@@ -16,6 +16,7 @@ export function usePlayerState(hpCapBonus) {
   const specialTier = ref(1);
   const offeringPot = ref(0);
   const goldSpent = ref(0);
+  const campTier = ref(0); // 0=ground, 1=sleeping bag, 2=pillow, 3=tent
 
   const effectiveMaxHP = computed(() => {
     return playerClass.value ? playerClass.value.maxHP + hpCapBonus.value : 0;
@@ -38,5 +39,6 @@ export function usePlayerState(hpCapBonus) {
     specialTier,
     offeringPot,
     goldSpent,
+    campTier,
   };
 }

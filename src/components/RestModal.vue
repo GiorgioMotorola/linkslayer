@@ -90,6 +90,10 @@
           <button @click="$emit('open-die-slayer')" :disabled="props.playerGold < 5">
             🎲 Play Die Slayer
           </button>
+
+          <button v-if="props.campTier < 3" @click="$emit('open-tavern-shop')" class="close-action-btn">
+            🛒 Camp Supplies →
+          </button>
           <button
             v-if="props.questComplete && !props.questTurnedIn"
             @click="$emit('turn-in-quest')"
@@ -131,7 +135,7 @@
             @click="handleLongRest"
             :disabled="longRestDone"
           >
-            🌙 Long Rest — restore 35 HP and gain +1 class ability
+            🌙 {{ longRestLabel }} — restore {{ longRestHp }} HP and gain +{{ longRestSpecials }} class {{ longRestSpecials === 1 ? 'ability' : 'abilities' }}
           </button>
 
           <button
@@ -184,9 +188,10 @@ const props = defineProps({
   questTaken: { type: Boolean, default: false },
   questComplete: { type: Boolean, default: false },
   questTurnedIn: { type: Boolean, default: false },
+  campTier: { type: Number, default: 0 },
 });
 
-const emit = defineEmits(["rest", "assemble-upgrade", "offer", "sleep", "order-beer", "order-meal", "open-die-slayer", "take-quest", "turn-in-quest", "sip-beer", "bite-meal", "open-shop"]);
+const emit = defineEmits(["rest", "assemble-upgrade", "offer", "sleep", "order-beer", "order-meal", "open-die-slayer", "take-quest", "turn-in-quest", "sip-beer", "bite-meal", "open-shop", "open-tavern-shop"]);
 
 const currentRestPhrase = ref("");
 const tavernPhrase = ref("");
@@ -240,6 +245,14 @@ watch(
   },
   { immediate: true }
 );
+
+const CAMP_LABELS = ["sleep on the ground", "sleeping bag", "sleeping bag, pillow", "sleeping bag, pillow, tent"];
+const longRestLabel = computed(() => {
+  const label = CAMP_LABELS[props.campTier] ?? CAMP_LABELS[0];
+  return `Long Rest, ${label}`;
+});
+const longRestHp = computed(() => [20, 25, 30, 50][props.campTier] ?? 20);
+const longRestSpecials = computed(() => [1, 1, 2, 2][props.campTier] ?? 1);
 
 const shouldShowLongRest = computed(() => props.restModalCount % 2 === 0);
 const shouldShowShortRest = computed(() => props.restModalCount % 2 !== 0);
@@ -350,392 +363,5 @@ const returnToCampsite = async () => {
 </script>
 
 <style scoped>
-* {
-  font-family: "IBM Plex Sans", sans-serif;
-  font-optical-sizing: auto;
-}
-
-.rest-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: auto;
-  animation: fade-in-overlay 1.25s ease-out forwards;
-}
-
-@keyframes fade-in-overlay {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-.overlay-campfire {
-  background: linear-gradient(
-    to bottom,
-    rgba(18, 8, 2, 0.93),
-    rgba(38, 18, 6, 0.9),
-    rgba(22, 10, 3, 0.78)
-  );
-}
-
-.overlay-tavern {
-  background: linear-gradient(
-    to bottom,
-    rgba(16, 8, 1, 0.95),
-    rgba(32, 17, 4, 0.92),
-    rgba(20, 10, 2, 0.84)
-  );
-}
-
-.overlay-night {
-  background:
-    radial-gradient(ellipse at 20% 15%, rgba(255,255,200,0.07) 1px, transparent 1px),
-    radial-gradient(ellipse at 55% 8%,  rgba(255,255,200,0.06) 1px, transparent 1px),
-    radial-gradient(ellipse at 78% 20%, rgba(255,255,200,0.05) 1px, transparent 1px),
-    radial-gradient(ellipse at 35% 30%, rgba(255,255,200,0.04) 1px, transparent 1px),
-    radial-gradient(ellipse at 88% 12%, rgba(255,255,200,0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(4,6,22,0.96), rgba(8,12,38,0.93), rgba(6,9,28,0.82));
-}
-
-.rest-modal {
-  padding: 2rem;
-  border-radius: 12px;
-  text-align: start;
-  max-width: 700px;
-  width: 90%;
-  animation: pop-in 0.3s ease;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  position: relative;
-}
-
-@keyframes pop-in {
-  from { transform: scale(0.85); opacity: 0; }
-  to   { transform: scale(1);    opacity: 1; }
-}
-
-.modal-campfire {
-  background: rgba(28, 12, 4, 0.88);
-  border: 1px solid rgba(200, 95, 18, 0.55);
-  box-shadow: 0 0 35px rgba(200, 95, 18, 0.18), 0 8px 28px rgba(0,0,0,0.65);
-}
-
-.modal-campfire .rest-modal-phrase {
-  border-bottom-color: rgba(200, 95, 18, 0.4);
-}
-
-.modal-campfire button {
-  border-color: rgba(170, 80, 15, 0.5);
-  background: rgba(38, 16, 4, 0.65);
-  color: #e8c890;
-}
-
-.modal-campfire button:hover:not(:disabled) {
-  background: rgba(180, 85, 15, 0.22);
-  border-color: rgba(230, 130, 35, 0.75);
-  color: #f5d898;
-  opacity: 1;
-}
-
-.modal-tavern {
-  background: rgba(20, 10, 3, 0.92);
-  border: 1px solid rgba(170, 115, 28, 0.5);
-  box-shadow: 0 0 40px rgba(150, 95, 15, 0.16), 0 8px 28px rgba(0,0,0,0.65);
-}
-
-.modal-tavern .rest-modal-phrase {
-  border-bottom-color: rgba(170, 115, 28, 0.4);
-}
-
-.modal-tavern button {
-  border-color: rgba(150, 100, 22, 0.5);
-  background: rgba(35, 14, 3, 0.65);
-  color: #e8c890;
-}
-
-.modal-tavern button:hover:not(:disabled) {
-  background: rgba(165, 100, 18, 0.22);
-  border-color: rgba(210, 145, 38, 0.75);
-  color: #f5d898;
-  opacity: 1;
-}
-
-.modal-tavern .close-action-btn {
-  border-color: rgba(210, 145, 35, 0.7) !important;
-  color: #f5d060 !important;
-}
-
-.modal-night {
-  background: rgba(6, 10, 32, 0.9);
-  border: 1px solid rgba(80, 105, 210, 0.5);
-  box-shadow: 0 0 45px rgba(55, 80, 190, 0.18), 0 8px 28px rgba(0,0,0,0.75);
-}
-
-.modal-night .rest-modal-phrase {
-  border-bottom-color: rgba(80, 105, 210, 0.4);
-}
-
-.modal-night button {
-  border-color: rgba(70, 95, 190, 0.45);
-  background: rgba(10, 15, 45, 0.65);
-  color: #b0c4f0;
-}
-
-.modal-night button:hover:not(:disabled) {
-  background: rgba(60, 85, 190, 0.22);
-  border-color: rgba(110, 140, 230, 0.7);
-  color: #ccdaff;
-  opacity: 1;
-}
-
-.rest-icon {
-  font-size: 38px;
-  text-align: center;
-}
-
-@keyframes flicker {
-  0%,100% { transform: scale(1)    rotate(-1deg); filter: drop-shadow(0 0 6px rgba(255,140,20,0.7)); }
-  25%     { transform: scale(1.08) rotate(2deg);  filter: drop-shadow(0 0 12px rgba(255,160,30,0.9)); }
-  50%     { transform: scale(0.95) rotate(-1deg); filter: drop-shadow(0 0 4px rgba(220,100,10,0.6)); }
-  75%     { transform: scale(1.05) rotate(1deg);  filter: drop-shadow(0 0 10px rgba(255,150,25,0.8)); }
-}
-
-.modal-campfire .rest-icon {
-  animation: flicker 2.2s ease-in-out infinite;
-}
-
-@keyframes ale-bob {
-  0%,100% { transform: translateY(0);    filter: drop-shadow(0 0 6px rgba(200,140,20,0.5)); }
-  50%     { transform: translateY(-3px); filter: drop-shadow(0 0 10px rgba(220,160,30,0.7)); }
-}
-
-.modal-tavern .rest-icon {
-  animation: ale-bob 2.8s ease-in-out infinite;
-}
-
-@keyframes moon-float {
-  0%,100% { transform: translateY(0);    filter: drop-shadow(0 0 8px rgba(140,165,255,0.65)); }
-  50%     { transform: translateY(-5px); filter: drop-shadow(0 0 14px rgba(160,185,255,0.85)); }
-}
-
-.modal-night .rest-icon {
-  animation: moon-float 3.5s ease-in-out infinite;
-}
-
-.rest-modal-phrase {
-  text-align: center;
-  font-size: 18px;
-  color: rgb(214, 215, 216);
-  border-bottom: 1px solid rgba(150, 150, 150, 0.35);
-  padding-bottom: 1.2rem;
-}
-
-button {
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  align-items: flex-start;
-  text-align: start;
-  border-radius: 8px;
-  padding: 0.8rem 1rem;
-  font-size: 15px;
-  font-weight: 400;
-  cursor: pointer;
-  transition: all 0.15s ease-in-out;
-  position: relative;
-}
-
-button:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  filter: grayscale(0.4);
-}
-
-button:disabled::after {
-  content: '🚫';
-  position: absolute;
-  right: 0.8rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.1em;
-  opacity: 0.7;
-}
-
-button:disabled:hover {
-  cursor: not-allowed;
-  opacity: 0.35;
-}
-
-.sip-button {
-  transition: background 0.5s ease, opacity 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
-}
-
-.sip-cooling {
-  opacity: 0.5;
-}
-
-.sip-cooling::after {
-  content: none !important;
-}
-
-.assemble-sub,
-.sip-sub {
-  font-size: 0.82em;
-  opacity: 0.65;
-  margin-top: 2px;
-}
-
-.close-action-btn {
-  margin-top: 0.4rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-
-.modal-campfire .close-action-btn {
-  border-color: rgba(220, 130, 30, 0.7) !important;
-  color: #f5d070 !important;
-}
-
-.modal-campfire .shop-btn {
-  border-color: rgba(100, 160, 220, 0.55) !important;
-  color: #a8ccee !important;
-}
-
-.modal-campfire .shop-btn:hover:not(:disabled) {
-  background: rgba(40, 80, 140, 0.22) !important;
-  border-color: rgba(130, 190, 240, 0.75) !important;
-  color: #c8e0f8 !important;
-}
-
-.modal-night .close-action-btn {
-  border-color: rgba(110, 140, 230, 0.7) !important;
-  color: #ccdaff !important;
-}
-
-.sleep-btn {
-  font-style: italic;
-}
-
-.offering-button {
-  gap: 0.3rem;
-}
-
-.offering-main {
-  font-weight: 500;
-}
-
-.offering-sub {
-  font-size: 0.85em;
-  opacity: 0.75;
-  letter-spacing: 0.02em;
-}
-
-.pot-dot {
-  margin: 0 1px;
-}
-
-.pot-dot.filled {
-  opacity: 1;
-}
-
-.transition-fade {
-  position: absolute;
-  inset: 0;
-  background: black;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.35s ease;
-  z-index: 1002;
-}
-
-.transition-fade.active {
-  opacity: 1;
-}
-
-.modal-night .tavern-btn {
-  border-color: rgba(160, 100, 22, 0.6) !important;
-  color: #d4a84b !important;
-}
-
-.quest-taken-note {
-  font-size: 14px;
-  opacity: 0.55;
-  padding: 0.5rem 0.2rem;
-  font-style: italic;
-  color: white;
-}
-
-.quest-turnin-btn {
-  border-color: rgba(80, 160, 60, 0.55) !important;
-  background: rgba(20, 50, 15, 0.6) !important;
-  color: #a8e090 !important;
-}
-
-.quest-turnin-btn:hover:not(:disabled) {
-  background: rgba(40, 100, 25, 0.3) !important;
-  border-color: rgba(100, 200, 70, 0.8) !important;
-  color: #c4f0a0 !important;
-  opacity: 1 !important;
-}
-
-.danger-warning {
-  color: #e08050;
-  font-size: 15px;
-  border: 1px solid #7a3a1a;
-  border-radius: 6px;
-  padding: 0.5rem 0.8rem;
-  background: rgba(100, 40, 10, 0.25);
-}
-
-.rest-options {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  margin-bottom: 0.5rem;
-}
-
-@media screen and (max-width: 600px) {
-  .rest-overlay {
-    align-items: center;
-    justify-content: center;
-    overflow-y: auto;
-    padding: 0.75rem 0.5rem;
-    box-sizing: border-box;
-  }
-
-  .rest-modal {
-    width: 100%;
-    padding: 1rem;
-    box-sizing: border-box;
-    gap: 0.6rem;
-  }
-
-  .rest-icon {
-    font-size: 28px;
-  }
-
-  .rest-modal-phrase {
-    font-size: 15px;
-    padding-bottom: 0.8rem;
-  }
-
-  button {
-    font-size: 13px;
-    padding: 0.6rem 0.8rem;
-    word-break: break-word;
-    overflow-wrap: break-word;
-  }
-
-  .rest-options {
-    gap: 1.2rem;
-    margin-bottom: 0.5rem;
-  }
-}
+@import "./styles/restModalStyles.css";
 </style>

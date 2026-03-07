@@ -160,6 +160,7 @@
         :questTaken="questTaken"
         :questComplete="questComplete"
         :questTurnedIn="questTurnedIn"
+        :campTier="campTier"
         @rest="handleRest"
         @assemble-upgrade="handleAssembleUpgradeWrapper"
         @offer="callHandleOffer"
@@ -172,6 +173,7 @@
         @take-quest="handleTakeQuest"
         @turn-in-quest="handleTurnInQuest"
         @open-shop="showShopModal = true"
+        @open-tavern-shop="showTavernShop = true"
       />
 
       <ShopModal
@@ -287,7 +289,28 @@
     </template>
     <template #quests>
       <div class="hub-quest-pane">
-        <div v-if="inventory.questScrolls > 0" class="hub-quest-item">
+        <div v-if="questTurnedIn" class="hub-quest-item hub-quest-complete">
+          <div class="hub-quest-info">
+            <span class="hub-quest-name">The Growling Dark</span>
+            <span class="hub-quest-desc">You slew the beast and claimed your reward.</span>
+          </div>
+          <span class="hub-quest-status-badge">COMPLETED ✓</span>
+        </div>
+        <div v-else-if="questComplete" class="hub-quest-item hub-quest-turn-in">
+          <div class="hub-quest-info">
+            <span class="hub-quest-name">The Growling Dark</span>
+            <span class="hub-quest-desc">The beast is slain. Return to The Lighthouse Tavern to collect your reward.</span>
+          </div>
+          <span class="hub-quest-status-badge hub-quest-status-return">Turn In !</span>
+        </div>
+        <div v-else-if="questTaken && !inventory.questScrolls" class="hub-quest-item">
+          <div class="hub-quest-info">
+            <span class="hub-quest-name">The Growling Dark</span>
+            <span class="hub-quest-desc">Venture into the cave and slay what lurks within.</span>
+          </div>
+          <span class="hub-quest-status-badge hub-quest-status-active">In Progress</span>
+        </div>
+        <div v-else-if="inventory.questScrolls > 0" class="hub-quest-item">
           <div class="hub-quest-info">
             <span class="hub-quest-name">The Growling Dark</span>
             <span class="hub-quest-desc">A rolled parchment sealed with wax. Venture into the cave and slay what lurks within. Must be opened while idle.</span>
@@ -327,6 +350,14 @@
     v-if="showDogNameModal"
     @named="onDogNamed"
   />
+
+  <TavernShopModal
+    v-if="showTavernShop"
+    :campTier="campTier"
+    :playerGold="playerGold"
+    @close="showTavernShop = false"
+    @buy="handleTavernShopBuy"
+  />
 </template>
 
 <script setup>
@@ -346,6 +377,7 @@ import DieSlayerModal from "@/components/DieSlayerModal.vue";
 import CampfireOverlay from "@/components/CampfireOverlay.vue";
 import RuneCacheModal from "@/components/RuneCacheModal.vue";
 import DogNameModal from "@/components/DogNameModal.vue";
+import TavernShopModal from "@/components/TavernShopModal.vue";
 
 import { shopItems as allShopItems } from "@/utils/shopItems";
 import { isBoss } from "@/utils/bossGenerator";
@@ -415,6 +447,7 @@ const {
 
 const hubOpen = ref(false);
 const hubTab = ref("backpack");
+const showTavernShop = ref(false);
 
 const showDieSlayer = ref(false);
 const dieSlayerSource = ref("shop");
@@ -504,6 +537,7 @@ const {
   offeringPot,
   playerGoal,
   dogName,
+  campTier,
 } = player;
 
 function onDogNamed(name) {
@@ -535,6 +569,7 @@ const shopItems = computed(() =>
     if (item.id === "cooler_stick_item" && inventory.value.coolerStickItem > 0) return false;
     if (item.id === "even_cooler_stick_item" && inventory.value.coolerStickItem <= 0) return false;
     if (item.id === "even_cooler_stick_item" && inventory.value.evenCoolerStickItem > 0) return false;
+    if (item.id === "dog_companion" && dogName.value) return false;
     return true;
   })
 );
@@ -744,6 +779,18 @@ const isIdle = computed(() =>
   !showShopModal.value
 );
 
+const CAMP_NAMES = ["", "Sleeping Bag", "Pillow", "Tent"];
+const CAMP_COSTS = [0, 50, 75, 100];
+
+function handleTavernShopBuy(tier) {
+  const cost = CAMP_COSTS[tier];
+  if (playerGold.value < cost) return;
+  playerGold.value -= cost;
+  campTier.value = tier;
+  log(`🏕️ You purchase a ${CAMP_NAMES[tier]}. Your long rest has improved.`);
+  saveGame();
+}
+
 function handleTakeQuest() {
   inventory.value.questScrolls++;
   questTaken.value = true;
@@ -863,6 +910,7 @@ function handleUseInventoryItem(itemType) {
   } else if (itemType === "questScroll") {
     inventory.value.questScrolls--;
     closeInventoryModal();
+    hubOpen.value = false;
     advanceQuestStep(0);
     showQuestNotification.value = true;
     setTimeout(() => { showQuestNotification.value = false; }, 3000);
@@ -962,6 +1010,7 @@ async function saveGame() {
       restModalCount: restModalCount.value,
       longRestDismissCount: longRestDismissCount.value,
       dogName: dogName.value,
+      campTier: campTier.value,
     },
   }, { onConflict: 'user_id' });
 }
@@ -1023,6 +1072,7 @@ function restoreGameState(s) {
   if (s.restModalCount != null) restModalCount.value = s.restModalCount;
   if (s.longRestDismissCount != null) longRestDismissCount.value = s.longRestDismissCount;
   dogName.value = s.dogName ?? "";
+  campTier.value = s.campTier ?? 0;
 }
 
 async function handleRestart() {
@@ -1055,234 +1105,5 @@ watch(user, async (newUser, oldUser) => {
 </script>
 
 <style scoped>
-.sleep-overlay {
-  position: fixed;
-  inset: 0;
-  background: black;
-  z-index: 9998;
-  pointer-events: none;
-}
-
-.sleep-fade-enter-active {
-  transition: opacity 1.6s ease;
-}
-.sleep-fade-leave-active {
-  transition: opacity 0.9s ease;
-}
-.sleep-fade-enter-from,
-.sleep-fade-leave-to {
-  opacity: 0;
-}
-
-.campfire-fade-enter-active {
-  transition: opacity 1.4s ease;
-}
-.campfire-fade-leave-active {
-  transition: opacity 1.2s ease;
-}
-.campfire-fade-enter-from,
-.campfire-fade-leave-to {
-  opacity: 0;
-}
-
-.quest-notification {
-  position: fixed;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10000;
-  text-align: center;
-  pointer-events: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-  background: black;
-  padding: 1.2rem 2.4rem;
-  border-radius: 6px;
-}
-
-.quest-notif-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: rgba(200, 140, 40, 0.75);
-  font-family: "IBM Plex Sans", sans-serif;
-}
-
-.quest-notif-name {
-  font-size: 26px;
-  font-weight: 500;
-  color: #e8c870;
-  font-family: "IBM Plex Sans", sans-serif;
-  text-shadow: 0 0 30px rgba(220, 160, 30, 0.6), 0 0 60px rgba(180, 110, 10, 0.3);
-  letter-spacing: 1px;
-}
-
-.quest-notif-fade-enter-active {
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-.quest-notif-fade-leave-active {
-  transition: opacity 1s ease, transform 1s ease;
-}
-.quest-notif-fade-enter-from {
-  opacity: 0;
-  transform: translate(-50%, -44%);
-}
-.quest-notif-fade-leave-to {
-  opacity: 0;
-  transform: translate(-50%, -60%);
-}
-
-.timer {
-  font-size: 13px;
-  color: #555;
-  font-weight: 500;
-}
-
-.player-name {
-  color: rgb(160, 178, 226);
-  text-transform: uppercase;
-}
-
-.dim-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0);
-  pointer-events: none;
-  transition: background-color 1.5s ease-in-out;
-  z-index: 99;
-}
-
-.dim-overlay.active-overlay {
-  background-color: rgba(0, 0, 0, 0.6);
-  pointer-events: auto;
-}
-
-.game-loader-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  color: white;
-  font-size: 1.5rem;
-  flex-direction: column;
-}
-
-.loader-content {
-  text-align: center;
-}
-
-.spinner {
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid #fff;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 15px;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .timer {
-    font-size: 13px;
-    margin-top: 0.1rem;
-  }
-}
-
-.hub-quest-pane {
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex: 1;
-  overflow-y: auto;
-}
-
-.hub-quest-item {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 14px 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(80, 110, 160, 0.25);
-  border-radius: 6px;
-}
-
-.hub-quest-info {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  flex: 1;
-}
-
-.hub-quest-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: #c8dcf4;
-  letter-spacing: 0.3px;
-}
-
-.hub-quest-desc {
-  font-size: 12px;
-  color: #6a80a0;
-  line-height: 1.5;
-  font-style: italic;
-}
-
-.hub-quest-btn {
-  background: transparent;
-  border: 1px solid rgba(80, 110, 160, 0.45);
-  border-radius: 4px;
-  color: #7a90b0;
-  font-size: 11px;
-  font-family: "IBM Plex Sans", sans-serif;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 6px 14px;
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
-}
-
-.hub-quest-btn:hover {
-  color: #b0c8e8;
-  border-color: rgba(80, 110, 160, 0.7);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.hub-quest-btn:disabled {
-  color: #3a4a5a;
-  border-color: rgba(60, 80, 110, 0.3);
-  cursor: not-allowed;
-}
-
-.hub-quest-empty {
-  font-size: 13px;
-  color: #3a4a5a;
-  font-style: italic;
-  text-align: center;
-  padding: 40px 0;
-}
+@import "./styles/gameViewStyles.css";
 </style>
