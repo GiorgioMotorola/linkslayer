@@ -310,4 +310,6 @@ onMounted(load);
   max-width: 280px;
 }
 
+@import "./styles/CombatAnimations.css"
+
 </style>
