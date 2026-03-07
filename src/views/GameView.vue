@@ -961,6 +961,7 @@ async function saveGame() {
       bountyScrollActive: bountyScrollActive.value,
       restModalCount: restModalCount.value,
       longRestDismissCount: longRestDismissCount.value,
+      dogName: dogName.value,
     },
   }, { onConflict: 'user_id' });
 }
@@ -1021,7 +1022,7 @@ function restoreGameState(s) {
   bountyScrollActive.value = s.bountyScrollActive ?? false;
   if (s.restModalCount != null) restModalCount.value = s.restModalCount;
   if (s.longRestDismissCount != null) longRestDismissCount.value = s.longRestDismissCount;
-  
+  dogName.value = s.dogName ?? "";
 }
 
 async function handleRestart() {
