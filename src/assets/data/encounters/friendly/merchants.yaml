@@ -133,6 +133,9 @@
         - text: Leave the cave undisturbed.
           flow: close_encounter
           responseText: You decide your journey is too important. You continue on.
+        - text: Come back later.
+          result: come_back_later
+          responseText: "This point of interest has been marked on your map."
     cave_entrance:
       text: "The darkness inside is absolute, broken only by the drip of water. You can barely make out two paths ahead: one narrow and winding, the other wider and leading deeper."
       options:

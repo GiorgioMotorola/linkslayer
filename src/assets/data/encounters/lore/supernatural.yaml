@@ -23,6 +23,9 @@
     - text: Turn around and walk away.
       result: none
       responseText: "The voice yells 'Yeah, you better walk away.'"
+    - text: Come back later.
+      result: come_back_later
+      responseText: "This point of interest has been marked on your map."
 
 - id: lore_021_whispering_well
   name: The Whispering Well
@@ -36,6 +39,9 @@
         - text: Walk away. Some mysteries are best left alone.
           flow: close_encounter
           responseText: You decide the well holds more trouble than treasure and continue on your journey.
+        - text: Come back later.
+          result: come_back_later
+          responseText: "This point of interest has been marked on your map."
     well_bottom:
       text: "You touch down into shallow, cool water. The air is damp, and a faint light reveals a narrow tunnel leading away from the bottom of the well. The tunnel seems to lead towards a distant, flickering light and the faint sounds of voices."
       options:
@@ -115,6 +121,9 @@
         - text: Put out the embers and move on.
           result: none
           responseText: "You carefully douse the remaining embers. The wilderness can be unforgiving with unattended fires. You continue your journey."
+        - text: Come back later.
+          result: come_back_later
+          responseText: "This point of interest has been marked on your map."
     journal_entry_1:
       text: "The journal's first page is dated weeks ago and appears to be marked with a '⚲' as if it's marking some sort importance: 'Day 1: The cartographers maps were right. The 'Missing Grotto' is real, just as the legends foretold. I'm camped near what they call the 'Quiet River Bend' now. Legend has it, this Grotto was a safe house for Pirates. There is a well known pirate shanty I sing to keep my spirits up: ⚲ 'A pi-rates life is ne-ver through, three, then one, then four, then two' ⚲ Next, I'll head ⚲ east along the riverbank. ⚲'"
       options:

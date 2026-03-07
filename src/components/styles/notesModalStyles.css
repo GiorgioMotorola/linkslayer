@@ -1,9 +1,107 @@
 .notes-embedded {
   display: flex;
-  justify-content: center;
   width: 100%;
   height: 100%;
   overflow-y: auto;
+}
+
+.notes-embedded .modal-content {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  width: 100%;
+  max-width: none;
+  padding: 18px 20px;
+}
+
+.notes-embedded .modal-header {
+  border-bottom-color: rgba(80, 110, 160, 0.3);
+}
+
+.notes-embedded .journal-title {
+  color: #c8dcf4;
+}
+
+.notes-embedded .char-sheet {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(80, 110, 160, 0.25);
+}
+
+.notes-embedded .char-field,
+.notes-embedded .char-goal-text {
+  color: #9ab0cc;
+}
+
+.notes-embedded .char-label {
+  color: #5a7090;
+}
+
+.notes-embedded .char-goal {
+  border-top-color: rgba(80, 110, 160, 0.2);
+}
+
+.notes-embedded .special-info-pane {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(80, 110, 160, 0.25);
+}
+
+.notes-embedded .special-info-name {
+  color: #a0b8d8;
+}
+
+.notes-embedded .special-tier-badge {
+  color: #6a8faa;
+  background: rgba(80, 120, 160, 0.15);
+  border-color: rgba(80, 120, 160, 0.35);
+}
+
+.notes-embedded .special-info-desc {
+  color: #6a80a0;
+}
+
+.notes-embedded .tier-dot {
+  border-color: rgba(80, 110, 160, 0.3);
+  color: #4a6080;
+  background: rgba(40, 70, 120, 0.2);
+}
+
+.notes-embedded .tier-dot.tier-dot-active {
+  border-color: rgba(80, 140, 200, 0.6);
+  color: #8ab0d8;
+  background: rgba(40, 90, 150, 0.3);
+}
+
+.notes-embedded .tier-dot.tier-dot-current {
+  border-color: #4a9adc;
+  color: #a8d0f0;
+  background: rgba(40, 100, 180, 0.35);
+  box-shadow: 0 0 6px rgba(60, 140, 220, 0.4);
+}
+
+.notes-embedded .dog-pane {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(80, 110, 160, 0.25);
+}
+
+.notes-embedded .dog-pane:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.notes-embedded .dog-pane-name-line {
+  color: #9ab0cc;
+}
+
+.notes-embedded .dog-pane-sep {
+  color: #3a5070;
+}
+
+.notes-embedded .dog-pane-type {
+  color: #5a7090;
+}
+
+.notes-embedded .char-count {
+  color: #3a5070;
 }
 
 .modal-overlay {

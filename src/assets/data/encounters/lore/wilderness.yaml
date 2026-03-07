@@ -147,6 +147,9 @@
         - text: Turn around and leave this area.
           flow: close_encounter
           responseText: "Feeling unsure, you decide to leave the river behind for now."
+        - text: Come back later.
+          result: come_back_later
+          responseText: "This point of interest has been marked on your map."
     step_1_riverbank_east:
       text: "You follow the river east. After some time, a truly immense twin-trunked oak tree dominates the landscape on the eastern bank, just as a faded drawing might suggest. Its ancient roots sprawl, creating a network around its base."
       options:

@@ -80,6 +80,9 @@
           details: gold
           amount: 15
           responseText: "'Sure. What does it matter? These are the end times.'"
+        - text: Come back later.
+          result: come_back_later
+          responseText: "This point of interest has been marked on your map."
     kill_offer_confirmation:
       text: "'Are you sure? She is pretty dangerous...'"
       options:
@@ -356,6 +359,9 @@
         - text: Walk away as if you didn't hear anything at all.
           flow: close_encounter
           responseText: "You turn and walk away, the scream fading behind you. Best not to get involved."
+        - text: Come back later.
+          result: come_back_later
+          responseText: "This point of interest has been marked on your map."
     kidnapped_start:
       text: "As you get closer, you feel a sharp pain on the back of your head. The lights go out, and your consciousness drifts away."
       options:

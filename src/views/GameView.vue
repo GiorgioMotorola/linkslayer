@@ -267,6 +267,10 @@
         embedded
         :fullChain="chain"
         :currentTargetIndex="currentTargetIndex"
+        :markedPOIs="markedPOIs"
+        :engagedPOIs="engagedPOIs"
+        :isIdle="isIdle"
+        @revisit-poi="handleRevisitPOI"
       />
     </template>
     <template #journal>
@@ -405,6 +409,7 @@ import ForgeModal from "@/components/ForgeModal.vue";
 import { shopItems as allShopItems } from "@/utils/shopItems";
 import { isBoss } from "@/utils/bossGenerator";
 import { generateMiniBoss } from "@/utils/miniBossGenerator";
+import { npcData, loreData } from "@/utils/encounterGenerator";
 import { QUESTS } from "@/utils/quests";
 import { classes } from "@/utils/classes";
 import { supabase } from "@/lib/supabase";
@@ -793,6 +798,8 @@ const completedQuestIds = ref([]);
 const activeQuestId = ref(null);
 const questCombatActive = ref(false);
 const questComplete = ref(false);
+const markedPOIs = ref([]);
+const engagedPOIs = ref([]);
 
 const activeQuest = computed(() =>
   activeQuestId.value ? QUESTS.find(q => q.id === activeQuestId.value) : null
@@ -877,6 +884,25 @@ function advanceQuestStep(stepIndex) {
   };
 }
 
+function getCurrentEncounterOptions(enc) {
+  if (!enc) return [];
+  if (enc.type === 'lore') {
+    if (enc.lore.dialogueNodes) {
+      const nodeId = enc.lore.currentNodeId || 'start';
+      return enc.lore.dialogueNodes[nodeId]?.options || [];
+    }
+    return enc.lore.options || [];
+  }
+  if (enc.type === 'npc') {
+    if (enc.npc.dialogueNodes) {
+      const nodeId = enc.npc.currentNodeId || 'start';
+      return enc.npc.dialogueNodes[nodeId]?.options || [];
+    }
+    return enc.npc.options || [];
+  }
+  return [];
+}
+
 function handleOptionChosen(option) {
   if (option.questStep !== undefined) {
     const quest = activeQuest.value;
@@ -895,7 +921,50 @@ function handleOptionChosen(option) {
     }
     return;
   }
+
+  if (option.result === 'come_back_later') {
+    const enc = encounter.value;
+    const encId = enc?.lore?.id || enc?.npc?.id;
+    const encName = enc?.lore?.name || enc?.npc?.name || '';
+    if (encId && !markedPOIs.value.some(p => p.id === encId)) {
+      markedPOIs.value.push({ id: encId, name: encName });
+    }
+    const responseText = option.responseText || 'This point of interest has been marked on your map.';
+    log(`🗺️ ${responseText}`);
+    const continueOption = [{ text: "Continue on your journey.", flow: "close_encounter" }];
+    if (enc?.type === 'lore') {
+      encounter.value = { type: 'lore', lore: { id: enc.lore.id, name: enc.lore.name, text: responseText, options: continueOption } };
+    } else if (enc?.type === 'npc') {
+      encounter.value = { type: 'npc', npc: { id: enc.npc.id, name: enc.npc.name, greeting: responseText, options: continueOption } };
+    } else {
+      encounter.value = null;
+    }
+    return;
+  }
+
+  const enc = encounter.value;
+  const currentOptions = getCurrentEncounterOptions(enc);
+  if (currentOptions.some(o => o.result === 'come_back_later')) {
+    const encId = enc?.lore?.id || enc?.npc?.id;
+    if (encId && markedPOIs.value.some(p => p.id === encId) && !engagedPOIs.value.includes(encId)) {
+      engagedPOIs.value.push(encId);
+    }
+  }
+
   callHandleEncounterOption(option);
+}
+
+function handleRevisitPOI(poi) {
+  if (engagedPOIs.value.includes(poi.id) || !isIdle.value) return;
+  const loreEnc = loreData.find(e => e.id === poi.id);
+  if (loreEnc) {
+    encounter.value = { type: 'lore', lore: { ...loreEnc, currentNodeId: loreEnc.dialogueNodes ? 'start' : undefined } };
+    return;
+  }
+  const npcEnc = npcData.find(e => e.id === poi.id);
+  if (npcEnc) {
+    encounter.value = { type: 'npc', npc: { ...npcEnc, currentNodeId: npcEnc.dialogueNodes ? 'start' : undefined } };
+  }
 }
 
 function startQuestCombat(bossType) {
@@ -1083,6 +1152,8 @@ async function saveGame() {
       dogName: dogName.value,
       goldPouchAccumulatedGold: goldPouchAccumulatedGold.value,
       campTier: campTier.value,
+      markedPOIs: [...markedPOIs.value],
+      engagedPOIs: [...engagedPOIs.value],
     },
   }, { onConflict: 'user_id' });
 }
@@ -1146,6 +1217,8 @@ function restoreGameState(s) {
   dogName.value = s.dogName ?? "";
   campTier.value = s.campTier ?? 0;
   goldPouchAccumulatedGold.value = s.goldPouchAccumulatedGold ?? 0;
+  markedPOIs.value = s.markedPOIs ?? [];
+  engagedPOIs.value = s.engagedPOIs ?? [];
 }
 
 async function handleRestart() {

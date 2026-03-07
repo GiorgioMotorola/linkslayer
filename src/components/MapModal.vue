@@ -54,6 +54,19 @@
               </span>
             </div>
           </div>
+
+          <div v-if="markedPOIs.length > 0" class="poi-section">
+            <div class="poi-section-title">Points of Interest</div>
+            <div
+              v-for="poi in markedPOIs"
+              :key="poi.id"
+              class="poi-item"
+              :class="{ 'poi-engaged': engagedPOIs.includes(poi.id), 'poi-revisitable': !engagedPOIs.includes(poi.id) && isIdle, 'poi-unavailable': !engagedPOIs.includes(poi.id) && !isIdle }"
+              @click="!engagedPOIs.includes(poi.id) && isIdle && $emit('revisit-poi', poi)"
+            >
+              🗺️ {{ poi.name }}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -70,17 +83,14 @@ import { defineProps, defineEmits } from "vue";
 
 const props = defineProps({
   embedded: { type: Boolean, default: false },
-  fullChain: {
-    type: Array,
-    default: () => [],
-  },
-  currentTargetIndex: {
-    type: Number,
-    default: -1,
-  },
+  fullChain: { type: Array, default: () => [] },
+  currentTargetIndex: { type: Number, default: -1 },
+  markedPOIs: { type: Array, default: () => [] },
+  engagedPOIs: { type: Array, default: () => [] },
+  isIdle: { type: Boolean, default: false },
 });
 
-defineEmits(["close"]);
+defineEmits(["close", "revisit-poi"]);
 
 const locationTypes = [
   "Village", "Hamlet", "Town", "Borough", "Colony", "Settlement", "Outpost", "Encampment",
