@@ -1,6 +1,6 @@
 - id: horse
   name: A Man About a Horse and a Horse
-  tavernHint: "A notice pinned beneath the others: 'My horse was taken. Tracks go east into the Thornwood. Good reward offered for her return.'"
+  tavernHint: "My horse was taken. Tracks go east into the Thornwood. Good reward offered for her return."
   combatType: Talking Horse
   combatEmoji: "🐴"
   postCombatStep: 4

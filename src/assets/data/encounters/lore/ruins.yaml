@@ -136,7 +136,7 @@
         - text: "Decide it's too dangerous and leave."
           flow: close_encounter
           responseText: Maybe someone else can kill the monster...
-        - text: Come back later.
+        - text: 🗺️ Come back later.
           result: come_back_later
           responseText: "This point of interest has been marked on your map."
     main_entrance:

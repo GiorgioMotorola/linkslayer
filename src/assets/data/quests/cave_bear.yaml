@@ -1,6 +1,6 @@
 - id: cave_bear
   name: The Growling Dark
-  tavernHint: "A weathered notice tacked to the wall. Something stirs in the cave near town..."
+  tavernHint: "The town of Bortsville has been complaining about a distrubance in their mining cave."
   combatType: Brown Bear
   combatEmoji: "🐻"
   turnInGold: 50

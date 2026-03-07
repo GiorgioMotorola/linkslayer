@@ -958,11 +958,13 @@ function handleRevisitPOI(poi) {
   if (engagedPOIs.value.includes(poi.id) || !isIdle.value) return;
   const loreEnc = loreData.find(e => e.id === poi.id);
   if (loreEnc) {
+    hubOpen.value = false;
     encounter.value = { type: 'lore', lore: { ...loreEnc, currentNodeId: loreEnc.dialogueNodes ? 'start' : undefined } };
     return;
   }
   const npcEnc = npcData.find(e => e.id === poi.id);
   if (npcEnc) {
+    hubOpen.value = false;
     encounter.value = { type: 'npc', npc: { ...npcEnc, currentNodeId: npcEnc.dialogueNodes ? 'start' : undefined } };
   }
 }

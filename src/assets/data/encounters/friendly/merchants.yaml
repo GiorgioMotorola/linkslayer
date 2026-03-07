@@ -133,7 +133,7 @@
         - text: Leave the cave undisturbed.
           flow: close_encounter
           responseText: You decide your journey is too important. You continue on.
-        - text: Come back later.
+        - text: 🗺️ Come back later.
           result: come_back_later
           responseText: "This point of interest has been marked on your map."
     cave_entrance:

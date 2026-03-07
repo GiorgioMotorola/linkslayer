@@ -53,13 +53,14 @@
 }
 
 .forge-scrap-count {
-  font-size: 20px;
+  font-size: 12px;
   font-weight: 700;
   color: #e0b060;
 }
 
 .forge-columns {
   display: flex;
+  flex-direction: column;
   gap: 0;
   align-items: stretch;
 }
@@ -79,6 +80,7 @@
 .forge-divider {
   width: 1rem;
   flex-shrink: 0;
+  margin-top: 1rem;
 }
 
 .forge-col-header {
@@ -90,6 +92,7 @@
 .forge-col-current {
   font-size: 11px;
   color: #6a5530;
+  text-align: start;
 }
 
 .forge-counter {
@@ -223,10 +226,6 @@
 
 .forge-scrap-count {
   font-size: 14px;
-}
-
-.forge-columns {
-  flex-direction: column;
 }
 
 .forge-divider {

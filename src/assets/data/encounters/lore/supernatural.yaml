@@ -23,7 +23,7 @@
     - text: Turn around and walk away.
       result: none
       responseText: "The voice yells 'Yeah, you better walk away.'"
-    - text: Come back later.
+    - text: 🗺️ Come back later.
       result: come_back_later
       responseText: "This point of interest has been marked on your map."
 
@@ -39,7 +39,7 @@
         - text: Walk away. Some mysteries are best left alone.
           flow: close_encounter
           responseText: You decide the well holds more trouble than treasure and continue on your journey.
-        - text: Come back later.
+        - text: 🗺️ Come back later.
           result: come_back_later
           responseText: "This point of interest has been marked on your map."
     well_bottom:
@@ -121,7 +121,7 @@
         - text: Put out the embers and move on.
           result: none
           responseText: "You carefully douse the remaining embers. The wilderness can be unforgiving with unattended fires. You continue your journey."
-        - text: Come back later.
+        - text: 🗺️ Come back later.
           result: come_back_later
           responseText: "This point of interest has been marked on your map."
     journal_entry_1:
