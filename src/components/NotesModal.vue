@@ -34,7 +34,7 @@
 
       <div v-if="props.dogName" class="dog-pane" @click="petDog" title="Pet the dog!">
         <div class="dog-pane-left">
-          <span class="dog-pane-emoji">🐕‍🦺</span>
+          <span class="dog-pane-emoji">🐶</span>
         </div>
         <div class="dog-pane-info">
           <div class="dog-pane-name-line">

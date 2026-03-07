@@ -137,11 +137,10 @@ header {
   position: relative;
   cursor: pointer;
   display: inline-block;
-  transition: transform 0.1s;
 }
 
 .dog-emoji-wrap:hover {
-  transform: scale(1.2);
+  rotate: 15deg;
 }
 
 .dog-emoji {

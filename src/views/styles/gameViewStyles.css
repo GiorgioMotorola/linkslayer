@@ -30,7 +30,7 @@
 
 .quest-notification {
   position: fixed;
-  top: 30%;
+  top: 12%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10000;
@@ -40,34 +40,34 @@
   flex-direction: column;
   align-items: center;
   gap: 0.35rem;
-  background: black;
+  background: rgb(0, 0, 0);
   padding: 1.2rem 2.4rem;
-  border-radius: 6px;
 }
 
 .quest-notif-label {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: rgba(200, 140, 40, 0.75);
+  color: rgb(253, 17, 0);
   font-family: "IBM Plex Sans", sans-serif;
 }
 
 .quest-notif-name {
   font-size: 26px;
-  font-weight: 500;
-  color: #e8c870;
+  font-weight: 700;
+  color: #ffffff;
   font-family: "IBM Plex Sans", sans-serif;
   text-shadow: 0 0 30px rgba(220, 160, 30, 0.6), 0 0 60px rgba(180, 110, 10, 0.3);
   letter-spacing: 1px;
+  white-space: nowrap;
 }
 
 .quest-notif-fade-enter-active {
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 .quest-notif-fade-leave-active {
-  transition: opacity 1s ease, transform 1s ease;
+  transition: opacity 2s ease, transform 0.6s ease;
 }
 .quest-notif-fade-enter-from {
   opacity: 0;
@@ -271,4 +271,25 @@
 @keyframes quest-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.6; }
+}
+
+@media screen and (max-width: 600px) {
+.quest-notification {
+  position: fixed;
+  top: 17%;
+  left: 50%;
+  padding: 1rem 2rem;
+}
+
+.quest-notif-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.quest-notif-name {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0px;
+}
 }

@@ -9,7 +9,7 @@ export function handleShopPurchase(
 ) {
   let purchased = false;
   if (item.details === "dog" && playerState.dogName?.value) {
-    utilityFunctions.log(`🐕‍🦺 You already have a companion: ${playerState.dogName.value}!`);
+    utilityFunctions.log(`🐶 You already have a companion: ${playerState.dogName.value}!`);
     return;
   }
   if (item.isSpecialLoot) {
@@ -233,7 +233,7 @@ export function handleShopPurchase(
           if (modalState?.showDogNameModal) {
             modalState.showDogNameModal.value = true;
           }
-          utilityFunctions.log(`🐕‍🦺 A dog trots up to you expectantly...`);
+          utilityFunctions.log(`🐶 A dog trots up to you expectantly...`);
         }
         break;
 

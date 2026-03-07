@@ -154,7 +154,7 @@
               <div class="dog-widget">
                 <div class="dog-damage-badge">+2⚔</div>
                 <div class="dog-emoji-wrap" @click="petDog" title="Pet the dog!">
-                  <span class="dog-emoji">🐕‍🦺</span>
+                  <span class="dog-emoji">🐶</span>
                   <div v-if="headerHeartCount > 0" class="dog-hearts">
                     <span v-for="i in headerHeartCount" :key="i" class="dog-heart">💕</span>
                   </div>
@@ -1163,6 +1163,7 @@ body {
   font-family: "Roboto", sans-serif;
   font-optical-sizing: auto;
 }
+
 
 @import "./styles/CombatAnimations.css";
 </style>

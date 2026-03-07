@@ -2,6 +2,13 @@
   name: The Growling Dark
   tavernHint: "A weathered notice tacked to the wall. Something stirs in the cave near town..."
   combatType: Brown Bear
+  combatEmoji: "🐻"
+  turnInGold: 50
+  turnInScrap: 0
+  rewardLabel: "You've slain the bear. Claim your 50g reward."
+  victoryLog: "You've slain the bear. Return to The Lighthouse Tavern to claim your reward."
+  leaveLog: "You step back from the cave. The notice remains on the board if you wish to return."
+  turnInLog: "You recount your deed at the bar. The innkeeper slides 50g across the counter. <em>The Growling Dark</em> — complete."
   steps:
     - scene: "The mouth of the cave yawns open in the hillside, cold air spilling out like a held breath. Claw marks score the stone on either side — deep, fresh, and wide as your hand."
       choices:

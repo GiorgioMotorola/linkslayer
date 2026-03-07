@@ -214,7 +214,7 @@
     lesson_7:
       text: "'Weather signs. A storm brewin', fish go deep. A gentle drizzle, they might come up. Look to the sky, and listen to the air. What do you see?'"
       options:
-        - text: '"I see a lot of water and some clouds in the sky. I see you. I smell you, too.'"
+        - text: "'I see a lot of water and some clouds in the sky. I see you. I smell you, too.'"
           flow: dialogue_branch
           next_node_id: lesson_8
         - text: "'I'm not a weather wizard. I give up.'"
@@ -241,7 +241,7 @@
     lesson_10:
       text: "'It's important to understand the yank of the fish. Sometimes the fish will be a big ol' goofball and that means you have to put in what the fish is hitting you with. You have to feel it."
       options:
-        - text: '"Ill focus on the feel. Do you have any beer to go with this?'"
+        - text: "'Ill focus on the feel. Do you have any beer to go with this?'"
           flow: dialogue_branch
           next_node_id: lesson_11
         - text: 'My hands are numb. I give up.'
@@ -250,7 +250,7 @@
     lesson_11:
       text: "'I dont drink. Choosing your hook size. Too big, they won't bite. Too small, they'll get away. It's a delicate balance. Think you can pick the right one?'"
       options:
-        - text: '"Ill pick carefully.'"
+        - text: "'Ill pick carefully.'"
           flow: dialogue_branch
           next_node_id: lesson_12
         - text: 'This is too much detail. I give up.'

@@ -155,10 +155,10 @@
         :offeringPot="offeringPot"
         :playerGold="playerGold"
         :nextOfferingCost="nextOfferingCost"
-        :questScrolls="inventory.questScrolls"
-        :questTaken="questTaken"
-        :questComplete="questComplete"
-        :questTurnedIn="questTurnedIn"
+        :questStatus="questStatus"
+        :boardQuestName="boardQuest?.name ?? ''"
+        :boardQuestHint="boardQuest?.tavernHint ?? ''"
+        :boardQuestRewardLabel="boardQuest?.rewardLabel ?? ''"
         :campTier="campTier"
         @rest="handleRest"
         @offer="callHandleOffer"
@@ -288,34 +288,48 @@
     </template>
     <template #quests>
       <div class="hub-quest-pane">
-        <div v-if="questTurnedIn" class="hub-quest-item hub-quest-complete">
+        <div
+          v-for="q in QUESTS.filter(q => completedQuestIds.includes(q.id))"
+          :key="q.id"
+          class="hub-quest-item hub-quest-complete"
+        >
           <div class="hub-quest-info">
-            <span class="hub-quest-name">The Growling Dark</span>
-            <span class="hub-quest-desc">You slew the beast and claimed your reward.</span>
+            <span class="hub-quest-name">{{ q.name }}</span>
+            <span class="hub-quest-desc">Quest complete.</span>
           </div>
           <span class="hub-quest-status-badge">COMPLETED ✓</span>
         </div>
-        <div v-else-if="questComplete" class="hub-quest-item hub-quest-turn-in">
-          <div class="hub-quest-info">
-            <span class="hub-quest-name">The Growling Dark</span>
-            <span class="hub-quest-desc">The beast is slain. Return to The Lighthouse Tavern to collect your reward.</span>
+        <template v-if="boardQuest && !completedQuestIds.includes(boardQuest.id)">
+          <div v-if="questStatus === 'complete'" class="hub-quest-item hub-quest-turn-in">
+            <div class="hub-quest-info">
+              <span class="hub-quest-name">{{ boardQuest.name }}</span>
+              <span class="hub-quest-desc">Return to The Lighthouse Tavern to collect your reward.</span>
+            </div>
+            <span class="hub-quest-status-badge hub-quest-status-return">Turn In !</span>
           </div>
-          <span class="hub-quest-status-badge hub-quest-status-return">Turn In !</span>
-        </div>
-        <div v-else-if="questTaken && !inventory.questScrolls" class="hub-quest-item">
-          <div class="hub-quest-info">
-            <span class="hub-quest-name">The Growling Dark</span>
-            <span class="hub-quest-desc">Venture into the cave and slay what lurks within.</span>
+          <div v-else-if="questStatus === 'progress'" class="hub-quest-item">
+            <div class="hub-quest-info">
+              <span class="hub-quest-name">{{ boardQuest.name }}</span>
+              <span class="hub-quest-desc">Quest underway.</span>
+            </div>
+            <span class="hub-quest-status-badge hub-quest-status-active">In Progress</span>
           </div>
-          <span class="hub-quest-status-badge hub-quest-status-active">In Progress</span>
-        </div>
-        <div v-else-if="inventory.questScrolls > 0" class="hub-quest-item">
-          <div class="hub-quest-info">
-            <span class="hub-quest-name">The Growling Dark</span>
-            <span class="hub-quest-desc">A rolled parchment sealed with wax. Venture into the cave and slay what lurks within. Must be opened while idle.</span>
+          <div v-else-if="questStatus === 'scroll'" class="hub-quest-item">
+            <div class="hub-quest-info">
+              <span class="hub-quest-name">{{ boardQuest.name }}</span>
+              <span class="hub-quest-desc">A rolled parchment sealed with wax. Must be opened while idle.</span>
+            </div>
+            <button class="hub-quest-btn" @click="handleUseInventoryItem('questScroll')" :disabled="!isIdle">Begin Quest</button>
           </div>
-          <button class="hub-quest-btn" @click="handleUseInventoryItem('questScroll')" :disabled="!isIdle">Begin Quest</button>
-        </div>
+          <div v-else class="hub-quest-item">
+            <div class="hub-quest-info">
+              <span class="hub-quest-name">{{ boardQuest.name }}</span>
+              <span class="hub-quest-desc">{{ boardQuest.tavernHint }}</span>
+            </div>
+            <span class="hub-quest-status-badge">Available</span>
+          </div>
+        </template>
+        <div v-else-if="questStatus === 'done'" class="hub-quest-empty">All quests complete.</div>
         <div v-else class="hub-quest-empty">No active quests.</div>
       </div>
     </template>
@@ -324,7 +338,7 @@
   <Transition name="quest-notif-fade">
     <div v-if="showQuestNotification" class="quest-notification">
       <div class="quest-notif-label">Quest Started</div>
-      <div class="quest-notif-name">The Growling Dark</div>
+      <div class="quest-notif-name">{{ activeQuest?.name ?? "" }}</div>
     </div>
   </Transition>
 
@@ -552,7 +566,7 @@ const {
 function onDogNamed(name) {
   dogName.value = name;
   showDogNameModal.value = false;
-  log(`🐕‍🦺 You named your companion <strong>${name}</strong>! They wag their tail happily.`);
+  log(`🐶 You named your companion <strong>${name}</strong>! They wag their tail happily.`);
 }
 
 const OFFERING_COSTS = [[10, 15, 20], [25, 30, 50]];
@@ -775,10 +789,25 @@ onUnmounted(() => {
 });
 
 const showQuestNotification = ref(false);
-const questTaken = ref(false);
+const completedQuestIds = ref([]);
+const activeQuestId = ref(null);
 const questCombatActive = ref(false);
 const questComplete = ref(false);
-const questTurnedIn = ref(false);
+
+const activeQuest = computed(() =>
+  activeQuestId.value ? QUESTS.find(q => q.id === activeQuestId.value) : null
+);
+const boardQuest = computed(() => {
+  if (activeQuestId.value) return activeQuest.value;
+  return QUESTS.find(q => !completedQuestIds.value.includes(q.id)) ?? null;
+});
+const questStatus = computed(() => {
+  if (!boardQuest.value) return "done";
+  if (questComplete.value && activeQuestId.value === boardQuest.value?.id) return "complete";
+  if ((inventory.value.questScrolls ?? 0) > 0 && activeQuestId.value === boardQuest.value?.id) return "scroll";
+  if (activeQuestId.value === boardQuest.value?.id) return "progress";
+  return "none";
+});
 
 const isIdle = computed(() =>
   !isInCombat.value &&
@@ -812,24 +841,35 @@ function handleForge({ type, scrapUsed }) {
 }
 
 function handleTakeQuest() {
+  const quest = boardQuest.value;
+  if (!quest) return;
   inventory.value.questScrolls++;
-  questTaken.value = true;
+  activeQuestId.value = quest.id;
   log("📜 You take the quest scroll from the notice board.");
 }
 
 function handleTurnInQuest() {
-  playerGold.value += 50;
-  questTurnedIn.value = true;
-  log("📜 You recount your deed at the bar. The innkeeper slides 50g across the counter. <em>The Growling Dark</em> — complete.");
+  const quest = activeQuest.value;
+  if (!quest) return;
+  playerGold.value += quest.turnInGold ?? 0;
+  if (quest.turnInScrap) {
+    inventory.value.scrapMetal = (inventory.value.scrapMetal || 0) + quest.turnInScrap;
+  }
+  completedQuestIds.value.push(quest.id);
+  activeQuestId.value = null;
+  questComplete.value = false;
+  log(`📜 ${quest.turnInLog}`);
+  saveGame();
 }
 
 function advanceQuestStep(stepIndex) {
-  const quest = QUESTS[0];
+  const quest = activeQuest.value;
+  if (!quest) return;
   const step = quest.steps[stepIndex];
   encounter.value = {
     type: "npc",
     npc: {
-      id: `quest_cave_step_${stepIndex}`,
+      id: `quest_${quest.id}_step_${stepIndex}`,
       name: quest.name,
       greeting: step.scene,
       options: step.choices.map(c => ({ text: c.text, questStep: c.next })),
@@ -839,12 +879,17 @@ function advanceQuestStep(stepIndex) {
 
 function handleOptionChosen(option) {
   if (option.questStep !== undefined) {
+    const quest = activeQuest.value;
     if (option.questStep === "combat") {
-      startQuestCombat(QUESTS[0].combatType);
+      startQuestCombat(quest.combatType);
+    } else if (option.questStep === "complete") {
+      encounter.value = null;
+      questComplete.value = true;
+      log(`📜 ${quest?.victoryLog ?? "Quest complete. Return to the tavern to claim your reward."}`);
     } else if (option.questStep === "leave") {
       encounter.value = null;
-      questTaken.value = false;
-      log("📜 You step back from the cave. The notice remains on the board if you wish to return.");
+      activeQuestId.value = null;
+      log(`📜 ${quest?.leaveLog ?? "You turn back. The quest scroll remains on the board."}`);
     } else {
       advanceQuestStep(option.questStep);
     }
@@ -862,20 +907,26 @@ function startQuestCombat(bossType) {
   enemyNextAction.value = "attack";
   combatEncountersFought.value++;
   questCombatActive.value = true;
-  log(`🐻 A massive <strong>${boss.name}</strong> emerges from the darkness! What do you do?`);
+  const emoji = activeQuest.value?.combatEmoji ?? "⚔️";
+  log(`${emoji} A <strong>${boss.name}</strong> blocks your path! What do you do?`);
   logEnemyAction(enemyNextAction, nextEnemyAttack);
 }
 
 watch(encounter, (newVal, oldVal) => {
   if (!questCombatActive.value) return;
-  if (oldVal?.type === "combat" && oldVal?.enemy?.name === "Brown Bear" && newVal === null) {
+  if (oldVal?.type === "combat" && newVal === null) {
+    const quest = activeQuest.value;
     questCombatActive.value = false;
     if (!defeated.value && enemyHP.value <= 0) {
-      questComplete.value = true;
-      log("📜 You've slain the bear. Return to The Lighthouse Tavern to claim your reward.");
+      if (quest?.postCombatStep != null) {
+        advanceQuestStep(quest.postCombatStep);
+      } else {
+        questComplete.value = true;
+        log(`📜 ${quest?.victoryLog ?? "Quest enemy defeated. Return to the tavern to claim your reward."}`);
+      }
     } else if (!defeated.value) {
-      questTaken.value = false;
-      log("📜 You retreat from the cave. The notice remains on the board if you wish to return.");
+      activeQuestId.value = null;
+      log(`📜 ${quest?.leaveLog ?? "You retreat. The quest remains available."}`);
     }
   }
 });
@@ -933,7 +984,7 @@ function handleUseInventoryItem(itemType) {
     hubOpen.value = false;
     advanceQuestStep(0);
     showQuestNotification.value = true;
-    setTimeout(() => { showQuestNotification.value = false; }, 3000);
+    setTimeout(() => { showQuestNotification.value = false; }, 6000);
   }
 }
 
@@ -993,9 +1044,9 @@ async function saveGame() {
       hpCapBonus: hpCapBonus.value,
       combatWinsSinceLastCapIncrease: combatWinsSinceLastCapIncrease.value,
       inventory: { ...inventory.value },
-      questTaken: questTaken.value,
       questComplete: questComplete.value,
-      questTurnedIn: questTurnedIn.value,
+      completedQuestIds: [...completedQuestIds.value],
+      activeQuestId: activeQuestId.value,
       chain: [...chain],
       current: current.value,
       currentTargetIndex: currentTargetIndex.value,
@@ -1056,9 +1107,9 @@ function restoreGameState(s) {
   combatWinsSinceLastCapIncrease.value = s.combatWinsSinceLastCapIncrease ?? 0;
   enlightenmentFishAccumulatedHP.value = s.enlightenmentFishAccumulatedHP ?? 0;
   if (s.inventory) Object.assign(inventory.value, s.inventory);
-  questTaken.value = s.questTaken ?? false;
   questComplete.value = s.questComplete ?? false;
-  questTurnedIn.value = s.questTurnedIn ?? false;
+  completedQuestIds.value = s.completedQuestIds ?? (s.questTurnedIn ? ["cave_bear"] : []);
+  activeQuestId.value = s.activeQuestId ?? (s.questTaken && !s.questTurnedIn ? "cave_bear" : null);
   if (s.chain?.length) chain.splice(0, chain.length, ...s.chain);
   if (s.current) current.value = s.current;
   if (s.currentTargetIndex != null) currentTargetIndex.value = s.currentTargetIndex;

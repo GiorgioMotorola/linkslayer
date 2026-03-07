@@ -2,9 +2,9 @@
   <div class="dog-overlay" @click.self="$emit('named', dogNameInput.trim() || 'Dog')">
     <div class="dog-modal">
       <div class="dog-header">
-        <span class="header-ornament">🐕‍🦺</span>
+        <span class="header-ornament">🐶</span>
         <span class="header-title">A New Companion</span>
-        <span class="header-ornament">🐕‍🦺</span>
+        <span class="header-ornament">🐶</span>
       </div>
       <p class="dog-prompt">What will you call them?</p>
       <input

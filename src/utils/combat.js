@@ -304,7 +304,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
 
   if (player.dogName?.value && damageToEnemy > 0) {
     damageToEnemy += 2;
-    log(`🐕‍🦺 ${player.dogName.value} bites for 2 extra damage!`);
+    log(`🐶 ${player.dogName.value} bites for 2 extra damage!`);
   }
 
   if (damageToEnemy > 0) {

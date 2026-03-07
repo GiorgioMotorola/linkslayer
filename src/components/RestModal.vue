@@ -144,37 +144,29 @@
             🛒 Camp Supplies →
           </button>
           <button
-            v-if="props.questComplete && !props.questTurnedIn"
+            v-if="props.questStatus === 'complete'"
             @click="$emit('turn-in-quest')"
             class="quest-turnin-btn"
           >
-            📜 Turn In: The Growling Dark
-            <span class="assemble-sub"
-              >You've slain the bear. Claim your 50g reward.</span
-            >
+            📜 Turn In: {{ props.boardQuestName }}
+            <span class="assemble-sub">{{ props.boardQuestRewardLabel }}</span>
           </button>
 
-          <div v-else-if="props.questTurnedIn" class="quest-taken-note">
-            ✓ The Growling Dark — complete.
+          <div v-else-if="props.questStatus === 'done'" class="quest-taken-note">
+            ✓ All quests complete.
           </div>
 
-          <div v-else-if="props.questScrolls > 0" class="quest-taken-note">
+          <div v-else-if="props.questStatus === 'scroll'" class="quest-taken-note">
             📜 Quest scroll is in your backpack.
           </div>
 
-          <div
-            v-else-if="props.questTaken && !props.questComplete"
-            class="quest-taken-note"
-          >
+          <div v-else-if="props.questStatus === 'progress'" class="quest-taken-note">
             📜 Quest in progress...
           </div>
 
-          <button v-else @click="takeQuest">
-            📜 The Growling Dark
-            <span class="assemble-sub"
-              >A weathered notice tacked to the wall. Something stirs in the
-              cave near town...</span
-            >
+          <button v-else-if="props.boardQuestName" @click="takeQuest">
+            📜 {{ props.boardQuestName }}
+            <span class="assemble-sub">{{ props.boardQuestHint }}</span>
           </button>
 
           <button @click="returnToCampsite" class="close-action-btn">
@@ -222,10 +214,10 @@ const props = defineProps({
   offeringPot: { type: Number, default: 0 },
   playerGold: { type: Number, default: 0 },
   nextOfferingCost: { type: Number, default: 10 },
-  questScrolls: { type: Number, default: 0 },
-  questTaken: { type: Boolean, default: false },
-  questComplete: { type: Boolean, default: false },
-  questTurnedIn: { type: Boolean, default: false },
+  questStatus: { type: String, default: "none" },
+  boardQuestName: { type: String, default: "" },
+  boardQuestHint: { type: String, default: "" },
+  boardQuestRewardLabel: { type: String, default: "" },
   campTier: { type: Number, default: 0 },
 });
 

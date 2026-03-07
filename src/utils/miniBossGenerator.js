@@ -159,6 +159,14 @@ export const MINI_BOSS_TYPES = [
     goldReward: 50,
     scrapReward: 4,
   },
+  {
+    type: "Talking Horse",
+    hp: 90,
+    minDamage: 5,
+    maxDamage: 9,
+    goldReward: 0,
+    scrapReward: 4,
+  },
 ];
 
 export function generateMiniBoss(specificType, difficultyLevel = 0) {
