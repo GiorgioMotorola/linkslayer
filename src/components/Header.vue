@@ -150,10 +150,18 @@
       <div class="player-header">
         <div class="player-info-left">
           <div class="player-name-line">
-            {{ props.playerName || "Unnamed" }}
-            <span style="font-weight: 400; color: #02204d"
-              >({{ playerClass?.name || `none` }})</span
-            >
+            <template v-if="props.dogName">
+              <div class="dog-widget">
+                <div class="dog-damage-badge">+2⚔</div>
+                <div class="dog-emoji-wrap" @click="petDog" title="Pet the dog!">
+                  <span class="dog-emoji">🐕‍🦺</span>
+                  <div v-if="headerHeartCount > 0" class="dog-hearts">
+                    <span v-for="i in headerHeartCount" :key="i" class="dog-heart">💕</span>
+                  </div>
+                  <div v-if="dogPlusOneVisible" class="dog-plus-one">+1 dmg</div>
+                </div>
+              </div>
+            </template>
           </div>
         </div>
         <div class="player-buttons-right">
@@ -356,6 +364,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  dogName: {
+    type: String,
+    default: "",
+  },
 });
 
 const emit = defineEmits([
@@ -418,6 +430,29 @@ async function handleSignOutAuth() {
   await signOut();
 }
 
+
+const headerHeartCount = ref(0);
+let headerHeartTimer = null;
+
+function petDog() {
+  headerHeartCount.value = 3;
+  clearTimeout(headerHeartTimer);
+  headerHeartTimer = setTimeout(() => { headerHeartCount.value = 0; }, 1500);
+}
+
+const dogPlusOneVisible = ref(false);
+let dogPlusOneTimer = null;
+
+watch(() => props.lastDamageDealt, (newVal) => {
+  if (newVal !== null && newVal !== undefined && newVal > 0 && props.dogName) {
+    dogPlusOneVisible.value = false;
+    nextTick(() => {
+      dogPlusOneVisible.value = true;
+      clearTimeout(dogPlusOneTimer);
+      dogPlusOneTimer = setTimeout(() => { dogPlusOneVisible.value = false; }, 1400);
+    });
+  }
+});
 
 const headerEl = ref(null);
 const headerHeight = ref(300);

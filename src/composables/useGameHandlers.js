@@ -50,7 +50,7 @@ export function useGameHandlers(deps) {
     markBossDefeated,
   } = gameFlow;
 
-  const { showRestModal, showShopModal, showTipsModal, restModalCount, showCampfireOverlay, campfireReward, showRuneCacheModal, runeCacheReward } = modals;
+  const { showRestModal, showShopModal, showTipsModal, restModalCount, showCampfireOverlay, campfireReward, showRuneCacheModal, runeCacheReward, showDogNameModal } = modals;
 
   const {
     playerClass,
@@ -68,6 +68,7 @@ export function useGameHandlers(deps) {
     specialTier,
     offeringPot,
     playerGoal,
+    dogName,
   } = player;
 
   const {
@@ -390,6 +391,7 @@ export function useGameHandlers(deps) {
         weaponBonus,
         shieldBonus,
         playerName,
+        dogName,
         action: playerAction,
         effectiveMaxHP,
         totalSpecialsUsed,
@@ -535,12 +537,16 @@ export function useGameHandlers(deps) {
         shortRestsUsed,
         blurClicksLeft,
         inventory,
+        dogName,
       },
       {
         playerName,
       },
       {
         log,
+      },
+      {
+        showDogNameModal,
       }
     );
   }

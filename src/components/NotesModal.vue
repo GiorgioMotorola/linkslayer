@@ -13,6 +13,15 @@
           <span class="char-field"><span class="char-label">👤</span> {{ props.playerName || "Unknown" }}</span>
           <span class="char-field"><span class="char-label">⚔</span> {{ props.playerClass?.name || "—" }}</span>
         </div>
+        <div v-if="!props.dogName && (props.isBlurred || props.isPlayerPoisoned || props.isCloakActive || props.wardStoneActive || props.healthRegenActive)" class="char-sheet-row">
+          <span class="char-field status-line">
+            <span v-if="props.isBlurred" class="status-emoji" title="Blurred">🍺</span>
+            <span v-if="props.isPlayerPoisoned" class="status-emoji" title="Poisoned">🤢</span>
+            <span v-if="props.isCloakActive" class="status-emoji" title="Cloaked">👻</span>
+            <span v-if="props.wardStoneActive" class="status-emoji" title="Ward Stone Active">🪨</span>
+            <span v-if="props.healthRegenActive" class="status-emoji" title="Regenerating">🌿</span>
+          </span>
+        </div>
         <div class="char-sheet-row">
           <span class="char-field"><span class="char-label">🗡 Weapon</span> +{{ props.weaponBonus ?? 0 }}</span>
           <span class="char-field"><span class="char-label">🛡 Defense</span> +{{ props.shieldBonus ?? 0 }}</span>
@@ -20,6 +29,28 @@
         <div v-if="props.playerGoal" class="char-goal">
           <span class="char-label">🎯 Goal</span>
           <span class="char-goal-text">"{{ props.playerGoal }}"</span>
+        </div>
+      </div>
+
+      <div v-if="props.dogName" class="dog-pane" @click="petDog" title="Pet the dog!">
+        <div class="dog-pane-left">
+          <span class="dog-pane-emoji">🐕‍🦺</span>
+        </div>
+        <div class="dog-pane-info">
+          <div class="dog-pane-name-line">
+            <span class="dog-pane-name">{{ props.dogName }}</span>
+            <span class="dog-pane-sep"> | </span>
+            <span class="dog-pane-type">Dog</span>
+            <span v-if="props.isBlurred" class="status-emoji" title="Blurred">🍺</span>
+            <span v-if="props.isPlayerPoisoned" class="status-emoji" title="Poisoned">🤢</span>
+            <span v-if="props.isCloakActive" class="status-emoji" title="Cloaked">👻</span>
+            <span v-if="props.wardStoneActive" class="status-emoji" title="Ward Stone Active">🪨</span>
+            <span v-if="props.healthRegenActive" class="status-emoji" title="Regenerating">🌿</span>
+          </div>
+          <div class="dog-pane-stat">+1 dmg per hit</div>
+        </div>
+        <div v-if="heartCount > 0" class="hearts-container">
+          <span v-for="i in heartCount" :key="i" class="floating-heart">💕</span>
         </div>
       </div>
 
@@ -71,6 +102,12 @@ const props = defineProps({
   weaponBonus: { type: Number, default: 0 },
   shieldBonus: { type: Number, default: 0 },
   playerGoal: { type: String, default: "" },
+  dogName: { type: String, default: "" },
+  isBlurred: { type: Boolean, default: false },
+  isPlayerPoisoned: { type: Boolean, default: false },
+  isCloakActive: { type: Boolean, default: false },
+  wardStoneActive: { type: Boolean, default: false },
+  healthRegenActive: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["close"]);
@@ -79,6 +116,15 @@ const currentTierData = computed(() => {
   if (!props.playerClass?.specialTiers) return null;
   return props.playerClass.specialTiers[props.specialTier - 1] ?? null;
 });
+
+const heartCount = ref(0);
+let heartTimer = null;
+
+function petDog() {
+  heartCount.value = 3;
+  clearTimeout(heartTimer);
+  heartTimer = setTimeout(() => { heartCount.value = 0; }, 1500);
+}
 
 const notesContent = ref("");
 const justSaved = ref(false);
@@ -365,5 +411,109 @@ const closeModal = () => {
 .close-button:hover {
   background: linear-gradient(135deg, #5a3a22 0%, #3a2210 100%);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.status-line {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-emoji {
+  font-size: 15px;
+  line-height: 1;
+  cursor: default;
+}
+
+.dog-pane {
+  background: rgba(255, 230, 160, 0.06);
+  border: 1px solid rgba(180, 130, 40, 0.3);
+  border-radius: 4px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  position: relative;
+  transition: opacity 0.1s, background 0.1s;
+}
+
+.dog-pane:hover {
+  background: rgba(255, 230, 160, 0.1);
+}
+
+.dog-pane-left {
+  flex-shrink: 0;
+}
+
+.dog-pane-emoji {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.dog-pane-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dog-pane-name-line {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: #c8a060;
+}
+
+.dog-pane-name {
+  font-weight: 600;
+  font-style: italic;
+}
+
+.dog-pane-sep {
+  color: #6a5030;
+}
+
+.dog-pane-type {
+  font-size: 11px;
+  color: #8a6a40;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.dog-pane-stat {
+  font-size: 11px;
+  color: #7aaa7a;
+  letter-spacing: 0.5px;
+}
+
+.hearts-container {
+  position: absolute;
+  top: -20px;
+  left: 0;
+  display: flex;
+  gap: 3px;
+  pointer-events: none;
+}
+
+.floating-heart {
+  display: inline-block;
+  font-size: 14px;
+  animation: floatUp 1.4s ease-out forwards;
+}
+
+.floating-heart:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.floating-heart:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes floatUp {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-36px) scale(1.3); }
 }
 </style>

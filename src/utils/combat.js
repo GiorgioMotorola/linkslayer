@@ -118,6 +118,10 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
 
     if (didHit) {
       damageToEnemy = Math.floor(randomDamage * damageMultiplier);
+      if (player.dogName?.value) {
+        damageToEnemy += 2;
+        log(`🐕‍🦺 ${player.dogName.value} bit the enemy for 2 extra damage!`);
+      }
       log(
         `🗡️ <span class="player-name">${playerName.value}</span> ${attackName} and hits ${formattedTitle} for ${damageToEnemy} damage.`
       );

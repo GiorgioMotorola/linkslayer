@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 export function usePlayerState(hpCapBonus) {
   const playerClass = ref(null);
   const playerName = ref("");
+  const dogName = ref("");
   const playerHP = ref(0);
   const specialUsesLeft = ref(3);
   const totalSpecialsUsed = ref(0);
@@ -23,6 +24,7 @@ export function usePlayerState(hpCapBonus) {
   return {
     playerClass,
     playerName,
+    dogName,
     playerHP,
     specialUsesLeft,
     totalSpecialsUsed,

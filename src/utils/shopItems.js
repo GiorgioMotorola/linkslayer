@@ -308,4 +308,15 @@ export const shopItems = [
     haikuTwo: "Worlds unseen, a random twist",
     haikuThree: "Fate's new road unfurled.",
   },
+  {
+    id: "dog_companion",
+    name: "🐕‍🦺 Dog Companion",
+    cost: 100,
+    effect: "inventoryItem",
+    details: "dog",
+    description: "A loyal companion who joins you on your quest. Deals +2 damage to every attack. One per adventure.",
+    haikuOne: "Warm fur, wagging tail",
+    haikuTwo: "Faithful steps beside your own",
+    haikuThree: "Never walk alone.",
+  },
 ];

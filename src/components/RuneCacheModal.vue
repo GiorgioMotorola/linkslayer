@@ -109,7 +109,7 @@ const rewardsByTier = {
     { type: "gold", amount: 40, label: "You find 40 gold inside." },
     {
       type: "health_potion",
-      amount: 1,
+      amount: 2,
       label: "You find a Health Potion inside.",
     },
   ],
@@ -117,7 +117,7 @@ const rewardsByTier = {
     { type: "gold", amount: 80, label: "You find 80 gold inside." },
     {
       type: "health_potion",
-      amount: 1,
+      amount: 3,
       label: "You find 2 Health Potions inside.",
     },
   ],
@@ -125,33 +125,23 @@ const rewardsByTier = {
     { type: "gold", amount: 100, label: "You find 100 gold inside." },
     {
       type: "health_potion",
-      amount: 2,
+      amount: 4,
       label: "You find 2 Health Potions inside.",
     },
   ],
   5: [
-    { type: "gold", amount: 125, label: "You find 125 gold inside." },
+    { type: "gold", amount: 150, label: "You find 125 gold inside." },
     {
       type: "weapon",
-      amount: 1,
+      amount: 2,
       label: "You find a sword pommel.",
     },
   ],
   6: [
     { type: "gold", amount: 150, label: "You find 150 gold inside." },
     {
-      type: "health_potion",
-      amount: 2,
-      label: "You find 2 Health Potions inside.",
-    },
-    {
-      type: "weapon",
-      amount: 1,
-      label: "You find a sword pommel.",
-    },
-    {
       type: "defense",
-      amount: 1,
+      amount: 2,
       label: "You find a greaves.",
     },
   ],

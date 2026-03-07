@@ -21,6 +21,7 @@
     @option-chosen="handleOptionChosen"
     @close="handleCloseEncounterWrapper"
     :playerName="playerName"
+    :dogName="dogName"
     @log-line="log"
     :compass-count="inventory.compass"
     :shieldBonus="shieldBonus"
@@ -276,6 +277,12 @@
         :weaponBonus="weaponBonus"
         :shieldBonus="shieldBonus"
         :playerGoal="playerGoal"
+        :dogName="dogName"
+        :isBlurred="isBlurred"
+        :isPlayerPoisoned="isPlayerPoisoned"
+        :isCloakActive="isCloakActive"
+        :wardStoneActive="wardStoneActive"
+        :healthRegenActive="healthRegenActive"
       />
     </template>
     <template #quests>
@@ -315,6 +322,11 @@
     @close="showRuneCacheModal = false"
     @reward="handleRuneCacheReward"
   />
+
+  <DogNameModal
+    v-if="showDogNameModal"
+    @named="onDogNamed"
+  />
 </template>
 
 <script setup>
@@ -333,6 +345,7 @@ import HubModal from "@/components/HubModal.vue";
 import DieSlayerModal from "@/components/DieSlayerModal.vue";
 import CampfireOverlay from "@/components/CampfireOverlay.vue";
 import RuneCacheModal from "@/components/RuneCacheModal.vue";
+import DogNameModal from "@/components/DogNameModal.vue";
 
 import { shopItems as allShopItems } from "@/utils/shopItems";
 import { isBoss } from "@/utils/bossGenerator";
@@ -395,6 +408,7 @@ const {
   campfireReward,
   showRuneCacheModal,
   runeCacheReward,
+  showDogNameModal,
   openInventoryModal,
   closeInventoryModal,
 } = modals;
@@ -489,7 +503,14 @@ const {
   specialTier,
   offeringPot,
   playerGoal,
+  dogName,
 } = player;
+
+function onDogNamed(name) {
+  dogName.value = name;
+  showDogNameModal.value = false;
+  log(`🐕 You named your companion <strong>${name}</strong>! They wag their tail happily.`);
+}
 
 const OFFERING_COSTS = [[10, 15, 20], [25, 30, 50]];
 const nextOfferingCost = computed(() => {

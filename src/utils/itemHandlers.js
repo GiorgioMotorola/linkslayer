@@ -4,9 +4,14 @@ export function handleShopPurchase(
   item,
   playerState,
   gameData,
-  utilityFunctions
+  utilityFunctions,
+  modalState
 ) {
   let purchased = false;
+  if (item.details === "dog" && playerState.dogName?.value) {
+    utilityFunctions.log(`🐕‍🦺 You already have a companion: ${playerState.dogName.value}!`);
+    return;
+  }
   if (item.isSpecialLoot) {
     purchased = true;
     utilityFunctions.log(
@@ -224,6 +229,11 @@ export function handleShopPurchase(
           utilityFunctions.log(
             `📜 ${gameData.playerName.value} acquired a Bounty Scroll.`
           );
+        } else if (item.details === "dog") {
+          if (modalState?.showDogNameModal) {
+            modalState.showDogNameModal.value = true;
+          }
+          utilityFunctions.log(`🐕‍🦺 A dog trots up to you expectantly...`);
         }
         break;
 

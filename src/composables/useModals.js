@@ -12,6 +12,7 @@ export function useModals() {
   const campfireReward = ref(null);
   const showRuneCacheModal = ref(false);
   const runeCacheReward = ref(null);
+  const showDogNameModal = ref(false);
 
   watch(showRestModal, (newValue) => {
     if (newValue) {
@@ -41,6 +42,7 @@ export function useModals() {
     campfireReward,
     showRuneCacheModal,
     runeCacheReward,
+    showDogNameModal,
     openInventoryModal,
     closeInventoryModal,
   };
