@@ -509,7 +509,7 @@ const {
 function onDogNamed(name) {
   dogName.value = name;
   showDogNameModal.value = false;
-  log(`🐕 You named your companion <strong>${name}</strong>! They wag their tail happily.`);
+  log(`🐕‍🦺 You named your companion <strong>${name}</strong>! They wag their tail happily.`);
 }
 
 const OFFERING_COSTS = [[10, 15, 20], [25, 30, 50]];

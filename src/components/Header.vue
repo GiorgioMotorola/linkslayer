@@ -158,7 +158,7 @@
                   <div v-if="headerHeartCount > 0" class="dog-hearts">
                     <span v-for="i in headerHeartCount" :key="i" class="dog-heart">💕</span>
                   </div>
-                  <div v-if="dogPlusOneVisible" class="dog-plus-one">+1 dmg</div>
+                  <div v-if="dogPlusOneVisible" class="dog-plus-one">+2 dmg</div>
                 </div>
               </div>
             </template>
