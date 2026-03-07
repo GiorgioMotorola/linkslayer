@@ -97,54 +97,12 @@ const emit = defineEmits(["close", "reward"]);
 const RUNES = ["ᚠ", "ᚢ", "ᚦ", "ᚨ", "ᚱ", "ᚲ"];
 
 const rewardsByTier = {
-  1: [
-    { type: "gold", amount: 25, label: "You find 25 gold inside." },
-    {
-      type: "health_potion",
-      amount: 1,
-      label: "You find a Health Potion inside.",
-    },
-  ],
-  2: [
-    { type: "gold", amount: 40, label: "You find 40 gold inside." },
-    {
-      type: "health_potion",
-      amount: 2,
-      label: "You find a Health Potion inside.",
-    },
-  ],
-  3: [
-    { type: "gold", amount: 80, label: "You find 80 gold inside." },
-    {
-      type: "health_potion",
-      amount: 3,
-      label: "You find 2 Health Potions inside.",
-    },
-  ],
-  4: [
-    { type: "gold", amount: 100, label: "You find 100 gold inside." },
-    {
-      type: "health_potion",
-      amount: 4,
-      label: "You find 2 Health Potions inside.",
-    },
-  ],
-  5: [
-    { type: "gold", amount: 150, label: "You find 125 gold inside." },
-    {
-      type: "weapon",
-      amount: 2,
-      label: "You find a sword pommel.",
-    },
-  ],
-  6: [
-    { type: "gold", amount: 150, label: "You find 150 gold inside." },
-    {
-      type: "defense",
-      amount: 2,
-      label: "You find a greaves.",
-    },
-  ],
+  1: { type: "gold", amount: 25, label: "You find 25 gold inside." },
+  2: { type: "gold", amount: 40, label: "You find 40 gold inside." },
+  3: { type: "gold", amount: 80, label: "You find 80 gold inside." },
+  4: { type: "gold", amount: 100, label: "You find 100 gold inside." },
+  5: { type: "gold", amount: 150, label: "You find 150 gold inside." },
+  6: { type: "gold", amount: 175, label: "You find 175 gold inside." },
 };
 
 const sequenceLength = computed(() => props.tier + 2); // tier 1→3, tier 2→4, tier 3→5
@@ -201,9 +159,8 @@ async function onRuneClick(rune) {
     playerInput.value.push(rune);
 
     if (playerInput.value.length === sequence.value.length) {
-      // Success — roll reward
-      const pool = rewardsByTier[props.tier] ?? rewardsByTier[1];
-      rolledReward.value = pool[Math.floor(Math.random() * pool.length)];
+      // Success — give gold reward for this tier
+      rolledReward.value = rewardsByTier[props.tier] ?? rewardsByTier[1];
       phase.value = "success";
     }
   } else {
