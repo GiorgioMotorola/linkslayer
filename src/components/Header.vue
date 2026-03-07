@@ -1163,7 +1163,4 @@ body {
   font-family: "Roboto", sans-serif;
   font-optical-sizing: auto;
 }
-
-
-@import "./styles/CombatAnimations.css";
 </style>
