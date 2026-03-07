@@ -57,7 +57,7 @@ import { ref, watch, onMounted, computed } from "vue";
 import { fetchWikipediaArticle } from "@/utils/wikipediaApi";
 import logo from "../assets/newlogo-nobg1.png";
 import WeatherOverlay from "./WeatherOverlay.vue";
-import "./styles/articleViewerstyles.css";
+import "./styles/articleViewerStyles.css";
 
 const props = defineProps({
   articleTitle: String,
