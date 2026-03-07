@@ -245,6 +245,33 @@ function applyOptionEffects({
   }
 }
 
+function showFinalScene(responseText, currentEncounter, enemyState) {
+  const continueOption = [{ text: "Continue on your journey.", flow: "close_encounter" }];
+  if (currentEncounter.type === "npc") {
+    enemyState.encounter.value = {
+      type: "npc",
+      npc: {
+        id: currentEncounter.npc.id,
+        name: currentEncounter.npc.name,
+        greeting: responseText,
+        options: continueOption,
+      },
+    };
+  } else if (currentEncounter.type === "lore") {
+    enemyState.encounter.value = {
+      type: "lore",
+      lore: {
+        id: currentEncounter.lore.id,
+        name: currentEncounter.lore.name,
+        text: responseText,
+        options: continueOption,
+      },
+    };
+  } else {
+    enemyState.encounter.value = null;
+  }
+}
+
 export function handleEncounterOption({
   option,
   playerState,
@@ -258,6 +285,7 @@ export function handleEncounterOption({
   const currentEncounter = enemyState.encounter.value;
   const isNpcEncounter = currentEncounter && currentEncounter.type === "npc";
   const isLoreEncounter = currentEncounter && currentEncounter.type === "lore";
+  const canShowFinalScene = isNpcEncounter || isLoreEncounter;
 
   if (option.responseText) {
     utilityFunctions.log(`You select: ${option.text}`);
@@ -319,8 +347,12 @@ export function handleEncounterOption({
   }
 
   if (option.flow === "close_encounter") {
-    enemyState.encounter.value = null;
-    modalState.bossOverlay.value = false;
+    if (option.responseText && canShowFinalScene) {
+      showFinalScene(option.responseText, currentEncounter, enemyState);
+    } else {
+      enemyState.encounter.value = null;
+      modalState.bossOverlay.value = false;
+    }
     return;
   }
 
@@ -440,13 +472,21 @@ export function handleEncounterOption({
       playerState,
       utilityFunctions,
     });
-    enemyState.encounter.value = null;
-    modalState.bossOverlay.value = false;
+    if (option.responseText && canShowFinalScene) {
+      showFinalScene(option.responseText, currentEncounter, enemyState);
+    } else {
+      enemyState.encounter.value = null;
+      modalState.bossOverlay.value = false;
+    }
     return;
   }
 
   if (currentEncounter !== null) {
-    enemyState.encounter.value = null;
-    modalState.bossOverlay.value = false;
+    if (option.responseText && canShowFinalScene) {
+      showFinalScene(option.responseText, currentEncounter, enemyState);
+    } else {
+      enemyState.encounter.value = null;
+      modalState.bossOverlay.value = false;
+    }
   }
 }
