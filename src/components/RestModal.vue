@@ -35,6 +35,24 @@
           </span>
         </button>
 
+        <button
+          v-if="shouldShowShortRest"
+          @click="handleAssemble('weapon')"
+          :disabled="(props.weaponPieces || 0) < 2"
+        >
+          🛠️ Assemble Weapon Upgrade
+          <span class="assemble-sub">{{ props.weaponPieces || 0 }} piece{{ (props.weaponPieces || 0) !== 1 ? 's' : '' }} — need 2</span>
+        </button>
+
+        <button
+          v-if="shouldShowShortRest"
+          @click="handleAssemble('defense')"
+          :disabled="(props.defensePieces || 0) < 2"
+        >
+          🛡️ Assemble Defense Upgrade
+          <span class="assemble-sub">{{ props.defensePieces || 0 }} piece{{ (props.defensePieces || 0) !== 1 ? 's' : '' }} — need 2</span>
+        </button>
+
         <button v-if="shouldShowShortRest" @click="$emit('open-shop')" class="close-action-btn shop-btn">
           🛒 Visit the Shop →
         </button>
@@ -136,22 +154,6 @@
             :disabled="longRestDone"
           >
             🌙 {{ longRestLabel }} — restore {{ longRestHp }} HP and gain +{{ longRestSpecials }} class {{ longRestSpecials === 1 ? 'ability' : 'abilities' }}
-          </button>
-
-          <button
-            @click="handleAssemble('weapon')"
-            :disabled="(props.weaponPieces || 0) < 2"
-          >
-            🛠️ Assemble Weapon Upgrade
-            <span class="assemble-sub">{{ props.weaponPieces || 0 }} piece{{ (props.weaponPieces || 0) !== 1 ? 's' : '' }} — need 2</span>
-          </button>
-
-          <button
-            @click="handleAssemble('defense')"
-            :disabled="(props.defensePieces || 0) < 2"
-          >
-            🛡️ Assemble Defense Upgrade
-            <span class="assemble-sub">{{ props.defensePieces || 0 }} piece{{ (props.defensePieces || 0) !== 1 ? 's' : '' }} — need 2</span>
           </button>
 
           <button @click="handleSleep" class="close-action-btn sleep-btn">
