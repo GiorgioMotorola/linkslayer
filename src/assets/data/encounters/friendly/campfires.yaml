@@ -6,7 +6,7 @@
       result: campfire_rest
       campfireName: Cliffside Campfire
       responseText: You sit by the fire.
-    - text: Keep moving. The ridge looks like a good vantage point.
+    - text: Keep moving along the ridge.
       result: none
       responseText: You continue on.
 
@@ -30,7 +30,7 @@
       result: campfire_rest
       campfireName: Valley Campfire
       responseText: You sit by the fire
-    - text: Keep going while there's still light.
+    - text: Keep moving through the valley.
       result: none
       responseText: You continue on.
 
@@ -42,6 +42,6 @@
       result: campfire_rest
       campfireName: Riverside Campfire
       responseText: You sit by the fire
-    - text: Cross the river and push on.
+    - text: Keep moving through the river.
       result: none
       responseText: You continue on.

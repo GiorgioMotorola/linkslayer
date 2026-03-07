@@ -100,6 +100,7 @@
     - text: Put on the P mask.
       result: item
       details: shield
+      amount: 2
       responseText: You feel safer and ready for any attack.
     - text: Put on the W mask.
       result: special
@@ -109,7 +110,7 @@
     - text: Put on the R mask.
       effect: item
       details: gold
-      amount: 15
+      amount: 50
       responseText: You feel richer than ever.
     - text: Put on the C mask.
       result: item

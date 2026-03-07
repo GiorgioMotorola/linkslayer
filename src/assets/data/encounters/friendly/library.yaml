@@ -14,8 +14,8 @@
     - text: "A Blacksmith's Notes on Tempered Steel — full of weapon diagrams, marginalia everywhere"
       result: item
       details: weapon
-      amount: 1
-      responseText: You spend a few minutes reading the blacksmith's precise, obsessive notes. By the time you set the book down, you have a much better understanding of how to hit things harder. Weapon damage +1.
+      amount: 2
+      responseText: You spend a few minutes reading the blacksmith's precise, obsessive notes. By the time you set the book down, you have a much better understanding of forge work. A few metal scraps fall from the pages. You pocket 4 Scrap Metal.
     - text: "On Patience and the Virtue of Waiting — the longest, densest book in the foyer"
       result: none
       responseText: "You take the book and open it to page one. You read a single paragraph. You put the book back. The Archivist watches this with professional detachment. 'Most people last half a paragraph,' she says. 'You did well.'"
@@ -32,8 +32,8 @@
     - text: "The Siege Engineer's Handbook — weapon schematics, some with brown stains on them"
       result: item
       details: weapon
-      amount: 1
-      responseText: The handbook is detailed, gruesome, and surprisingly practical. You absorb enough to improve how you hit things. Weapon damage +1. The Pale Librarian watches you read with an expression you can't quite identify.
+      amount: 2
+      responseText: The handbook is detailed, gruesome, and surprisingly practical. A small bundle of metal scraps is tucked into the back cover. You pocket them. 4 Scrap Metal. The Pale Librarian watches with an expression you can't quite identify.
     - text: "Prayers of the Final Healer — warm to the touch, stained with something very old"
       result: item
       details: health_potion_consumable
@@ -45,7 +45,7 @@
 
 - id: lib_003
   name: The East Wing
-  greeting: "A frantic scholar rushes past, dropping scrolls. He skids to a stop when he notices you. 'Oh! A visitor! I've been cataloguing the East Wing for — a while. Years, probably. Or centuries. The shelves keep moving. I have too many books. Please. Take one. I cannot carry them all.'"
+  greeting: "A frantic scholar rushes past, dropping scrolls. He skids to a stop when he notices you. 'Oh! A visitor! I've been cataloguing the East Wing for a while. Years, probably. Or centuries. The shelves keep moving. I have too many books. Please. Take one. I cannot carry them all.'"
   options:
     - text: "Practical Alchemy for the Impatient — smells faintly of sulfur, works anyway"
       result: item
@@ -59,8 +59,8 @@
     - text: "Field Notes on Living Armor — shell samples and scales still attached to the pages"
       result: item
       details: shield
-      amount: 1
-      responseText: "The field notes are dense with observations about how creatures defend themselves. You take the attached samples too. By the time you put the book down, your own defense has improved. Defense +1. 'Fascinating, isn't it?' the scholar says. He does not wait for an answer."
+      amount: 2
+      responseText: "The field notes are dense with observations about how creatures defend themselves. The attached material samples are real, actual shell fragments and scale pieces, still useful. You pocket them. 4 Scrap Metal. 'Fascinating, isn't it?' the scholar says. He does not wait for an answer."
     - text: "The Unfinished Theory of Everything — stops mid-sentence on page 12"
       result: none
       responseText: "You read the first twelve pages, which are genuinely extraordinary. Page 12 ends mid-sentence: 'And therefore the fundamental nature of reality is simply a matter of—' That's it. That's the book. The scholar looks embarrassed. 'I'll finish it eventually,' he says. You hand it back."
@@ -81,8 +81,8 @@
     - text: "The Soldier's Practical Compendium — worn spine, every page used, combat notes in the margins"
       result: item
       details: weapon
-      amount: 1
-      responseText: The compendium has been carried into combat by someone who knew what they were doing. Their notes are sharp and specific. You read carefully and feel your technique improve. Weapon damage +1.
+      amount: 2
+      responseText: The compendium has been carried into combat by someone who knew what they were doing. Their notes are sharp and specific. Wedged in the spine, a small wrapped bundle of metal scraps. You pocket them. 4 Scrap Metal.
     - text: "Poetry of the Open Sky — three hundred and forty pages of verse about clouds"
       result: none
       responseText: "You sit on a bench and read for a while. The poetry is genuinely beautiful. A cloud passes overhead that looks exactly like the one described on page 212. You put the book back gently. Nothing useful has happened, but you feel strangely calm."
@@ -103,12 +103,12 @@
     - text: "Treatise on Unsanctioned Blades — the pages are surprisingly sharp"
       result: item
       details: weapon
-      amount: 1
-      responseText: "The figure hands it over with visible reluctance. 'Careful with that one.' The treatise covers blade techniques that are, in several jurisdictions, illegal. They are also effective. Weapon damage +1. You cut your thumb on page 7."
+      amount: 2
+      responseText: "The figure hands it over with visible reluctance. 'Careful with that one.' The treatise covers blade techniques that are, in several jurisdictions, illegal. Four sharpened metal scraps fall from between the pages. You pocket them. 4 Scrap Metal. You cut your thumb on page 7."
     - text: "Secrets of the Library Itself — begins with tremendous promise"
       result: damage-minor
       amount: 7
-      responseText: "You open the book. Page one is extraordinary — the library's true nature, laid bare. Page two is blank. Page three is blank. You flip to the end. All blank. The cover closes on its own. Something about the experience has cost you 7 HP. You don't know how to explain it. The figure shrugs. 'Yeah. That happens.'"
+      responseText: "You open the book. Page one is extraordinary. Page two is blank. Page three is blank. You flip to the end. All blank. The cover closes on its own. Something about the experience has cost you 7 HP. You don't know how to explain it. The figure shrugs. 'Yeah. That happens.'"
 
 - id: lib_006
   name: The Back Stacks
@@ -126,8 +126,8 @@
     - text: "Notes on Defensive Metalwork — half-finished, but what's there is solid"
       result: item
       details: shield
-      amount: 1
-      responseText: "The notes break off mid-thought on page 88, but everything up to that point is excellent. You spend a few minutes studying the diagrams. Your defense improves. Defense +1. The student seems pleased you took it. 'It was heavy,' she says."
+      amount: 2
+      responseText: "The notes break off mid-thought on page 88, but everything up to that point is excellent. You find metal sample pieces tucked throughout. You pocket them. 4 Scrap Metal. The student seems pleased you took it. 'It was heavy,' she says."
     - text: "How to Navigate Infinite Spaces — appears to be exactly what you need"
       result: none
       responseText: "You open the book with genuine hope. Chapter one refers you to Volume II. You look for Volume II. It refers you to Volume III. Volume III refers you to Volume I. You put the book down. The student watches. 'Yeah,' she says. 'I tried that one too.'"
@@ -140,7 +140,7 @@
       result: item
       details: weapon
       amount: 2
-      responseText: "The Curator slides the book through the gate without touching the bars. Inside the front cover, a detailed weapon schematic is folded in thirds. It covers techniques that the swordsmith apparently took pains to ensure would not survive him. They have. Weapon damage +2."
+      responseText: "The Curator slides the book through the gate without touching the bars. Inside the front cover, a detailed weapon schematic is folded in thirds. You pocket them. 4 Scrap Metal."
     - text: "The Healer Who Refused to Die — pressed flowers inside, still fresh after an unknowable number of years"
       result: item
       details: health_potion_consumable
@@ -153,4 +153,4 @@
     - text: "What the Library Knows About You — your name is written on page one"
       result: damage-minor
       amount: 10
-      responseText: "You open the book. Your name, precisely correct, is on page one. The next page contains a date. The page after that is blank. You close the book very quickly and slide it back through the gate. The Curator catches it without looking. You take 10 damage in the form of a cold sweat that doesn't fully go away."
+      responseText: "You open the book. Your name is on page one. The next page contains a date. The page after that is blank. You close the book very quickly and slide it back through the gate. The Curator catches it without looking. You take 10 damage in the form of a cold sweat that doesn't fully go away."

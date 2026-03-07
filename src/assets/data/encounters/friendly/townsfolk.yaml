@@ -1,79 +1,80 @@
 - id: npc_002
   name: Smith the Blacksmith
-  greeting: "SMITH THE BLACKSMITH: Hello."
+  greeting: "'Hello.'"
   options:
     - text: "'Howdy'"
       result: item
       details: shield
-      responseText: "SMITH THE BLACKSMITH: You can see me?. No one has talked to me or looked at me in 50 years. Oh heavens this is incredible. I spend my days and nights sleeping and tending to various pieces of armor. All day. All Night. You have given me hope. Here, take this bracer. Its my best yet."
-    - text: "'Hello?'"
+      amount: 2
+      responseText: "You can see me?. No one has talked to me or looked at me in 50 years. Oh heavens this is incredible. I spend my days and nights sleeping and tending to various pieces of metal. All day. All Night. You have given me hope. Here, take these scrap pieces. Use them well. 2 Scrap Metal."
+    - text: "Say Nothing"
       result: none
-      responseText: "SMITH THE BLACKSMITH: Howdy."
-    - text: "'Hello.'"
+      responseText: "'I will never be seen again.'"
+    - text: "Continue Walking."
       result: none
-      responseText: "SMITH THE BLACKSMITH: Howdy."
-    - text: "'Hi.'"
+      responseText: "'I will never be seen again.'"
+    - text: "'I wonder what is just over that ridge...'"
       result: none
-      responseText: "SMITH THE BLACKSMITH: Howdy."
+      responseText: "'I will never be seen again.'"
 
 - id: npc_003
   name: Old Guy Accardi
-  greeting: "OLD GUY ACCARDI: Have you seen my dog? His name is Artie. Honestly, he'll eat any food. He even eats the tops of strawberries. Also, he likes two clicks at the same time."
+  greeting: "'Have you seen my dog? His name is Artie. Honestly, he'll eat any food. He even eats the tops of strawberries. Also, he likes two clicks at the same time.'"
   options:
     - text: "'I have not seen him, but if I do, I'll run back here and let you know.'"
       result: inventoryItem
       id: health_potion_consumable
-      responseText: "OLD GUY ACCARDI: That's what's up. Thanks for telling me. As a reward, here is a sealed Health Potion I found earlier."
+      responseText: "'That's what's up. Thanks for telling me. As a reward, here is a sealed Health Potion I found earlier.'"
     - text: Ignore him and walk away
       result: none
       responseText: "You nod politely and keep moving. You feel guilt because you DID in fact see Artie a few clicks ago. I hope you lose sleep."
-    - text: "More like Fartie, heh."
+    - text: "'More like Fartie, heh.'"
       result: combat
       responseText: "Old Guy Accardi's smile turns to a deep and angry scowl. He says, 'You're going to eat those words,' makes a ton of noise to attract unwanted attention, and then throws a smoke bomb at his feet. He is now gone and in his place is something ready to kill you."
     - text: "'Yes. I saw him a few clicks back that way. Gave him a couple of pets on the noggin, I did.'"
       effect: item
       details: gold
       amount: 15
-      responseText: "OLD GUY ACCARDI: That's what's up. Thank you for looking out. Here is a finder's fee."
+      responseText: "'That's what's up. Thank you for looking out. Here is a finder's fee.'"
 
 - id: npc_008
   name: Daniel the Selfless
-  greeting: "DANIEL THE SELFLESS: Hello, traveler. I am giving away all of my posessions in an attempt to live free. Please, take a look."
+  greeting: "'Hello, traveler. I am giving away all of my posessions in an attempt to live free. Please, take a look.'"
   options:
     - text: Take a Turkey Leg from Daniel.
       result: inventoryItem
       id: turkey_leg_consumable
-      responseText: "DANIEL THE SELFLESS: Enjoy it."
+      responseText: "'Enjoy it.'"
     - text: "'No, thank you.'"
       result: none
-      responseText: "DANIEL THE SELFLESS: Cool."
+      responseText: "'Cool.'"
     - text: Take his Gold
       result: item
       details: gold
       amount: 15
-      responseText: "DANIEL THE SELFLESS: Spend in good health"
+      responseText: "'Spend in good health.'"
     - text: Take the Compass
       result: inventoryItem
       id: arcane_compass
-      responseText: "DANIEL THE SELFLESS: Be careful with this."
+      responseText: "'Be careful with this.'"
 
 - id: npc_014
   name: Lord Bruenor Battlehammer
-  greeting: "LORD BRUENOR BATTLEHAMMER: Good sir, I am Lord Bruenor Battlehammer, Lord of these lands and heir of King Bort Battlehammer. I confess I am lost. I understand being lost and a Lord of this land seems like something a crazy beggar would say, but I implore you, I am telling the truth. You seem like you know these lands better than most. Please, tell me which direction would be Castle Battlehammer?"
+  greeting: "'Good sir, I am Lord Bruenor Battlehammer, Lord of these lands and heir of King Bort Battlehammer. I confess I am lost. I understand being lost and a Lord of this land seems like something a crazy beggar would say, but I implore you, I am telling the truth. You seem like you know these lands better than most. Please, tell me which direction would be Castle Battlehammer?'"
   options:
     - text: "'My Lord, go past those bushes over there and through the clearing. You will be able to see your castle in the distance.'"
       result: inventoryItem
       id: turkey_leg_consumable
-      responseText: "LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Here is a Turkey Leg from my finest Turkey. Come by any time and we can dine on a full Turkey."
+      responseText: "'Thank you, my dear friend. Here is a Turkey Leg from my finest Turkey. Come by any time and we can dine on a full Turkey.'"
     - text: "'This path will lead you there safely. You will just have to head the other direction, My Lord.'"
       result: special
       details: recover
       amount: 1
-      responseText: "LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Come visit me anytime and I will show you how to harness the power of your highest ability."
+      responseText: "'Thank you, my dear friend. Come visit me anytime and I will show you how to harness the power of your highest ability.'"
     - text: "'These things happen, My Lord. However, I seem to be just as lost as you are, sadly.'"
       result: item
       details: weapon
-      responseText: "LORD BRUENOR BATTLEHAMMER: Thank you, my dear friend. Come visit me anytime and we will improve that sword of yours."
+      responseText: "'Thank you, my dear friend. Here, take these scraps from my forge. Come visit me anytime. 2 Scrap Metal.'"
     - text: You distrust the raving madman. Why would a Lord of the lands be lost? You decide to attack the lunatic with your weapon.
       routeTitle: Prison
       responseText: It seems he was telling the truth. Off to jail you go, I suppose.
@@ -85,7 +86,8 @@
     - text: Take the Doctors Padded Armor
       result: item
       details: shield
-      responseText: You take the dead man's Padded Armor
+      amount: 2
+      responseText: You pry some metal from the dead man's armor. 2 Scrap Metal.
     - text: Take the Doctors Gold
       effect: item
       details: gold
@@ -100,10 +102,10 @@
 
 - id: hanni_aebi
   name: Hanni Aebi
-  greeting: "New face in town, aren't you? My name's Hanni Aebi. Come, sit a spell, and tell me what brings you to our humble village."
+  greeting: "'New face in town, aren't you? My name's Hanni Aebi. Come, sit a spell, and tell me what brings you to our humble village.'"
   dialogueNodes:
     start:
-      text: "New face in town, aren't you? My name's Hanni Aebi. Come, sit a spell, and tell me what brings you to our humble village."
+      text: "'New face in town, aren't you? My name's Hanni Aebi. Come, sit a spell, and tell me what brings you to our humble village.'"
       options:
         - text: Tell me about this village.
           flow: dialogue_branch
@@ -111,16 +113,16 @@
         - text: I could use some healing.
           flow: dialogue_branch
           next_node_id: healing_offer
-        - text: "I'm fine, thank you. Just passing through."
+        - text: "'I'm fine, thank you. Just passing through.'"
           flow: close_encounter
           responseText: "Hanni nods kindly. 'Safe travels then, dearie. May your path be clear.'"
     village_backstory:
-      text: "Oh, this village has seen many seasons. We're nestled right at the foot of the Whisperwind Peaks, you see. Long ago, they say ancient spirits dwelled there, protecting us from the creeping shadows of the Sunken City. It's quieter now, but the old ways linger. We will know the shadows are back if our young ones start disappearing. The shadows crave innocent minds. But so far, no missing children."
+      text: "'Oh, this village has seen many seasons. We're nestled right at the foot of the Whisperwind Peaks, you see. Long ago, they say ancient spirits dwelled there, protecting us from the creeping shadows of the Sunken City. It's quieter now, but the old ways linger. We will know the shadows are back if our young ones start disappearing. The shadows crave innocent minds. But so far, no missing children.'"
       options:
-        - text: "Thats... great for you..."
+        - text: "'Dang.'"
           flow: dialogue_branch
           next_node_id: sunken_city_lore
-        - text: "That's enough history for now. Can you help me?"
+        - text: "'That's enough history for now. Can you help me?'"
           flow: dialogue_branch
           next_node_id: healing_offer
         - text: Thank you for the stories. I should go.
@@ -129,14 +131,14 @@
     sunken_city_lore:
       text: "The Sunken City... a tragic tale. It was once a grand kingdom, swallowed by the earth and sea in a single night. Some say it was a curse, others, a forgotten magic. Best not to dwell on such things too long; they tend to draw unwanted attention."
       options:
-        - text: "That's enough history for now. Can you help me?"
+        - text: "'That's enough history for now. Can you help me?'"
           flow: dialogue_branch
           next_node_id: village_backstory
         - text: "I've heard enough. Goodbye."
           flow: close_encounter
           responseText: "Hanni nods, her expression thoughtful. 'Indeed. Some stories are best left untold.'"
     healing_offer:
-      text: "Oh, you poor thing. You look a bit rough. I've got some remedies. What do you need?"
+      text: "'Oh, you poor thing. You look a bit rough. I've got some remedies. What do you need?'"
       options:
         - text: A quick pick-me-up. (Free +5 HP)
           effect: item
@@ -159,6 +161,6 @@
           amount: 4
           responseText: "Hanni chuckles, pulling out a tankard. 'Always got some homebrew for a parched throat. Just 2 gold, but it's strong stuff.'"
           flow: close_encounter
-        - text: "Never mind, I'm alright now."
+        - text: "'Never mind, I'm alright now.'"
           flow: dialogue_branch
           next_node_id: start

@@ -5,8 +5,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 20,
-    weaponReward: 1,
-    defenseReward: 0,
+    scrapReward: 2,
   },
   {
     type: "Lich Apprentice",
@@ -14,8 +13,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 25,
-    weaponReward: 0,
-    defenseReward: 1,
+    scrapReward: 2,
   },
   {
     type: "Young Vampire",
@@ -23,8 +21,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 20,
-    weaponReward: 1,
-    defenseReward: 1,
+    scrapReward: 4,
   },
   {
     type: "Giant Spider",
@@ -32,8 +29,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 15,
-    weaponReward: 0,
-    defenseReward: 0,
+    scrapReward: 0,
   },
   {
     type: "Baby Kraken",
@@ -41,8 +37,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 30,
-    weaponReward: 1,
-    defenseReward: 0,
+    scrapReward: 2,
   },
   {
     type: "Lesser Elder Brain",
@@ -50,8 +45,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 35,
-    weaponReward: 0,
-    defenseReward: 1,
+    scrapReward: 2,
   },
   {
     type: "Imp",
@@ -59,8 +53,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 10,
-    weaponReward: 0,
-    defenseReward: 0,
+    scrapReward: 0,
   },
   {
     type: "Flaming Skull",
@@ -68,8 +61,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 12,
-    weaponReward: 0,
-    defenseReward: 0,
+    scrapReward: 0,
   },
   {
     type: "Mind Flayer Spawn",
@@ -77,8 +69,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 50,
-    weaponReward: 1,
-    defenseReward: 1,
+    scrapReward: 4,
   },
   {
     type: "Dire Wolf",
@@ -86,8 +77,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 18,
-    weaponReward: 0,
-    defenseReward: 0,
+    scrapReward: 0,
   },
   {
     type: "Wailing Ghost",
@@ -95,8 +85,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 16,
-    weaponReward: 0,
-    defenseReward: 0,
+    scrapReward: 0,
   },
   {
     type: "Hulking Brute",
@@ -104,8 +93,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 80,
-    weaponReward: 1,
-    defenseReward: 1,
+    scrapReward: 4,
   },
   {
     type: "Bandit Camp",
@@ -113,8 +101,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 100,
-    weaponReward: 2,
-    defenseReward: 2,
+    scrapReward: 8,
   },
   {
     type: "Bog Hag (Wearing the skin of the Wizard)",
@@ -122,8 +109,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 70,
-    weaponReward: 1,
-    defenseReward: 0,
+    scrapReward: 2,
   },
   {
     type: "Bobby Lasagna's Hut",
@@ -131,8 +117,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 70,
-    weaponReward: 1,
-    defenseReward: 0,
+    scrapReward: 2,
   },
   {
     type: "Bobby Lasagna",
@@ -140,8 +125,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 140,
-    weaponReward: 1,
-    defenseReward: 2,
+    scrapReward: 6,
   },
   {
     type: "Grotto Banshee",
@@ -149,8 +133,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 0,
-    weaponReward: 1,
-    defenseReward: 0,
+    scrapReward: 2,
   },
   {
     type: "Drunken Kidnappers",
@@ -158,17 +141,15 @@ export const MINI_BOSS_TYPES = [
     minDamage: 6,
     maxDamage: 9,
     goldReward: 150,
-    weaponReward: 1,
-    defenseReward: 1,
+    scrapReward: 4,
   },
-    {
+  {
     type: "Chef Robert, Retired Knights Gaurd and Hand of the King (Expert in Swordplay, has killed over 1000 Men and Beasts.)",
     hp: 180,
     minDamage: 5,
     maxDamage: 10,
     goldReward: 170,
-    weaponReward: 2,
-    defenseReward: 0,
+    scrapReward: 4,
   },
   {
     type: "Brown Bear",
@@ -176,8 +157,7 @@ export const MINI_BOSS_TYPES = [
     minDamage: 5,
     maxDamage: 9,
     goldReward: 50,
-    weaponReward: 1,
-    defenseReward: 1,
+    scrapReward: 4,
   },
 ];
 
@@ -210,8 +190,7 @@ export function generateMiniBoss(specificType, difficultyLevel = 0) {
     minDamage: scaledMinDamage,
     maxDamage: scaledMaxDamage,
     goldReward: miniBossData.goldReward || 0,
-    weaponReward: miniBossData.weaponReward || 0,
-    defenseReward: miniBossData.defenseReward || 0,
+    scrapReward: miniBossData.scrapReward || 0,
     isMiniBoss: true,
   };
 }

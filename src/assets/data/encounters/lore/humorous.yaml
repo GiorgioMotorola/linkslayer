@@ -4,7 +4,7 @@
   options:
     - text: "Place your weapon on the shelf and press 'upgrade'."
       result: combat
-      responseText: Cazzata, Malanga.
+      responseText: 'Cazzata, Malanga.'
     - text: Move forward without upgrading your weapon.
       result: none
       responseText: Nothing is free in this life. I'll pass.

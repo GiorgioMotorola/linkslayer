@@ -77,7 +77,7 @@
     - text: Pick it up and touch it to your weapon
       result: item
       details: weapon
-      responseText: "The shaking stops, the weapon feels sturdier. Damage base has been increased by 1."
+      responseText: "The shaking stops and the artifact crumbles apart, leaving behind shards of dense, workable metal. You pocket them. 2 Scrap Metal."
     - text: Kick the rock into the lake
       result: damage-minor
       responseText: "The rock, still shaking, sails into the lake and disappears under the water. Your foot took damage."
@@ -95,7 +95,7 @@
     - text: Use the things under the lean-to on your weapon.
       result: item
       details: weapon
-      responseText: "I should have been a blacksmith instead of an adventurer. Damage base has been increased by 1."
+      responseText: "I should have been a blacksmith instead of an adventurer. You gather usable materials from the forge site. 2 Scrap Metal."
     - text: Continue on.
       result: none
       responseText: There are probably bugs and spiders in that mess. No thank you.

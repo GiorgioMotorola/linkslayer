@@ -11,8 +11,6 @@ function applyOptionEffects({
     playerHP,
     playerName,
     specialUsesLeft,
-    weaponBonus,
-    shieldBonus,
     blurClicksLeft,
     poisonedClicksLeft,
     poisonDamagePerClick,
@@ -49,13 +47,10 @@ function applyOptionEffects({
         );
       }
       if (option.details === "weapon") {
-        weaponBonus.value += Number(option.amount || 1);
+        const scrapAmount = Number(option.amount || 1) * 2;
+        inventory.value.scrapMetal = (inventory.value.scrapMetal || 0) + scrapAmount;
         log(
-          `🎲 <span class="player-name">${
-            playerName.value
-          }</span> found a weapon upgrade. Weapon damage +${
-            option.amount || 1
-          } (Base Damage Total: +${weaponBonus.value})`
+          `🔩 <span class="player-name">${playerName.value}</span> found ${scrapAmount} Scrap Metal.`
         );
       }
       if (option.details === "beer") {
@@ -136,13 +131,10 @@ function applyOptionEffects({
         }
       }
       if (option.details === "shield") {
-        shieldBonus.value += Number(option.amount || 1);
+        const scrapAmount = Number(option.amount || 1) * 2;
+        inventory.value.scrapMetal = (inventory.value.scrapMetal || 0) + scrapAmount;
         log(
-          `🛡️ <span class="player-name">${
-            playerName.value
-          }</span> has increased their Defense by +${
-            option.amount || 1
-          } (Base Defense Total: +${shieldBonus.value})`
+          `🔩 <span class="player-name">${playerName.value}</span> found ${scrapAmount} Scrap Metal.`
         );
       }
       break;
@@ -418,8 +410,8 @@ export function handleEncounterOption({
   if (option.result === "campfire_rest") {
     const rewards = [
       { type: "gold", amount: 50 },
-      { type: "weapon", amount: 1 },
-      { type: "shield", amount: 1 },
+      { type: "scrap", amount: 2 },
+      { type: "scrap", amount: 4 },
       { type: "special", amount: 3 },
     ];
     const reward = rewards[Math.floor(Math.random() * rewards.length)];

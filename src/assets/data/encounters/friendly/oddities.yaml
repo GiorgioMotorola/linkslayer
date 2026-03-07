@@ -1,24 +1,25 @@
 - id: npc_001
   name: Old Man Flynn
-  greeting: "OLD MAN FLYNN: Did you know They Know?"
+  greeting: "'Did you know They Know?'"
   options:
     - text: "'Yes sir, I did.'"
       result: item
       details: shield
-      responseText: "OLD MAN FLYNN: I knew it. I knew someone would know. That brace looks like it needs a fair polishing. Let me give it a fair polishing, my son."
+      amount: 2
+      responseText: "'I knew it. I knew someone would know. That brace looks like it needs a fair polishing. Let me give it a fair polishing, my son.'"
     - text: Ignore him and walk away
       result: none
       responseText: You nod politely and keep moving. They continue to know.
     - text: "'What do you mean?'"
       result: none
-      responseText: "OLD MAN FLYNN: You... don't know? Then I have nothing to discuss with you."
+      responseText: "'You... don't know? Then I have nothing to discuss with you.'"
     - text: "'From what I heard, they do NOT know, actually.'"
       result: damage-minor
       responseText: Old Man Flynn uses his cane to bop you on the head. He then walks away.
 
 - id: npc_004
   name: TJ the Golden
-  greeting: "TJ THE GOLDEN: Take a seat, will ya? I am cracking beers and listening to Steely Dan."
+  greeting: "'Take a seat, will ya? I am cracking beers and listening to Steely Dan.'"
   options:
     - text: Take a seat, crack a beer, and listen to Steely Dan
       result: item
@@ -26,10 +27,10 @@
       responseText: "Your mind and body are restored by a father's kindness and you gain +5 HP, and your vision is blurry from the delicious beer."
     - text: "'No thanks, I only like to Imagine the Dragon I am going to fight later.'"
       result: none
-      responseText: "TJ THE GOLDEN: Alright. Suit yourself, padre."
+      responseText: "'Alright. Suit yourself, padre.'"
     - text: "'No thanks, I have no time to learn the saxophone.'"
       result: none
-      responseText: "TJ THE GOLDEN: They got a name for the winners in the world. I hope you have a name for when you lose."
+      responseText: "'They got a name for the winners in the world. I hope you have a name for when you lose.'"
     - text: "'Hell yeah I'd have a beer.'"
       result: item
       details: beer-health
@@ -37,11 +38,11 @@
 
 - id: npc_006
   name: Evil Tom
-  greeting: "EVIL TOM: My name is Evil Tom. I'm a really nice guy. \U0001F603"
+  greeting: "'My name is Evil Tom. I'm a really nice guy. \U0001F603'"
   options:
     - text: "'I don't believe you, Evil Tom.'"
       result: combat
-      responseText: "EVIL TOM: Well, I never."
+      responseText: "'Well, I never.'"
     - text: "'Right on.'"
       result: damage
       responseText: Evil Tom sneezes and vanishes in a puff of smoke, leaving only a pair of old Crocs. The Crocs hurt to look at and deal 5 damage.
@@ -51,43 +52,43 @@
     - text: "'You should change your name to Nice Tom then.'"
       result: item
       details: health
-      responseText: "EVIL TOM: Thank you. There is a lack of kindness in this world, and it's nice to meet someone who is counter to the culture. Here is some fresh bread."
+      responseText: "'Thank you. There is a lack of kindness in this world, and it's nice to meet someone who is counter to the culture. Here is some fresh bread.'"
 
 - id: npc_011
   name: Miss Riddlesworth
-  greeting: "MISS RIDDLESWORTH: You see me once in a minute, twice in a moment, but never in a thousand years. What am I?"
+  greeting: "'You see me once in a minute, twice in a moment, but never in a thousand years. What am I?'"
   options:
     - text: "'A blink'"
       result: none
-      responseText: "MISS RIDDLESWORTH: Wrong."
+      responseText: "'Wrong.'"
     - text: "'The letter M'"
       result: item
       details: health
-      responseText: "MISS RIDDLESWORTH: H- How did you guess?"
+      responseText: "'H- How did you guess?'"
     - text: "'A memory'"
       result: none
-      responseText: "MISS RIDDLESWORTH: Not a chance."
+      responseText: "'Not a chance.'"
     - text: "'The moon'"
       result: none
-      responseText: "MISS RIDDLESWORTH: You could not be more incorrect."
+      responseText: "'You could not be more incorrect.'"
 
 - id: npc_012
   name: Mr Riddlesworth
-  greeting: "MR RIDDLESWORTH: I build up castles, I tear down mountains. I make some men blind, I help others to see. What am I?"
+  greeting: "'I build up castles, I tear down mountains. I make some men blind, I help others to see. What am I?'"
   options:
     - text: "'Time'"
       result: none
-      responseText: "MR RIDDLESWORTH: Incorrect."
+      responseText: "'Incorrect.'"
     - text: "'Fire'"
       result: none
-      responseText: "MR RIDDLESWORTH: Well, that's not the answer."
+      responseText: "'Well, that's not the answer.'"
     - text: "'Sand'"
       result: item
       details: weapon
-      responseText: "MR RIDDLESWORTH: You got it."
+      responseText: "'You got it.'"
     - text: "'Gold'"
       result: none
-      responseText: "MR RIDDLESWORTH: Wrong."
+      responseText: "'Wrong.'"
 
 - id: npc_016
   name: A Cute Dog
@@ -96,10 +97,10 @@
     - text: "'Hey I think a guy is looking for you.'"
       result: combat
       responseText: The dog doesn't appear to be a dog after all and morphs into a disgusting creature.
-    - text: "'Woof' back at ya."
+    - text: "''Woof' back at ya.'"
       result: combat
       responseText: The dog doesn't appear to be a dog after all and morphs into a disgusting creature.
-    - text: "More like Fartie, heh."
+    - text: "'More like Fartie, heh.'"
       result: combat
       responseText: The dog doesn't appear to be a dog after all and morphs into a disgusting creature.
     - text: Attack the dog
