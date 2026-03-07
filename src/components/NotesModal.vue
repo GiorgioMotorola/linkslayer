@@ -47,7 +47,7 @@
             <span v-if="props.wardStoneActive" class="status-emoji" title="Ward Stone Active">🪨</span>
             <span v-if="props.healthRegenActive" class="status-emoji" title="Regenerating">🌿</span>
           </div>
-          <div class="dog-pane-stat">+1 dmg per hit</div>
+          <div class="dog-pane-stat">+2 dmg per hit</div>
         </div>
         <div v-if="heartCount > 0" class="hearts-container">
           <span v-for="i in heartCount" :key="i" class="floating-heart">💕</span>
