@@ -149,8 +149,7 @@
         :showRestModal="showRestModal"
         :shortRestsUsed="shortRestsUsed"
         :longRestsUsed="longRestsUsed"
-        :weaponPieces="inventory.weaponPieces"
-        :defensePieces="inventory.defensePieces"
+        :scrapMetal="inventory.scrapMetal"
         :restModalCount="restModalCount"
         :specialTier="specialTier"
         :offeringPot="offeringPot"
@@ -162,7 +161,6 @@
         :questTurnedIn="questTurnedIn"
         :campTier="campTier"
         @rest="handleRest"
-        @assemble-upgrade="handleAssembleUpgradeWrapper"
         @offer="callHandleOffer"
         @sleep="handleSleepTransition"
         @order-beer="handleOrderBeer"
@@ -174,6 +172,7 @@
         @turn-in-quest="handleTurnInQuest"
         @open-shop="showShopModal = true"
         @open-tavern-shop="showTavernShop = true"
+        @open-forge="showForge = true"
       />
 
       <ShopModal
@@ -358,6 +357,15 @@
     @close="showTavernShop = false"
     @buy="handleTavernShopBuy"
   />
+
+  <ForgeModal
+    v-if="showForge"
+    :scrapMetal="inventory.scrapMetal"
+    :weaponBonus="weaponBonus"
+    :shieldBonus="shieldBonus"
+    @close="showForge = false"
+    @forge="handleForge"
+  />
 </template>
 
 <script setup>
@@ -378,6 +386,7 @@ import CampfireOverlay from "@/components/CampfireOverlay.vue";
 import RuneCacheModal from "@/components/RuneCacheModal.vue";
 import DogNameModal from "@/components/DogNameModal.vue";
 import TavernShopModal from "@/components/TavernShopModal.vue";
+import ForgeModal from "@/components/ForgeModal.vue";
 
 import { shopItems as allShopItems } from "@/utils/shopItems";
 import { isBoss } from "@/utils/bossGenerator";
@@ -448,6 +457,7 @@ const {
 const hubOpen = ref(false);
 const hubTab = ref("backpack");
 const showTavernShop = ref(false);
+const showForge = ref(false);
 
 const showDieSlayer = ref(false);
 const dieSlayerSource = ref("shop");
@@ -678,7 +688,6 @@ const {
   callHandleEncounterOption,
   handleShopPurchase,
   handleClassSelection,
-  handleAssembleUpgradeWrapper,
   handleCloseEncounterWrapper,
   lastDiceRoll,
   lastDamageDealt,
@@ -789,6 +798,18 @@ function handleTavernShopBuy(tier) {
   campTier.value = tier;
   log(`🏕️ You purchase a ${CAMP_NAMES[tier]}. Your long rest has improved.`);
   saveGame();
+}
+
+function handleForge({ type, scrapUsed }) {
+  const upgrades = scrapUsed / 2;
+  inventory.value.scrapMetal = (inventory.value.scrapMetal || 0) - scrapUsed;
+  if (type === "weapon") {
+    weaponBonus.value += upgrades;
+    log(`⚒️ <span class="player-name">${playerName.value}</span> forged ${scrapUsed} scrap into +${upgrades} Weapon Bonus.`);
+  } else {
+    shieldBonus.value += upgrades;
+    log(`⚒️ <span class="player-name">${playerName.value}</span> forged ${scrapUsed} scrap into +${upgrades} Defense Bonus.`);
+  }
 }
 
 function handleTakeQuest() {

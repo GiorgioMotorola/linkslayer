@@ -1,0 +1,213 @@
+.forge-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  backdrop-filter: blur(4px);
+}
+
+.forge-modal {
+  background: rgba(18, 10, 4, 0.97);
+  border: 1px solid rgba(160, 100, 30, 0.55);
+  box-shadow: 0 0 40px rgba(140, 80, 20, 0.2), 0 8px 30px rgba(0, 0, 0, 0.75);
+  border-radius: 10px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  font-family: "IBM Plex Sans", sans-serif;
+  animation: forge-pop 0.25s ease;
+}
+
+@keyframes forge-pop {
+  from { transform: scale(0.88); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.forge-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #e8c070;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(160, 100, 30, 0.4);
+  padding-bottom: 0.7rem;
+}
+
+.forge-scrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.forge-scrap-label {
+  font-size: 12px;
+  color: #8a7050;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.forge-scrap-count {
+  font-size: 20px;
+  font-weight: 700;
+  color: #e0b060;
+}
+
+.forge-columns {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+}
+
+.forge-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem;
+  background: rgba(30, 15, 5, 0.5);
+  border: 1px solid rgba(120, 80, 20, 0.35);
+  border-radius: 6px;
+}
+
+.forge-divider {
+  width: 1rem;
+  flex-shrink: 0;
+}
+
+.forge-col-header {
+  font-size: 14px;
+  font-weight: 700;
+  color: #e8c070;
+}
+
+.forge-col-current {
+  font-size: 11px;
+  color: #6a5530;
+}
+
+.forge-counter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.forge-adj {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(160, 100, 30, 0.5);
+  border-radius: 4px;
+  background: rgba(40, 20, 5, 0.7);
+  color: #e8c070;
+  font-size: 16px;
+  font-family: "IBM Plex Sans", sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.forge-adj:hover:not(:disabled) {
+  background: rgba(160, 90, 20, 0.25);
+  border-color: rgba(210, 140, 40, 0.7);
+}
+
+.forge-adj:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.forge-alloc {
+  font-size: 13px;
+  font-weight: 600;
+  color: #d0a050;
+  min-width: 52px;
+  text-align: center;
+}
+
+.forge-yield {
+  font-size: 11px;
+  color: #7a6040;
+  min-height: 16px;
+}
+
+.forge-btn-wrap {
+  position: relative;
+  margin-top: 0.3rem;
+}
+
+.forge-make-btn {
+  background: rgba(40, 20, 5, 0.7);
+  border: 1px solid rgba(160, 100, 30, 0.5);
+  border-radius: 4px;
+  color: #e8c070;
+  font-size: 12px;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 600;
+  padding: 7px 10px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  text-align: center;
+}
+
+.forge-make-btn:hover:not(:disabled) {
+  background: rgba(160, 90, 20, 0.25);
+  border-color: rgba(210, 140, 40, 0.75);
+  color: #f5d080;
+}
+
+.forge-make-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.spark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3px;
+  height: 7px;
+  margin: -3.5px 0 0 -1.5px;
+  background: linear-gradient(to bottom, #fff7aa, #ff9900);
+  border-radius: 2px;
+  pointer-events: none;
+  transform-origin: 50% 100%;
+  animation: spark-fly 0.5s ease-out forwards;
+}
+
+@keyframes spark-fly {
+  0%   { transform: rotate(var(--a)) translateY(0)    scale(1);   opacity: 1; }
+  100% { transform: rotate(var(--a)) translateY(-38px) scale(0.2); opacity: 0; }
+}
+
+.forge-empty {
+  font-size: 12px;
+  color: #4a3a20;
+  font-style: italic;
+  text-align: center;
+}
+
+.forge-close-btn {
+  background: transparent;
+  border: 1px solid rgba(210, 140, 35, 0.5);
+  border-radius: 4px;
+  color: #f0d060;
+  font-size: 12px;
+  font-family: "IBM Plex Sans", sans-serif;
+  padding: 7px 14px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.forge-close-btn:hover {
+  background: rgba(160, 110, 20, 0.15);
+  border-color: rgba(210, 140, 35, 0.8);
+}

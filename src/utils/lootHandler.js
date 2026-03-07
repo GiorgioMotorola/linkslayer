@@ -1,16 +1,12 @@
 function dropOnce({ playerName, inventory, playerGold, log }) {
-  const lootOptions = ["weaponPiece", "defensePiece", "gold"];
+  const lootOptions = ["scrapMetal", "scrapMetal", "gold"];
   const selectedLoot = lootOptions[Math.floor(Math.random() * lootOptions.length)];
 
   switch (selectedLoot) {
-    case "weaponPiece": {
-      inventory.value.weaponPieces = (inventory.value.weaponPieces || 0) + 1;
-      log(`🛠️ <span class="player-name">${playerName.value}</span> loots a Weapon Piece.`);
-      break;
-    }
-    case "defensePiece": {
-      inventory.value.defensePieces = (inventory.value.defensePieces || 0) + 1;
-      log(`🛡️ <span class="player-name">${playerName.value}</span> loots a Defense Piece.`);
+    case "scrapMetal": {
+      const amount = Math.floor(Math.random() * 3) + 1;
+      inventory.value.scrapMetal = (inventory.value.scrapMetal || 0) + amount;
+      log(`🔩 <span class="player-name">${playerName.value}</span> loots ${amount} Scrap Metal.`);
       break;
     }
     case "gold": {

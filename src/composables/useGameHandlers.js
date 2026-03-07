@@ -636,60 +636,6 @@ export function useGameHandlers(deps) {
     }
   }
 
-  function handleAssembleUpgrade({
-    inventory,
-    playerName,
-    weaponBonus,
-    shieldBonus,
-    upgradeType,
-    utilityFunctions,
-  }) {
-    const { log } = utilityFunctions;
-
-    if (upgradeType === "weapon") {
-      if (inventory.value.weaponPieces >= 2) {
-        inventory.value.weaponPieces -= 2;
-        weaponBonus.value += 1;
-        log(
-          `⚔️ <span class="player-name">${playerName.value}</span> crafted a Weapon Upgrade (+1 Weapon Bonus)`
-        );
-        log(
-          `Weapon Pieces: ${inventory.value.weaponPieces}, Weapon Bonus: ${weaponBonus.value}`
-        );
-      } else {
-        log(`⛔ Not enough Weapon Pieces to craft an upgrade. You need 2.`);
-      }
-    } else if (upgradeType === "defense") {
-      if (inventory.value.defensePieces >= 2) {
-        inventory.value.defensePieces -= 2;
-        shieldBonus.value += 1;
-        log(
-          `🛡️ <span class="player-name">${playerName.value}</span> crafted a Defense Upgrade. (+1 Defense Bonus)`
-        );
-        log(
-          `Defense Pieces: ${inventory.value.defensePieces}, Defense Bonus: ${shieldBonus.value}`
-        );
-      } else {
-        log(`⛔ Not enough Defense Pieces to craft an upgrade. You need 2.`);
-      }
-    } else {
-      log(`Unknown upgrade type: ${upgradeType}`);
-    }
-  }
-
-  function handleAssembleUpgradeWrapper(upgradeType) {
-    handleAssembleUpgrade({
-      inventory: inventory,
-      playerName,
-      weaponBonus,
-      shieldBonus,
-      upgradeType,
-      utilityFunctions: {
-        log,
-      },
-    });
-  }
-
   return {
     callHandleClick,
     callHandleRest,
@@ -700,7 +646,6 @@ export function useGameHandlers(deps) {
     callHandleEncounterOption,
     handleShopPurchase,
     handleClassSelection,
-    handleAssembleUpgradeWrapper,
     handleCloseEncounterWrapper,
     lastDiceRoll,
     lastDamageDealt,

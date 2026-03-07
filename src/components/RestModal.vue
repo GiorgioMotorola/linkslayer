@@ -2,7 +2,6 @@
   <div class="rest-overlay" :class="overlayClass" v-if="props.showRestModal">
     <div class="transition-fade" :class="{ active: isTransitioning }"></div>
     <div class="rest-modal" :class="modalClass">
-
       <div class="rest-icon">{{ restIcon }}</div>
       <div class="rest-modal-phrase">{{ displayPhrase }}</div>
 
@@ -22,13 +21,24 @@
         <button
           v-if="shouldShowShortRest && props.specialTier < 3"
           @click="handleOffer"
-          :disabled="hasOfferedThisRest || props.playerGold < props.nextOfferingCost"
+          :disabled="
+            hasOfferedThisRest || props.playerGold < props.nextOfferingCost
+          "
           class="offering-button"
         >
-          <span class="offering-main">🙏 Offer {{ props.nextOfferingCost }}g to the Gods — upgrade your Special</span>
+          <span class="offering-main"
+            >🙏 Offer {{ props.nextOfferingCost }}g to the Gods — upgrade your
+            Special</span
+          >
           <span class="offering-sub">
             Offering bowl:
-            <span v-for="i in 3" :key="i" class="pot-dot" :class="{ filled: i <= props.offeringPot }">{{ i <= props.offeringPot ? '●' : '○' }}</span>
+            <span
+              v-for="i in 3"
+              :key="i"
+              class="pot-dot"
+              :class="{ filled: i <= props.offeringPot }"
+              >{{ i <= props.offeringPot ? "●" : "○" }}</span
+            >
             {{ props.offeringPot }}/3
             <span v-if="props.specialTier === 1"> — Tier 1 → 2</span>
             <span v-if="props.specialTier === 2"> — Tier 2 → 3</span>
@@ -37,32 +47,36 @@
 
         <button
           v-if="shouldShowShortRest"
-          @click="handleAssemble('weapon')"
-          :disabled="(props.weaponPieces || 0) < 2"
+          @click="$emit('open-forge')"
+          class="close-action-btn"
         >
-          🛠️ Assemble Weapon Upgrade
-          <span class="assemble-sub">{{ props.weaponPieces || 0 }} piece{{ (props.weaponPieces || 0) !== 1 ? 's' : '' }} — need 2</span>
+          ⚒️ Go To The Forge
+          <span class="assemble-sub"
+            >{{ props.scrapMetal || 0 }} scrap metal available</span
+          >
         </button>
 
         <button
           v-if="shouldShowShortRest"
-          @click="handleAssemble('defense')"
-          :disabled="(props.defensePieces || 0) < 2"
+          @click="$emit('open-shop')"
+          class="close-action-btn shop-btn"
         >
-          🛡️ Assemble Defense Upgrade
-          <span class="assemble-sub">{{ props.defensePieces || 0 }} piece{{ (props.defensePieces || 0) !== 1 ? 's' : '' }} — need 2</span>
-        </button>
-
-        <button v-if="shouldShowShortRest" @click="$emit('open-shop')" class="close-action-btn shop-btn">
           🛒 Visit the Shop →
         </button>
 
-        <button v-if="shouldShowShortRest" @click="handleContinue" class="close-action-btn">
+        <button
+          v-if="shouldShowShortRest"
+          @click="handleContinue"
+          class="close-action-btn"
+        >
           Continue On →
         </button>
         <template v-if="shouldShowLongRest && tavernView">
-
-          <button v-if="!hasBeer" @click="orderBeer" :disabled="props.playerGold < 10">
+          <button
+            v-if="!hasBeer"
+            @click="orderBeer"
+            :disabled="props.playerGold < 10"
+          >
             🍺 Order a beer (10g)
           </button>
 
@@ -77,7 +91,12 @@
             Take a sip
             <span class="sip-sub">
               <template v-if="sipCooldown">...</template>
-              <template v-else>+1 HP · {{ sipsRemaining }} sip{{ sipsRemaining !== 1 ? 's' : '' }} remaining</template>
+              <template v-else
+                >+1 HP · {{ sipsRemaining }} sip{{
+                  sipsRemaining !== 1 ? "s" : ""
+                }}
+                remaining</template
+              >
             </span>
           </button>
 
@@ -101,15 +120,27 @@
             Take a bite
             <span class="sip-sub">
               <template v-if="mealCooldown">...</template>
-              <template v-else>+12 HP · {{ mealBitesRemaining }} bite{{ mealBitesRemaining !== 1 ? 's' : '' }} remaining</template>
+              <template v-else
+                >+12 HP · {{ mealBitesRemaining }} bite{{
+                  mealBitesRemaining !== 1 ? "s" : ""
+                }}
+                remaining</template
+              >
             </span>
           </button>
 
-          <button @click="$emit('open-die-slayer')" :disabled="props.playerGold < 5">
+          <button
+            @click="$emit('open-die-slayer')"
+            :disabled="props.playerGold < 5"
+          >
             🎲 Play Die Slayer
           </button>
 
-          <button v-if="props.campTier < 3" @click="$emit('open-tavern-shop')" class="close-action-btn">
+          <button
+            v-if="props.campTier < 3"
+            @click="$emit('open-tavern-shop')"
+            class="close-action-btn"
+          >
             🛒 Camp Supplies →
           </button>
           <button
@@ -118,7 +149,9 @@
             class="quest-turnin-btn"
           >
             📜 Turn In: The Growling Dark
-            <span class="assemble-sub">You've slain the bear. Claim your 50g reward.</span>
+            <span class="assemble-sub"
+              >You've slain the bear. Claim your 50g reward.</span
+            >
           </button>
 
           <div v-else-if="props.questTurnedIn" class="quest-taken-note">
@@ -129,43 +162,42 @@
             📜 Quest scroll is in your backpack.
           </div>
 
-          <div v-else-if="props.questTaken && !props.questComplete" class="quest-taken-note">
+          <div
+            v-else-if="props.questTaken && !props.questComplete"
+            class="quest-taken-note"
+          >
             📜 Quest in progress...
           </div>
 
-          <button
-            v-else
-            @click="takeQuest"
-          >
+          <button v-else @click="takeQuest">
             📜 The Growling Dark
-            <span class="assemble-sub">A weathered notice tacked to the wall. Something stirs in the cave near town...</span>
+            <span class="assemble-sub"
+              >A weathered notice tacked to the wall. Something stirs in the
+              cave near town...</span
+            >
           </button>
 
           <button @click="returnToCampsite" class="close-action-btn">
             ← Return to your campsite
           </button>
-
         </template>
 
         <template v-if="shouldShowLongRest && !tavernView">
-
-          <button
-            @click="handleLongRest"
-            :disabled="longRestDone"
-          >
-            🌙 {{ longRestLabel }} — restore {{ longRestHp }} HP and gain +{{ longRestSpecials }} class {{ longRestSpecials === 1 ? 'ability' : 'abilities' }}
-          </button>
-
-          <button @click="handleSleep" class="close-action-btn sleep-btn">
-            Drift Off to Sleep…
+          <button @click="handleLongRest" :disabled="longRestDone">
+            🌙 {{ longRestLabel }} — restore {{ longRestHp }} HP and gain +{{
+              longRestSpecials
+            }}
+            class {{ longRestSpecials === 1 ? "ability" : "abilities" }}
           </button>
 
           <button @click="goToTavern" class="close-action-btn tavern-btn">
             Head to The Lighthouse Tavern →
           </button>
 
+          <button @click="handleSleep" class="close-action-btn sleep-btn">
+            Drift Off to Sleep…
+          </button>
         </template>
-
       </div>
     </div>
   </div>
@@ -173,14 +205,18 @@
 
 <script setup>
 import { ref, watch, computed } from "vue";
-import { getRandomRestPhrase, getRandomTavernPhrase, getRandomSipPhrase, getRandomTavernMeal } from "../utils/restPhrases.js";
+import {
+  getRandomRestPhrase,
+  getRandomTavernPhrase,
+  getRandomSipPhrase,
+  getRandomTavernMeal,
+} from "../utils/restPhrases.js";
 
 const props = defineProps({
   showRestModal: Boolean,
   shortRestsUsed: Number,
   longRestsUsed: Number,
-  weaponPieces: { type: Number, default: 0 },
-  defensePieces: { type: Number, default: 0 },
+  scrapMetal: { type: Number, default: 0 },
   restModalCount: Number,
   specialTier: { type: Number, default: 1 },
   offeringPot: { type: Number, default: 0 },
@@ -193,7 +229,21 @@ const props = defineProps({
   campTier: { type: Number, default: 0 },
 });
 
-const emit = defineEmits(["rest", "assemble-upgrade", "offer", "sleep", "order-beer", "order-meal", "open-die-slayer", "take-quest", "turn-in-quest", "sip-beer", "bite-meal", "open-shop", "open-tavern-shop"]);
+const emit = defineEmits([
+  "rest",
+  "offer",
+  "sleep",
+  "order-beer",
+  "order-meal",
+  "open-die-slayer",
+  "take-quest",
+  "turn-in-quest",
+  "sip-beer",
+  "bite-meal",
+  "open-shop",
+  "open-tavern-shop",
+  "open-forge",
+]);
 
 const currentRestPhrase = ref("");
 const tavernPhrase = ref("");
@@ -245,10 +295,15 @@ watch(
       mealCooldown.value = false;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
-const CAMP_LABELS = ["sleep on the ground", "sleeping bag", "sleeping bag, pillow", "sleeping bag, pillow, tent"];
+const CAMP_LABELS = [
+  "sleep on the ground",
+  "sleeping bag",
+  "sleeping bag, pillow",
+  "sleeping bag, pillow, tent",
+];
 const longRestLabel = computed(() => {
   const label = CAMP_LABELS[props.campTier] ?? CAMP_LABELS[0];
   return `Long Rest, ${label}`;
@@ -299,10 +354,6 @@ const handleSleep = () => {
   emit("sleep");
 };
 
-const handleAssemble = (type) => {
-  emit("assemble-upgrade", type);
-};
-
 const handleOffer = () => {
   hasOfferedThisRest.value = true;
   emit("offer");
@@ -326,7 +377,9 @@ const takeBite = () => {
   mealBitesRemaining.value--;
   if (mealBitesRemaining.value === 0) return;
   mealCooldown.value = true;
-  setTimeout(() => { mealCooldown.value = false; }, 3000);
+  setTimeout(() => {
+    mealCooldown.value = false;
+  }, 3000);
 };
 
 const takeSip = () => {
@@ -338,15 +391,17 @@ const takeSip = () => {
     return;
   }
   sipCooldown.value = true;
-  setTimeout(() => { sipCooldown.value = false; }, 3000);
+  setTimeout(() => {
+    sipCooldown.value = false;
+  }, 3000);
 };
 
 const goToTavern = async () => {
   isTransitioning.value = true;
-  await new Promise(r => setTimeout(r, 350));
+  await new Promise((r) => setTimeout(r, 350));
   tavernView.value = true;
   currentSipScene.value = "";
-  await new Promise(r => setTimeout(r, 30));
+  await new Promise((r) => setTimeout(r, 30));
   isTransitioning.value = false;
 };
 
@@ -356,10 +411,10 @@ const takeQuest = () => {
 
 const returnToCampsite = async () => {
   isTransitioning.value = true;
-  await new Promise(r => setTimeout(r, 350));
+  await new Promise((r) => setTimeout(r, 350));
   tavernView.value = false;
   currentSipScene.value = "";
-  await new Promise(r => setTimeout(r, 30));
+  await new Promise((r) => setTimeout(r, 30));
   isTransitioning.value = false;
 };
 </script>
