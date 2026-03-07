@@ -1081,6 +1081,7 @@ async function saveGame() {
       restModalCount: restModalCount.value,
       longRestDismissCount: longRestDismissCount.value,
       dogName: dogName.value,
+      goldPouchAccumulatedGold: goldPouchAccumulatedGold.value,
       campTier: campTier.value,
     },
   }, { onConflict: 'user_id' });
@@ -1144,6 +1145,7 @@ function restoreGameState(s) {
   if (s.longRestDismissCount != null) longRestDismissCount.value = s.longRestDismissCount;
   dogName.value = s.dogName ?? "";
   campTier.value = s.campTier ?? 0;
+  goldPouchAccumulatedGold.value = s.goldPouchAccumulatedGold ?? 0;
 }
 
 async function handleRestart() {
