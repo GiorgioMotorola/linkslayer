@@ -13,7 +13,7 @@ import GameView from "./views/GameView.vue";
 <style scoped>
 body {
   margin: 0;
-  background: #e2e6e7;
+  background-color: rgb(243, 238, 238);
   color: #222;
   font-weight: 300;
   font-size: 16px;

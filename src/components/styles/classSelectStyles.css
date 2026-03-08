@@ -14,7 +14,7 @@
   font-weight: 400;
   letter-spacing: 7px;
   text-decoration-color: rgb(99, 79, 79);
-  color: #990000;
+  color: rgb(216, 15, 1);
   font-size: 25px;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .class-select {
-  background: #e8ecee;
+  background: #f8f7f3;
   padding: 1rem;
   border-radius: 3px;
   text-align: center;
@@ -235,17 +235,16 @@
   font-family: "MedievalSharp", cursive;
   font-size: 13px;
   background: transparent;
-  border: 1px solid #990000;
+  border: 1px solid rgb(216, 15, 1);
   border-radius: 4px;
-  color: #990000;
+  color: rgb(216, 15, 1);
   padding: 4px 11px;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
 }
 
 .class-select-btn:hover {
-  background: #990000;
-  color: white;
+  color: rgb(131, 128, 128);
 }
 
 .class-card-stats {

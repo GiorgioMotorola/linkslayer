@@ -2,11 +2,12 @@
   position: relative;
   border-radius: 5px;
   padding: 1.5rem;
-  background-color: #ffffff;
+  background-color: #f0eded;
   max-width: 2000px;
   margin-bottom: 25rem;
   margin-top: 4.5rem;
   z-index: 10;
+  border: 1px solid black;
 }
 
 .overlay {
@@ -45,7 +46,7 @@
 }
 
 .path-display {
-  background: #e8ecee;
+  background: #f8f7f3;
   border-bottom: solid 1px #ccc;
   display: flex;
   align-items: center;

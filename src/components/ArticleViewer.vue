@@ -16,7 +16,7 @@
   <div v-if="inEncounter" class="overlay"></div>
   <div class="path-wrapper">
     <div class="path-display">
-      <img :src="logo" alt="logo" class="path-logo" />
+      <!-- <img :src="logo" alt="logo" class="path-logo" /> -->
       <div class="path-crumb">
         <div class="path-group path-group-from">
           <span class="path-label">from</span>

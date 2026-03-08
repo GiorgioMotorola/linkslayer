@@ -13,13 +13,17 @@
           <span class="char-field"><span class="char-label">👤</span> {{ props.playerName || "Unknown" }}</span>
           <span class="char-field"><span class="char-label">⚔</span> {{ props.playerClass?.name || "—" }}</span>
         </div>
-        <div v-if="!props.dogName && (props.isBlurred || props.isPlayerPoisoned || props.isCloakActive || props.wardStoneActive || props.healthRegenActive)" class="char-sheet-row">
+        <div v-if="!props.dogName && hasAnyStatus" class="char-sheet-row">
           <span class="char-field status-line">
-            <span v-if="props.isBlurred" class="status-emoji" title="Blurred">🍺</span>
+            <span v-if="props.weaponBonus > 0" class="status-emoji" :title="props.weaponBonus === 1 ? 'Cool Stick' : props.weaponBonus === 2 ? 'Cooler Stick' : 'Even Cooler Stick'">🫒{{ props.weaponBonus === 2 ? ' +2' : props.weaponBonus === 3 ? ' +5' : '' }}</span>
+            <span v-if="props.isBlurred" class="status-emoji" title="Drunk">🍺</span>
             <span v-if="props.isPlayerPoisoned" class="status-emoji" title="Poisoned">🤢</span>
-            <span v-if="props.isCloakActive" class="status-emoji" title="Cloaked">👻</span>
-            <span v-if="props.wardStoneActive" class="status-emoji" title="Ward Stone Active">🪨</span>
-            <span v-if="props.healthRegenActive" class="status-emoji" title="Regenerating">🌿</span>
+            <span v-if="props.isEnemyVenomed" class="status-emoji" title="Venom Vial">🧪</span>
+            <span v-if="props.isEnemyBleeding" class="status-emoji" title="Bleeding">🩸</span>
+            <span v-if="props.encounterBeaconActive" class="status-emoji" title="Encounter Beacon">💡</span>
+            <span v-if="props.wardingShieldHitsRemaining > 0" class="status-emoji" title="Warding Shield">✨</span>
+            <span v-if="props.healthRegenActive" class="status-emoji" title="Herbal Poultice">🌿</span>
+            <span v-if="props.isCloakActive" class="status-emoji" title="Cloak of Invisibility">🪄</span>
           </span>
         </div>
         <div class="char-sheet-row">
@@ -41,11 +45,15 @@
             <span class="dog-pane-name">{{ props.dogName }}</span>
             <span class="dog-pane-sep"> | </span>
             <span class="dog-pane-type">Dog</span>
-            <span v-if="props.isBlurred" class="status-emoji" title="Blurred">🍺</span>
+            <span v-if="props.weaponBonus > 0" class="status-emoji" :title="props.weaponBonus === 1 ? 'Cool Stick' : props.weaponBonus === 2 ? 'Cooler Stick' : 'Even Cooler Stick'">🫒{{ props.weaponBonus === 2 ? ' +2' : props.weaponBonus === 3 ? ' +5' : '' }}</span>
+            <span v-if="props.isBlurred" class="status-emoji" title="Drunk">🍺</span>
             <span v-if="props.isPlayerPoisoned" class="status-emoji" title="Poisoned">🤢</span>
-            <span v-if="props.isCloakActive" class="status-emoji" title="Cloaked">👻</span>
-            <span v-if="props.wardStoneActive" class="status-emoji" title="Ward Stone Active">🪨</span>
-            <span v-if="props.healthRegenActive" class="status-emoji" title="Regenerating">🌿</span>
+            <span v-if="props.isEnemyVenomed" class="status-emoji" title="Venom Vial">🧪</span>
+            <span v-if="props.isEnemyBleeding" class="status-emoji" title="Bleeding">🩸</span>
+            <span v-if="props.encounterBeaconActive" class="status-emoji" title="Encounter Beacon">💡</span>
+            <span v-if="props.wardingShieldHitsRemaining > 0" class="status-emoji" title="Warding Shield">✨</span>
+            <span v-if="props.healthRegenActive" class="status-emoji" title="Herbal Poultice">🌿</span>
+            <span v-if="props.isCloakActive" class="status-emoji" title="Cloak of Invisibility">🪄</span>
           </div>
           <div class="dog-pane-stat">+2 dmg per hit</div>
         </div>
@@ -108,6 +116,10 @@ const props = defineProps({
   isCloakActive: { type: Boolean, default: false },
   wardStoneActive: { type: Boolean, default: false },
   healthRegenActive: { type: Boolean, default: false },
+  encounterBeaconActive: { type: Boolean, default: false },
+  wardingShieldHitsRemaining: { type: Number, default: 0 },
+  isEnemyVenomed: { type: Boolean, default: false },
+  isEnemyBleeding: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["close"]);
@@ -116,6 +128,18 @@ const currentTierData = computed(() => {
   if (!props.playerClass?.specialTiers) return null;
   return props.playerClass.specialTiers[props.specialTier - 1] ?? null;
 });
+
+const hasAnyStatus = computed(() =>
+  props.weaponBonus > 0 ||
+  props.isBlurred ||
+  props.isPlayerPoisoned ||
+  props.isEnemyVenomed ||
+  props.isEnemyBleeding ||
+  props.encounterBeaconActive ||
+  props.wardingShieldHitsRemaining > 0 ||
+  props.healthRegenActive ||
+  props.isCloakActive
+);
 
 const heartCount = ref(0);
 let heartTimer = null;

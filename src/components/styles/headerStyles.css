@@ -3,14 +3,13 @@ header {
   bottom: 0;
   left: 0;
   right: 0;
-  background: #e8ecee;
+  background: #f8f7f3;
   z-index: 100;
   padding: 0.5rem;
-  border-top: 1.5px solid #000000;
+  border-top: 1.5px solid rgb(216, 15, 1);
   transition: background-color 1.5s ease-in-out, filter 1.5s ease-in-out,
     color 1.5s ease-in-out;
-  color: rgb(35, 36, 35);
-
+  color: #c0b8a8;
   display: flex;
   flex-direction: column;
 }
@@ -100,6 +99,20 @@ header {
   color: rgb(100, 200, 120);
 }
 
+.encounter-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s ease;
+}
+
+.encounter-wrapper.encounter-active {
+  grid-template-rows: 1fr;
+}
+
+.encounter-wrapper-inner {
+  overflow: hidden;
+}
+
 .encounter-dashboard {
   border-radius: 8px;
   padding: 0.5rem;
@@ -109,11 +122,33 @@ header {
   font-family: "IBM Plex Sans", sans-serif;
   font-optical-sizing: auto;
   font-size: 19px;
-  color: rgb(0, 0, 0);
+  color: #c0b8a8;
   font-weight: 400;
   margin-top: 0;
   margin-bottom: 0;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.player-name-display {
+  font-size: 15px;
+  font-weight: 500;
+  color: #b0a880;
+  letter-spacing: 0.3px;
+}
+
+.status-emojis {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-emoji {
+  font-size: 22px;
+  line-height: 1;
+  cursor: default;
 }
 
 .dog-widget {
@@ -122,6 +157,7 @@ header {
   align-items: center;
   gap: 0;
   line-height: 1;
+  margin-right: 1rem;
 }
 
 .dog-damage-badge {
@@ -191,6 +227,55 @@ header {
   100% { opacity: 0; transform: translateX(-50%) translateY(-28px) scale(1.2); }
 }
 
+.header-main-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  gap: 8px;
+  padding: 2px 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.header-emoji-section {
+  flex-shrink: 0;
+  width: 170px;
+  min-width: 170px;
+  max-width: 170px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.header-left-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-start;
+  position: relative;
+}
+
+.header-stats-section {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.header-right-section {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
 .player-header {
   display: flex;
   justify-content: space-between;
@@ -232,47 +317,167 @@ header {
 }
 
 .all-stats-row-box {
-  background-color: #e3e6e6;
-  border: 3px solid #080808;
+  background: transparent;
+  border: none;
   border-radius: 8px;
-  padding: 0.8rem 1rem;
-  margin-left: auto;
-  margin-right: auto;
+  padding: 0.4rem 0.5rem;
+  margin: 0;
   max-width: fit-content;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 5rem;
-  color: rgb(229, 231, 229);
+  gap: 0.5rem;
+  color: #c0b8a8;
   transition: box-shadow 0.3s ease-out, border-color 0.3s ease-out;
+}
+
+.stat-tile {
+  position: relative;
+  min-width: 44px;
+  padding: 5px 7px;
+  background: #f8f7f3;
+  border: 2px solid rgb(216, 15, 1);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.st-icon {
+  font-size: 18px;
+  color: rgb(0, 0, 0);
+  line-height: 1;
+  user-select: none;
+}
+
+.st-val {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgb(216, 15, 1);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.st-max {
+  font-size: 9px;
+  color: #7a6a48;
+  font-weight: 400;
+}
+
+.st-tier {
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  font-size: 8px;
+  font-weight: 700;
+  color: rgba(200,175,120,0.7);
+  line-height: 1;
+}
+
+.header-dog-btn {
+  position: relative;
+  font-size: 22px;
+  cursor: pointer;
+  line-height: 1;
+  user-select: none;
+  padding: 2px;
+  border-radius: 4px;
+  transition: transform 0.15s;
+}
+
+.header-dog-btn:hover {
+  transform: scale(1.15);
+}
+
+.dog-desktop { display: flex; }
+.dog-mobile { display: none; }
+
+.status-btn-wrapper {
+  position: relative;
+}
+
+.status-btn {
+  background-color: transparent;
+  color: rgb(216, 15, 1);
+  border: 1.5px solid #2c3e50;
+  border-radius: 0.3rem;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  font-size: 19px;
+  font-weight: 400;
+  transition: all 0.25s ease-out;
+  box-shadow: none;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.status-btn:hover {
+  color: #8b8b8b;
+  border-color: #8b8b8b;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.status-popup {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  min-width: 200px;
+  background: #0e0e10;
+  border: 1px solid rgba(200,175,120,0.4);
+  border-radius: 6px;
+  padding: 8px 10px;
+  z-index: 200;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.6);
+}
+
+.status-popup-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(200,175,120,0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.status-popup-item {
+  font-size: 12px;
+  color: #c0b8a8;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(200,175,120,0.1);
+}
+
+.status-popup-item:last-child {
+  border-bottom: none;
+}
+
+.status-popup-empty {
+  color: #7a7060;
+  font-style: italic;
 }
 
 .stat-column,
 .stat-column-hp,
 .stat-column-clicks {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  gap: 4px;
   white-space: nowrap;
 }
 
-.stat-column-hp {
-  border-right: 2px solid rgb(141, 141, 141);
-  padding-right: 4.5rem;
-}
 
-.stat-column-clicks {
-  border-left: 2px solid rgb(141, 141, 141);
-  padding-left: 4.5rem;
-}
 
 .stat-label {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 500;
-  margin-bottom: 0.2rem;
-  letter-spacing: 1px;
-  color: #000;
+  margin-bottom: 0;
+  letter-spacing: 0;
+  color: #7a6840;
+  line-height: 1;
 }
 
 .tier-badge {
@@ -291,9 +496,9 @@ header {
 }
 
 .stat-value {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: 400;
-  color: #374147;
+  color: #e4d4a8;
   display: inline-block;
   will-change: transform, color, text-shadow;
 }
@@ -306,8 +511,8 @@ header {
 
 .inventory-button {
   background-color: transparent;
-  color: #2c3e50;
-  border: 3px solid #2c3e50;
+  color: rgb(216, 15, 1);
+  border: 1.5px solid #2c3e50;
   border-radius: 0.3rem;
   padding: 0.3rem 0.5rem;
   cursor: pointer;
@@ -318,17 +523,16 @@ header {
   letter-spacing: 0.5px;
 }
 .inventory-button:hover {
-  background-color: rgba(44, 62, 80, 0.08);
-  color: #1a2b3b;
-  border-color: #34495e;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  color: #8b8b8b;
+  border-color: #8b8b8b;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);
 }
 
 .inventory-button:active {
-  background-color: rgba(44, 62, 80, 0.15);
+  background-color: rgba(160,120,50,0.18);
   transform: translateY(0px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .map-button {
@@ -418,7 +622,7 @@ header {
   justify-content: space-between;
   padding: 2px 2px;
   margin-top: 2px;
-  border-top: 1px solid rgba(0,0,0,0.08);
+  border-top: 1px solid rgba(150,110,45,0.2);
   position: relative;
 }
 
@@ -427,29 +631,28 @@ header {
   align-items: center;
   gap: 5px;
   font-size: 12px;
-  font-family: "IBM Plex Sans", sans-serif;
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
   position: relative;
 }
 
-.hbb-username { font-size: 12px; color: #555; }
-.hbb-sep { color: #aaa; font-size: 12px; }
+.hbb-username { font-size: 12px; color: #8a8070; }
+.hbb-sep { color: #55504a; font-size: 12px; }
 
 .hbb-link {
-  background: none;
-  border: none;
-  padding: 0;
-  font-size: 15px;
-  color: #0645ad;
+  margin-top: 0.3rem;
+  background-color: transparent;
+  color: rgb(22, 178, 240);
+  font-size: 17px;
   cursor: pointer;
-  font-family: "IBM Plex Sans", sans-serif;
-  text-decoration: none;
-  font-weight: 500;
+  transition: background-color 0.3s ease;
+  border: none;
 }
-.hbb-link:hover { color: #003380; }
+.hbb-link:hover { color: #aac8e8; }
 
 .hbb-dropdown {
   position: absolute;
-  top: calc(100% + 6px);
+  bottom: calc(100% + 6px);
   left: 0;
   background: white;
   border: 1px solid #ccc;
@@ -505,7 +708,6 @@ header {
   border-radius: 4px;
   padding: 8px 8px;
   font-size: 14px;
-  font-family: "IBM Plex Sans", sans-serif;
   cursor: pointer;
   color: #2c3e50;
   transition: all 0.15s ease;
@@ -524,23 +726,28 @@ header {
   margin-top: 0.1rem;
   margin-bottom: 1rem;
   font-size: 16px;
-  color: #555;
+  color: #6a6050;
   text-align: start;
 }
 
 .game-log {
-  max-height: 200px;
-  overflow-y: auto;
-  background-color: #1f2e4a;
+  overflow: visible;
+  background-color: #2f4552;
   color: rgb(229, 231, 229);
   font-family: monospace;
   padding: 0.5rem;
   margin-top: 0.1rem;
-  border: 3px solid #080808;
+  border: none;
   border-radius: 8px;
   font-size: 14px;
   font-family: "IBM Plex Sans", sans-serif;
 }
+
+.log-body {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
 
 .log {
   color: rgb(229, 231, 229);
@@ -551,8 +758,9 @@ header {
 .log-btns {
   display: flex;
   flex-direction: row;
+  align-items: center;
   border: none;
-  background-color: #1f2e4a;
+  background-color: #2f4552;
   font-size: 14px;
   margin-top: 0rem;
   color: rgb(229, 231, 229);
@@ -787,7 +995,7 @@ header {
 .btn-group button:disabled {
   opacity: 0.35;
   cursor: not-allowed;
-  color: #888;
+  color: #000000;
 }
 
 button {
@@ -797,12 +1005,12 @@ button {
   background: transparent;
   font-size: 17px;
   margin-bottom: 0.3rem;
-  color: #303030;
+  color: #000000;
   font-weight: 400;
 }
 
 button:hover {
-  color: rgb(28, 128, 158);
+  color: #d4a850;
   cursor: pointer;
 }
 
@@ -969,7 +1177,7 @@ button:hover {
   align-items: center;
   justify-content: center;
   gap: 2.5rem;
-  border-bottom: 1px solid rgb(155, 152, 152);
+  border-bottom: 1px solid rgba(150,110,45,0.3);
   padding-bottom: 10px;
   margin-bottom: 0.3rem;
   animation: combat-drop 0.35s ease-in forwards;
@@ -997,7 +1205,7 @@ button:hover {
 .combat-hp-enemy {
   font-size: 18px;
   font-weight: 600;
-  color: rgb(78, 78, 78);
+  color: #000000;
   white-space: nowrap;
   max-width: 55%;
   transition: color 0.15s ease;
@@ -1034,8 +1242,8 @@ button:hover {
   font-weight: 600;
   text-transform: uppercase;
   animation: npc-drop 0.5s ease-out forwards;
-  color: #1e4168;
-  border-bottom: 1px solid rgb(155, 152, 152);
+  color: #0063af;
+  border-bottom: 1px solid rgba(150,110,45,0.3);
   padding-bottom: 10px;
   margin-left: 100px;
   margin-right: 100px;
@@ -1048,8 +1256,8 @@ button:hover {
   font-weight: 600;
   text-transform: uppercase;
   animation: lore-drop 0.8s ease-out forwards;
-  color: #1e4168;
-  border-bottom: 1px solid black;
+  color: #0063af;
+  border-bottom: 1px solid rgba(150,110,45,0.3);
   padding-bottom: 10px;
   margin-left: 100px;
   margin-right: 100px;
@@ -1059,9 +1267,9 @@ button:hover {
 .lore-greeting {
   font-size: 22px;
   margin-bottom: 1rem;
-  color: #000;
+  color: #000000;
   font-style: italic;
-  border-left: 3px solid rgba(80, 80, 80, 0.25);
+  border-left: 3px solid rgba(150,110,45,0.35);
   padding-left: 10px;
   margin-left: 4px;
 }
@@ -1069,7 +1277,7 @@ button:hover {
 .dialogue-options {
   margin-top: 10px;
   padding-top: 8px;
-  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  border-top: 1px solid rgba(0, 0, 0, 0.25);
 }
 
 .dialogue-options::before {
@@ -1077,7 +1285,7 @@ button:hover {
   display: block;
   font-size: 10px;
   letter-spacing: 2px;
-  color: #999;
+  color: #000000;
   text-transform: uppercase;
   margin-bottom: 6px;
 }
@@ -1087,10 +1295,11 @@ button:hover {
   padding: 3px 6px;
   transition: background 0.15s, padding-left 0.12s;
   width: 100%;
+  color: #000000;
 }
 
 .dialogue-options button:hover {
-  background: rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.05);
   padding-left: 12px;
 }
 
@@ -1101,7 +1310,7 @@ button:hover {
   background: transparent;
   font-size: 17px;
   margin-bottom: 0.3rem;
-  color: #303030;
+  color: rgb(0, 0, 0);
   font-weight: 400;
   text-align: left;
 }
@@ -1113,7 +1322,7 @@ button:hover {
   background: transparent;
   font-size: 17px;
   margin-bottom: 0.3rem;
-  color: #303030;
+  color: rgb(0, 0, 0);
   font-weight: 400;
   text-align: left;
 }
@@ -1132,7 +1341,7 @@ button:hover {
   text-align: start;
   font-size: 22px;
   margin-bottom: 1rem;
-  color: #000;
+  color: #000000;
   padding-bottom: 0.5rem;
   padding-top: 1rem;
 }
@@ -1689,25 +1898,21 @@ button:hover {
   animation: max-hp-increase-animation 1s ease-out;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 900px) {
   header {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: #e8ecee;
     z-index: 100;
     padding: 0.3rem 0.5rem;
-    border-top: 1.5px solid #000000;
-    transition: background-color 1.5s ease-in-out, filter 1.5s ease-in-out;
-    color: rgb(35, 36, 35);
     transition: background-color 1.5s ease-in-out, filter 1.5s ease-in-out,
       color 1.5s ease-in-out;
 
     display: flex;
     flex-direction: column;
     max-width: 100vw;
-    overflow-x: hidden;
+    overflow-x: clip;
     box-sizing: border-box;
   }
 
@@ -1716,49 +1921,87 @@ button:hover {
     margin-bottom: 0.5rem;
   }
 
-  .player-header {
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0 5px;
-    margin-bottom: 0.5rem;
+  .header-main-row {
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 2px;
   }
 
-  .player-info-left {
-    width: 100%;
-    text-align: center;
+  .header-right-section {
+    position: static;
+    transform: none;
+    flex: 0 0 100%;
+    order: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
   }
+
+  .header-stats-section {
+    order: 2;
+    flex: 0 0 100%;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .dog-desktop { display: none; }
+  .dog-mobile { display: flex; }
 
   .player-name-line {
     font-size: 13px;
-    text-align: center;
     white-space: normal;
     word-break: break-word;
     overflow-wrap: break-word;
     max-width: 100%;
   }
 
-  .player-buttons-right {
-    width: 100%;
-    justify-content: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
+  .status-emoji {
+    font-size: 15px;
+  }
+
+  .dog-emoji {
+    font-size: 15px;
   }
 
   .all-stats-row-box {
-    background-color: #e3e6e6;
-    border: 1px solid #080808;
+    background: transparent;
+    border: none;
     border-radius: 6px;
-    padding: 0.25rem 0.1rem;
-    margin-left: auto;
-    margin-right: auto;
+    padding: 0;
+    margin: 0;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 0.1rem;
-    color: rgb(229, 231, 229);
+    box-shadow: none;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 3px;
+    color: #c0b8a8;
+  }
+
+  .stat-tile {
+    min-width: 0;
+    flex: 1;
+    padding: 3px 2px;
+    gap: 1px;
+  }
+
+  .st-icon {
+    font-size: 13px;
+  }
+
+  .st-val {
+    font-size: 11px;
+  }
+
+  .st-max {
+    font-size: 8px;
+  }
+
+  .st-tier {
+    font-size: 7px;
   }
 
   .current-path {
@@ -1767,6 +2010,7 @@ button:hover {
 
   .backpack-button,
   .inventory-button,
+  .status-btn,
   .map-button,
   .notes-button,
   .save-button {
@@ -1784,33 +2028,36 @@ button:hover {
     min-width: 0;
   }
 
+  /* status-btn-wrapper must be flex:1 (it's the flex child, not the button itself) */
+  .status-btn-wrapper {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .status-btn {
+    width: 100%;
+  }
+
   .stat-column,
   .stat-column-hp,
   .stat-column-clicks {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    gap: 2px;
     white-space: nowrap;
     border: none !important;
-    padding: 0.2rem 0;
+    padding: 0.1rem 0;
     overflow: hidden;
     min-width: 0;
-  }
-
-  .stat-column-hp,
-  .stat-column-clicks {
-    border-right: none;
-    border-left: none;
-    padding-right: 0;
-    padding-left: 0;
+    justify-content: center;
   }
 
   .stat-label {
-    font-size: 8px;
+    font-size: 10px;
     margin-bottom: 0;
     letter-spacing: 0;
     overflow: hidden;
-    text-overflow: ellipsis;
     max-width: 100%;
   }
 
@@ -1847,21 +2094,25 @@ button:hover {
   }
 
   .game-log {
-    max-height: 150px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: visible;
     background-color: #1f2e4a;
     color: rgb(229, 231, 229);
     font-family: monospace;
     padding: 0.4rem;
     margin-top: 0.5rem;
-    border: 1px solid #080808;
+    border: none;
     border-radius: 6px;
     font-size: 11px;
     font-family: "IBM Plex Sans", sans-serif;
     max-width: 100%;
     box-sizing: border-box;
     word-break: break-word;
+  }
+
+  .log-body {
+    max-height: 120px;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .log {
@@ -1889,6 +2140,11 @@ button:hover {
     font-size: 11px;
     padding: 0.2rem;
   }
+
+  .hbb-link {
+    font-size: 11px;
+    padding: 0.2rem;
+}
 
   .latest-log {
     font-weight: bold;

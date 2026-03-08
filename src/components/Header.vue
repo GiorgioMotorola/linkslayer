@@ -1,5 +1,7 @@
 <template>
   <header ref="headerEl" :class="{ 'darkened-header': isDarkened }">
+    <div class="encounter-wrapper" :class="{ 'encounter-active': !!encounter }">
+      <div class="encounter-wrapper-inner">
     <transition name="encounter-fade" mode="out-in">
       <div v-if="encounter" class="encounter-dashboard">
         <div v-if="encounter.type === 'combat'">
@@ -145,134 +147,135 @@
         </div>
       </div>
     </transition>
+      </div>
+    </div>
 
     <div class="player-stats-container">
-      <div class="player-header">
-        <div class="player-info-left">
-          <div class="player-name-line">
-            <template v-if="props.dogName">
-              <div class="dog-widget">
-                <div class="dog-damage-badge">+2⚔</div>
-                <div class="dog-emoji-wrap" @click="petDog" title="Pet the dog!">
-                  <span class="dog-emoji">🐶</span>
-                  <div v-if="headerHeartCount > 0" class="dog-hearts">
-                    <span v-for="i in headerHeartCount" :key="i" class="dog-heart">💕</span>
-                  </div>
-                  <div v-if="dogPlusOneVisible" class="dog-plus-one">+2 dmg</div>
-                </div>
-              </div>
-            </template>
+      <div class="header-main-row">
+        <div class="header-stats-section">
+          <div v-if="props.dogName" class="header-dog-btn dog-desktop" @click="petDog" :title="'Pet ' + props.dogName">
+            <span>🐶</span>
+            <div v-if="headerHeartCount > 0" class="dog-hearts">
+              <span v-for="i in headerHeartCount" :key="i" class="dog-heart">💕</span>
+            </div>
+            <div v-if="dogPlusOneVisible" class="dog-plus-one">+2</div>
+          </div>
+          <div class="all-stats-row-box" :class="containerAnimClass">
+            <div class="stat-tile">
+              <span class="st-icon">♥</span>
+              <span class="st-val"><span :class="hpAnimClass">{{ playerHP }}</span><span class="st-max">/{{ effectiveMaxHP }}</span></span>
+            </div>
+
+            <div class="stat-tile">
+              <span class="st-icon">⚔</span>
+              <span class="st-val" :class="weaponAnimClass">+{{ weaponBonus }}</span>
+            </div>
+
+            <div class="stat-tile">
+              <span class="st-icon">⛨</span>
+              <span class="st-val" :class="defenseAnimClass">+{{ shieldBonus }}</span>
+            </div>
+
+            <div class="stat-tile stat-tile-special">
+              <span class="st-tier">T{{ props.specialTier ?? 1 }}</span>
+              <span class="st-icon">✦</span>
+              <span class="st-val" :class="specialAnimClass">{{ specialUsesLeft }}</span>
+            </div>
+
+            <div class="stat-tile">
+              <span class="st-icon">◉</span>
+              <span class="st-val" :class="goldAnimClass">{{ playerGold }}</span>
+            </div>
+
+            <div class="stat-tile">
+              <span class="st-icon">☀</span>
+              <span class="st-val">{{ daysCount }}</span>
+            </div>
           </div>
         </div>
-        <div class="player-buttons-right">
+
+        <div class="header-right-section">
+          <div class="status-btn-wrapper">
+            <button class="status-btn" @click="showStatusPopup = !showStatusPopup">Status</button>
+            <div v-if="showStatusPopup" class="status-popup">
+              <div class="status-popup-title">Active Effects</div>
+              <div v-for="s in activeStatuses" :key="s" class="status-popup-item">{{ s }}</div>
+              <div v-if="activeStatuses.length === 0" class="status-popup-item status-popup-empty">No active effects</div>
+            </div>
+          </div>
+          <div v-if="props.dogName" class="header-dog-btn dog-mobile" @click="petDog" :title="'Pet ' + props.dogName">
+            <span>🐶</span>
+            <div v-if="headerHeartCount > 0" class="dog-hearts">
+              <span v-for="i in headerHeartCount" :key="i" class="dog-heart">💕</span>
+            </div>
+            <div v-if="dogPlusOneVisible" class="dog-plus-one">+2</div>
+          </div>
           <button @click="emit('open-hub')" class="inventory-button">Inventory</button>
         </div>
       </div>
 
-      <div class="all-stats-row-box" :class="containerAnimClass">
-        <div class="stat-column-hp">
-          <div class="stat-label">HP</div>
-          <div class="stat-value">
-            <span :class="hpAnimClass">{{ playerHP }}</span
-            >|<span :class="maxHpAnimClass">{{ effectiveMaxHP }}</span>
-          </div>
-        </div>
-
-        <div class="stat-column">
-          <div class="stat-label">Weapon</div>
-          <div class="stat-value" :class="weaponAnimClass">
-            +{{ weaponBonus }}
-          </div>
-        </div>
-
-        <div class="stat-column">
-          <div class="stat-label">Defense</div>
-          <div class="stat-value" :class="defenseAnimClass">
-            +{{ shieldBonus }}
-          </div>
-        </div>
-
-        <div class="stat-column">
-          <div class="stat-label">
-            {{ playerSpecialAbilityName }}
-            <span class="tier-badge">T{{ props.specialTier ?? 1 }}</span>
-          </div>
-          <div class="stat-value" :class="specialAnimClass">
-            {{ specialUsesLeft }}
-          </div>
-        </div>
-
-        <div class="stat-column">
-          <div class="stat-label">Gold</div>
-          <div class="stat-value" :class="goldAnimClass">{{ playerGold }}</div>
-        </div>
-
-        <div class="stat-column-clicks">
-          <div class="stat-label">Day</div>
-          <div class="stat-value">{{ daysCount }}</div>
-        </div>
-      </div>
-
-      <div class="header-bottom-bar">
-        <div class="hbb-auth">
-          <template v-if="authUser">
-            <span class="hbb-username">{{ userLabel }}</span>
-            <span class="hbb-sep">·</span>
-            <button class="hbb-link" @click="handleSignOutAuth">Sign out</button>
-          </template>
-          <template v-else>
-            <button class="hbb-link" @click="toggleForm('signin')">Sign in</button>
-            <span class="hbb-sep">·</span>
-            <button class="hbb-link" @click="toggleForm('signup')">Sign up</button>
-          </template>
-          <div v-if="showForm" class="hbb-dropdown">
-            <div class="hbb-dropdown-title">{{ showForm === 'signup' ? 'Create Account' : 'Sign In' }}</div>
-            <input v-model="authEmail" type="email" placeholder="Email" class="hbb-input" @keyup.enter="submitAuth" />
-            <input v-model="authPassword" type="password" placeholder="Password" class="hbb-input" @keyup.enter="submitAuth" />
-            <div v-if="authError" class="hbb-error">{{ authError }}</div>
-            <div v-if="authSuccess" class="hbb-success">{{ authSuccess }}</div>
-            <button class="hbb-submit" @click="submitAuth" :disabled="authLoading">
-              {{ authLoading ? '...' : showForm === 'signup' ? 'Create Account' : 'Sign In' }}
-            </button>
-          </div>
-        </div>
-        <div class="hbb-actions">
-        </div>
-      </div>
-
       <div class="game-log">
-        <div class="log"></div>
-        <div
-          v-for="(entry, index) in visibleLog"
-          :key="entry.id"
-          :class="[
-            'log-entry',
-            {
-              'latest-log': entry === visibleLog[visibleLog.length - 1],
-              'animate-log': newLineIds.includes(entry.id),
-            },
-          ]"
-          v-html="entry.id + '. ' + entry.text"
-          :style="
-            newLineIds.includes(entry.id)
-              ? { animationDelay: `${Math.max(index, 1) * 0.3}s` }
-              : {}
-          "
-        />
+        <div v-show="logOpen" class="log-body">
+          <div class="log"></div>
+          <div
+            v-for="(entry, index) in visibleLog"
+            :key="entry.id"
+            :class="[
+              'log-entry',
+              {
+                'latest-log': entry === visibleLog[visibleLog.length - 1],
+                'animate-log': newLineIds.includes(entry.id),
+              },
+            ]"
+            v-html="entry.id + '. ' + entry.text"
+            :style="
+              newLineIds.includes(entry.id)
+                ? { animationDelay: `${Math.max(index, 1) * 0.3}s` }
+                : {}
+            "
+          />
+        </div>
 
         <div class="log-btns">
-          <button
-            v-if="props.gameLog.length > 5"
-            @click="expanded = !expanded"
-            class="tips-button"
-          >
-            {{ expanded ? "Show Less" : "Show More" }}
+          <button class="tips-button" @click="logOpen = !logOpen">
+            {{ logOpen ? 'Hide Log' : 'Show Log' }}
           </button>
-          <button class="tips-button" @click="copyLogToClipboard">
-            Copy Log
-          </button>
+          <template v-if="logOpen">
+            <button
+              v-if="props.gameLog.length > 5"
+              @click="expanded = !expanded"
+              class="tips-button"
+            >
+              {{ expanded ? "Show Less" : "Show More" }}
+            </button>
+            <button class="tips-button" @click="copyLogToClipboard">
+              Copy Log
+            </button>
+          </template>
           <button class="tips-button" @click="openModal">How To Play</button>
           <TipsModal v-if="isModalOpen" @close="closeModal" />
+          <div class="hbb-auth">
+            <template v-if="authUser">
+              <span class="hbb-username">{{ userLabel }}</span>
+              <span class="hbb-sep">·</span>
+              <button class="hbb-link" @click="handleSignOutAuth">Sign out</button>
+            </template>
+            <template v-else>
+              <button class="hbb-link" @click="toggleForm('signin')">Sign in</button>
+              <span class="hbb-sep">·</span>
+              <button class="hbb-link" @click="toggleForm('signup')">Sign up</button>
+            </template>
+            <div v-if="showForm" class="hbb-dropdown">
+              <div class="hbb-dropdown-title">{{ showForm === 'signup' ? 'Create Account' : 'Sign In' }}</div>
+              <input v-model="authEmail" type="email" placeholder="Email" class="hbb-input" @keyup.enter="submitAuth" />
+              <input v-model="authPassword" type="password" placeholder="Password" class="hbb-input" @keyup.enter="submitAuth" />
+              <div v-if="authError" class="hbb-error">{{ authError }}</div>
+              <div v-if="authSuccess" class="hbb-success">{{ authSuccess }}</div>
+              <button class="hbb-submit" @click="submitAuth" :disabled="authLoading">
+                {{ authLoading ? '...' : showForm === 'signup' ? 'Create Account' : 'Sign In' }}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -368,6 +371,19 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  isBlurred: { type: Boolean, default: false },
+  isPlayerPoisoned: { type: Boolean, default: false },
+  isCloakActive: { type: Boolean, default: false },
+  healthRegenActive: { type: Boolean, default: false },
+  encounterBeaconActive: { type: Boolean, default: false },
+  wardingShieldHitsRemaining: { type: Number, default: 0 },
+  isEnemyVenomed: { type: Boolean, default: false },
+  isEnemyBleeding: { type: Boolean, default: false },
+  bountyScrollActive: { type: Boolean, default: false },
+  luckyFleeActive: { type: Boolean, default: false },
+  hasStick: { type: Boolean, default: false },
+  hasCoolerStick: { type: Boolean, default: false },
+  hasEvenCoolerStick: { type: Boolean, default: false },
 });
 
 const emit = defineEmits([
@@ -430,6 +446,32 @@ async function handleSignOutAuth() {
   await signOut();
 }
 
+const showStatusPopup = ref(false);
+
+function closeStatusPopupOnOutsideClick(e) {
+  if (!e.target.closest('.status-btn-wrapper')) {
+    showStatusPopup.value = false;
+  }
+}
+
+
+const activeStatuses = computed(() => {
+  const list = [];
+  if (props.hasEvenCoolerStick) list.push("Even Cooler Stick — +5 to rolls");
+  else if (props.hasCoolerStick) list.push("Cooler Stick — +2 to rolls");
+  else if (props.hasStick) list.push("Stick — weapon bonus");
+  if (props.isBlurred) list.push("Drunk — blurred vision");
+  if (props.isPlayerPoisoned) list.push("Poisoned — taking damage over time");
+  if (props.isEnemyVenomed) list.push("Venom Vial — enemy is poisoned");
+  if (props.isEnemyBleeding) list.push("Bleeding — enemy taking bleed damage");
+  if (props.encounterBeaconActive) list.push("Encounter Beacon — active");
+  if (props.wardingShieldHitsRemaining > 0) list.push(`Warding Shield — ${props.wardingShieldHitsRemaining} hit${props.wardingShieldHitsRemaining === 1 ? '' : 's'} remaining`);
+  if (props.healthRegenActive) list.push("Herbal Poultice — regenerating HP");
+  if (props.isCloakActive) list.push("Cloak of Invisibility — cloaked");
+  if (props.bountyScrollActive) list.push("Bounty Scroll — active");
+  if (props.luckyFleeActive) list.push("Lucky Coin — flee bonus");
+  return list;
+});
 
 const headerHeartCount = ref(0);
 let headerHeartTimer = null;
@@ -466,10 +508,12 @@ onMounted(() => {
     });
     headerResizeObserver.observe(headerEl.value);
   }
+  document.addEventListener('click', closeStatusPopupOnOutsideClick);
 });
 
 onUnmounted(() => {
   headerResizeObserver?.disconnect();
+  document.removeEventListener('click', closeStatusPopupOnOutsideClick);
   if (playerHpAnimInterval) clearInterval(playerHpAnimInterval);
   if (enemyHpAnimInterval) clearInterval(enemyHpAnimInterval);
 });
@@ -588,6 +632,7 @@ const visibleLog = computed(() => {
   return displayedLog.value.slice(-visibleLogCount.value);
 });
 
+const logOpen = ref(false);
 const isModalOpen = ref(false);
 
 const openModal = () => {

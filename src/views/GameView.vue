@@ -26,6 +26,9 @@
     :compass-count="inventory.compass"
     :shieldBonus="shieldBonus"
     :weaponBonus="weaponBonus"
+    :hasStick="inventory.stickItem > 0"
+    :hasCoolerStick="inventory.coolerStickItem > 0"
+    :hasEvenCoolerStick="inventory.evenCoolerStickItem > 0"
     :longRestsUsed="longRestsUsed"
     :isDarkened="bossOverlay"
     :shortRestsUsed="shortRestsUsed"
@@ -34,6 +37,15 @@
     :game-chain="chain"
     @open-hub="hubOpen = true; hubTab = 'backpack'"
     :is-cloak-active="isCloakActive"
+    :isBlurred="isBlurred"
+    :isPlayerPoisoned="isPlayerPoisoned"
+    :healthRegenActive="healthRegenActive"
+    :encounterBeaconActive="encounterBeaconActive"
+    :wardingShieldHitsRemaining="wardingShieldHitsRemaining"
+    :isEnemyVenomed="isEnemyVenomed"
+    :isEnemyBleeding="isEnemyBleeding"
+    :bountyScrollActive="bountyScrollActive"
+    :luckyFleeActive="luckyFleeActive"
     :cloak-clicks-remaining="cloakClicksRemaining"
     :combatWinsSinceLastCapIncrease="combatWinsSinceLastCapIncrease"
     :hpCapBonus="hpCapBonus"
@@ -145,6 +157,7 @@
         :daysCount="daysCount"
       />
 
+      <Transition name="rest-modal">
       <RestModal
         :showRestModal="showRestModal"
         :shortRestsUsed="shortRestsUsed"
@@ -174,6 +187,7 @@
         @open-tavern-shop="showTavernShop = true"
         @open-forge="showForge = true"
       />
+      </Transition>
 
       <ShopModal
         v-show="showShopModal && !showDieSlayer"
@@ -288,6 +302,10 @@
         :isCloakActive="isCloakActive"
         :wardStoneActive="wardStoneActive"
         :healthRegenActive="healthRegenActive"
+        :encounterBeaconActive="encounterBeaconActive"
+        :wardingShieldHitsRemaining="wardingShieldHitsRemaining"
+        :isEnemyVenomed="isEnemyVenomed"
+        :isEnemyBleeding="isEnemyBleeding"
       />
     </template>
     <template #quests>
@@ -822,6 +840,8 @@ const isIdle = computed(() =>
   !showRestModal.value &&
   !showShopModal.value
 );
+const isEnemyVenomed = computed(() => enemyStatusEffects.value?.some(e => e.type === "poison") ?? false);
+const isEnemyBleeding = computed(() => enemyStatusEffects.value?.some(e => e.type === "bleed") ?? false);
 
 const CAMP_NAMES = ["", "Sleeping Bag", "Pillow", "Tent"];
 const CAMP_COSTS = [0, 50, 75, 100];
