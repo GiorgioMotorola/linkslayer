@@ -27,7 +27,7 @@
           <span class="path-goal">{{ props.fullChain[props.currentTargetIndex + 1]?.replaceAll("_", " ") }}</span>
         </div>
       </div>
-
+      <span class="path-day">Day {{ props.daysCount }}</span>
     </div>
     <div class="path-sub-bar">
       <div class="sky-bar">

@@ -204,8 +204,8 @@
             </div>
 
             <div class="stat-tile">
-              <span class="st-icon">☀</span>
-              <span class="st-val">{{ daysCount }}</span>
+              <span class="st-icon">&#9874;</span>
+              <span class="st-val">{{ scrapMetal ?? 0 }}</span>
             </div>
           </div>
         </div>
@@ -400,6 +400,7 @@ const props = defineProps({
   hasStick: { type: Boolean, default: false },
   hasCoolerStick: { type: Boolean, default: false },
   hasEvenCoolerStick: { type: Boolean, default: false },
+  scrapMetal: { type: Number, default: 0 },
 });
 
 const emit = defineEmits([

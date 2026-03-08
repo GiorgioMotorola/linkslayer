@@ -61,6 +61,7 @@
     :confusedAction="confusedAction"
     :confusedTurnsLeft="confusedTurnsLeft"
     :autoSaveFeedback="autoSaveFeedback"
+    :scrapMetal="inventory.scrapMetal"
     @restart="handleRestart"
   />
 

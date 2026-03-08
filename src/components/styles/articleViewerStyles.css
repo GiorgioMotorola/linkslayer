@@ -56,6 +56,14 @@
   position: relative;
 }
 
+.path-day {
+  position: absolute;
+  right: 12px;
+  font-size: 11px;
+  color: #888;
+  white-space: nowrap;
+}
+
 .path-sub-bar {
   border-bottom: solid 1px #222;
   box-sizing: border-box;
