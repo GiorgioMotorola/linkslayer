@@ -1,41 +1,46 @@
 .forge-overlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.534);
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 340px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   z-index: 1100;
-  backdrop-filter: blur(4px);
+  box-shadow: -10px 0 50px rgba(0, 0, 0, 0.75);
+  overflow-y: auto;
+}
+
+.forge-panel-enter-active {
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.forge-panel-leave-active {
+  transition: transform 0.25s ease-in;
+}
+.forge-panel-enter-from,
+.forge-panel-leave-to {
+  transform: translateX(100%);
 }
 
 .forge-modal {
-  background: rgba(18, 10, 4, 0.97);
-  border: 1px solid rgba(160, 100, 30, 0.55);
-  box-shadow: 0 0 40px rgba(140, 80, 20, 0.2), 0 8px 30px rgba(0, 0, 0, 0.75);
-  border-radius: 10px;
-  padding: 2rem;
-  width: 90%;
-  max-width: 520px;
+  background: rgba(14, 8, 3, 0.98);
+  border-left: 1px solid rgba(148, 92, 28, 0.3);
+  flex: 1;
+  padding: 1.4rem 1.6rem;
   display: flex;
   flex-direction: column;
-  gap: 1.4rem;
+  gap: 1.2rem;
   font-family: "IBM Plex Sans", sans-serif;
-  animation: forge-pop 0.25s ease;
-}
-
-@keyframes forge-pop {
-  from { transform: scale(0.88); opacity: 0; }
-  to   { transform: scale(1);    opacity: 1; }
 }
 
 .forge-title {
-  font-size: 15px;
+  font-size: 11px;
   font-weight: 700;
-  color: #e8c070;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid rgba(160, 100, 30, 0.4);
-  padding-bottom: 0.7rem;
+  color: #c09848;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(145, 88, 22, 0.38);
+  padding-bottom: 0.6rem;
   text-align: center;
 }
 
@@ -46,16 +51,16 @@
 }
 
 .forge-scrap-label {
-  font-size: 12px;
-  color: #8a7050;
+  font-size: 11px;
+  color: #785e38;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .forge-scrap-count {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  color: #e0b060;
+  color: #d0a048;
 }
 
 .forge-columns {
@@ -70,10 +75,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.6rem;
-  padding: 1rem;
-  background: rgba(30, 15, 5, 0.5);
-  border: 1px solid rgba(120, 80, 20, 0.35);
+  gap: 0.5rem;
+  padding: 0.9rem 1rem;
+  background: rgba(24, 12, 4, 0.5);
+  border: 1px solid rgba(108, 72, 18, 0.32);
   border-radius: 6px;
 }
 
@@ -84,14 +89,14 @@
 }
 
 .forge-col-header {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
-  color: #e8c070;
+  color: #d0a048;
 }
 
 .forge-col-current {
   font-size: 11px;
-  color: #6a5530;
+  color: #5e4828;
   text-align: start;
 }
 
@@ -105,10 +110,10 @@
 .forge-adj {
   width: 28px;
   height: 28px;
-  border: 1px solid rgba(160, 100, 30, 0.5);
+  border: 1px solid rgba(148, 92, 28, 0.48);
   border-radius: 4px;
-  background: rgba(40, 20, 5, 0.7);
-  color: #e8c070;
+  background: rgba(30, 14, 4, 0.7);
+  color: #d0a048;
   font-size: 16px;
   font-family: "IBM Plex Sans", sans-serif;
   cursor: pointer;
@@ -120,26 +125,26 @@
 }
 
 .forge-adj:hover:not(:disabled) {
-  background: rgba(160, 90, 20, 0.25);
-  border-color: rgba(210, 140, 40, 0.7);
+  background: rgba(140, 78, 16, 0.24);
+  border-color: rgba(195, 128, 36, 0.68);
 }
 
 .forge-adj:disabled {
-  opacity: 0.25;
+  opacity: 0.22;
   cursor: not-allowed;
 }
 
 .forge-alloc {
   font-size: 13px;
   font-weight: 600;
-  color: #d0a050;
+  color: #b88840;
   min-width: 52px;
   text-align: center;
 }
 
 .forge-yield {
   font-size: 11px;
-  color: #7a6040;
+  color: #6a5032;
   min-height: 16px;
 }
 
@@ -149,10 +154,10 @@
 }
 
 .forge-make-btn {
-  background: rgba(40, 20, 5, 0.7);
-  border: 1px solid rgba(160, 100, 30, 0.5);
+  background: rgba(30, 14, 4, 0.7);
+  border: 1px solid rgba(148, 92, 28, 0.48);
   border-radius: 4px;
-  color: #e8c070;
+  color: #d0a048;
   font-size: 12px;
   font-family: "IBM Plex Sans", sans-serif;
   font-weight: 600;
@@ -163,13 +168,13 @@
 }
 
 .forge-make-btn:hover:not(:disabled) {
-  background: rgba(160, 90, 20, 0.25);
-  border-color: rgba(210, 140, 40, 0.75);
-  color: #f5d080;
+  background: rgba(145, 78, 16, 0.24);
+  border-color: rgba(195, 128, 36, 0.72);
+  color: #e8b858;
 }
 
 .forge-make-btn:disabled {
-  opacity: 0.3;
+  opacity: 0.28;
   cursor: not-allowed;
 }
 
@@ -188,68 +193,67 @@
 }
 
 @keyframes spark-fly {
-  0%   { transform: rotate(var(--a)) translateY(0)    scale(1);   opacity: 1; }
+  0%   { transform: rotate(var(--a)) translateY(0)     scale(1);   opacity: 1; }
   100% { transform: rotate(var(--a)) translateY(-38px) scale(0.2); opacity: 0; }
 }
 
 .forge-empty {
   font-size: 12px;
-  color: #4a3a20;
+  color: #3e2e14;
   font-style: italic;
   text-align: center;
 }
 
 .forge-close-btn {
   background: transparent;
-  border: 1px solid rgba(210, 140, 35, 0.5);
+  border: 1px solid rgba(195, 128, 34, 0.45);
   border-radius: 4px;
-  color: #f0d060;
+  color: #c09040;
   font-size: 12px;
   font-family: "IBM Plex Sans", sans-serif;
   padding: 7px 14px;
   cursor: pointer;
   align-self: center;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .forge-close-btn:hover {
-  background: rgba(160, 110, 20, 0.15);
-  border-color: rgba(210, 140, 35, 0.8);
+  background: rgba(145, 98, 16, 0.14);
+  border-color: rgba(195, 128, 34, 0.75);
+  color: #d8a84e;
 }
 
 @media screen and (max-width: 600px) {
+  .forge-scrap-label {
+    font-size: 12px;
+    letter-spacing: 0.1px;
+  }
 
-.forge-scrap-label {
-  font-size: 12px;
-  letter-spacing: 0.1px;
-}
+  .forge-scrap-count {
+    font-size: 14px;
+  }
 
-.forge-scrap-count {
-  font-size: 14px;
-}
+  .forge-divider {
+    width: auto;
+    height: 0.6rem;
+  }
 
-.forge-divider {
-  width: auto;
-  height: 0.6rem;
-}
+  .forge-col {
+    gap: 0.2rem;
+    padding: 1rem;
+  }
 
-.forge-col {
-  gap: 0.2rem;
-  padding: 1rem;
-}
+  .forge-adj {
+    width: 25px;
+    height: 25px;
+    font-size: 13px;
+  }
 
-.forge-adj {
-  width: 25px;
-  height: 25px;
-  font-size: 13px;
-}
-
-.forge-counter {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin-top: .5rem;
-  margin-bottom: .5rem;
-}
-
+  .forge-counter {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+  }
 }

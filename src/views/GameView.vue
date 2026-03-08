@@ -157,6 +157,10 @@
         :daysCount="daysCount"
       />
 
+      <Transition name="rest-backdrop">
+        <div v-if="showRestModal" class="rest-backdrop"></div>
+      </Transition>
+
       <Transition name="rest-modal">
       <RestModal
         :showRestModal="showRestModal"
@@ -189,6 +193,10 @@
       />
       </Transition>
 
+      <Transition name="rest-backdrop">
+        <div v-if="showShopModal" class="rest-backdrop"></div>
+      </Transition>
+      <Transition name="shop-panel">
       <ShopModal
         v-show="showShopModal && !showDieSlayer"
         :playerGold="playerGold"
@@ -201,13 +209,19 @@
         @open-backpack="openInventoryModal"
         @open-die-slayer="openDieSlayerFromShop"
       />
+      </Transition>
 
+      <Transition name="rest-backdrop">
+        <div v-if="showDieSlayer" class="rest-backdrop"></div>
+      </Transition>
+      <Transition name="ds-panel">
       <DieSlayerModal
         v-if="showDieSlayer"
         :playerGold="playerGold"
         @gold-change="handleDieSlayerGold"
         @leave="handleDieSlayerLeave"
       />
+      </Transition>
 
       <InventoryModal
         v-if="isInventoryModalOpen"
@@ -374,18 +388,27 @@
     />
   </Transition>
 
+  <Transition name="rest-backdrop">
+    <div v-if="showRuneCacheModal" class="rest-backdrop"></div>
+  </Transition>
+  <Transition name="rune-panel">
   <RuneCacheModal
     v-if="showRuneCacheModal"
     :tier="runeCacheReward?.tier ?? 1"
     @close="showRuneCacheModal = false"
     @reward="handleRuneCacheReward"
   />
+  </Transition>
 
   <DogNameModal
     v-if="showDogNameModal"
     @named="onDogNamed"
   />
 
+  <Transition name="rest-backdrop">
+    <div v-if="showTavernShop" class="rest-backdrop"></div>
+  </Transition>
+  <Transition name="tshop-panel">
   <TavernShopModal
     v-if="showTavernShop"
     :campTier="campTier"
@@ -393,7 +416,12 @@
     @close="showTavernShop = false"
     @buy="handleTavernShopBuy"
   />
+  </Transition>
 
+  <Transition name="rest-backdrop">
+    <div v-if="showForge" class="rest-backdrop"></div>
+  </Transition>
+  <Transition name="forge-panel">
   <ForgeModal
     v-if="showForge"
     :scrapMetal="inventory.scrapMetal"
@@ -402,6 +430,7 @@
     @close="showForge = false"
     @forge="handleForge"
   />
+  </Transition>
 </template>
 
 <script setup>

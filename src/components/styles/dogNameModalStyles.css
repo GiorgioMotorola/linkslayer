@@ -1,7 +1,7 @@
 .dog-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.82);
+  background: rgba(0, 0, 0, 0.84);
   backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
@@ -10,20 +10,20 @@
 }
 
 .dog-modal {
-  background: #011316;
-  border: 1px solid rgba(100, 140, 60, 0.35);
+  background: rgba(26, 26, 32, 0.97);
+  border: 1px solid rgba(180, 182, 200, 0.28);
   border-radius: 8px;
   width: 90%;
-  max-width: 380px;
-  padding: 28px 28px 24px;
+  max-width: 360px;
+  padding: 22px 24px 20px;
   box-shadow:
-    0 10px 50px rgba(0, 0, 0, 0.8),
-    inset 0 0 40px rgba(0, 0, 0, 0.4);
+    0 0 24px rgba(155, 158, 178, 0.1),
+    0 8px 32px rgba(0, 0, 0, 0.65);
   font-family: "IBM Plex Sans", sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
 }
 
 .dog-header {
@@ -31,37 +31,37 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgb(111, 221, 0);
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(170, 172, 192, 0.22);
   width: 100%;
 }
 
 .header-title {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 4px;
   text-transform: uppercase;
-  color: #c8b97a;
+  color: #b0b2c8;
 }
 
 .header-ornament {
-  font-size: 18px;
-  opacity: 0.85;
+  font-size: 17px;
+  opacity: 0.8;
 }
 
 .dog-prompt {
   font-size: 13px;
-  color: #d6ced5;
+  color: #8a8a9a;
   text-align: center;
   line-height: 1.6;
   margin: 0;
 }
 
 .dog-name-input {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(100, 140, 60, 0.4);
+  background: rgba(12, 12, 18, 0.65);
+  border: 1px solid rgba(165, 168, 188, 0.28);
   border-radius: 5px;
-  color: #e8e4d0;
+  color: #d0d0dc;
   font-size: 15px;
   font-family: "IBM Plex Sans", sans-serif;
   padding: 8px 14px;
@@ -73,24 +73,25 @@
 }
 
 .dog-name-input:focus {
-  border-color: rgba(140, 180, 80, 0.6);
+  border-color: rgba(190, 192, 214, 0.52);
 }
 
 .dog-confirm-btn {
-  background: rgba(0, 0, 0, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(18, 18, 26, 0.7);
+  border: 1px solid rgba(170, 172, 194, 0.38);
   border-radius: 5px;
-  color: #c8b97a;
+  color: #b0b2c8;
   font-size: 12px;
   font-family: "IBM Plex Sans", sans-serif;
   letter-spacing: 2px;
   text-transform: uppercase;
   padding: 8px 28px;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .dog-confirm-btn:hover {
-  background: rgba(55, 85, 25, 0.8);
-  border-color: rgba(130, 180, 70, 0.7);
+  background: rgba(48, 48, 64, 0.6);
+  border-color: rgba(200, 202, 224, 0.58);
+  color: #d0d2ec;
 }

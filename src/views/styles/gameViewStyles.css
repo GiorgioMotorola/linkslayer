@@ -1,3 +1,55 @@
+.panel-slide-enter-active,
+.shop-panel-enter-active,
+.ds-panel-enter-active,
+.forge-panel-enter-active,
+.rune-panel-enter-active,
+.tshop-panel-enter-active {
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.panel-slide-leave-active,
+.shop-panel-leave-active,
+.ds-panel-leave-active,
+.forge-panel-leave-active,
+.rune-panel-leave-active,
+.tshop-panel-leave-active {
+  transition: transform 0.25s ease-in;
+}
+
+.panel-slide-enter-from,
+.panel-slide-leave-to,
+.shop-panel-enter-from,
+.shop-panel-leave-to,
+.ds-panel-enter-from,
+.ds-panel-leave-to,
+.forge-panel-enter-from,
+.forge-panel-leave-to,
+.rune-panel-enter-from,
+.rune-panel-leave-to,
+.tshop-panel-enter-from,
+.tshop-panel-leave-to {
+  transform: translateX(100%);
+}
+
+.rest-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 999;
+  pointer-events: auto;
+}
+
+.rest-backdrop-enter-active {
+  transition: opacity 0.35s ease;
+}
+.rest-backdrop-leave-active {
+  transition: opacity 0.25s ease;
+}
+.rest-backdrop-enter-from,
+.rest-backdrop-leave-to {
+  opacity: 0;
+}
+
 .sleep-overlay {
   position: fixed;
   inset: 0;

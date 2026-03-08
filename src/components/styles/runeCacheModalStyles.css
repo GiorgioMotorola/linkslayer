@@ -1,24 +1,32 @@
 .rune-overlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.82);
-  backdrop-filter: blur(3px);
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 320px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   z-index: 1100;
+  box-shadow: -10px 0 50px rgba(0, 0, 0, 0.75);
+  overflow-y: auto;
+}
+
+.rune-panel-enter-active {
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.rune-panel-leave-active {
+  transition: transform 0.25s ease-in;
+}
+.rune-panel-enter-from,
+.rune-panel-leave-to {
+  transform: translateX(100%);
 }
 
 .rune-modal {
-  background: #080808;
-  border: 1px solid rgba(60, 88, 140, 0.35);
-  border-radius: 8px;
-  width: 90%;
-  max-width: 420px;
-  padding: 28px 28px 24px;
-  box-shadow:
-    0 10px 50px rgba(0, 0, 0, 0.8),
-    inset 0 0 40px rgba(0, 0, 0, 0.4);
+  background: rgba(14, 14, 20, 0.97);
+  border-left: 1px solid rgba(108, 112, 130, 0.25);
+  flex: 1;
+  padding: 22px 24px 20px;
   font-family: "IBM Plex Sans", sans-serif;
 }
 
@@ -27,67 +35,64 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(60, 88, 140, 0.35);
-  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(105, 108, 128, 0.28);
+  margin-bottom: 18px;
 }
 
 .header-title {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 4px;
   text-transform: uppercase;
-  color: #c00e0e;
+  color: #8888a0;
 }
 
 .header-ornament {
-  color: #3061ca;
-  font-size: 16px;
-  opacity: 0.8;
+  color: #606078;
+  font-size: 15px;
+  opacity: 0.85;
 }
 
 .rune-body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
 }
 
 .rune-instruction {
   font-size: 13px;
-  color: #d3d6ce;
+  color: #8a8a9e;
   text-align: center;
   line-height: 1.5;
   margin: 0;
 }
 
 .attempts-left {
-  color: rgba(60, 88, 140, 0.35);
+  color: #505060;
   font-size: 12px;
 }
 
 .rune-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 8px;
   width: 100%;
 }
 
 .rune-btn {
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid rgba(60, 88, 140, 0.35);
+  background: rgba(18, 18, 26, 0.82);
+  border: 1px solid rgba(95, 98, 118, 0.35);
   border-radius: 6px;
-  color: #d3d6ce;
+  color: #7878908;
   font-size: 28px;
   padding: 14px 8px;
   cursor: default;
-  transition:
-    background 0.15s,
-    border-color 0.15s,
-    color 0.15s,
-    box-shadow 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
   user-select: none;
   line-height: 1;
+  color: #787890;
 }
 
 .rune-btn-clickable {
@@ -95,16 +100,16 @@
 }
 
 .rune-btn-clickable:hover {
-  background: rgba(40, 60, 25, 0.9);
-  border-color: rgba(120, 160, 70, 0.5);
-  color: rgba(60, 88, 140, 0.35);
+  background: rgba(38, 38, 54, 0.82);
+  border-color: rgba(135, 138, 162, 0.52);
+  color: #a0a0bc;
 }
 
 .rune-active {
-  background: rgba(16, 2, 65, 0.692) !important;
-  border-color: rgba(80, 112, 200, 0.8) !important;
-  color: #c8e880 !important;
-  box-shadow: 0 0 18px 4px rgba(120, 180, 40, 0.45) !important;
+  background: rgba(38, 38, 68, 0.78) !important;
+  border-color: rgba(125, 128, 178, 0.72) !important;
+  color: #b8b8dc !important;
+  box-shadow: 0 0 16px 4px rgba(95, 98, 155, 0.38) !important;
 }
 
 .rune-flash-correct {
@@ -122,36 +127,36 @@
 }
 
 .action-btn {
-  background: rgba(0, 0, 0, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(18, 18, 26, 0.72);
+  border: 1px solid rgba(105, 108, 128, 0.42);
   border-radius: 5px;
-  color: #3061ca;
+  color: #8080980;
   font-size: 12px;
   font-family: "IBM Plex Sans", sans-serif;
   letter-spacing: 2px;
   text-transform: uppercase;
   padding: 8px 28px;
   cursor: pointer;
-  transition:
-    background 0.15s,
-    border-color 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  color: #808098;
 }
 
 .action-btn:hover {
-  background: rgba(55, 85, 25, 0.8);
-  border-color: rgba(130, 180, 70, 0.7);
+  background: rgba(45, 45, 64, 0.72);
+  border-color: rgba(145, 148, 172, 0.62);
+  color: #aaaac0;
 }
 
 .action-btn-dim {
-  background: rgba(25, 30, 20, 0.6);
-  border-color: rgba(70, 90, 50, 0.4);
-  color: #6a7a55;
+  background: rgba(14, 14, 20, 0.6);
+  border-color: rgba(65, 68, 82, 0.38);
+  color: #484858;
 }
 
 .action-btn-dim:hover {
-  background: rgba(35, 40, 25, 0.7);
-  border-color: rgba(90, 110, 60, 0.5);
-  color: #8a9a70;
+  background: rgba(24, 24, 34, 0.65);
+  border-color: rgba(85, 88, 105, 0.5);
+  color: #686878;
 }
 
 .rune-result {
@@ -160,35 +165,36 @@
 
 .result-icon {
   font-size: 36px;
-  color: rgba(105, 137, 192, 0.815);
-  text-shadow: 0 0 20px rgba(60, 88, 140, 0.35);
+  color: #848498;
+  text-shadow: 0 0 18px rgba(95, 98, 125, 0.38);
 }
 
 .result-icon-fail {
   color: #a06060;
-  text-shadow: 0 0 20px rgba(160, 60, 60, 0.5);
+  text-shadow: 0 0 18px rgba(160, 60, 60, 0.45);
 }
 
 .result-title {
   font-size: 15px;
   font-weight: 700;
-  color: rgba(69, 102, 161, 0.815);
+  color: #9292aa;
   letter-spacing: 1px;
   margin: 0;
 }
 
 .result-reward {
   font-size: 13px;
-  color: rgba(69, 102, 161, 0.815);
+  color: #8282988;
   text-align: center;
   font-style: italic;
   margin: 0;
   line-height: 1.5;
+  color: #828298;
 }
 
 .result-sub {
   font-size: 13px;
-  color: rgba(69, 102, 161, 0.815);
+  color: #828298;
   font-style: italic;
   margin: 0;
 }

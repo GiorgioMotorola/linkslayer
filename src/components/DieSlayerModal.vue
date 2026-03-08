@@ -85,39 +85,20 @@
       </div>
 
       <div v-if="phase === 'battle'" class="ds-phase">
-        <div class="ds-battle-arena">
-
-          <div class="ds-arena-side">
-            <div class="ds-arena-label">You</div>
-            <div class="ds-dice-row">
-              <div
-                v-for="(die, i) in playerRemainingDice"
-                :key="i"
-                class="ds-die ds-die-player"
-                :class="{
-                  'ds-die-selected': selectedDieIndex === i,
-                  'ds-die-played': hiddenPlayerDieIndex === i,
-                }"
-                @click="selectDie(i)"
-              >
-                {{ die }}
-              </div>
-            </div>
+        <div class="ds-arena-label">You</div>
+        <div class="ds-dice-row">
+          <div
+            v-for="(die, i) in playerRemainingDice"
+            :key="i"
+            class="ds-die ds-die-player"
+            :class="{
+              'ds-die-selected': selectedDieIndex === i,
+              'ds-die-played': hiddenPlayerDieIndex === i,
+            }"
+            @click="selectDie(i)"
+          >
+            {{ die }}
           </div>
-
-          <div class="ds-arena-side">
-            <div class="ds-arena-label">{{ npc.name }}</div>
-            <div class="ds-dice-row">
-              <div
-                v-for="(_, i) in npcRemainingDice"
-                :key="i"
-                class="ds-die ds-die-npc ds-die-hidden"
-              >
-                ?
-              </div>
-            </div>
-          </div>
-
         </div>
 
         <div class="ds-staging-row">
@@ -151,6 +132,17 @@
                 }"
               >{{ revealedNpcDie }}</div>
             </div>
+          </div>
+        </div>
+
+        <div class="ds-arena-label">{{ npc.name }}</div>
+        <div class="ds-dice-row">
+          <div
+            v-for="(_, i) in npcRemainingDice"
+            :key="i"
+            class="ds-die ds-die-npc ds-die-hidden"
+          >
+            ?
           </div>
         </div>
 

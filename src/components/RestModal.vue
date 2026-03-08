@@ -3,7 +3,6 @@
     <div class="transition-fade" :class="{ active: isTransitioning }"></div>
     <div class="rest-modal" :class="modalClass">
       <div class="rest-icon">{{ restIcon }}</div>
-      <div class="rest-modal-phrase">{{ displayPhrase }}</div>
 
       <div v-if="shouldShowLongRest && !tavernView" class="danger-warning">
         Enemies will be stronger when you wake up...
@@ -14,70 +13,57 @@
           v-if="shouldShowShortRest"
           @click="handleShortRest"
           :disabled="shortRestDone"
+          class="sr-btn"
         >
-          🔥 Short Rest — gain +20 HP
+          Short Rest <span class="sr-sub">+20 HP</span>
         </button>
 
         <button
           v-if="shouldShowShortRest && props.specialTier < 3"
           @click="handleOffer"
-          :disabled="
-            hasOfferedThisRest || props.playerGold < props.nextOfferingCost
-          "
-          class="offering-button"
+          :disabled="hasOfferedThisRest || props.playerGold < props.nextOfferingCost"
+          class="sr-btn"
         >
-          <span class="offering-main"
-            >🙏 Offer {{ props.nextOfferingCost }}g to the Gods — upgrade your
-            Special</span
-          >
-          <span class="offering-sub">
-            Offering bowl:
-            <span
-              v-for="i in 3"
-              :key="i"
-              class="pot-dot"
-              :class="{ filled: i <= props.offeringPot }"
-              >{{ i <= props.offeringPot ? "●" : "○" }}</span
-            >
+          Offer {{ props.nextOfferingCost }}g to the Gods
+          <span class="sr-sub">
+            <span v-for="i in 3" :key="i" class="pot-dot" :class="{ filled: i <= props.offeringPot }">{{ i <= props.offeringPot ? "●" : "○" }}</span>
             {{ props.offeringPot }}/3
-            <span v-if="props.specialTier === 1"> — Tier 1 → 2</span>
-            <span v-if="props.specialTier === 2"> — Tier 2 → 3</span>
+            <template v-if="props.specialTier === 1"> — Tier 1 → 2</template>
+            <template v-if="props.specialTier === 2"> — Tier 2 → 3</template>
           </span>
         </button>
 
         <button
           v-if="shouldShowShortRest"
           @click="$emit('open-forge')"
-          class="close-action-btn"
+          class="sr-btn"
         >
-          ⚒️ Go To The Forge
-          <span class="assemble-sub"
-            >{{ props.scrapMetal || 0 }} scrap metal available</span
-          >
+          Go To The Forge <span class="sr-sub">{{ props.scrapMetal || 0 }} scrap available</span>
         </button>
 
         <button
           v-if="shouldShowShortRest"
           @click="$emit('open-shop')"
-          class="close-action-btn shop-btn"
+          class="sr-btn"
         >
-          🛒 Visit the Shop →
+          Visit the Shop
         </button>
 
         <button
           v-if="shouldShowShortRest"
           @click="handleContinue"
-          class="close-action-btn"
+          class="sr-btn sr-continue"
         >
-          Continue On →
+          Continue On
         </button>
         <template v-if="shouldShowLongRest && tavernView">
           <button
             v-if="!hasBeer"
             @click="orderBeer"
             :disabled="props.playerGold < 10"
+            class="sr-btn"
           >
-            🍺 Order a beer (10g)
+            Order a Beer <span class="sr-sub">10g</span>
           </button>
 
           <button
@@ -91,12 +77,7 @@
             Take a sip
             <span class="sip-sub">
               <template v-if="sipCooldown">...</template>
-              <template v-else
-                >+1 HP · {{ sipsRemaining }} sip{{
-                  sipsRemaining !== 1 ? "s" : ""
-                }}
-                remaining</template
-              >
+              <template v-else>+1 HP · {{ sipsRemaining }} sip{{ sipsRemaining !== 1 ? "s" : "" }} remaining</template>
             </span>
           </button>
 
@@ -104,9 +85,9 @@
             v-if="currentMeal && !mealOrdered"
             @click="orderMeal"
             :disabled="props.playerGold < 15"
+            class="sr-btn"
           >
-            🍽️ {{ currentMeal.name }} (15g)
-            <span class="assemble-sub">{{ currentMeal.desc }}</span>
+            {{ currentMeal.name }} <span class="sr-sub">15g · {{ currentMeal.desc }}</span>
           </button>
 
           <button
@@ -120,36 +101,33 @@
             Take a bite
             <span class="sip-sub">
               <template v-if="mealCooldown">...</template>
-              <template v-else
-                >+12 HP · {{ mealBitesRemaining }} bite{{
-                  mealBitesRemaining !== 1 ? "s" : ""
-                }}
-                remaining</template
-              >
+              <template v-else>+12 HP · {{ mealBitesRemaining }} bite{{ mealBitesRemaining !== 1 ? "s" : "" }} remaining</template>
             </span>
           </button>
 
           <button
             @click="$emit('open-die-slayer')"
             :disabled="props.playerGold < 5"
+            class="sr-btn"
           >
-            🎲 Play Die Slayer
+            Play Die Slayer <span class="sr-sub">5g min</span>
           </button>
 
           <button
             v-if="props.campTier < 3"
             @click="$emit('open-tavern-shop')"
-            class="close-action-btn"
+            class="sr-btn"
           >
-            🛒 Camp Supplies →
+            Camp Supplies
           </button>
+
           <button
             v-if="props.questStatus === 'complete'"
             @click="$emit('turn-in-quest')"
-            class="quest-turnin-btn"
+            class="quest-turnin-btn sr-btn"
           >
-            📜 Turn In: {{ props.boardQuestName }}
-            <span class="assemble-sub">{{ props.boardQuestRewardLabel }}</span>
+            Turn In: {{ props.boardQuestName }}
+            <span class="sr-sub">{{ props.boardQuestRewardLabel }}</span>
           </button>
 
           <div v-else-if="props.questStatus === 'done'" class="quest-taken-note">
@@ -157,36 +135,34 @@
           </div>
 
           <div v-else-if="props.questStatus === 'scroll'" class="quest-taken-note">
-            📜 Quest scroll is in your backpack.
+            Quest scroll is in your backpack.
           </div>
 
           <div v-else-if="props.questStatus === 'progress'" class="quest-taken-note">
-            📜 Quest in progress...
+            Quest in progress...
           </div>
 
-          <button v-else-if="props.boardQuestName" @click="takeQuest">
-            📜 {{ props.boardQuestName }}
-            <span class="assemble-sub">{{ props.boardQuestHint }}</span>
+          <button v-else-if="props.boardQuestName" @click="takeQuest" class="sr-btn">
+            {{ props.boardQuestName }}
+            <span class="sr-sub">{{ props.boardQuestHint }}</span>
           </button>
 
-          <button @click="returnToCampsite" class="close-action-btn">
-            ← Return to your campsite
+          <button @click="returnToCampsite" class="sr-btn sr-continue">
+            Return to campsite
           </button>
         </template>
 
         <template v-if="shouldShowLongRest && !tavernView">
-          <button @click="handleLongRest" :disabled="longRestDone">
-            🌙 {{ longRestLabel }} — restore {{ longRestHp }} HP and gain +{{
-              longRestSpecials
-            }}
-            class {{ longRestSpecials === 1 ? "ability" : "abilities" }}
+          <button @click="handleLongRest" :disabled="longRestDone" class="sr-btn">
+            {{ longRestLabel }}
+            <span class="sr-sub">+{{ longRestHp }} HP · +{{ longRestSpecials }} {{ longRestSpecials === 1 ? "ability" : "abilities" }}</span>
           </button>
 
-          <button @click="goToTavern" class="close-action-btn tavern-btn">
-            Head to The Lighthouse Tavern →
+          <button @click="goToTavern" class="sr-btn">
+            Head to the Tavern
           </button>
 
-          <button @click="handleSleep" class="close-action-btn sleep-btn">
+          <button @click="handleSleep" class="sr-btn sr-continue">
             Drift Off to Sleep…
           </button>
         </template>
@@ -198,8 +174,6 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 import {
-  getRandomRestPhrase,
-  getRandomTavernPhrase,
   getRandomSipPhrase,
   getRandomTavernMeal,
 } from "../utils/restPhrases.js";
@@ -237,8 +211,6 @@ const emit = defineEmits([
   "open-forge",
 ]);
 
-const currentRestPhrase = ref("");
-const tavernPhrase = ref("");
 const currentSipScene = ref("");
 const hasOfferedThisRest = ref(false);
 const shortRestDone = ref(false);
@@ -271,8 +243,6 @@ watch(
   () => props.showRestModal,
   (newValue) => {
     if (newValue) {
-      currentRestPhrase.value = getRandomRestPhrase();
-      tavernPhrase.value = getRandomTavernPhrase();
       currentSipScene.value = "";
       hasOfferedThisRest.value = false;
       shortRestDone.value = false;
@@ -317,16 +287,10 @@ const modalClass = computed(() => {
 });
 
 const restIcon = computed(() => {
-  if (shouldShowShortRest.value) return "🔥";
+  if (shouldShowShortRest.value) return "🌤️";
   return tavernView.value ? "🍺" : "🌙";
 });
 
-const displayPhrase = computed(() => {
-  if (!shouldShowLongRest.value) return currentRestPhrase.value;
-  if (!tavernView.value) return currentRestPhrase.value;
-  if (currentSipScene.value) return currentSipScene.value;
-  return tavernPhrase.value;
-});
 
 const handleShortRest = () => {
   shortRestDone.value = true;
