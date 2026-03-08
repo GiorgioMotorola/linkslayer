@@ -1,8 +1,23 @@
 <template>
   <div class="shop-overlay">
     <div class="shop-content-game-style">
-      <div class="shop-title">The Shop</div>
-      <div class="shop-gold">You have {{ playerGold }} Gold</div>
+      <div class="shop-header">
+        <div class="shop-title">The Shop</div>
+        <div class="shop-gold">You have {{ playerGold }} Gold</div>
+        <transition name="toast-fade">
+          <div
+            v-if="toastMessage"
+            class="toast-notification"
+            :class="{ 'toast-error': isToastError }"
+          >
+            {{ toastMessage }}
+          </div>
+        </transition>
+        <div class="shop-footer">
+          <button class="shop-close-btn" @click="$emit('open-backpack')">Backpack</button>
+          <button class="shop-close-btn" @click="$emit('close')">← Done</button>
+        </div>
+      </div>
 
       <div class="shop-items">
         <div
@@ -28,21 +43,6 @@
           </div>
         </div>
       </div>
-
-      <div class="shop-footer">
-        <button class="shop-close-btn" @click="$emit('open-backpack')">Backpack</button>
-        <button class="shop-close-btn" @click="$emit('close')">← Done</button>
-      </div>
-
-      <transition name="toast-fade">
-        <div
-          v-if="toastMessage"
-          class="toast-notification"
-          :class="{ 'toast-error': isToastError }"
-        >
-          {{ toastMessage }}
-        </div>
-      </transition>
     </div>
   </div>
 </template>

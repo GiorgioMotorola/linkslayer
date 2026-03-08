@@ -2,7 +2,9 @@
   <div class="rest-overlay" :class="overlayClass" v-if="props.showRestModal">
     <div class="transition-fade" :class="{ active: isTransitioning }"></div>
     <div class="rest-modal" :class="modalClass">
-      <div class="rest-icon">{{ restIcon }}</div>
+      <img v-if="shouldShowShortRest" :src="shortRestImg" class="sr-banner-img" alt="" />
+      <img v-else-if="tavernView" :src="tavernImg" class="sr-banner-img" alt="" />
+      <img v-else-if="shouldShowLongRest" :src="longRestImg" class="sr-banner-img" alt="" />
 
       <div v-if="shouldShowLongRest && !tavernView" class="danger-warning">
         Enemies will be stronger when you wake up...
@@ -177,6 +179,9 @@ import {
   getRandomSipPhrase,
   getRandomTavernMeal,
 } from "../utils/restPhrases.js";
+const shortRestImg = new URL("../assets/short-rest.png", import.meta.url).href;
+const longRestImg = new URL("../assets/long-rest.jpg", import.meta.url).href;
+const tavernImg = new URL("../assets/tavern.jpg", import.meta.url).href;
 
 const props = defineProps({
   showRestModal: Boolean,
@@ -286,10 +291,6 @@ const modalClass = computed(() => {
   return tavernView.value ? "modal-tavern" : "modal-night";
 });
 
-const restIcon = computed(() => {
-  if (shouldShowShortRest.value) return "🌤️";
-  return tavernView.value ? "🍺" : "🌙";
-});
 
 
 const handleShortRest = () => {
