@@ -7,7 +7,7 @@
         <div v-if="encounter.type === 'combat'">
           <div class="combat-hp-bar">
             <div class="combat-hp-player" :class="{ 'hp-counting': isPlayerHpAnimating }">
-              ❤️ {{ displayedPlayerHP }}/{{ effectiveMaxHP }}
+              ❤️ {{ displayedPlayerHP }}
               <transition name="delta-fade">
                 <span v-if="lastDamageTaken" class="hp-delta hp-delta-taken">-{{ lastDamageTaken }}</span>
               </transition>
@@ -109,35 +109,51 @@
 
         <div class="npc" v-else-if="encounter.type === 'npc'">
           <div class="npc-name">{{ encounter.npc.name }}</div>
-          <div class="npc-greeting" v-html="typedGreeting"></div>
-          <div v-if="currentDialogue && currentDialogue.options" class="dialogue-options">
-            <button
-              v-for="(option, index) in currentDialogue.options"
-              :key="index"
-              @click="emit('option-chosen', option)"
-            >
-              ▸ {{ option.text }}
-            </button>
-          </div>
-          <div v-else class="dialogue-options">
-            <button @click="emit('close')">▸ Continue</button>
+          <div class="dialogue-wrap">
+            <div class="dialogue-wrap-inner">
+              <transition name="dialogue-fade" mode="out-in">
+                <div :key="currentDialogueNodeId" class="dialogue-body">
+                  <div class="npc-greeting" v-html="typedGreeting"></div>
+                  <div v-if="currentDialogue && currentDialogue.options" class="dialogue-options">
+                    <button
+                      v-for="(option, index) in currentDialogue.options"
+                      :key="index"
+                      @click="emit('option-chosen', option)"
+                    >
+                      ▸ {{ option.text }}
+                    </button>
+                  </div>
+                  <div v-else class="dialogue-options">
+                    <button @click="emit('close')">▸ Continue</button>
+                  </div>
+                </div>
+              </transition>
+            </div>
           </div>
         </div>
 
         <div class="lore" v-else-if="encounter.type === 'lore'">
           <div class="lore-name">{{ encounter.lore.name || 'Discovery' }}</div>
-          <div class="lore-greeting" v-html="typedGreeting"></div>
-          <div v-if="currentDialogue && currentDialogue.options" class="dialogue-options">
-            <button
-              v-for="(option, index) in currentDialogue.options"
-              :key="index"
-              @click="emit('option-chosen', option)"
-            >
-              ▸ {{ option.text }}
-            </button>
-          </div>
-          <div v-else class="dialogue-options">
-            <button @click="emit('close')">▸ Continue</button>
+          <div class="dialogue-wrap">
+            <div class="dialogue-wrap-inner">
+              <transition name="dialogue-fade" mode="out-in">
+                <div :key="currentDialogueNodeId" class="dialogue-body">
+                  <div class="lore-greeting" v-html="typedGreeting"></div>
+                  <div v-if="currentDialogue && currentDialogue.options" class="dialogue-options">
+                    <button
+                      v-for="(option, index) in currentDialogue.options"
+                      :key="index"
+                      @click="emit('option-chosen', option)"
+                    >
+                      ▸ {{ option.text }}
+                    </button>
+                  </div>
+                  <div v-else class="dialogue-options">
+                    <button @click="emit('close')">▸ Continue</button>
+                  </div>
+                </div>
+              </transition>
+            </div>
           </div>
         </div>
 
@@ -1189,6 +1205,7 @@ function triggerContainerAnim(refVar, className, duration = 700) {
     }, duration);
   });
 }
+
 
 
 function copyLogToClipboard() {
