@@ -544,6 +544,10 @@ button:hover {
     font-size: 14px;
     text-indent: 1rem;
   }
+
+  .cs-auth-link {
+  font-size: 11px;
+}
 }
 
 .journey-length-selection {

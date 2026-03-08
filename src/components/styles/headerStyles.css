@@ -830,7 +830,7 @@ header {
 }
 
 .tips-button:hover {
-  color: rgb(28, 128, 158);
+  color: #0063af;
   cursor: pointer;
 }
 @keyframes fadeInUp {
@@ -1328,12 +1328,12 @@ button:hover {
 }
 
 .npc button:hover {
-  color: rgb(28, 128, 158);
+  color: #0063af;
   cursor: pointer;
 }
 
 .lore button:hover {
-  color: rgb(28, 128, 158);
+  color: #0063af;
   cursor: pointer;
 }
 
