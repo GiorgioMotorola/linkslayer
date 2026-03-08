@@ -6,7 +6,7 @@
     <div v-for="i in 12" :key="i" class="snowflake"><div class="inner">❅</div></div>
   </div>
   <div v-else-if="weather === 'rain'" class="raindrops" aria-hidden="true">
-    <div v-for="i in 16" :key="i" class="raindrop"><div class="inner">|</div></div>
+    <div v-for="i in 19" :key="i" class="raindrop"><div class="inner">|</div></div>
   </div>
   <div v-else-if="weather === 'leaves'" class="leaffall" aria-hidden="true">
     <div v-for="i in 10" :key="i" class="leaf"><div class="inner">🍂</div></div>
