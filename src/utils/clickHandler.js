@@ -1,6 +1,38 @@
 import { nextTick } from "vue";
 import { getRandomBoss, isBoss } from "@/utils/bossGenerator";
 import { rollEncounter, generateEnemy, npcData, loreData } from "@/utils/encounterGenerator";
+import { shopItems } from "@/utils/shopItems";
+
+const DOG_EXCLUDED = new Set([
+  "stickItem", "coolerStickItem", "evenCoolerStickItem", "dog",
+]);
+const DOG_ALLOWED_ITEMS = shopItems.filter(
+  (i) => i.effect === "inventoryItem" && !DOG_EXCLUDED.has(i.details)
+);
+
+const dogInventoryKey = {
+  compass:              (inv) => { inv.compass              = (inv.compass              || 0) + 1; },
+  healthPotion:         (inv) => { inv.healthPotions        = (inv.healthPotions        || 0) + 1; },
+  minorHealthPotion:    (inv) => { inv.minorHealthPotions   = (inv.minorHealthPotions   || 0) + 1; },
+  barkTea:              (inv) => { inv.barkTeas             = (inv.barkTeas             || 0) + 1; },
+  invisibilityCloak:    (inv) => { inv.invisibilityCloaks   = (inv.invisibilityCloaks   || 0) + 1; },
+  herbalPoultice:       (inv) => { inv.herbalPoultices      = (inv.herbalPoultices      || 0) + 1; },
+  frenchOnionSoup:      (inv) => { inv.frenchOnionSoups     = (inv.frenchOnionSoups     || 0) + 1; },
+  smokeBomb:            (inv) => { inv.smokeBombs           = (inv.smokeBombs           || 0) + 1; },
+  antidote:             (inv) => { inv.antidotes            = (inv.antidotes            || 0) + 1; },
+  adventurersRations:   (inv) => { inv.adventurersRations   = (inv.adventurersRations   || 0) + 1; },
+  sharedSufferingAmulet:(inv) => { inv.sharedSufferingAmulets = (inv.sharedSufferingAmulets || 0) + 1; },
+  flashPowder:          (inv) => { inv.flashPowders         = (inv.flashPowders         || 0) + 1; },
+  venomVial:            (inv) => { inv.venomVials           = (inv.venomVials           || 0) + 1; },
+  serratedDagger:       (inv) => { inv.serratedDaggers      = (inv.serratedDaggers      || 0) + 1; },
+  luckyCoin:            (inv) => { inv.luckyCoins           = (inv.luckyCoins           || 0) + 1; },
+  wardingShield:        (inv) => { inv.wardingShields       = (inv.wardingShields       || 0) + 1; },
+  wardStone:            (inv) => { inv.wardStones           = (inv.wardStones           || 0) + 1; },
+  encounterBeacon:      (inv) => { inv.encounterBeacons     = (inv.encounterBeacons     || 0) + 1; },
+  goldPouch:            (inv) => { inv.goldPouches          = (inv.goldPouches          || 0) + 1; },
+  bountyScroll:         (inv) => { inv.bountyScrolls        = (inv.bountyScrolls        || 0) + 1; },
+  turkeyLeg:            (inv) => { inv.turkeyLegs           = (inv.turkeyLegs           || 0) + 1; },
+};
 
 export async function handleClick({
   title,
@@ -199,6 +231,30 @@ export async function handleClick({
 
   if (title === finalTarget && gameData.bossDefeated.value) {
     utilityFunctions.clearInterval(gameData.timerInterval);
+  }
+
+  // Dog find encounter — 10% chance if player has a dog and no encounter is active
+  if (
+    playerState.dogName?.value &&
+    playerState.inventory?.value &&
+    !enemyState.encounter.value &&
+    Math.random() < 0.07
+  ) {
+    const item = DOG_ALLOWED_ITEMS[Math.floor(Math.random() * DOG_ALLOWED_ITEMS.length)];
+    const addFn = dogInventoryKey[item.details];
+    if (item && addFn) {
+      addFn(playerState.inventory.value);
+      const dogName = playerState.dogName.value;
+      enemyState.encounter.value = {
+        type: "lore",
+        lore: {
+          id: `dog_find_${Date.now()}`,
+          name: "Dog Find",
+          text: `🐶 ${dogName} sniffs the ground and begins digging and growling excitedly. They found <strong>${item.name}</strong>! It has been added to your inventory.`,
+          options: [{ text: "Good dog! 🐾", flow: "close_encounter" }],
+        },
+      };
+    }
   }
 
   window.scrollTo({ top: 0, behavior: "smooth" });

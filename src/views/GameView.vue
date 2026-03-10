@@ -87,8 +87,27 @@
       @show-tips="showTipsModal = true"
     />
     <div>
+      <JourneyRecapModal
+        v-if="showRecap"
+        :type="recapType"
+        :playerName="playerName"
+        :playerClass="playerClass"
+        :daysCount="daysCount"
+        :clickCount="clickCount"
+        :weaponBonus="weaponBonus"
+        :shieldBonus="shieldBonus"
+        :enemiesKilled="enemiesKilled"
+        :totalSpecialsUsed="totalSpecialsUsed"
+        :goldSpent="goldSpent"
+        :shortRestsUsed="shortRestsUsed"
+        :longRestsUsed="longRestsUsed"
+        :dogName="dogName"
+        :lastBattle="lastBattle"
+        @continue="onRecapContinue"
+      />
+
       <VictoryModal
-        v-if="isGameComplete"
+        v-if="isGameComplete && recapDismissed"
         :clicks="clickCount"
         :daysCount="daysCount"
         :path="path"
@@ -459,6 +478,7 @@ import DieSlayerModal from "@/components/DieSlayerModal.vue";
 import CampfireOverlay from "@/components/CampfireOverlay.vue";
 import RuneCacheModal from "@/components/RuneCacheModal.vue";
 import DogNameModal from "@/components/DogNameModal.vue";
+import JourneyRecapModal from "@/components/JourneyRecapModal.vue";
 import TavernShopModal from "@/components/TavernShopModal.vue";
 import ForgeModal from "@/components/ForgeModal.vue";
 
@@ -494,6 +514,8 @@ const {
   timerInterval,
   formattedTimer,
   defeated,
+  showRecap,
+  recapType,
   isLoadingGame,
   isGameComplete,
   bossOverlay,
@@ -710,6 +732,14 @@ setupClickWatcher({
 });
 
 const lastBattle = ref({ enemyName: '', article: '' });
+const recapDismissed = ref(false);
+
+watch(isGameComplete, (val) => {
+  if (val && !recapDismissed.value) {
+    showRecap.value = true;
+    recapType.value = 'victory';
+  }
+});
 
 watch(encounter, (newVal) => {
   if (newVal?.type === 'combat' && newVal?.enemy) {
@@ -721,15 +751,24 @@ watch(encounter, (newVal) => {
 });
 
 watch(playerHP, (newVal) => {
-  if (playerClass.value && newVal <= 0 && !defeated.value) {
+  if (playerClass.value && newVal <= 0 && !defeated.value && !showRecap.value) {
     log(
       `💀 <span class="player-name">${playerName.value}</span> was defeated.`
     );
-    defeated.value = true;
-    clearInterval(timerInterval);
     encounter.value = null;
+    showRecap.value = true;
+    recapType.value = 'defeat';
   }
 });
+
+function onRecapContinue() {
+  showRecap.value = false;
+  if (recapType.value === 'defeat') {
+    defeated.value = true;
+  } else if (recapType.value === 'victory') {
+    recapDismissed.value = true;
+  }
+}
 
 watch(bossDefeated, (val) => {
   if (val) {

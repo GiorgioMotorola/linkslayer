@@ -36,6 +36,8 @@ export function useGameHandlers(deps) {
     shortcutsUsedCount,
     timerInterval,
     defeated,
+    showRecap,
+    recapType,
     bossSpawned,
     bossDefeated,
     selectedBossType,
@@ -305,6 +307,9 @@ export function useGameHandlers(deps) {
         currentTargetIndex,
         combatEncountersFought,
         combatWinsSinceLastCapIncrease,
+        dogName,
+        inventory,
+        playerName,
       },
       gameData: {
         enemyDifficultyLevel,
@@ -422,7 +427,11 @@ export function useGameHandlers(deps) {
       },
       utils: {
         clearTimer: () => clearInterval(timerInterval),
-        setDefeated: () => (defeated.value = true),
+        setDefeated: () => {
+          showRecap.value = true;
+          recapType.value = 'defeat';
+          clearInterval(timerInterval);
+        },
         handleLootDrop: handleLoot,
         markBossDefeated,
         gotoEnemyTurn,

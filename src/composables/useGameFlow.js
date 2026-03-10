@@ -29,6 +29,8 @@ export function useGameFlow() {
   });
 
   const defeated = ref(false);
+  const showRecap = ref(false);
+  const recapType = ref('');
   const isLoadingGame = ref(false);
 
   const bossSpawned = ref(false);
@@ -96,6 +98,8 @@ export function useGameFlow() {
     formattedTimer,
 
     defeated,
+    showRecap,
+    recapType,
     isLoadingGame,
     isGameComplete,
 
