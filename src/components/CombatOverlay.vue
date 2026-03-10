@@ -2,15 +2,14 @@
   <Transition name="combat-overlay">
     <div v-if="inEncounter" class="combat-backdrop" aria-hidden="true">
       <div class="scanlines"></div>
-      <div v-if="flashType" :class="['hit-flash', `hit-flash--${flashType}`]"></div>
     </div>
   </Transition>
   <Transition name="combat-overlay">
     <div v-if="inEncounter" class="combat-overlay" aria-hidden="true">
-      <div class="co-player-wrap">
+      <div class="co-player-wrap" :class="{ 'img-flash--taken': flashType === 'taken' }">
         <img :src="playerImage" class="co-player" alt="" />
       </div>
-      <div class="co-enemy-wrap">
+      <div class="co-enemy-wrap" :class="{ 'img-flash--dealt': flashType === 'dealt' }">
         <img
           :src="thumbnailUrl ?? enemyPlaceholder"
           class="co-enemy"
@@ -46,7 +45,7 @@ let flashTimer = null;
 function triggerFlash(type) {
   flashType.value = type;
   clearTimeout(flashTimer);
-  flashTimer = setTimeout(() => { flashType.value = null; }, 350);
+  flashTimer = setTimeout(() => { flashType.value = null; }, 1400);
 }
 
 watch(() => props.lastDamageTaken, (val) => { if (val) triggerFlash("taken"); });
@@ -104,19 +103,18 @@ watch(
   to   { background-position: 0 40px; }
 }
 
-.hit-flash {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  animation: flash-burst 0.35s ease-out forwards;
+.img-flash--taken,
+.img-flash--dealt {
+  animation: img-hit-pulse 1.4s ease-out forwards;
 }
 
-.hit-flash--taken { background: rgba(220, 30, 30, 0.35); }
-.hit-flash--dealt { background: rgba(255, 255, 255, 0.2); }
-
-@keyframes flash-burst {
-  0%   { opacity: 1; }
-  100% { opacity: 0; }
+@keyframes img-hit-pulse {
+  0%   { transform: scale(1);    box-shadow: 0 0 8px  4px  rgba(180, 20, 20, 0.6); }
+  15%  { transform: scale(1.06); box-shadow: 0 0 24px 12px rgba(220, 0,  0,  0.95); }
+  30%  { transform: scale(0.98); box-shadow: 0 0 18px 8px  rgba(200, 30, 10, 0.8); }
+  50%  { transform: scale(1.03); box-shadow: 0 0 20px 10px rgba(160, 0,  0,  0.65); }
+  70%  { transform: scale(1);    box-shadow: 0 0 14px 6px  rgba(140, 0,  0,  0.4); }
+  100% { transform: scale(1);    box-shadow: 0 0 0px  0px  rgba(100, 0,  0,  0); }
 }
 
 .combat-backdrop {
