@@ -12,8 +12,7 @@
       </div>
       <div class="co-enemy-wrap">
         <img
-          v-if="thumbnailUrl"
-          :src="thumbnailUrl"
+          :src="thumbnailUrl ?? enemyPlaceholder"
           class="co-enemy"
           alt=""
           @error="thumbnailUrl = null"
@@ -26,11 +25,12 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 
-const knightImg  = new URL("../assets/knight-img.jpg",  import.meta.url).href;
-const paladinImg = new URL("../assets/paladin-img.jpg", import.meta.url).href;
-const wizardImg  = new URL("../assets/wizard-img.jpg",  import.meta.url).href;
-const rogueImg   = new URL("../assets/rogue-img.png",           import.meta.url).href;
-const mundaneImg = new URL("../assets/mundane-img.jpg", import.meta.url).href;
+const knightImg       = new URL("../assets/knight-img.jpg",        import.meta.url).href;
+const paladinImg      = new URL("../assets/paladin-img.jpg",       import.meta.url).href;
+const wizardImg       = new URL("../assets/wizard-img.jpg",        import.meta.url).href;
+const rogueImg        = new URL("../assets/rogue-img.png",         import.meta.url).href;
+const mundaneImg      = new URL("../assets/mundane-img.jpg",       import.meta.url).href;
+const enemyPlaceholder = new URL("../assets/enemy-placeholder.png", import.meta.url).href;
 
 const props = defineProps({
   inEncounter: Boolean,
@@ -146,7 +146,7 @@ watch(
   left: 25%;
   bottom: 0;
     border-radius: 50%;
-  border: 3px solid rgb(0, 76, 99);
+  border: 5px solid rgb(4, 183, 238);
   overflow: hidden;
 }
 
@@ -155,7 +155,7 @@ watch(
   right: 26%;
   bottom: 0;
   border-radius: 50%;
-  border: 3px solid rgb(102, 0, 0);
+  border: 5px solid rgb(202, 17, 17);
   overflow: hidden;
 }
 
