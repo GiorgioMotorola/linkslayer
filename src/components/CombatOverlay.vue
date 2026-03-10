@@ -175,7 +175,7 @@ watch(
   border-radius: 50%;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 1000px) {
   .combat-overlay { bottom: clamp(320px, 62vh, 600px); }
   .co-player-wrap { left: 5%; }
   .co-enemy-wrap  { right: 5%; }
