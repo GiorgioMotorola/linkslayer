@@ -1071,6 +1071,7 @@ button:hover {
   font-weight: 600;
   font-size: 15px;
   width: 340px;
+  max-width: 90vw;
   border: 2px solid;
   z-index: 110;
   animation: pulse-glow-centered 2s ease-in-out infinite;
@@ -2106,9 +2107,6 @@ button:hover {
   }
 
   .enemy-intent {
-    left: 50%;
-    transform: translateX(-50%);
-    top: unset;
     width: min(340px, 90vw);
     padding: 0.35rem 0.8rem;
     font-size: 12px;

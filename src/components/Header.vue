@@ -1,5 +1,6 @@
 <template>
   <header ref="headerEl" :class="{ 'darkened-header': isDarkened }">
+
     <div class="encounter-wrapper" :class="{ 'encounter-active': !!encounter }">
       <div class="encounter-wrapper-inner">
     <transition name="encounter-fade" mode="out-in">
@@ -303,6 +304,13 @@ import { ref, computed, watch, nextTick, onMounted, onUnmounted } from "vue";
 import TipsModal from "./TipsModal.vue";
 import "./styles/headerStyles.css";
 
+const knightImg  = new URL("../assets/knight-placeholder.png",  import.meta.url).href;
+const paladinImg = new URL("../assets/paladin-placeholder.png", import.meta.url).href;
+const wizardImg  = new URL("../assets/wizard-placeholder.png",  import.meta.url).href;
+const rogueImg   = new URL("../assets/rogue-img.png",           import.meta.url).href;
+const mundaneImg = new URL("../assets/mundane-placeholder.png", import.meta.url).href;
+const classImageMap = { Fighter: knightImg, Paladin: paladinImg, Wizard: wizardImg, Rogue: rogueImg, Mundane: mundaneImg };
+
 import { useAuth } from "@/composables/useAuth";
 
 const props = defineProps({
@@ -417,6 +425,20 @@ const emit = defineEmits([
 ]);
 
 const { user: authUser, signIn, signUp, signOut } = useAuth();
+
+const playerClassImg = computed(() => classImageMap[props.playerClass?.name] ?? knightImg);
+
+const enemyThumbnailUrl = ref(null);
+watch(() => props.formattedTitle, async (title) => {
+  if (!title) return;
+  try {
+    const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`);
+    const data = await res.json();
+    enemyThumbnailUrl.value = data.thumbnail?.source ?? null;
+  } catch {
+    enemyThumbnailUrl.value = null;
+  }
+}, { immediate: true });
 
 const showForm = ref(null);
 const authEmail = ref("");

@@ -29,7 +29,7 @@
       </div>
       <span class="path-day">Day {{ props.daysCount }}</span>
     </div>
-    <div class="path-sub-bar">
+    <div class="path-sub-bar" :class="{ 'blurred-content': props.isInCombat }">
       <div class="sky-bar">
         <div class="sky-track" :style="skyTrackStyle">
           <div class="sky-indicator" :style="{ left: skyPercent + '%' }">
@@ -39,7 +39,14 @@
       </div>
     </div>
   </div>
-  <div class="article" :class="{ 'blurred-content': isBlurred }">
+  <CombatOverlay
+    :inEncounter="props.isInCombat"
+    :playerClass="props.playerClass"
+    :articleTitle="props.articleTitle"
+    :lastDamageDealt="props.lastDamageDealt"
+    :lastDamageTaken="props.lastDamageTaken"
+  />
+  <div class="article" :class="{ 'blurred-content': isBlurred || props.isInCombat }">
     <div v-if="inEncounter" class="overlay"></div>
     <div class="title">{{ formattedTitle }}</div>
     <div v-if="isLoading" class="loader-overlay">
@@ -57,6 +64,7 @@ import { ref, watch, onMounted, computed } from "vue";
 import { fetchWikipediaArticle } from "@/utils/wikipediaApi";
 import logo from "../assets/newlogo-nobg1.png";
 import WeatherOverlay from "./WeatherOverlay.vue";
+import CombatOverlay from "./CombatOverlay.vue";
 import "./styles/articleViewerStyles.css";
 
 const props = defineProps({
@@ -72,6 +80,13 @@ const props = defineProps({
   longRestDismissCount: { type: Number, default: 0 },
   autoSaveFeedback: { type: Boolean, default: false },
   daysCount: { type: Number, default: 1 },
+  playerClass: { type: Object, default: null },
+  isInCombat: { type: Boolean, default: false },
+  playerHP: { type: Number, default: 0 },
+  enemyHP: { type: Number, default: 0 },
+  lastDamageDealt: { type: Number, default: null },
+  lastDamageTaken: { type: Number, default: null },
+  enemyStatusEffects: { type: Array, default: () => [] },
 });
 
 function dayWeather(day) {

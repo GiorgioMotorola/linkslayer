@@ -156,6 +156,13 @@
         :longRestDismissCount="longRestDismissCount"
         :autoSaveFeedback="autoSaveFeedback"
         :daysCount="daysCount"
+        :playerClass="playerClass"
+        :isInCombat="isInCombat"
+        :playerHP="playerHP"
+        :enemyHP="enemyHP"
+        :lastDamageDealt="lastDamageDealt"
+        :lastDamageTaken="lastDamageTaken"
+        :enemyStatusEffects="enemyStatusEffects"
       />
 
       <Transition name="rest-backdrop">
@@ -432,6 +439,7 @@
     @forge="handleForge"
   />
   </Transition>
+
 </template>
 
 <script setup>
