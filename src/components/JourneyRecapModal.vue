@@ -252,4 +252,15 @@ const narrative = computed(() => {
   background: #8b6914;
   color: #fff;
 }
+
+@media screen and (max-width: 600px) {
+  .scroll-wrap { width: 95vw; }
+  .scroll-inner { padding: 1rem 1.2rem; }
+  .recap-title { font-size: 1.15rem; }
+  .recap-text { font-size: 0.92rem; }
+  .recap-stats { gap: 0.4rem 0.7rem; }
+  .recap-stat { min-width: 64px; padding: 0.25rem 0.5rem; }
+  .rs-val { font-size: 0.95rem; }
+  .recap-continue { width: 100%; }
+}
 </style>
