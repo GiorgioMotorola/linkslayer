@@ -2307,4 +2307,8 @@ button:hover {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
   }
+
+  .status-popup {
+  left: 0;
+}
 }
