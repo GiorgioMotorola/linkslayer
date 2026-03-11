@@ -20,6 +20,7 @@
                 v-for="fx in enemyStatusIcons"
                 :key="fx.key"
                 class="enemy-status-icon"
+                :class="{ 'status-icon-new': flashingStatusKeys.has(fx.key) }"
                 :title="fx.label"
               >{{ fx.icon }}</span>
               <transition name="delta-fade">
@@ -216,7 +217,10 @@
             <button class="status-btn" @click="showStatusPopup = !showStatusPopup">Status</button>
             <div v-if="showStatusPopup" class="status-popup">
               <div class="status-popup-title">Active Effects</div>
-              <div v-for="s in activeStatuses" :key="s" class="status-popup-item">{{ s }}</div>
+              <div v-for="entry in activeStatuses" :key="entry.label" class="status-popup-item">
+                <div class="status-popup-item-label">{{ entry.label }}</div>
+                <div class="status-popup-item-desc">{{ entry.desc }}</div>
+              </div>
               <div v-if="activeStatuses.length === 0" class="status-popup-item status-popup-empty">No active effects</div>
             </div>
           </div>
@@ -303,6 +307,7 @@
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from "vue";
 import TipsModal from "./TipsModal.vue";
 import "./styles/headerStyles.css";
+import { shopItems } from "@/utils/shopItems";
 
 const knightImg  = new URL("../assets/knight-placeholder.png",  import.meta.url).href;
 const paladinImg = new URL("../assets/paladin-placeholder.png", import.meta.url).href;
@@ -403,6 +408,8 @@ const props = defineProps({
   wardingShieldHitsRemaining: { type: Number, default: 0 },
   isEnemyVenomed: { type: Boolean, default: false },
   isEnemyBleeding: { type: Boolean, default: false },
+  weaponAugment:  { type: String, default: "" },
+  defenseAugment: { type: String, default: "" },
   bountyScrollActive: { type: Boolean, default: false },
   luckyFleeActive: { type: Boolean, default: false },
   hasStick: { type: Boolean, default: false },
@@ -494,21 +501,69 @@ function closeStatusPopupOnOutsideClick(e) {
 }
 
 
+const AUGMENT_LABELS = {
+  bleedEdge:    "Serrated Edge",
+  venomCoat:    "Venom Coat",
+  thunderstrike:"Thunderstrike Rune",
+  emberTemper:  "Ember Temper",
+  cursedRune:   "Cursed Rune",
+  soulShard:    "Soul Shard",
+  thornplate:   "Thornplate",
+  stoneskin:    "Stoneskin",
+  bloodpactRune:"Bloodpact Rune",
+  ironWill:     "Iron Will",
+  wardensWard:  "Warden's Ward",
+  frostbound:   "Frostbound",
+};
+
+const augmentItemDesc = Object.fromEntries(
+  shopItems.filter(i => i.details && i.description).map(i => [
+    i.details,
+    i.description.replace(/\s*Install at the Forge\.?/i, "").trim(),
+  ])
+);
+
+function s(label, desc) { return { label, desc }; }
+
 const activeStatuses = computed(() => {
   const list = [];
-  if (props.hasEvenCoolerStick) list.push("Even Cooler Stick — +5 to rolls");
-  else if (props.hasCoolerStick) list.push("Cooler Stick — +2 to rolls");
-  else if (props.hasStick) list.push("Stick — weapon bonus");
-  if (props.isBlurred) list.push("Drunk — blurred vision");
-  if (props.isPlayerPoisoned) list.push("Poisoned — taking damage over time");
-  if (props.isEnemyVenomed) list.push("Venom Vial — enemy is poisoned");
-  if (props.isEnemyBleeding) list.push("Bleeding — enemy taking bleed damage");
-  if (props.encounterBeaconActive) list.push("Encounter Beacon — active");
-  if (props.wardingShieldHitsRemaining > 0) list.push(`Warding Shield — ${props.wardingShieldHitsRemaining} hit${props.wardingShieldHitsRemaining === 1 ? '' : 's'} remaining`);
-  if (props.healthRegenActive) list.push("Herbal Poultice — regenerating HP");
-  if (props.isCloakActive) list.push("Cloak of Invisibility — cloaked");
-  if (props.bountyScrollActive) list.push("Bounty Scroll — active");
-  if (props.luckyFleeActive) list.push("Lucky Coin — flee bonus");
+  const effects = props.enemyStatusEffects ?? [];
+
+  // Player passives
+  if (props.hasEvenCoolerStick) list.push(s("Even Cooler Stick", "+5 bonus to every dice roll."));
+  else if (props.hasCoolerStick) list.push(s("Cooler Stick", "+2 bonus to every dice roll."));
+  else if (props.hasStick) list.push(s("A Cool Stick", "Provides a small weapon bonus."));
+
+  // Augments
+  if (props.weaponAugment) list.push(s(
+    `⚔️ ${AUGMENT_LABELS[props.weaponAugment] ?? props.weaponAugment}`,
+    augmentItemDesc[props.weaponAugment] ?? "Weapon augment equipped."
+  ));
+  if (props.defenseAugment) list.push(s(
+    `🛡️ ${AUGMENT_LABELS[props.defenseAugment] ?? props.defenseAugment}`,
+    augmentItemDesc[props.defenseAugment] ?? "Defense augment equipped."
+  ));
+
+  // Player status
+  if (props.isBlurred)       list.push(s("🍺 Drunk",    "Vision is blurred. Effects wear off over time."));
+  if (props.isPlayerPoisoned) list.push(s("🤢 Poisoned", "Taking 3 poison damage per turn until cured."));
+  if (props.isCloakActive)   list.push(s("👻 Cloaked",  "Invisible — enemies less likely to engage."));
+  if (props.healthRegenActive) list.push(s("🌿 Regenerating", "Herbal Poultice active — restoring 1 HP per click."));
+  if (props.wardingShieldHitsRemaining > 0) list.push(s(
+    `🛡️ Warding Shield`,
+    `Absorbs the next ${props.wardingShieldHitsRemaining} hit${props.wardingShieldHitsRemaining === 1 ? "" : "s"}.`
+  ));
+  if (props.bountyScrollActive) list.push(s("📜 Bounty Scroll", "Next combat victory drops double loot."));
+  if (props.luckyFleeActive)    list.push(s("🍀 Lucky Coin",    "Guaranteed successful flee ready."));
+  if (props.encounterBeaconActive) list.push(s("🔦 Encounter Beacon", "Next encounter will be a friendly NPC."));
+
+  // Enemy conditions
+  if (props.isEnemyVenomed)  list.push(s("☠️ Venom Vial",     "Enemy is poisoned — taking damage each turn."));
+  if (props.isEnemyBleeding) list.push(s("🩸 Enemy Bleeding", "Enemy taking 2 bleed damage per turn."));
+  if (effects.some(e => e.type === "fire"))   list.push(s("🔥 Enemy on Fire",    "Enemy burning — 5 damage per turn."));
+  if (effects.some(e => e.type === "weaken")) list.push(s("💫 Enemy Weakened",   "Enemy is weakened — dealing reduced damage."));
+  if (effects.some(e => e.type === "chill"))  list.push(s("❄️ Enemy Chilled",    "Enemy is chilled — reduced damage next hit."));
+
   return list;
 });
 
@@ -625,10 +680,31 @@ const badgeBottomStyle = computed(() => ({
 const enemyStatusIcons = computed(() => {
   const effects = props.enemyStatusEffects ?? [];
   const icons = [];
-  if (effects.some(e => e.type === "bleed")) icons.push({ icon: "🩸", key: "bleed", label: "bleed" });
-  if (effects.some(e => e.type === "poison")) icons.push({ icon: "🤢", key: "poison", label: "poison" });
+  if (effects.some(e => e.type === "bleed"))   icons.push({ icon: "🩸", key: "bleed",   label: "Bleeding" });
+  if (effects.some(e => e.type === "poison"))  icons.push({ icon: "☠️", key: "poison",  label: "Poisoned" });
+  if (effects.some(e => e.type === "fire"))    icons.push({ icon: "🔥", key: "fire",    label: "On Fire" });
+  if (effects.some(e => e.type === "weaken"))  icons.push({ icon: "💫", key: "weaken",  label: "Weakened" });
+  if (effects.some(e => e.type === "chill"))   icons.push({ icon: "❄️", key: "chill",   label: "Chilled" });
   return icons;
 });
+
+// Flash animation tracking for newly applied status effects
+const flashingStatusKeys = ref(new Set());
+
+watch(() => props.enemyStatusEffects, (newEffects, oldEffects) => {
+  const oldTypes = new Set((oldEffects ?? []).map(e => e.type));
+  const newTypes = new Set(newEffects.map(e => e.type));
+  for (const type of newTypes) {
+    if (!oldTypes.has(type)) {
+      flashingStatusKeys.value = new Set([...flashingStatusKeys.value, type]);
+      setTimeout(() => {
+        const next = new Set(flashingStatusKeys.value);
+        next.delete(type);
+        flashingStatusKeys.value = next;
+      }, 700);
+    }
+  }
+}, { deep: true });
 
 const diceRollBadgeStyle = computed(() => ({
   bottom: `${headerHeight.value + 8 + 62}px`,

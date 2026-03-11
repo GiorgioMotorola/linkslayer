@@ -460,7 +460,7 @@ header {
 .status-popup {
   position: absolute;
   bottom: calc(100% + 6px);
-  left: 0;
+  right: 0;
   min-width: 200px;
   background: #0e0e10;
   border: 1px solid rgba(200,175,120,0.4);
@@ -480,9 +480,7 @@ header {
 }
 
 .status-popup-item {
-  font-size: 12px;
-  color: #c0b8a8;
-  padding: 3px 0;
+  padding: 5px 0;
   border-bottom: 1px solid rgba(200,175,120,0.1);
 }
 
@@ -490,7 +488,21 @@ header {
   border-bottom: none;
 }
 
+.status-popup-item-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #d4c48a;
+  margin-bottom: 2px;
+}
+
+.status-popup-item-desc {
+  font-size: 11px;
+  color: #8a8070;
+  line-height: 1.4;
+}
+
 .status-popup-empty {
+  font-size: 12px;
   color: #7a7060;
   font-style: italic;
 }
@@ -1265,6 +1277,16 @@ button:hover {
 @keyframes status-pulse {
   0%, 100% { opacity: 0.75; }
   50%       { opacity: 1; }
+}
+
+.status-icon-new {
+  animation: status-pop-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+}
+
+@keyframes status-pop-in {
+  0%   { transform: scale(0) rotate(-20deg); opacity: 0; }
+  60%  { transform: scale(1.6) rotate(8deg); opacity: 1; }
+  100% { transform: scale(1)   rotate(0deg); opacity: 0.85; }
 }
 
 @keyframes hp-tick-pulse {

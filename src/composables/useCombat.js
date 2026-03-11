@@ -17,6 +17,9 @@ export function useCombat() {
   const confusedAction = ref([]);
   const confusedTurnsLeft = ref(0);
 
+  const ironWillUsed = ref(false);
+  const bloodpactActive = ref(false);
+
   const DEFAULT_ENEMY_HP = 25;
 
   const inEncounter = computed(() => {
@@ -62,6 +65,8 @@ export function useCombat() {
       enrageBonus.value = 0;
       confusedAction.value = [];
       confusedTurnsLeft.value = 0;
+      ironWillUsed.value = false;
+      bloodpactActive.value = false;
     }
   });
 
@@ -119,6 +124,9 @@ export function useCombat() {
 
     confusedAction,
     confusedTurnsLeft,
+
+    ironWillUsed,
+    bloodpactActive,
 
     decideEnemyAction,
     handleCloseEncounter,

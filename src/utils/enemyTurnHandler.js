@@ -31,6 +31,23 @@ export function handleEnemyTurn({
       log(
         `☠️ ${formattedTitle.value} is poisoned. ${formattedTitle.value} takes ${effect.damage} poison damage.`
       );
+    } else if (effect.type === "fire") {
+      enemyHP.value -= effect.damage;
+      log(`🔥 ${formattedTitle.value} is on fire! Takes ${effect.damage} burn damage.`);
+    } else if (effect.type === "weaken") {
+      const turnsLeft = effect.duration - 1;
+      if (turnsLeft > 0) {
+        log(`💫 ${formattedTitle.value} is weakened (-${effect.damageReduction} dmg, ${turnsLeft} turn${turnsLeft === 1 ? "" : "s"} left).`);
+      } else {
+        log(`💫 ${formattedTitle.value}'s weakness fades.`);
+      }
+    } else if (effect.type === "chill") {
+      const turnsLeft = effect.duration - 1;
+      if (turnsLeft > 0) {
+        log(`❄️ ${formattedTitle.value} is chilled (-${effect.damageReduction} dmg, ${turnsLeft} turn${turnsLeft === 1 ? "" : "s"} left).`);
+      } else {
+        log(`❄️ The chill on ${formattedTitle.value} fades.`);
+      }
     }
 
     effect.duration -= 1;

@@ -44,6 +44,8 @@
     :wardingShieldHitsRemaining="wardingShieldHitsRemaining"
     :isEnemyVenomed="isEnemyVenomed"
     :isEnemyBleeding="isEnemyBleeding"
+    :weaponAugment="weaponAugment"
+    :defenseAugment="defenseAugment"
     :bountyScrollActive="bountyScrollActive"
     :luckyFleeActive="luckyFleeActive"
     :cloak-clicks-remaining="cloakClicksRemaining"
@@ -276,6 +278,10 @@
         :gold-pouch-accumulated-gold="goldPouchAccumulatedGold"
         :is-bounty-scroll-active="bountyScrollActive"
         :isIdle="isIdle"
+        :weaponAugment="weaponAugment"
+        :defenseAugment="defenseAugment"
+        :pendingWeaponAugments="inventory.pendingWeaponAugments ?? []"
+        :pendingDefenseAugments="inventory.pendingDefenseAugments ?? []"
       />
 
     </div>
@@ -315,6 +321,10 @@
         :gold-pouch-accumulated-gold="goldPouchAccumulatedGold"
         :is-bounty-scroll-active="bountyScrollActive"
         :isIdle="isIdle"
+        :weaponAugment="weaponAugment"
+        :defenseAugment="defenseAugment"
+        :pendingWeaponAugments="inventory.pendingWeaponAugments ?? []"
+        :pendingDefenseAugments="inventory.pendingDefenseAugments ?? []"
       />
     </template>
     <template #map>
@@ -440,8 +450,13 @@
     v-if="showTavernShop"
     :campTier="campTier"
     :playerGold="playerGold"
+    :weaponAugment="weaponAugment"
+    :defenseAugment="defenseAugment"
+    :pendingWeaponAugments="inventory.pendingWeaponAugments ?? []"
+    :pendingDefenseAugments="inventory.pendingDefenseAugments ?? []"
     @close="showTavernShop = false"
     @buy="handleTavernShopBuy"
+    @buy-augment="handleAugmentBuy"
   />
   </Transition>
 
@@ -454,8 +469,13 @@
     :scrapMetal="inventory.scrapMetal"
     :weaponBonus="weaponBonus"
     :shieldBonus="shieldBonus"
+    :weaponAugment="weaponAugment"
+    :defenseAugment="defenseAugment"
+    :pendingWeaponAugments="inventory.pendingWeaponAugments ?? []"
+    :pendingDefenseAugments="inventory.pendingDefenseAugments ?? []"
     @close="showForge = false"
     @forge="handleForge"
+    @install-augment="handleInstallAugment"
   />
   </Transition>
 
@@ -644,6 +664,8 @@ const {
   playerGoal,
   dogName,
   campTier,
+  weaponAugment,
+  defenseAugment,
 } = player;
 
 function onDogNamed(name) {
@@ -669,6 +691,7 @@ const {
 
 const shopItems = computed(() =>
   allShopItems.filter((item) => {
+    if (item.effect === "weaponAugment" || item.effect === "defenseAugment") return false;
     if (item.id === "gold_pouch" && inventory.value.goldPouches > 0) return false;
     if (item.id === "stick_item" && (inventory.value.stickItem > 0 || inventory.value.coolerStickItem > 0)) return false;
     if (item.id === "cooler_stick_item" && inventory.value.stickItem <= 0) return false;
@@ -941,6 +964,41 @@ function handleForge({ type, scrapUsed }) {
   } else {
     shieldBonus.value += upgrades;
     log(`⚒️ <span class="player-name">${playerName.value}</span> forged ${scrapUsed} scrap into +${upgrades} Defense Bonus.`);
+  }
+}
+
+function handleAugmentBuy(item) {
+  handleShopPurchase(item);
+}
+
+function handleInstallAugment({ type, key }) {
+  const pending = type === "weapon"
+    ? inventory.value.pendingWeaponAugments
+    : inventory.value.pendingDefenseAugments;
+  const idx = pending.indexOf(key);
+  if (idx !== -1) pending.splice(idx, 1);
+
+  const AUGMENT_LABELS = {
+    bleedEdge: "Serrated Edge", venomCoat: "Venom Coat",
+    thunderstrike: "Thunderstrike Rune", emberTemper: "Ember Temper",
+    cursedRune: "Cursed Rune", soulShard: "Soul Shard",
+    thornplate: "Thornplate", stoneskin: "Stoneskin",
+    bloodpactRune: "Bloodpact Rune", ironWill: "Iron Will",
+    wardensWard: "Warden's Ward", frostbound: "Frostbound",
+  };
+
+  if (type === "weapon") {
+    if (weaponAugment.value && weaponAugment.value !== key) {
+      inventory.value.pendingWeaponAugments.push(weaponAugment.value);
+    }
+    weaponAugment.value = key;
+    log(`⚒️ <span class="player-name">${playerName.value}</span> installs <strong>${AUGMENT_LABELS[key] ?? key}</strong> on their weapon!`);
+  } else {
+    if (defenseAugment.value && defenseAugment.value !== key) {
+      inventory.value.pendingDefenseAugments.push(defenseAugment.value);
+    }
+    defenseAugment.value = key;
+    log(`⚒️ <span class="player-name">${playerName.value}</span> installs <strong>${AUGMENT_LABELS[key] ?? key}</strong> on their armor!`);
   }
 }
 
@@ -1251,6 +1309,8 @@ async function saveGame() {
       dogName: dogName.value,
       goldPouchAccumulatedGold: goldPouchAccumulatedGold.value,
       campTier: campTier.value,
+      weaponAugment: weaponAugment.value,
+      defenseAugment: defenseAugment.value,
       markedPOIs: [...markedPOIs.value],
       engagedPOIs: [...engagedPOIs.value],
     },
@@ -1315,6 +1375,8 @@ function restoreGameState(s) {
   if (s.longRestDismissCount != null) longRestDismissCount.value = s.longRestDismissCount;
   dogName.value = s.dogName ?? "";
   campTier.value = s.campTier ?? 0;
+  weaponAugment.value = s.weaponAugment ?? "";
+  defenseAugment.value = s.defenseAugment ?? "";
   goldPouchAccumulatedGold.value = s.goldPouchAccumulatedGold ?? 0;
   markedPOIs.value = s.markedPOIs ?? [];
   engagedPOIs.value = s.engagedPOIs ?? [];

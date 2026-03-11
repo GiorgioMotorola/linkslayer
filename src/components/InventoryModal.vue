@@ -464,6 +464,68 @@
           </div>
         </div>
 
+        <!-- Installed augments -->
+        <template v-if="weaponAugment">
+          <div class="item-slot-wrapper augment-slot-wrapper">
+            <div class="item-details-box">
+              <div class="item-name-quantity">
+                <span class="item-name">{{ augmentLabel(weaponAugment) }}</span>
+                <span class="augment-type-tag">⚔️ Weapon</span>
+              </div>
+              <div class="item-description">{{ augmentDesc(weaponAugment) }}</div>
+            </div>
+            <div class="item-button-box">
+              <span class="augment-equipped-tag">Equipped</span>
+            </div>
+          </div>
+        </template>
+
+        <template v-if="defenseAugment">
+          <div class="item-slot-wrapper augment-slot-wrapper">
+            <div class="item-details-box">
+              <div class="item-name-quantity">
+                <span class="item-name">{{ augmentLabel(defenseAugment) }}</span>
+                <span class="augment-type-tag">🛡️ Defense</span>
+              </div>
+              <div class="item-description">{{ augmentDesc(defenseAugment) }}</div>
+            </div>
+            <div class="item-button-box">
+              <span class="augment-equipped-tag">Equipped</span>
+            </div>
+          </div>
+        </template>
+
+        <!-- Pending (uninstalled) augments -->
+        <template v-for="key in uniquePendingWeapon" :key="'pw-' + key">
+          <div class="item-slot-wrapper augment-slot-wrapper">
+            <div class="item-details-box">
+              <div class="item-name-quantity">
+                <span class="item-name">{{ augmentLabel(key) }}</span>
+                <span class="augment-type-tag">⚔️ Weapon</span>
+              </div>
+              <div class="item-description">{{ augmentDesc(key) }}</div>
+            </div>
+            <div class="item-button-box">
+              <span class="augment-pending-tag">Install at Forge</span>
+            </div>
+          </div>
+        </template>
+
+        <template v-for="key in uniquePendingDefense" :key="'pd-' + key">
+          <div class="item-slot-wrapper augment-slot-wrapper">
+            <div class="item-details-box">
+              <div class="item-name-quantity">
+                <span class="item-name">{{ augmentLabel(key) }}</span>
+                <span class="augment-type-tag">🛡️ Defense</span>
+              </div>
+              <div class="item-description">{{ augmentDesc(key) }}</div>
+            </div>
+            <div class="item-button-box">
+              <span class="augment-pending-tag">Install at Forge</span>
+            </div>
+          </div>
+        </template>
+
         <div
           v-if="isInventoryEmpty"
           class="item-slot-wrapper no-items-message-wrapper"
@@ -485,6 +547,24 @@ import { shopItems } from "@/utils/shopItems.js";
 const itemDesc = Object.fromEntries(
   shopItems.filter((i) => i.details && i.description).map((i) => [i.details, i.description])
 );
+
+const AUGMENT_LABELS = {
+  bleedEdge:    "Serrated Edge",
+  venomCoat:    "Venom Coat",
+  thunderstrike:"Thunderstrike Rune",
+  emberTemper:  "Ember Temper",
+  cursedRune:   "Cursed Rune",
+  soulShard:    "Soul Shard",
+  thornplate:   "Thornplate",
+  stoneskin:    "Stoneskin",
+  bloodpactRune:"Bloodpact Rune",
+  ironWill:     "Iron Will",
+  wardensWard:  "Warden's Ward",
+  frostbound:   "Frostbound",
+};
+
+function augmentLabel(key) { return AUGMENT_LABELS[key] ?? key; }
+function augmentDesc(key)  { return itemDesc[key] ?? ""; }
 
 const props = defineProps({
   embedded: { type: Boolean, default: false },
@@ -576,11 +656,20 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  weaponAugment:          { type: String, default: "" },
+  defenseAugment:         { type: String, default: "" },
+  pendingWeaponAugments:  { type: Array,  default: () => [] },
+  pendingDefenseAugments: { type: Array,  default: () => [] },
 });
 
 const emit = defineEmits(["close", "use-item"]);
 
+const uniquePendingWeapon  = computed(() => [...new Set(props.pendingWeaponAugments)]);
+const uniquePendingDefense = computed(() => [...new Set(props.pendingDefenseAugments)]);
+
 const isInventoryEmpty = computed(() => {
+  if (props.weaponAugment || props.defenseAugment) return false;
+  if (props.pendingWeaponAugments.length || props.pendingDefenseAugments.length) return false;
   const skip = new Set(["questScrolls"]);
   for (const key in props.inventory) {
     if (skip.has(key)) continue;

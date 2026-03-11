@@ -11,6 +11,10 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     totalSpecialsUsed,
     specialTier,
     playerGold,
+    weaponAugment,
+    defenseAugment,
+    ironWillUsed,
+    bloodpactActive,
   } = player;
 
   const {
@@ -74,6 +78,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
   let skipEnemyCurrentTurn = false;
   let playerDefendedThisTurn = false;
   let enemyActionCountered = false;
+  let enemyAttemptedAttack = false;
 
   if (playerAction === "attack_steady" || playerAction === "attack_power" || playerAction === "attack_reckless") {
     let randomDamage = Math.floor(Math.random() * 5) + 2;
@@ -307,6 +312,11 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     log(`🐶 ${player.dogName.value} bites for 2 extra damage!`);
   }
 
+  // Bloodpact Rune: once active, add +3 to attack damage
+  if (bloodpactActive?.value && damageToEnemy > 0) {
+    damageToEnemy += 3;
+  }
+
   if (damageToEnemy > 0) {
     let finalDamageToEnemy = damageToEnemy;
 
@@ -321,12 +331,42 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     }
     enemyHP.value -= finalDamageToEnemy;
     utils.onCombatResult?.({ type: "dealt", amount: finalDamageToEnemy });
+
+    // Weapon augment proc (only on actual hits)
+    const wAug = weaponAugment?.value;
+    if (wAug && finalDamageToEnemy > 0) {
+      const roll = Math.random();
+      if (wAug === "bleedEdge" && roll < 0.30) {
+        enemyStatusEffects.value.push({ type: "bleed", damage: 2, duration: 4 });
+        log(`🩸 Serrated Edge bites deep — enemy Bleeds (2 dmg × 4 turns)!`);
+      } else if (wAug === "venomCoat" && roll < 0.30) {
+        enemyStatusEffects.value.push({ type: "poison", damage: 3, duration: 3 });
+        log(`☠️ Venom Coat seeps in — enemy Poisoned (3 dmg × 3 turns)!`);
+      } else if (wAug === "thunderstrike" && roll < 0.25) {
+        enemyIsStunned.value = true;
+        enemyNextAction.value = "stunned";
+        skipEnemyCurrentTurn = true;
+        log(`⚡ Thunderstrike Rune fires — enemy stunned!`);
+      } else if (wAug === "emberTemper" && roll < 0.30) {
+        enemyStatusEffects.value.push({ type: "fire", damage: 5, duration: 2 });
+        log(`🔥 Ember Temper ignites the wound — enemy on Fire (5 dmg × 2 turns)!`);
+      } else if (wAug === "cursedRune" && roll < 0.20) {
+        enemyStatusEffects.value.push({ type: "weaken", damageReduction: 2, duration: 3 });
+        log(`💫 Cursed Rune drains their strength — enemy Weakened (-2 dmg × 3 turns)!`);
+      }
+    }
   }
 
   if (enemyHP.value <= 0) {
     log(
       `💀 <span class="player-name">${playerName.value}</span> defeated ${formattedTitle}`
     );
+    // Soul Shard: 15% chance on kill to restore 8 HP
+    if (weaponAugment?.value === "soulShard" && Math.random() < 0.15) {
+      const soulHeal = 8;
+      playerHP.value = Math.min(playerHP.value + soulHeal, effectiveMaxHP.value);
+      log(`💠 Soul Shard pulses — you recover ${soulHeal} HP from the fallen.`);
+    }
     const defeatedEnemyData = encounter.value?.enemy;
     utils.onVictory?.(defeatedEnemyData);
     handleLootDrop(defeatedEnemyData);
@@ -352,7 +392,34 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       damageToPlayer = 0;
     } else {
       if (enemyNextAction.value === "attack") {
+        enemyAttemptedAttack = true;
         damageToPlayer = currentEnemyDamage;
+
+        // Apply weaken/chill status debuffs on the enemy
+        for (const eff of (enemyStatusEffects.value ?? [])) {
+          if ((eff.type === "weaken" || eff.type === "chill") && eff.damageReduction > 0) {
+            damageToPlayer = Math.max(0, damageToPlayer - eff.damageReduction);
+          }
+        }
+
+        // Iron Will: block first hit of combat entirely
+        if (defenseAugment?.value === "ironWill" && !ironWillUsed?.value) {
+          ironWillUsed.value = true;
+          damageToPlayer = 0;
+          log(`🧱 Iron Will absorbs the first blow entirely!`);
+        }
+
+        // Stoneskin: 20% chance to fully block
+        if (damageToPlayer > 0 && defenseAugment?.value === "stoneskin" && Math.random() < 0.20) {
+          damageToPlayer = 0;
+          log(`🪨 Stoneskin activates — attack fully blocked!`);
+        }
+
+        // Warden's Ward: 25% chance to halve damage
+        if (damageToPlayer > 0 && defenseAugment?.value === "wardensWard" && Math.random() < 0.25) {
+          damageToPlayer = Math.floor(damageToPlayer * 0.5);
+          log(`✨ Warden's Ward pulses — damage halved to ${damageToPlayer}!`);
+        }
 
         damageToPlayer = Math.max(
           0,
@@ -450,6 +517,51 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       damageToPlayer
     );
     playerHP.value = Math.max(playerHP.value - 0, 0);
+  }
+
+  // Defense augment procs that fire after enemy attack
+  if (enemyAttemptedAttack && defenseAugment?.value) {
+    const daug = defenseAugment.value;
+
+    // Thornplate: reflect 2 damage back on any hit attempt
+    if (daug === "thornplate") {
+      const thornDmg = 2;
+      enemyHP.value = Math.max(0, enemyHP.value - thornDmg);
+      utils.onCombatResult?.({ type: "dealt", amount: thornDmg });
+      log(`🌵 Thornplate reflects ${thornDmg} damage back at ${formattedTitle}!`);
+      if (enemyHP.value <= 0) {
+        log(`💀 <span class="player-name">${playerName.value}</span> defeated ${formattedTitle} with Thornplate!`);
+        const defeatedEnemyData = encounter.value?.enemy;
+        utils.onVictory?.(defeatedEnemyData);
+        handleLootDrop(defeatedEnemyData);
+        if (enemiesKilled) enemiesKilled.value++;
+        combatWinsSinceLastCapIncrease.value++;
+        if (combatWinsSinceLastCapIncrease.value >= 5) {
+          hpCapBonus.value += 10;
+          log(`🎉 Your maximum HP increased by <strong>10</strong>. New max HP: ${effectiveMaxHP.value}`);
+          combatWinsSinceLastCapIncrease.value = 0;
+          playerHP.value = Math.min(playerHP.value, effectiveMaxHP.value);
+        }
+        return;
+      }
+    }
+
+    // Frostbound: 20% chance to Chill enemy (-1 dmg next hit) when damage landed
+    if (daug === "frostbound" && damageToPlayer > 0 && Math.random() < 0.20) {
+      enemyStatusEffects.value.push({ type: "chill", damageReduction: 1, duration: 1 });
+      log(`❄️ Frostbound retaliates — ${formattedTitle} is Chilled (-1 dmg next hit)!`);
+    }
+  }
+
+  // Bloodpact Rune: activate when HP drops below 25% for first time
+  if (
+    defenseAugment?.value === "bloodpactRune" &&
+    !bloodpactActive?.value &&
+    playerHP.value > 0 &&
+    playerHP.value < effectiveMaxHP.value * 0.25
+  ) {
+    bloodpactActive.value = true;
+    log(`🩸 Bloodpact Rune awakens — rage fills the wound! +3 damage for the rest of this combat.`);
   }
 
   if (playerHP.value <= 0) {

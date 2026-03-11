@@ -83,6 +83,26 @@ export function handleShopPurchase(
         utilityFunctions.log(`🧼 ${gameData.playerName.value} sobered up.`);
         break;
 
+      case "weaponAugment":
+        if (!playerState.inventory.value.pendingWeaponAugments) {
+          playerState.inventory.value.pendingWeaponAugments = [];
+        }
+        playerState.inventory.value.pendingWeaponAugments.push(item.details);
+        utilityFunctions.log(
+          `🔩 ${gameData.playerName.value} acquired <strong>${item.name}</strong> — install it at the Forge.`
+        );
+        break;
+
+      case "defenseAugment":
+        if (!playerState.inventory.value.pendingDefenseAugments) {
+          playerState.inventory.value.pendingDefenseAugments = [];
+        }
+        playerState.inventory.value.pendingDefenseAugments.push(item.details);
+        utilityFunctions.log(
+          `🔩 ${gameData.playerName.value} acquired <strong>${item.name}</strong> — install it at the Forge.`
+        );
+        break;
+
       case "inventoryItem":
         if (item.details === "compass") {
           playerState.inventory.value.compass++;

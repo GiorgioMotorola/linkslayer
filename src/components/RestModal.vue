@@ -116,11 +116,10 @@
           </button>
 
           <button
-            v-if="props.campTier < 3"
             @click="$emit('open-tavern-shop')"
             class="sr-btn"
           >
-            Camp Supplies
+            Tavern Fence
           </button>
 
           <button

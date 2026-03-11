@@ -1,34 +1,21 @@
 .shop-overlay {
   position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; right: 0; bottom: 0;
   width: 360px;
   display: flex;
   flex-direction: column;
   z-index: 1000;
-  box-shadow: -10px 0 50px rgba(0, 0, 0, 0.75);
+  box-shadow: -10px 0 50px rgba(0,0,0,0.75);
   overflow: hidden;
+  font-family: "IBM Plex Sans", sans-serif;
 }
 
-.shop-panel-enter-active {
-  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.shop-panel-leave-active {
-  transition: transform 0.25s ease-in;
-}
-.shop-panel-enter-from,
-.shop-panel-leave-to {
-  transform: translateX(100%);
-}
-
-.shop-content-game-style {
+.shop-panel {
   background: rgba(6, 6, 10, 0.98);
   border-left: 1px solid rgba(60, 62, 75, 0.4);
   flex: 1;
   display: flex;
   flex-direction: column;
-  font-family: "IBM Plex Sans", sans-serif;
   min-height: 0;
 }
 
@@ -46,9 +33,6 @@
   font-weight: 700;
   color: #848490;
   letter-spacing: 3px;
-  text-transform: uppercase;
-  border-bottom: 1px solid rgba(62, 64, 76, 0.5);
-  padding-bottom: 0.6rem;
 }
 
 .shop-gold {
@@ -56,67 +40,79 @@
   color: #c8a840;
 }
 
-.shop-items {
+.shop-btns {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.6rem;
+}
+
+.shop-btn {
+  background: transparent;
+  border: 1px solid rgba(65, 68, 82, 0.5);
+  border-radius: 4px;
+  color: #848490;
+  font-size: 12px;
+  font-family: "IBM Plex Sans", sans-serif;
+  padding: 7px 14px;
+  cursor: pointer;
+}
+
+.shop-btn:hover {
+  background: rgba(36, 36, 48, 0.45);
+  color: #aaaab8;
+}
+
+.shop-list {
   flex: 1;
   overflow-y: auto;
   padding: 1rem 1.6rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 
 .shop-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.7rem 0.9rem;
-  border: 1px solid rgba(58, 60, 72, 0.5);
-  border-radius: 5px;
-  background: rgba(18, 18, 24, 0.6);
-}
-
-.shop-item-owned {
-  border-color: rgba(55, 100, 55, 0.35);
-  background: rgba(14, 28, 14, 0.4);
-}
-
-.shop-item-left {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  flex: 1;
-  min-width: 0;
+  overflow: hidden;
 }
 
 .shop-item-name {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: #b8b8c4;
+  padding: 0rem 0;
+  cursor: pointer;
+  user-select: none;
 }
 
-.shop-item-owned .shop-item-name {
+.shop-item-name:hover {
+  color: #d8d8e4;
+}
+
+.shop-item.owned .shop-item-name {
   color: #6a9e6a;
 }
 
+.shop-item-body {
+  padding-bottom: .5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .shop-item-desc {
-  font-size: 11px;
-  color: #58585e;
-  line-height: 1.4;
+  font-size: 12px;
+  color: #787882;
+  line-height: 1.45;
+  margin: 0;
 }
 
-.shop-item-right {
-  flex-shrink: 0;
-}
-
-.shop-owned {
+.shop-owned-label {
   font-size: 11px;
   color: #4a7a4a;
   font-weight: 600;
-  letter-spacing: 0.3px;
 }
 
 .shop-buy-btn {
+  align-self: flex-start;
   background: rgba(20, 20, 28, 0.8);
   border: 1px solid rgba(68, 70, 85, 0.58);
   border-radius: 4px;
@@ -126,7 +122,6 @@
   font-weight: 600;
   padding: 5px 14px;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .shop-buy-btn:hover:not(:disabled) {
@@ -140,32 +135,8 @@
   cursor: not-allowed;
 }
 
-.shop-footer {
-  display: flex;
-  gap: 0.6rem;
-  padding-top: 0.5rem;
-}
-
-.shop-close-btn {
-  background: transparent;
-  border: 1px solid rgba(65, 68, 82, 0.5);
-  border-radius: 4px;
-  color: #848490;
-  font-size: 12px;
-  font-family: "IBM Plex Sans", sans-serif;
-  padding: 7px 14px;
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
-}
-
-.shop-close-btn:hover {
-  background: rgba(36, 36, 48, 0.45);
-  border-color: rgba(98, 100, 120, 0.68);
-  color: #aaaab8;
-}
-
-.toast-notification {
-  background-color: rgba(0, 0, 0, 0.85);
+.toast {
+  background: rgba(0,0,0,0.85);
   color: #ccc;
   padding: 6px 12px;
   border-radius: 5px;
@@ -174,24 +145,19 @@
   pointer-events: none;
 }
 
-.toast-notification.toast-error {
-  background-color: rgba(160, 48, 48, 0.92);
+.toast.toast-error {
+  background: rgba(160, 48, 48, 0.92);
   color: #f0b0b0;
 }
 
-.toast-fade-enter-active,
-.toast-fade-leave-active {
+.toast-fade-enter-active, .toast-fade-leave-active {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
-
-.toast-fade-enter-from,
-.toast-fade-leave-to {
+.toast-fade-enter-from, .toast-fade-leave-to {
   opacity: 0;
   transform: translateY(-4px);
 }
 
 @media screen and (max-width: 600px) {
-  .shop-overlay {
-    width: 100%;
-  }
+  .shop-overlay { width: 100%; }
 }

@@ -62,6 +62,52 @@
 
       <div v-if="scrapMetal === 0" class="forge-empty">No scrap metal.</div>
 
+      <!-- Augment Slots -->
+      <div v-if="showAugmentSection" class="forge-augments">
+        <div class="forge-augment-title">⚗️ Augment Slots</div>
+        <div class="forge-augment-row">
+          <!-- Weapon Slot -->
+          <div class="forge-augment-slot">
+            <div class="forge-augment-slot-label">⚔️ Weapon</div>
+            <div class="forge-augment-current">
+              {{ weaponAugment ? augmentLabel(weaponAugment) : '— Empty —' }}
+            </div>
+            <div v-if="uniquePendingWeapon.length > 0" class="forge-augment-pending">
+              <button
+                v-for="key in uniquePendingWeapon"
+                :key="key"
+                class="forge-augment-btn"
+                @click="installAugment('weapon', key)"
+              >
+                Install: {{ augmentLabel(key) }}
+              </button>
+            </div>
+            <div v-else-if="!weaponAugment" class="forge-augment-hint">Buy augments at the Tavern Fence</div>
+          </div>
+
+          <div class="forge-augment-divider"></div>
+
+          <!-- Defense Slot -->
+          <div class="forge-augment-slot">
+            <div class="forge-augment-slot-label">🛡️ Defense</div>
+            <div class="forge-augment-current">
+              {{ defenseAugment ? augmentLabel(defenseAugment) : '— Empty —' }}
+            </div>
+            <div v-if="uniquePendingDefense.length > 0" class="forge-augment-pending">
+              <button
+                v-for="key in uniquePendingDefense"
+                :key="key"
+                class="forge-augment-btn"
+                @click="installAugment('defense', key)"
+              >
+                Install: {{ augmentLabel(key) }}
+              </button>
+            </div>
+            <div v-else-if="!defenseAugment" class="forge-augment-hint">Buy augments at the Tavern Fence</div>
+          </div>
+        </div>
+      </div>
+
       <button class="forge-close-btn" @click="$emit('close')">← Back to Camp</button>
     </div>
   </div>
@@ -70,13 +116,32 @@
 <script setup>
 import { ref, computed } from "vue";
 
+const AUGMENT_LABELS = {
+  bleedEdge:    "Serrated Edge",
+  venomCoat:    "Venom Coat",
+  thunderstrike:"Thunderstrike Rune",
+  emberTemper:  "Ember Temper",
+  cursedRune:   "Cursed Rune",
+  soulShard:    "Soul Shard",
+  thornplate:   "Thornplate",
+  stoneskin:    "Stoneskin",
+  bloodpactRune:"Bloodpact Rune",
+  ironWill:     "Iron Will",
+  wardensWard:  "Warden's Ward",
+  frostbound:   "Frostbound",
+};
+
 const props = defineProps({
-  scrapMetal: { type: Number, default: 0 },
-  weaponBonus: { type: Number, default: 0 },
-  shieldBonus: { type: Number, default: 0 },
+  scrapMetal:             { type: Number, default: 0 },
+  weaponBonus:            { type: Number, default: 0 },
+  shieldBonus:            { type: Number, default: 0 },
+  weaponAugment:          { type: String, default: "" },
+  defenseAugment:         { type: String, default: "" },
+  pendingWeaponAugments:  { type: Array,  default: () => [] },
+  pendingDefenseAugments: { type: Array,  default: () => [] },
 });
 
-const emit = defineEmits(["close", "forge"]);
+const emit = defineEmits(["close", "forge", "install-augment"]);
 
 const weaponAlloc = ref(0);
 const defenseAlloc = ref(0);
@@ -121,6 +186,23 @@ function forgeDefense() {
   emit("forge", { type: "defense", scrapUsed: defenseAlloc.value });
   defenseAlloc.value = 0;
   triggerSparks(defenseBursts);
+}
+
+const uniquePendingWeapon = computed(() => [...new Set(props.pendingWeaponAugments)]);
+const uniquePendingDefense = computed(() => [...new Set(props.pendingDefenseAugments)]);
+
+const showAugmentSection = computed(() =>
+  props.weaponAugment || props.defenseAugment ||
+  props.pendingWeaponAugments.length > 0 || props.pendingDefenseAugments.length > 0
+);
+
+function augmentLabel(key) {
+  return AUGMENT_LABELS[key] ?? key;
+}
+
+function installAugment(type, key) {
+  emit("install-augment", { type, key });
+  triggerSparks(type === "weapon" ? weaponBursts : defenseBursts);
 }
 </script>
 

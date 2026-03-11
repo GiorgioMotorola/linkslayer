@@ -237,6 +237,33 @@
   box-shadow: none !important;
 }
 
+.augment-slot-wrapper {
+  border-color: rgba(180, 130, 30, 0.3);
+  background: rgba(20, 16, 8, 0.5);
+}
+
+.augment-type-tag {
+  font-size: 10px;
+  color: #a08040;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.augment-equipped-tag {
+  font-size: 11px;
+  color: #6a9e6a;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.augment-pending-tag {
+  font-size: 10px;
+  color: #a08040;
+  font-weight: 500;
+  font-style: italic;
+  white-space: nowrap;
+}
+
 .no-items-message-wrapper {
   justify-content: center;
 }

@@ -72,6 +72,8 @@ export function useGameHandlers(deps) {
     playerGoal,
     dogName,
     campTier,
+    weaponAugment,
+    defenseAugment,
   } = player;
 
   const {
@@ -100,6 +102,8 @@ export function useGameHandlers(deps) {
     enemyStatusEffects,
     enemyIsStunned,
     enrageBonus,
+    ironWillUsed,
+    bloodpactActive,
     DEFAULT_ENEMY_HP,
     confusedAction,
     confusedTurnsLeft,
@@ -404,6 +408,10 @@ export function useGameHandlers(deps) {
         totalSpecialsUsed,
         specialTier,
         playerGold,
+        weaponAugment,
+        defenseAugment,
+        ironWillUsed,
+        bloodpactActive,
       },
       enemy: {
         enemyHP,
