@@ -24,9 +24,9 @@
       </div>
 
       <div class="game-title">
-        <div class="game-name">LINK</div>
-        <div class="game-name">SLAYER</div>
-        <!-- <img :src="logo" alt="LINKSLAYER game title" /> -->
+        <!-- <div class="game-name">LINK</div>
+        <div class="game-name">SLAYER</div> -->
+        <img :src="logo" alt="LINKSLAYER game title" />
       </div>
       <div id="notification-banner" class="notification-banner">
         <span id="notification-message"></span>
@@ -94,7 +94,7 @@ import { classes } from "@/utils/classes";
 import prompts from "@/assets/data/prompts.json";
 import TipsModal from "./TipsModal.vue";
 import randomNames from "@/assets/data/randomNames.json";
-import logo from "../assets/newlogo-nobg1.png";
+import logo from "../assets/link-slayer-logo.png";
 import { useAuth } from "@/composables/useAuth";
 
 const { user, signIn, signUp, signOut } = useAuth();
