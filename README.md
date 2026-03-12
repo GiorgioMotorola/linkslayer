@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/linkslayer-logo.png" alt="Linkslayer Logo" width="200">
+  <img src="src/assets/link-slayer-logo.png" alt="Linkslayer Logo" width="200">
 </div>
 
 ---
