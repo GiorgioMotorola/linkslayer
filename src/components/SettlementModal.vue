@@ -15,7 +15,7 @@
         <template v-if="props.readOnly">
           <span class="lord-label">🏴 Claimed by</span>
           <span class="lord-name">{{ (currentLord.signInEmail ?? currentLord.playerName ?? "").split("@")[0] }}</span>
-          <!-- <span class="lord-since"> as {{ currentLord.playerName }}</span> -->
+          <span class="lord-since"> as {{ currentLord.playerName }}</span>
         </template>
         <template v-else>
           <span class="lord-label">👑 Lord</span>
