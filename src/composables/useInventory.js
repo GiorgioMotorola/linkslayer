@@ -55,6 +55,7 @@ export function useInventory() {
     goldPouches: 0,
     bountyScrolls: 0,
     questScrolls: 0,
+    settlementFlag: 0,
     pendingWeaponAugments: [],
     pendingDefenseAugments: [],
   });

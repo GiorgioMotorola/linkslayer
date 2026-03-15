@@ -377,3 +377,25 @@
     margin-top: 12px;
   }
 }
+
+/* ── Settlement shortcut ─────────────────────────────────────────────────── */
+.settlement-shortcut-row {
+  padding: 4px 0 8px;
+}
+
+.settlement-shortcut-btn {
+  width: 100%;
+  background: #1a1e0a;
+  border: 1px solid #4a6a18;
+  color: #8fc050;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+}
+.settlement-shortcut-btn:hover {
+  background: #242e0e;
+  color: #b0e060;
+}

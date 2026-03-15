@@ -67,6 +67,13 @@
               🗺️ {{ poi.name }}
             </div>
           </div>
+
+          <div v-if="props.hasSettlement" class="poi-section settlement-section">
+            <div class="poi-section-title">Settlement</div>
+            <div class="poi-item poi-revisitable" @click="$emit('visit-settlement')">
+              🏰 Visit Your Settlement
+            </div>
+          </div>
         </div>
       </div>
 
@@ -88,9 +95,10 @@ const props = defineProps({
   markedPOIs: { type: Array, default: () => [] },
   engagedPOIs: { type: Array, default: () => [] },
   isIdle: { type: Boolean, default: false },
+  hasSettlement: { type: Boolean, default: false },
 });
 
-defineEmits(["close", "revisit-poi"]);
+defineEmits(["close", "revisit-poi", "visit-settlement"]);
 
 const locationTypes = [
   "Village", "Hamlet", "Town", "Borough", "Colony", "Settlement", "Outpost", "Encampment",

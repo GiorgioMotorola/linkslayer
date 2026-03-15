@@ -346,3 +346,98 @@
 }
 }
 
+
+/* ── Town Naming Modal ────────────────────────────────────────────────────── */
+.town-naming-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.town-naming-modal {
+  background: #1a1208;
+  border: 2px solid #5a3a1a;
+  border-radius: 8px;
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.town-naming-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #f5deb3;
+  text-align: center;
+}
+
+.town-naming-region {
+  font-size: 0.82rem;
+  color: #a08060;
+  text-align: center;
+}
+.town-naming-region em {
+  color: #c8a96e;
+  font-style: normal;
+}
+
+.town-naming-input {
+  background: #0e0a04;
+  border: 1px solid #5a3a1a;
+  color: #f5deb3;
+  padding: 8px 12px;
+  font-size: 1rem;
+  border-radius: 4px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+.town-naming-input:focus {
+  border-color: #c8a96e;
+}
+
+.town-naming-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.town-naming-btn {
+  flex: 1;
+  background: #2c3e1a;
+  border: 1px solid #4a7a28;
+  color: #8fc050;
+  padding: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.town-naming-btn:hover:not(:disabled) {
+  background: #3a5220;
+  color: #b0e060;
+}
+.town-naming-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.town-naming-cancel {
+  background: none;
+  border: 1px solid #4a2a2a;
+  color: #8a5050;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.town-naming-cancel:hover {
+  color: #c06060;
+  border-color: #7a3a3a;
+}

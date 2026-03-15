@@ -99,6 +99,32 @@
         </div>
       </div>
 
+        <div class="tshop-section-label">🏴 Land</div>
+        <div class="tshop-list">
+          <div
+            class="tshop-item"
+            :class="{ 'tshop-owned': props.hasSettlementFlag || props.hasSettlement }"
+          >
+            <div class="tshop-item-header" @click="toggle('settlement-flag')">
+              <span class="tshop-item-name">Settlement Flag</span>
+              <span v-if="props.hasSettlementFlag || props.hasSettlement" class="tshop-check">✓</span>
+              <span v-else class="tshop-chevron" :class="{ open: expandedId === 'settlement-flag' }">›</span>
+            </div>
+            <div v-if="expandedId === 'settlement-flag'" class="tshop-item-body">
+              <p class="tshop-item-desc">Plant this flag on any Wikipedia article to found your settlement there. Name your town and begin building. One per adventure.</p>
+              <span v-if="props.hasSettlementFlag || props.hasSettlement" class="tshop-owned-label">✓ Owned</span>
+              <button
+                v-else
+                class="tshop-buy-btn"
+                :disabled="playerGold < 150"
+                @click="$emit('buy-flag'); expandedId = null"
+              >
+                150g — Buy
+              </button>
+            </div>
+          </div>
+        </div>
+
       <div class="tshop-footer">
         <button class="tshop-close-btn" @click="$emit('close')">← Back to Tavern</button>
       </div>
@@ -118,9 +144,11 @@ const props = defineProps({
   defenseAugment:         { type: String, default: "" },
   pendingWeaponAugments:  { type: Array,  default: () => [] },
   pendingDefenseAugments: { type: Array,  default: () => [] },
+  hasSettlementFlag:      { type: Boolean, default: false },
+  hasSettlement:          { type: Boolean, default: false },
 });
 
-defineEmits(["close", "buy", "buy-augment"]);
+defineEmits(["close", "buy", "buy-augment", "buy-flag"]);
 
 const expandedId = ref(null);
 

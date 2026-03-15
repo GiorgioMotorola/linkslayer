@@ -38,6 +38,9 @@
         </div>
       </div>
     </div>
+    <div v-if="props.settlementOnThisPage" class="settlement-banner" @click="emit('open-settlement')">
+      🏰 Visit {{ props.settlementOnThisPage.town_name }}, claimed by {{ props.settlementClaimedBy }}
+    </div>
   </div>
   <CombatOverlay
     :inEncounter="props.isInCombat"
@@ -87,6 +90,8 @@ const props = defineProps({
   lastDamageDealt: { type: Number, default: null },
   lastDamageTaken: { type: Number, default: null },
   enemyStatusEffects: { type: Array, default: () => [] },
+  settlementOnThisPage: { type: Object, default: null },
+  settlementClaimedBy:  { type: String, default: "" },
 });
 
 function dayWeather(day) {
@@ -148,7 +153,8 @@ const skyTrackStyle = computed(() => ({
   background: `radial-gradient(ellipse 15% 100% at ${skyPercent.value}% 50%, ${skyColor.value}, transparent), #1a1a1a`
 }));
 
-const emit = defineEmits(["link-clicked", "open-map"]);
+const emit = defineEmits(["link-clicked", "open-map", "open-settlement"]);
+
 
 const articleHtml = ref("");
 const errorMessage = ref("");
@@ -306,6 +312,29 @@ onMounted(load);
   font-family: Arial, Helvetica, sans-serif;
   color: rgb(54, 54, 54);
   font-weight: 400;
+}
+
+.settlement-banner {
+  background: #1e1408;
+  border-bottom: 1px solid #5a3a1a;
+  color: #c8a96e;
+  padding: 7px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-family: "IBM Plex Sans", Arial, sans-serif;
+}
+.settlement-banner:hover {
+  background: #2c1e0c;
+  color: #f5deb3;
+}
+.settlement-banner strong { color: #f5deb3; }
+.settlement-banner-sub {
+  color: #7a6040;
+  font-size: 0.78rem;
 }
 
 .path-reading {

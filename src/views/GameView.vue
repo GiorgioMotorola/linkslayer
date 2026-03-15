@@ -167,8 +167,11 @@
         :start="chain[0]"
         :targets="chain[currentTargetIndex + 1]"
         :inEncounter="inEncounter"
+        :settlementOnThisPage="pageSettlement"
+        :settlementClaimedBy="pageSettlementClaimedBy"
         @link-clicked="handleLinkClicked"
         @open-map="hubOpen = true; hubTab = 'map'"
+        @open-settlement="openPageSettlement"
         :path="path"
         :fullChain="chain"
         :currentTargetIndex="currentTargetIndex"
@@ -282,6 +285,8 @@
         :defenseAugment="defenseAugment"
         :pendingWeaponAugments="inventory.pendingWeaponAugments ?? []"
         :pendingDefenseAugments="inventory.pendingDefenseAugments ?? []"
+        :hasSettlement="!!settlementId"
+        @visit-settlement="openSettlement"
       />
 
     </div>
@@ -317,6 +322,8 @@
         :warding-shield-hits-remaining="wardingShieldHitsRemaining"
         :is-ward-stone-active="wardStoneActive"
         :ward-stone-clicks-remaining="wardStoneClicksRemaining"
+        :hasSettlement="!!settlementId"
+        @visit-settlement="openSettlement"
         :is-encounter-beacon-active="encounterBeaconActive"
         :gold-pouch-accumulated-gold="goldPouchAccumulatedGold"
         :is-bounty-scroll-active="bountyScrollActive"
@@ -335,7 +342,9 @@
         :markedPOIs="markedPOIs"
         :engagedPOIs="engagedPOIs"
         :isIdle="isIdle"
+        :hasSettlement="!!settlementId"
         @revisit-poi="handleRevisitPOI"
+        @visit-settlement="openSettlement(); hubOpen = false"
       />
     </template>
     <template #journal>
@@ -442,6 +451,62 @@
     @named="onDogNamed"
   />
 
+  <!-- Town Naming Modal -->
+  <div v-if="showTownNamingModal" class="town-naming-overlay">
+    <div class="town-naming-modal">
+      <div class="town-naming-title">🏴 Name Your Settlement</div>
+      <div class="town-naming-region">
+        Region: <em>{{ (current ?? "Unknown Lands").replaceAll("_", " ") }}</em>
+      </div>
+      <input
+        v-model="pendingTownName"
+        class="town-naming-input"
+        placeholder="Town name..."
+        maxlength="40"
+        @keydown.enter="submitTownName"
+        autofocus
+      />
+      <div class="town-naming-actions">
+        <button
+          class="town-naming-btn"
+          :disabled="!pendingTownName.trim()"
+          @click="submitTownName"
+        >
+          Found Town
+        </button>
+        <button class="town-naming-cancel" @click="showTownNamingModal = false">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settlement View (owner) -->
+  <SettlementModal
+    v-if="showSettlementView && settlement"
+    :settlement="settlement"
+    :playerGold="playerGold"
+    :isOwner="true"
+    :clicksSince="clickCount - lastSettlementVisitClickCount"
+    @close="closeSettlement"
+    @collect="handleSettlementCollect"
+    @place-building="handleSettlementPlaceBuilding"
+    @remove-building="handleSettlementRemoveBuilding"
+    @change-terrain="handleSettlementChangeTerrain"
+    @open-forge="showForge = true; showSettlementView = false"
+    @short-rest="handleRest('short'); showSettlementView = false"
+  />
+
+  <!-- Settlement View (visitor — read-only) -->
+  <SettlementModal
+    v-if="showVisitorSettlement && visitingSettlementData"
+    :settlement="visitingSettlementData"
+    :playerGold="0"
+    :isOwner="false"
+    :readOnly="true"
+    @close="showVisitorSettlement = false; visitingSettlementData = null"
+  />
+
   <Transition name="rest-backdrop">
     <div v-if="showTavernShop" class="rest-backdrop"></div>
   </Transition>
@@ -454,9 +519,12 @@
     :defenseAugment="defenseAugment"
     :pendingWeaponAugments="inventory.pendingWeaponAugments ?? []"
     :pendingDefenseAugments="inventory.pendingDefenseAugments ?? []"
+    :hasSettlementFlag="inventory.settlementFlag > 0"
+    :hasSettlement="!!settlementId"
     @close="showTavernShop = false"
     @buy="handleTavernShopBuy"
     @buy-augment="handleAugmentBuy"
+    @buy-flag="handleBuySettlementFlag"
   />
   </Transition>
 
@@ -501,6 +569,7 @@ import DogNameModal from "@/components/DogNameModal.vue";
 import JourneyRecapModal from "@/components/JourneyRecapModal.vue";
 import TavernShopModal from "@/components/TavernShopModal.vue";
 import ForgeModal from "@/components/ForgeModal.vue";
+import SettlementModal from "@/components/SettlementModal.vue";
 
 import { shopItems as allShopItems } from "@/utils/shopItems";
 import { isBoss } from "@/utils/bossGenerator";
@@ -519,6 +588,7 @@ import { useInventory } from "@/composables/useInventory";
 import { useStatusEffects } from "@/composables/useStatusEffects";
 import { useCombat } from "@/composables/useCombat";
 import { useGameHandlers } from "@/composables/useGameHandlers";
+import { useSettlement } from "@/composables/useSettlement";
 
 const gameFlow = useGameFlow();
 const {
@@ -574,6 +644,20 @@ const {
 const hubOpen = ref(false);
 const hubTab = ref("backpack");
 const showTavernShop = ref(false);
+const pageSettlement = ref(null); // settlement claimed on the current article (any player)
+
+const pageSettlementClaimedBy = computed(() => {
+  if (!pageSettlement.value) return "";
+  // Current user's own settlement — use live auth email
+  if (pageSettlement.value.owner_id === user.value?.id && user.value?.email) {
+    return user.value.email.split("@")[0];
+  }
+  // Another player's settlement — use stored signInEmail, fall back to playerName
+  const stored = pageSettlement.value.lord_history?.[0]?.signInEmail
+    ?? pageSettlement.value.lord_history?.[0]?.playerName
+    ?? "Someone";
+  return stored.split("@")[0];
+});
 const showForge = ref(false);
 
 const showDieSlayer = ref(false);
@@ -919,6 +1003,28 @@ const questComplete = ref(false);
 const markedPOIs = ref([]);
 const engagedPOIs = ref([]);
 
+// ── Settlement ─────────────────────────────────────────────────────────────
+const settlementFlagOffered   = ref(false); // NPC encounter has fired
+const settlementFlagAccepted  = ref(false); // player said yes
+const settlementId            = ref(null);  // uuid of their settlement row
+const lastSettlementVisitClickCount = ref(0);
+const showSettlementView      = ref(false);
+const visitingSettlementData  = ref(null);  // full settlement object for a visitor view
+const showVisitorSettlement   = ref(false);
+const showTownNamingModal     = ref(false);
+const pendingTownName         = ref("");
+
+const {
+  settlement,
+  isLoadingSettlement,
+  createSettlement,
+  loadSettlement,
+  loadSettlementFull,
+  saveBuildings,
+  saveTerrain,
+  getSettlementByWikiTitle,
+} = useSettlement();
+
 const activeQuest = computed(() =>
   activeQuestId.value ? QUESTS.find(q => q.id === activeQuestId.value) : null
 );
@@ -1077,6 +1183,14 @@ function handleOptionChosen(option) {
     return;
   }
 
+  if (option.result === "settlement_accept") {
+    encounter.value = null;
+    settlementFlagOffered.value = true;
+    inventory.value.settlementFlag = (inventory.value.settlementFlag || 0) + 1;
+    log("🏴 The herald presses a rolled parchment and an iron-tipped flag into your hands. Open your backpack and use the flag on the article where you wish to plant it.");
+    return;
+  }
+
   if (option.result === 'come_back_later') {
     const enc = encounter.value;
     const encId = enc?.lore?.id || enc?.npc?.id;
@@ -1136,6 +1250,149 @@ function startQuestCombat(bossType) {
   const emoji = activeQuest.value?.combatEmoji ?? "⚔️";
   log(`${emoji} A <strong>${boss.name}</strong> blocks your path! What do you do?`);
   logEnemyAction(enemyNextAction, nextEnemyAttack);
+}
+
+// ── Settlement handlers ────────────────────────────────────────────────────
+
+async function submitTownName() {
+  const name = pendingTownName.value.trim();
+  if (!name) return;
+
+  const { data: { user: currentUser } } = await supabase.auth.getUser();
+  if (!currentUser) {
+    log("⚠️ You must be logged in to found a settlement.");
+    return;
+  }
+
+  const wikiTitle = current.value ?? "Unknown Lands";
+  try {
+    const id = await createSettlement({
+      userId: currentUser.id,
+      townName: name,
+      playerName: playerName.value,
+      wikiTitle,
+      signInEmail: currentUser.email ?? null,
+    });
+    settlementId.value = id;
+    settlementFlagAccepted.value = true;
+    inventory.value.settlementFlag = 0;
+    showTownNamingModal.value = false;
+    pendingTownName.value = "";
+    lastSettlementVisitClickCount.value = clickCount.value;
+    pageSettlement.value = settlement.value; // show banner immediately on this article
+    log(`🏴 <strong>${name}</strong> has been founded in the region of <em>${wikiTitle.replaceAll("_", " ")}</em>. Your lands await.`);
+    await triggerAutoSave();
+  } catch (err) {
+    console.error("Failed to create settlement:", err);
+    log(`⚠️ Could not found the settlement: ${err?.message ?? "unknown error"}`);
+  }
+}
+
+async function openSettlement() {
+  if (!settlementId.value) return;
+  const data = await loadSettlement(settlementId.value);
+  if (data?.wiki_title) current.value = data.wiki_title;
+  showSettlementView.value = true;
+}
+
+// Opens the settlement on the current page — owner gets their edit view,
+// visitors get a read-only view of whoever claimed it.
+async function openPageSettlement() {
+  if (!pageSettlement.value) return;
+  if (pageSettlement.value.owner_id === user.value?.id) {
+    openSettlement();
+  } else {
+    const full = await loadSettlementFull(pageSettlement.value.id);
+    if (!full) return;
+    visitingSettlementData.value = full;
+    showVisitorSettlement.value = true;
+  }
+}
+
+async function closeSettlement() {
+  showSettlementView.value = false;
+  await triggerAutoSave();
+}
+
+async function handleSettlementCollect() {
+  if (!settlementId.value || !settlement.value) return;
+  const clicksSince = clickCount.value - lastSettlementVisitClickCount.value;
+  const { computeYield, BUILDING_DEFS } = await import("@/utils/buildingDefs.js");
+  const { gold, scrap, healthPotions } = computeYield(
+    settlement.value.buildings ?? [],
+    settlement.value.terrain ?? [],
+    clicksSince
+  );
+  if (gold > 0)          playerGold.value += gold;
+  if (scrap > 0)         inventory.value.scrapMetal = (inventory.value.scrapMetal || 0) + scrap;
+  if (healthPotions > 0) inventory.value.healthPotions = (inventory.value.healthPotions || 0) + healthPotions;
+  lastSettlementVisitClickCount.value = clickCount.value;
+
+  // Attribute earnings to each building for the info panel
+  if (clicksSince > 0) {
+    const hasMine = (settlement.value.buildings ?? []).some(b => b.type === "mine");
+    const houseCount = (settlement.value.buildings ?? []).filter(b => b.type === "house").length;
+    const houseGoldPerClick = Math.floor(houseCount * (BUILDING_DEFS.house.villagersPerBuilding ?? 5) / 25);
+    const updatedBuildings = (settlement.value.buildings ?? []).map(b => {
+      const def = BUILDING_DEFS[b.type];
+      if (!def) return b;
+      const e = { gold: 0, scrap: 0, healthPotions: 0 };
+      if (def.requiresBuildingOnMap === "mine" && !hasMine) { /* skip */ }
+      else {
+        if (def.yieldType === "gold" && def.yieldEvery)
+          e.gold += Math.floor(clicksSince / def.yieldEvery) * def.yieldAmount;
+        if (def.yieldType === "healthPotion" && def.yieldEvery)
+          e.healthPotions += Math.floor(clicksSince / def.yieldEvery) * def.yieldAmount;
+        if (def.bonusYieldType === "scrap" && def.bonusYieldEvery)
+          e.scrap += Math.floor(clicksSince / def.bonusYieldEvery) * def.bonusYieldAmount;
+        if (b.type === "house" && houseGoldPerClick > 0)
+          e.gold += houseGoldPerClick * clicksSince;
+      }
+      const prev = b.totalEarned ?? { gold: 0, scrap: 0, healthPotions: 0 };
+      return { ...b, totalEarned: { gold: prev.gold + e.gold, scrap: prev.scrap + e.scrap, healthPotions: prev.healthPotions + e.healthPotions } };
+    });
+    settlement.value = { ...settlement.value, buildings: updatedBuildings };
+    await saveBuildings(settlementId.value, updatedBuildings);
+  }
+
+  const parts = [];
+  if (gold > 0)          parts.push(`${gold}g`);
+  if (scrap > 0)         parts.push(`${scrap} Scrap Metal`);
+  if (healthPotions > 0) parts.push(`${healthPotions} Health Potion${healthPotions > 1 ? "s" : ""}`);
+  if (parts.length > 0) {
+    log(`💰 Collected from ${settlement.value?.town_name ?? "your settlement"}: ${parts.join(", ")}.`);
+  } else {
+    log(`💰 Nothing to collect yet from ${settlement.value?.town_name ?? "your settlement"}. Build more and come back after more clicks.`);
+  }
+  await triggerAutoSave();
+}
+
+async function handleSettlementPlaceBuilding({ cellIndex, type, cost }) {
+  if (!settlementId.value || !settlement.value) return;
+  if (playerGold.value < cost) return;
+  const buildings = [...(settlement.value.buildings ?? [])];
+  buildings.push({ cellIndex, type, totalEarned: { gold: 0, scrap: 0, healthPotions: 0 } });
+  settlement.value = { ...settlement.value, buildings };
+  playerGold.value -= cost;
+  await saveBuildings(settlementId.value, buildings);
+  await triggerAutoSave();
+}
+
+async function handleSettlementRemoveBuilding({ cellIndex, refund }) {
+  if (!settlementId.value || !settlement.value) return;
+  const buildings = (settlement.value.buildings ?? []).filter(b => b.cellIndex !== cellIndex);
+  settlement.value = { ...settlement.value, buildings };
+  if (refund > 0) playerGold.value += refund;
+  await saveBuildings(settlementId.value, buildings);
+  await triggerAutoSave();
+}
+
+async function handleSettlementChangeTerrain({ cellIndex, terrainType }) {
+  if (!settlementId.value || !settlement.value) return;
+  const terrain = [...(settlement.value.terrain ?? [])];
+  terrain[cellIndex] = terrainType;
+  settlement.value = { ...settlement.value, terrain };
+  await saveTerrain(settlementId.value, terrain);
 }
 
 watch(encounter, (newVal, oldVal) => {
@@ -1204,6 +1461,10 @@ function handleUseInventoryItem(itemType) {
     itemHandlers.useGoldPouch();
   } else if (itemType === "bountyScroll") {
     itemHandlers.useBountyScroll();
+  } else if (itemType === "settlementFlag") {
+    showTownNamingModal.value = true;
+    closeInventoryModal();
+    hubOpen.value = false;
   } else if (itemType === "questScroll") {
     inventory.value.questScrolls--;
     closeInventoryModal();
@@ -1230,6 +1491,32 @@ async function handleLinkClicked(...args) {
   await triggerAutoSave();
 }
 
+async function loadPageSettlement(wikiTitle) {
+  const base = settlement.value?.wiki_title === wikiTitle
+    ? settlement.value
+    : await getSettlementByWikiTitle(wikiTitle);
+  if (!base) { pageSettlement.value = null; return; }
+
+  // If signInEmail was never stored, inject it from the current auth user for their own settlement
+  const ownerEmail = base.lord_history?.[0]?.signInEmail;
+  if (!ownerEmail && base.owner_id === user.value?.id && user.value?.email) {
+    const history = (base.lord_history ?? []).map((e, i) =>
+      i === 0 ? { ...e, signInEmail: user.value.email } : e
+    );
+    pageSettlement.value = { ...base, lord_history: history };
+  } else {
+    pageSettlement.value = base;
+  }
+}
+
+function handleBuySettlementFlag() {
+  if (playerGold.value < 150) return;
+  playerGold.value -= 150;
+  inventory.value.settlementFlag = (inventory.value.settlementFlag || 0) + 1;
+  settlementFlagOffered.value = true;
+  log("🏴 You purchase a Settlement Flag. Open your backpack and use it on the Wikipedia article where you wish to plant it.");
+}
+
 async function handleRest(...args) {
   callHandleRest(...args);
   await triggerAutoSave();
@@ -1243,6 +1530,12 @@ watch(inventory, () => {
   clearTimeout(inventoryAutoSaveTimer);
   inventoryAutoSaveTimer = setTimeout(() => triggerAutoSave(), 500);
 }, { deep: true });
+
+// Load settlement banner data whenever the current article changes
+watch(current, (title) => {
+  if (title) loadPageSettlement(title);
+  else pageSettlement.value = null;
+});
 
 async function saveGame() {
   const { data: { user } } = await supabase.auth.getUser();
@@ -1313,6 +1606,10 @@ async function saveGame() {
       defenseAugment: defenseAugment.value,
       markedPOIs: [...markedPOIs.value],
       engagedPOIs: [...engagedPOIs.value],
+      settlementFlagOffered: settlementFlagOffered.value,
+      settlementFlagAccepted: settlementFlagAccepted.value,
+      settlementId: settlementId.value,
+      lastSettlementVisitClickCount: lastSettlementVisitClickCount.value,
     },
   }, { onConflict: 'user_id' });
 }
@@ -1380,6 +1677,10 @@ function restoreGameState(s) {
   goldPouchAccumulatedGold.value = s.goldPouchAccumulatedGold ?? 0;
   markedPOIs.value = s.markedPOIs ?? [];
   engagedPOIs.value = s.engagedPOIs ?? [];
+  settlementFlagOffered.value  = s.settlementFlagOffered ?? false;
+  settlementFlagAccepted.value = s.settlementFlagAccepted ?? false;
+  settlementId.value           = s.settlementId ?? null;
+  lastSettlementVisitClickCount.value = s.lastSettlementVisitClickCount ?? 0;
 }
 
 async function handleRestart() {

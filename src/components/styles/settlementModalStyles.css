@@ -1,0 +1,516 @@
+/* ── Overlay ──────────────────────────────────────────────────────────────── */
+.settlement-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 200;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  padding: 16px 8px 32px;
+}
+
+.settlement-panel {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+.settlement-header {
+  border-bottom: 1px solid #4a3728;
+  padding-bottom: 10px;
+}
+
+.settlement-town-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #f5deb3;
+  letter-spacing: 0.04em;
+}
+
+.settlement-region {
+  font-size: 0.8rem;
+  color: #a08060;
+  margin-top: 2px;
+}
+
+.settlement-close-btn {
+  background: none;
+  border: 1px solid #4a3728;
+  color: #a08060;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.settlement-close-btn:hover {
+  color: #f5deb3;
+  border-color: #7a5738;
+}
+
+/* ── Lord bar ─────────────────────────────────────────────────────────────── */
+.settlement-visitor-badge {
+  background: #1a2a1a;
+  border: 1px solid #3a6a3a;
+  color: #7acc7a;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+.settlement-lord-bar {
+  font-size: 0.85rem;
+  color: #c8a96e;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.lord-label { color: #7a6040; }
+.lord-name  { font-weight: 600; color: #f5deb3; }
+.lord-since { color: #7a6040; }
+
+/* ── Resources ────────────────────────────────────────────────────────────── */
+.settlement-resources {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: #1a1208;
+  border: 1px solid #3a2818;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.resource-item {
+  font-size: 0.8rem;
+  color: #6a5040;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s;
+}
+.resource-item.resource-has-value {
+  color: #c8a96e;
+}
+
+.collect-btn {
+  margin-left: auto;
+  background: #2c3e1a;
+  border: 1px solid #4a7a28;
+  color: #8fc050;
+  padding: 5px 14px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+.collect-btn:hover:not(:disabled) {
+  background: #3a5220;
+  color: #b0e060;
+}
+.collect-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* ── Castle actions ───────────────────────────────────────────────────────── */
+.settlement-castle-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.settlement-castle-actions .canvas-cell-label,
+.settlement-castle-actions .placement-error {
+  margin-left: auto;
+  font-size: 0.82rem;
+}
+.castle-action-btn {
+  background: #1e1408;
+  border: 1px solid #5a3a1a;
+  color: #c8a96e;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.castle-action-btn:hover {
+  background: #2c1e0c;
+  color: #f5deb3;
+}
+
+/* ── Grid (canvas) ────────────────────────────────────────────────────────── */
+.settlement-grid-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  justify-content: center;
+}
+
+.settlement-canvas {
+  display: block;
+  max-width: 100%;
+  image-rendering: pixelated;
+}
+
+.canvas-cell-label {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: #a08060;
+  min-height: 1.2em;
+}
+
+.placement-error {
+  margin-top: 4px;
+  font-size: 0.82rem;
+  color: #e05050;
+  font-weight: 600;
+  min-height: 1.2em;
+}
+
+/* ── Building info panel ──────────────────────────────────────────────────── */
+.building-info-panel {
+  position: relative;
+  background: #1e1408;
+  border: 1px solid #5a3a1a;
+  border-radius: 6px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.building-info-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #a08060;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.building-info-close:hover { color: #f5deb3; }
+.building-info-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.building-info-img {
+  width: 40px;
+  height: 40px;
+  image-rendering: pixelated;
+}
+.building-info-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f5deb3;
+}
+.building-info-worker {
+  font-size: 0.82rem;
+  color: #a08060;
+  margin-top: 2px;
+}
+.building-info-desc {
+  font-size: 0.8rem;
+  color: #8a7060;
+  font-style: italic;
+}
+.building-info-earnings {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.85rem;
+  color: #c8a96e;
+}
+.building-info-earnings-title {
+  font-size: 0.75rem;
+  color: #6a5040;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+.building-info-none {
+  color: #5a4030;
+  font-style: italic;
+}
+.building-info-deconstruct {
+  margin-top: 6px;
+  background: #2a0a0a;
+  border: 1px solid #7a2a2a;
+  color: #c07070;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-family: inherit;
+}
+.building-info-deconstruct:hover {
+  background: #3e1010;
+  color: #e09090;
+}
+
+/* ── Building palette ─────────────────────────────────────────────────────── */
+.building-palette {
+  background: #1a1208;
+  border: 1px solid #3a2818;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.build-btn-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+
+.build-popup-btn {
+  background: #1e1408;
+  border: 1px solid #5a3a1a;
+  color: #c8a96e;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+.build-popup-btn:hover {
+  background: #2c1e0c;
+  color: #f5deb3;
+}
+.build-popup-btn.selected {
+  background: #5a3a1a;
+  color: #f5deb3;
+  border-color: #c8a96e;
+}
+
+/* ── Placement confirm dialog ─────────────────────────────────────────────── */
+.placement-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.placement-confirm-dialog {
+  background: #1e1408;
+  border: 1px solid #5a3a1a;
+  border-radius: 8px;
+  padding: 20px 24px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.placement-confirm-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f5deb3;
+}
+.placement-confirm-body {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.placement-confirm-img {
+  width: 48px;
+  height: 48px;
+  image-rendering: pixelated;
+}
+.placement-confirm-desc {
+  font-size: 0.82rem;
+  color: #a08060;
+}
+.placement-confirm-cost {
+  font-size: 0.9rem;
+  color: #c8a96e;
+  margin-top: 4px;
+}
+.placement-confirm-actions {
+  display: flex;
+  gap: 10px;
+}
+.placement-confirm-yes {
+  background: #2a5c1a;
+  border: 1px solid #4a8c2a;
+  color: #b8e0a0;
+  padding: 6px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.placement-confirm-yes:hover { background: #3a7c2a; }
+.placement-confirm-no {
+  background: #1e1408;
+  border: 1px solid #5a3a1a;
+  color: #c8a96e;
+  padding: 6px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.placement-confirm-no:hover { background: #2c1e0c; }
+
+.build-popup {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  min-width: 260px;
+  max-width: 340px;
+  background: #0e0b06;
+  border: 1px solid rgba(200,169,110,0.4);
+  border-radius: 6px;
+  padding: 10px 12px;
+  z-index: 50;
+}
+
+.build-popup-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(200,169,110,0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.build-popup-subtitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(200,169,110,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 8px 0 4px;
+  border-top: 1px solid rgba(200,169,110,0.15);
+  padding-top: 6px;
+}
+
+.palette-img {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+  display: block;
+}
+
+.palette-scroll {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.palette-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  background: #1e1408;
+  border: 1px solid #3a2818;
+  color: #c8a96e;
+  padding: 4px 6px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: border-color 0.15s, background 0.15s;
+  min-width: 36px;
+}
+.palette-btn:hover {
+  background: #2c1e0c;
+  border-color: #6a4828;
+}
+.palette-btn.selected {
+  border-color: #c8a96e;
+  background: #2c1e0c;
+  color: #f5deb3;
+}
+
+.palette-cost { color: #f0c040; font-size: 0.65rem; }
+
+.palette-selected-info {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: #a08060;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.palette-selected-info strong { color: #f5deb3; }
+
+.palette-cancel {
+  background: none;
+  border: 1px solid #5a2828;
+  color: #c06060;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.palette-cancel:hover {
+  background: #2c0c0c;
+  color: #e08080;
+}
+
+/* ── History book ─────────────────────────────────────────────────────────── */
+.settlement-history {
+  border-top: 1px solid #3a2818;
+  padding-top: 10px;
+}
+
+.settlement-history-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.history-toggle-btn {
+  background: none;
+  border: none;
+  color: #7a6040;
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+}
+.history-toggle-btn:hover { color: #c8a96e; }
+
+.history-list {
+  margin-top: 8px;
+  background: #1a1208;
+  border: 1px solid #3a2818;
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.history-title {
+  font-size: 0.85rem;
+  color: #c8a96e;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.history-entry {
+  font-size: 0.8rem;
+  color: #a08060;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: baseline;
+}
+.history-lord-name { color: #f5deb3; font-weight: 500; }
+.history-days      { color: #7a6040; }
+.history-end-reason { color: #c06060; font-style: italic; }
+
+.history-empty { font-size: 0.8rem; color: #5a4030; font-style: italic; }

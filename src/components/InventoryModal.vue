@@ -526,6 +526,27 @@
           </div>
         </template>
 
+        <!-- Settlement Flag -->
+        <div v-if="inventory.settlementFlag > 0" class="item-slot-wrapper">
+          <div class="item-details-box">
+            <div class="item-name-quantity">
+              <span class="item-name">🏴 Settlement Flag</span>
+            </div>
+            <div class="item-description">
+              Plant this flag on the current Wikipedia article to found your settlement here. The article name becomes your region.
+            </div>
+          </div>
+          <div class="item-button-box">
+            <button
+              class="buy-button-details"
+              :disabled="!props.isIdle"
+              @click.stop="useItem('settlementFlag')"
+            >
+              Plant
+            </button>
+          </div>
+        </div>
+
         <div
           v-if="isInventoryEmpty"
           class="item-slot-wrapper no-items-message-wrapper"
@@ -656,13 +677,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  weaponAugment:          { type: String, default: "" },
-  defenseAugment:         { type: String, default: "" },
-  pendingWeaponAugments:  { type: Array,  default: () => [] },
-  pendingDefenseAugments: { type: Array,  default: () => [] },
+  weaponAugment:          { type: String,  default: "" },
+  defenseAugment:         { type: String,  default: "" },
+  pendingWeaponAugments:  { type: Array,   default: () => [] },
+  pendingDefenseAugments: { type: Array,   default: () => [] },
+  hasSettlement:          { type: Boolean, default: false },
 });
 
-const emit = defineEmits(["close", "use-item"]);
+const emit = defineEmits(["close", "use-item", "visit-settlement"]);
 
 const uniquePendingWeapon  = computed(() => [...new Set(props.pendingWeaponAugments)]);
 const uniquePendingDefense = computed(() => [...new Set(props.pendingDefenseAugments)]);
@@ -670,7 +692,7 @@ const uniquePendingDefense = computed(() => [...new Set(props.pendingDefenseAugm
 const isInventoryEmpty = computed(() => {
   if (props.weaponAugment || props.defenseAugment) return false;
   if (props.pendingWeaponAugments.length || props.pendingDefenseAugments.length) return false;
-  const skip = new Set(["questScrolls"]);
+  const skip = new Set(["questScrolls", "settlementFlag"]);
   for (const key in props.inventory) {
     if (skip.has(key)) continue;
     if (
