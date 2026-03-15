@@ -231,13 +231,16 @@ const TERRAIN_COLORS = {
 // MiniWorld sprite sheet definitions: { src, sx, sy, sw, sh }
 // sw/sh = source crop size (16 = 1 tile, 32 = 2×2 tiles for large buildings)
 const SPRITE_DEFS = {
-  grass:         { src: new URL("../assets/settlement/miniworld/Ground/TexturedGrass.png",     import.meta.url).href, sx:  16, sy: 16, sw: 32, sh: 16 },
+  grass:         { src: new URL("../assets/path.png", import.meta.url).href, sx: 16, sy: 0, sw: 16, sh: 16 },
   white_flower:        { src: new URL("../assets/flowers.png",     import.meta.url).href, sx:  0, sy: 16, sw: 16, sh: 16 },
   yellow_white_flower:        { src: new URL("../assets/flowers.png",     import.meta.url).href, sx:  16, sy: 16, sw: 16, sh: 16 },
   pink_flower:        { src: new URL("../assets/flowers.png",     import.meta.url).href, sx:  32, sy: 0, sw: 16, sh: 16 },
-  river:         { src: new URL("../assets/settlement/miniworld/Ground/Shore.png",             import.meta.url).href, sx:  48, sy: 0, sw: 16, sh: 16 },
-  road:          { src: new URL("../assets/settlement/miniworld/Ground/Grass.png",             import.meta.url).href, sx: 64, sy: 0, sw: 16, sh: 16 },
-  bridge:        { src: new URL("../assets/settlement/miniworld/Miscellaneous/Bridge.png",     import.meta.url).href, sx: 8, sy: 16, sw: 16, sh: 16 },
+  river:         { src: new URL("../assets/TileSetV2.png",             import.meta.url).href, sx:  128, sy: 304, sw: 16, sh: 16 },
+  road:          { src: new URL("../assets/path.png", import.meta.url).href, sx: 0, sy: 32, sw: 16, sh: 16 },
+  road_h:        { src: new URL("../assets/path.png", import.meta.url).href, sx: 0, sy: 32, sw: 16, sh: 16 },
+  fence:         { src: new URL("../assets/path.png", import.meta.url).href, sx: 148, sy: 48, sw: 16, sh: 16 },
+  fence_h:       { src: new URL("../assets/path.png", import.meta.url).href, sx: 136, sy: 48, sw: 16, sh: 16 },
+  bridge:        { src: new URL("../assets/settlement/miniworld/Miscellaneous/Bridge.png",     import.meta.url).href, sx: 10, sy: 0, sw: 8, sh: 32 },
   castle:        { src: new URL("../assets/settlement/miniworld/Buildings/Red/RedKeep.png",      import.meta.url).href, sx:  0, sy:  0, sw: 32, sh: 32},
   house:         { src: new URL("../assets/settlement/miniworld/Buildings/Wood/Houses.png",    import.meta.url).href, sx:  16, sy:  32, sw: 16, sh: 16},
   apothecary:    { src: new URL("../assets/settlement/miniworld/Buildings/Cyan/CyanBarracks.png", import.meta.url).href, sx:  16, sy: 0, sw: 16, sh: 16 },
@@ -441,9 +444,54 @@ function drawGrid() {
     const by   = br * CELL_SIZE;
     const size = isLarge(building.type) ? CELL_SIZE * 2 : CELL_SIZE;
 
-    const t = tileImages[building.type];
-    if (t?.img?.complete && t.img.naturalWidth > 0) {
-      ctx.drawImage(t.img, t.sx, t.sy, t.sw, t.sh, bx, by, size, size);
+    const drawRoadTile = (key, rotated) => {
+      const t = tileImages[key];
+      if (!t?.img?.complete || !t.img.naturalWidth) return;
+      if (rotated) {
+        ctx.save();
+        ctx.translate(bx + size / 2, by + size / 2);
+        ctx.rotate(Math.PI / 2);
+        ctx.drawImage(t.img, t.sx, t.sy, t.sw, t.sh, -size / 2, -size / 2, size, size);
+        ctx.restore();
+      } else {
+        ctx.drawImage(t.img, t.sx, t.sy, t.sw, t.sh, bx, by, size, size);
+      }
+    };
+
+    const getNeighbors = (type) => {
+      const cells = new Set((props.settlement.buildings ?? []).filter(b => b.type === type).map(b => b.cellIndex));
+      const col = building.cellIndex % COLS;
+      const hasH = (col > 0 && cells.has(building.cellIndex - 1)) || (col < COLS - 1 && cells.has(building.cellIndex + 1));
+      const hasV = cells.has(building.cellIndex - COLS) || cells.has(building.cellIndex + COLS);
+      return { hasH, hasV };
+    };
+
+    if (building.type === "road") {
+      const { hasH, hasV } = getNeighbors("road");
+      if (hasH && hasV) {
+        drawRoadTile("road_h", true);
+        ctx.fillStyle = "#eaa56c";
+        ctx.fillRect(bx + size * 0.1, by, size * 0.7, size);
+      } else if (hasH) {
+        drawRoadTile("road_h", true);
+      } else {
+        drawRoadTile("road", false);
+      }
+    } else if (building.type === "fence") {
+      const { hasH, hasV } = getNeighbors("fence");
+      if (hasH && hasV) {
+        drawRoadTile("fence", false);   // horizontal (native orientation)
+        drawRoadTile("fence_h", true);  // vertical (rotated) on top
+      } else if (hasH) {
+        drawRoadTile("fence", false);   // horizontal — native, no rotation
+      } else {
+        drawRoadTile("fence_h", true);  // vertical — rotate the horizontal tile
+      }
+    } else {
+      const t = tileImages[building.type];
+      if (t?.img?.complete && t.img.naturalWidth > 0) {
+        ctx.drawImage(t.img, t.sx, t.sy, t.sw, t.sh, bx, by, size, size);
+      }
     }
 
     // Name label for structure buildings only (skip terrain-category and unlabelled)
@@ -526,7 +574,7 @@ function handleCellClick(cellIndex) {
 
   if (existing) {
     // Only road and bridge can be removed by clicking with a build tool
-    if (existing.type === "road" || existing.type === "bridge") {
+    if (existing.type === "road" || existing.type === "bridge" || existing.type === "fence") {
       emit("remove-building", { cellIndex: existing.cellIndex });
     } else {
       showPlacementError("Use Deconstruct to remove this building");
@@ -579,7 +627,7 @@ function handleCellClick(cellIndex) {
       if (footprint.some(c => buildingAt(c))) return;
     }
 
-    const skipConfirm = selectedBuildingType.value === "road" || selectedBuildingType.value === "bridge";
+    const skipConfirm = selectedBuildingType.value === "road" || selectedBuildingType.value === "bridge" || selectedBuildingType.value === "fence";
     if (skipConfirm) {
       emit("place-building", { cellIndex, type: selectedBuildingType.value, cost: def.cost });
     } else {

@@ -46,6 +46,14 @@ export const BUILDING_DEFS = {
     category: "terrain",
     yieldType: null,
   },
+  fence: {
+    name: "Fence",
+    emoji: "🪵",
+    cost: 2,
+    description: "A wooden fence. Purely cosmetic.",
+    category: "terrain",
+    yieldType: null,
+  },
   bridge: {
     name: "Bridge",
     emoji: "🌉",
