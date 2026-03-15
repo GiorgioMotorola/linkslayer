@@ -286,6 +286,7 @@
         :pendingWeaponAugments="inventory.pendingWeaponAugments ?? []"
         :pendingDefenseAugments="inventory.pendingDefenseAugments ?? []"
         :hasSettlement="!!settlementId"
+        :pageSettlementClaimedBy="pageSettlement && pageSettlement.owner_id !== user.value?.id ? (pageSettlement.lord_history?.[0]?.playerName ?? 'another player') : null"
         @visit-settlement="openSettlement"
       />
 
@@ -323,6 +324,7 @@
         :is-ward-stone-active="wardStoneActive"
         :ward-stone-clicks-remaining="wardStoneClicksRemaining"
         :hasSettlement="!!settlementId"
+        :pageSettlementClaimedBy="pageSettlement && pageSettlement.owner_id !== user.value?.id ? (pageSettlement.lord_history?.[0]?.playerName ?? 'another player') : null"
         @visit-settlement="openSettlement"
         :is-encounter-beacon-active="encounterBeaconActive"
         :gold-pouch-accumulated-gold="goldPouchAccumulatedGold"
@@ -1268,6 +1270,18 @@ async function submitTownName() {
   }
 
   const wikiTitle = current.value ?? "Unknown Lands";
+
+  // Final server-side guard: re-check the article isn't already claimed
+  const existing = await getSettlementByWikiTitle(wikiTitle);
+  if (existing) {
+    const claimedBy = existing.lord_history?.[0]?.playerName ?? "another player";
+    log(`⚠️ This region was claimed by <strong>${claimedBy}</strong> before you could plant your flag.`);
+    showTownNamingModal.value = false;
+    pendingTownName.value = "";
+    pageSettlement.value = existing;
+    return;
+  }
+
   try {
     const id = await createSettlement({
       userId: currentUser.id,
@@ -1465,6 +1479,11 @@ function handleUseInventoryItem(itemType) {
   } else if (itemType === "bountyScroll") {
     itemHandlers.useBountyScroll();
   } else if (itemType === "settlementFlag") {
+    if (pageSettlement.value) {
+      const claimedBy = pageSettlement.value.lord_history?.[0]?.playerName ?? "another player";
+      log(`⚠️ This region has already been claimed by <strong>${claimedBy}</strong>. You cannot plant your flag here.`);
+      return;
+    }
     showTownNamingModal.value = true;
     closeInventoryModal();
     hubOpen.value = false;

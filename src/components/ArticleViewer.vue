@@ -38,7 +38,7 @@
         </div>
       </div>
     </div>
-    <div v-if="props.settlementOnThisPage" class="settlement-banner" @click="emit('open-settlement')">
+    <div v-if="props.settlementOnThisPage" class="settlement-banner" :class="{ 'settlement-banner-disabled': props.inEncounter }" @click="!props.inEncounter && emit('open-settlement')">
       🏰 Visit {{ props.settlementOnThisPage.town_name }}, claimed by {{ props.settlementClaimedBy }}
     </div>
   </div>
@@ -315,11 +315,12 @@ onMounted(load);
 }
 
 .settlement-banner {
-  background: #1e1408;
-  border-bottom: 1px solid #5a3a1a;
-  color: #c8a96e;
+  background: #4169E1;
+  border-bottom: 0px solid #fdfdfd;
+  color: #f5deb3;
   padding: 7px 14px;
-  font-size: 0.85rem;
+  font-size: 0.90rem;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -328,12 +329,16 @@ onMounted(load);
   font-family: "IBM Plex Sans", Arial, sans-serif;
 }
 .settlement-banner:hover {
-  background: #2c1e0c;
+  background: #6683da;
   color: #f5deb3;
+}
+.settlement-banner-disabled {
+  /* opacity: 0.4; */
+  cursor: not-allowed;
 }
 .settlement-banner strong { color: #f5deb3; }
 .settlement-banner-sub {
-  color: #7a6040;
+  color: #4c4c4d;
   font-size: 0.78rem;
 }
 

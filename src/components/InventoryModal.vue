@@ -527,19 +527,22 @@
         </template>
 
         <!-- Settlement Flag -->
-        <div v-if="inventory.settlementFlag > 0" class="item-slot-wrapper">
+        <div v-if="inventory.settlementFlag > 0" class="item-slot-wrapper" :class="{ 'item-slot-claimed': props.pageSettlementClaimedBy }">
           <div class="item-details-box">
             <div class="item-name-quantity">
               <span class="item-name">🏴 Settlement Flag</span>
             </div>
-            <div class="item-description">
+            <div v-if="props.pageSettlementClaimedBy" class="item-description item-description-blocked">
+              This region has already been claimed by <strong>{{ props.pageSettlementClaimedBy }}</strong>. Travel to an unclaimed article to plant your flag.
+            </div>
+            <div v-else class="item-description">
               Plant this flag on the current Wikipedia article to found your settlement here. The article name becomes your region.
             </div>
           </div>
           <div class="item-button-box">
             <button
               class="buy-button-details"
-              :disabled="!props.isIdle"
+              :disabled="!props.isIdle || !!props.pageSettlementClaimedBy"
               @click.stop="useItem('settlementFlag')"
             >
               Plant
@@ -682,6 +685,7 @@ const props = defineProps({
   pendingWeaponAugments:  { type: Array,   default: () => [] },
   pendingDefenseAugments: { type: Array,   default: () => [] },
   hasSettlement:          { type: Boolean, default: false },
+  pageSettlementClaimedBy: { type: String,  default: null },
 });
 
 const emit = defineEmits(["close", "use-item", "visit-settlement"]);
