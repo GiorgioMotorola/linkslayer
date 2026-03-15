@@ -493,8 +493,9 @@
     @place-building="handleSettlementPlaceBuilding"
     @remove-building="handleSettlementRemoveBuilding"
     @change-terrain="handleSettlementChangeTerrain"
-    @open-forge="showForge = true; showSettlementView = false"
-    @short-rest="handleRest('short'); showSettlementView = false"
+    :canShortRest="canShortRestAtSettlement"
+    @open-forge="showForge = true"
+    @short-rest="handleSettlementShortRest"
   />
 
   <!-- Settlement View (visitor — read-only) -->
@@ -1011,6 +1012,7 @@ const lastSettlementVisitClickCount = ref(0);
 const showSettlementView      = ref(false);
 const visitingSettlementData  = ref(null);  // full settlement object for a visitor view
 const showVisitorSettlement   = ref(false);
+const settlementShortRestDay  = ref(0);     // daysCount value when settlement short rest was last used
 const showTownNamingModal     = ref(false);
 const pendingTownName         = ref("");
 
@@ -1046,6 +1048,7 @@ const isIdle = computed(() =>
   !showRestModal.value &&
   !showShopModal.value
 );
+const canShortRestAtSettlement = computed(() => settlementShortRestDay.value !== daysCount.value);
 const isEnemyVenomed = computed(() => enemyStatusEffects.value?.some(e => e.type === "poison") ?? false);
 const isEnemyBleeding = computed(() => enemyStatusEffects.value?.some(e => e.type === "bleed") ?? false);
 
@@ -1522,6 +1525,11 @@ async function handleRest(...args) {
   await triggerAutoSave();
 }
 
+async function handleSettlementShortRest() {
+  settlementShortRestDay.value = daysCount.value;
+  await handleRest('short');
+}
+
 watch(encounter, (newVal, oldVal) => {
   if (newVal === null && oldVal !== null) triggerAutoSave();
 });
@@ -1610,6 +1618,7 @@ async function saveGame() {
       settlementFlagAccepted: settlementFlagAccepted.value,
       settlementId: settlementId.value,
       lastSettlementVisitClickCount: lastSettlementVisitClickCount.value,
+      settlementShortRestDay: settlementShortRestDay.value,
     },
   }, { onConflict: 'user_id' });
 }
@@ -1681,6 +1690,7 @@ function restoreGameState(s) {
   settlementFlagAccepted.value = s.settlementFlagAccepted ?? false;
   settlementId.value           = s.settlementId ?? null;
   lastSettlementVisitClickCount.value = s.lastSettlementVisitClickCount ?? 0;
+  settlementShortRestDay.value = s.settlementShortRestDay ?? 0;
 }
 
 async function handleRestart() {

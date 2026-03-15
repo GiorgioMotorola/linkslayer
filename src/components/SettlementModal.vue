@@ -24,14 +24,11 @@
         </template>
       </div>
 
+        <div class="canvas-cell-label" v-if="hoveredLabel">{{ hoveredLabel }}</div>
+        <div class="placement-error" v-if="placementError">{{ placementError }}</div>
+
       <!-- Read-only visitor badge -->
       <div v-if="props.readOnly" class="settlement-visitor-badge">👁 Visiting — Read Only</div>
-
-      <!-- Castle short rest / forge shortcuts (if castle is built) -->
-      <div class="settlement-castle-actions" v-if="hasCastle && !props.readOnly">
-        <button class="castle-action-btn" @click="$emit('open-forge')">⚒️ Forge</button>
-        <button class="castle-action-btn" @click="$emit('short-rest')">🛌 Short Rest</button>
-      </div>
 
       <!-- Grid (canvas) -->
       <div class="settlement-grid-wrapper">
@@ -46,8 +43,6 @@
           @mouseleave="onCanvasMouseLeave"
         />
       </div>
-              <div class="canvas-cell-label" v-if="hoveredLabel">{{ hoveredLabel }}</div>
-        <div class="placement-error" v-if="placementError">{{ placementError }}</div>
 
       <!-- Building info panel (cursor mode) -->
       <div v-if="selectedBuilding" class="building-info-panel">
@@ -99,43 +94,44 @@
               class="build-popup-btn cursor-btn"
               :class="{ selected: selectedBuildingType === null }"
               @click="selectedBuildingType = null"
-            >🖱️ Cursor</button>
+            >Select</button>
             <button class="build-popup-btn" @click="showPalette = !showPalette">
-              🏗️ Build {{ showPalette ? '▲' : '▼' }}
+              Build {{ showPalette ? '▲' : '▼' }}
             </button>
+            <template v-if="hasCastle">
+              <button class="build-popup-btn" @click="$emit('open-forge')">Forge</button>
+              <button class="build-popup-btn" :disabled="!props.canShortRest" :title="!props.canShortRest ? 'Already rested today' : ''" @click="$emit('short-rest')">Short Rest</button>
+              <span v-if="!props.canShortRest" class="castle-rest-used">Already rested today</span>
+            </template>
             <div v-if="showPalette" class="build-popup">
               <div class="build-popup-title">Buildings</div>
-              <div class="palette-scroll">
-                <button
-                  v-for="(def, key) in BUILDING_DEFS"
-                  :key="key"
-                  class="palette-btn"
-                  :class="{ selected: selectedBuildingType === key }"
-                  :title="def.name + ' — ' + def.description + ' (' + def.cost + 'g)'"
-                  @click="toggleBuildingSelect(key)"
-                >
-                  <img :src="paletteUrls[key]" class="palette-img" />
-                  <span class="palette-cost">{{ def.cost }}g</span>
-                </button>
-              </div>
-              <div class="build-popup-subtitle">Terrain</div>
-              <div class="palette-scroll">
-                <button
-                  v-for="(def, key) in TERRAIN_PAINTS"
-                  :key="key"
-                  class="palette-btn"
-                  :class="{ selected: selectedBuildingType === key }"
-                  :title="def.description"
-                  @click="toggleBuildingSelect(key)"
-                >
-                  <img :src="paletteUrls[def.paintsTerrain]" class="palette-img" />
-                  <span class="palette-cost">free</span>
-                </button>
-              </div>
+              <button
+                v-for="(def, key) in BUILDING_DEFS"
+                :key="key"
+                class="palette-list-row"
+                :class="{ selected: selectedBuildingType === key }"
+                @click="toggleBuildingSelect(key)"
+              >
+                <span class="palette-list-name">{{ def.name }}</span>
+                <span class="palette-list-desc"> - {{ def.description }}</span>
+                <span class="palette-list-cost"> ({{ def.cost }}g)</span>
+              </button>
+              <div class="build-popup-title">Terrain</div>
+              <button
+                v-for="(def, key) in TERRAIN_PAINTS"
+                :key="key"
+                class="palette-list-row"
+                :class="{ selected: selectedBuildingType === key }"
+                @click="toggleBuildingSelect(key)"
+              >
+                <span class="palette-list-name">{{ def.name }}</span>
+                <span class="palette-list-desc"> - {{ def.description }}</span>
+                <span class="palette-list-cost"> (free)</span>
+              </button>
               <div v-if="selectedBuildingType" class="palette-selected-info">
                 <strong>{{ (BUILDING_DEFS[selectedBuildingType] ?? TERRAIN_PAINTS[selectedBuildingType])?.name }}</strong>
                 — {{ (BUILDING_DEFS[selectedBuildingType] ?? TERRAIN_PAINTS[selectedBuildingType])?.description }}
-                <button class="palette-cancel" @click="selectedBuildingType = null">✕ Cancel</button>
+                <button class="palette-cancel" @click="selectedBuildingType = null">Cancel</button>
               </div>
             </div>
           </div>
@@ -313,6 +309,7 @@ const props = defineProps({
   playerGold:   { type: Number, default: 0 },
   isOwner:      { type: Boolean, default: true },
   readOnly:     { type: Boolean, default: false },
+  canShortRest: { type: Boolean, default: true },
   clicksSince:  { type: Number, default: 0 },
 });
 
@@ -366,7 +363,7 @@ const hasCastle = computed(() =>
 );
 
 const hoveredLabel = computed(() => {
-  if (hoveredCell.value === null) return null;
+  if (hoveredCell.value === null) return 'None';
   const i = hoveredCell.value;
   const building = buildingAt(i);
   if (building) return BUILDING_DEFS[building.type]?.name ?? building.type;
