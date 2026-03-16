@@ -6,7 +6,7 @@
 export const SETTLEMENT_BOSS_DEFS = {
   ancient_dragon: {
     name: "Ancient Dragon",
-    baseHP: 220,
+    baseHP: 100,
     minBaseDamage: 14,
     maxBaseDamage: 22,
     goldReward: 200,
@@ -14,7 +14,7 @@ export const SETTLEMENT_BOSS_DEFS = {
   },
   gnoll_army: {
     name: "Gnoll Army",
-    baseHP: 150,
+    baseHP: 100,
     minBaseDamage: 9,
     maxBaseDamage: 15,
     goldReward: 120,
