@@ -2,6 +2,7 @@ import { ref } from "vue";
 import { supabase } from "@/lib/supabase.js";
 import { generateTerrain } from "@/utils/terrainGenerator.js";
 import { computeYield } from "@/utils/buildingDefs.js";
+import { assignSettlementBossKey } from "@/utils/settlementBossGenerator.js";
 
 export function useSettlement() {
   const settlement = ref(null);
@@ -170,11 +171,131 @@ export function useSettlement() {
   async function getSettlementByWikiTitle(wikiTitle) {
     const { data, error } = await supabase
       .from("settlements")
-      .select("id, owner_id, town_name, lord_history, wiki_title")
+      .select("id, owner_id, town_name, lord_history, wiki_title, abandoned, guardian_boss")
       .eq("wiki_title", wikiTitle)
       .single();
     if (error) return null;
     return data;
+  }
+
+  async function addSettlementHistoryEvent(settlementId, event) {
+    const { data } = await supabase
+      .from("settlements")
+      .select("lord_history")
+      .eq("id", settlementId)
+      .single();
+
+    const history = data?.lord_history ?? [];
+    history.push(event);
+
+    await supabase
+      .from("settlements")
+      .update({ lord_history: history, updated_at: new Date().toISOString() })
+      .eq("id", settlementId);
+
+    if (settlement.value) {
+      settlement.value = { ...settlement.value, lord_history: history };
+    }
+  }
+
+  /**
+   * Mark a settlement as abandoned when its owner dies or wins.
+   * Assigns a guardian boss, closes the current lord entry, and records history events.
+   */
+  async function markAbandoned(settlementId, buildings, day) {
+    const bossKey = assignSettlementBossKey(buildings);
+
+    const { data } = await supabase
+      .from("settlements")
+      .select("lord_history")
+      .eq("id", settlementId)
+      .single();
+
+    const history = data?.lord_history ?? [];
+
+    // Close out the current lord entry
+    const lastEntry = history[history.length - 1];
+    if (lastEntry && lastEntry.endDay == null) {
+      lastEntry.endDay = day;
+      lastEntry.endReason = "abandoned";
+    }
+
+    history.push({ type: "abandoned", day });
+    history.push({ type: "terrorized", bossKey, day });
+
+    await supabase
+      .from("settlements")
+      .update({
+        abandoned: true,
+        guardian_boss: bossKey,
+        lord_history: history,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", settlementId);
+
+    if (settlement.value) {
+      settlement.value = { ...settlement.value, abandoned: true, guardian_boss: bossKey, lord_history: history };
+    }
+  }
+
+  /**
+   * Mark the settlement owned by a given userId as abandoned.
+   * Used as a fallback in handleRestart when settlementId ref may be stale/null.
+   */
+  async function markAbandonedByOwner(ownerId, day) {
+    const { data } = await supabase
+      .from("settlements")
+      .select("id, buildings")
+      .eq("owner_id", ownerId)
+      .eq("abandoned", false)
+      .single();
+    if (!data) return;
+    await markAbandoned(data.id, data.buildings ?? [], day);
+  }
+
+  /**
+   * Claim an abandoned settlement after defeating the guardian boss.
+   * Transfers ownership, clears abandoned flag, and records history events.
+   */
+  async function claimSettlement(settlementId, newOwnerId, playerName, signInEmail, day) {
+    const { data } = await supabase
+      .from("settlements")
+      .select("lord_history")
+      .eq("id", settlementId)
+      .single();
+
+    const history = data?.lord_history ?? [];
+    history.push({ type: "claimed", playerName, day });
+
+    const newLordEntry = {
+      playerName: playerName ?? "Unknown",
+      signInEmail: signInEmail ?? null,
+      startDay: day,
+      endDay: null,
+      endReason: null,
+    };
+    history.push(newLordEntry);
+
+    await supabase
+      .from("settlements")
+      .update({
+        owner_id: newOwnerId,
+        abandoned: false,
+        guardian_boss: null,
+        lord_history: history,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", settlementId);
+
+    if (settlement.value) {
+      settlement.value = {
+        ...settlement.value,
+        owner_id: newOwnerId,
+        abandoned: false,
+        guardian_boss: null,
+        lord_history: history,
+      };
+    }
   }
 
   return {
@@ -189,5 +310,9 @@ export function useSettlement() {
     collectResources,
     addLordHistoryEntry,
     getSettlementByWikiTitle,
+    addSettlementHistoryEvent,
+    markAbandoned,
+    markAbandonedByOwner,
+    claimSettlement,
   };
 }

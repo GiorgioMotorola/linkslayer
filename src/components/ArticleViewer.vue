@@ -38,8 +38,13 @@
         </div>
       </div>
     </div>
-    <div v-if="props.settlementOnThisPage" class="settlement-banner" :class="{ 'settlement-banner-disabled': props.inEncounter }" @click="!props.inEncounter && emit('open-settlement')">
-      🏰 Visit {{ props.settlementOnThisPage.town_name }}, claimed by {{ props.settlementClaimedBy }}
+    <div v-if="props.settlementOnThisPage" class="settlement-banner" :class="{ 'settlement-banner-disabled': props.inEncounter, 'settlement-banner-abandoned': props.settlementOnThisPage.abandoned }" @click="!props.inEncounter && emit('open-settlement')">
+      <template v-if="props.settlementOnThisPage.abandoned">
+        ☠ {{ props.settlementOnThisPage.town_name }} has been abandoned and is being terrorized by {{ settlementGuardianName }}
+      </template>
+      <template v-else>
+        🏰 Visit {{ props.settlementOnThisPage.town_name }}, claimed by {{ props.settlementClaimedBy }}
+      </template>
     </div>
   </div>
   <CombatOverlay
@@ -69,6 +74,7 @@ import logo from "../assets/newlogo-nobg1.png";
 import WeatherOverlay from "./WeatherOverlay.vue";
 import CombatOverlay from "./CombatOverlay.vue";
 import "./styles/articleViewerStyles.css";
+import { SETTLEMENT_BOSS_DEFS } from "@/utils/settlementBossGenerator.js";
 
 const props = defineProps({
   articleTitle: String,
@@ -108,6 +114,11 @@ function dayWeather(day) {
 }
 
 const weatherType = computed(() => dayWeather(props.daysCount));
+
+const settlementGuardianName = computed(() => {
+  const key = props.settlementOnThisPage?.guardian_boss;
+  return key ? (SETTLEMENT_BOSS_DEFS[key]?.name ?? key) : "an unknown creature";
+});
 
 
 const cyclePosition = computed(() => {
@@ -335,6 +346,12 @@ onMounted(load);
 .settlement-banner-disabled {
   /* opacity: 0.4; */
   cursor: not-allowed;
+}
+.settlement-banner-abandoned {
+  background: #5c1a1a;
+}
+.settlement-banner-abandoned:hover {
+  background: #7a2222;
 }
 .settlement-banner strong { color: #f5deb3; }
 .settlement-banner-sub {

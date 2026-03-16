@@ -507,7 +507,9 @@
     :playerGold="0"
     :isOwner="false"
     :readOnly="true"
+    :canChallenge="canChallengeSettlement"
     @close="showVisitorSettlement = false; visitingSettlementData = null"
+    @challenge-boss="handleChallengeSettlementBoss"
   />
 
   <Transition name="rest-backdrop">
@@ -577,6 +579,7 @@ import SettlementModal from "@/components/SettlementModal.vue";
 import { shopItems as allShopItems } from "@/utils/shopItems";
 import { isBoss } from "@/utils/bossGenerator";
 import { generateMiniBoss } from "@/utils/miniBossGenerator";
+import { generateSettlementBoss } from "@/utils/settlementBossGenerator";
 import { npcData, loreData } from "@/utils/encounterGenerator";
 import { QUESTS } from "@/utils/quests";
 import { classes } from "@/utils/classes";
@@ -1014,6 +1017,7 @@ const lastSettlementVisitClickCount = ref(0);
 const showSettlementView      = ref(false);
 const visitingSettlementData  = ref(null);  // full settlement object for a visitor view
 const showVisitorSettlement   = ref(false);
+const settlementBossActive    = ref(false); // true while challenging an abandoned settlement's guardian
 const settlementShortRestDay  = ref(0);     // daysCount value when settlement short rest was last used
 const showTownNamingModal     = ref(false);
 const pendingTownName         = ref("");
@@ -1027,6 +1031,9 @@ const {
   saveBuildings,
   saveTerrain,
   getSettlementByWikiTitle,
+  markAbandoned,
+  markAbandonedByOwner,
+  claimSettlement,
 } = useSettlement();
 
 const activeQuest = computed(() =>
@@ -1051,6 +1058,7 @@ const isIdle = computed(() =>
   !showShopModal.value
 );
 const canShortRestAtSettlement = computed(() => settlementShortRestDay.value !== daysCount.value);
+const canChallengeSettlement   = computed(() => isIdle.value && !settlementBossActive.value);
 const isEnemyVenomed = computed(() => enemyStatusEffects.value?.some(e => e.type === "poison") ?? false);
 const isEnemyBleeding = computed(() => enemyStatusEffects.value?.some(e => e.type === "bleed") ?? false);
 
@@ -1243,6 +1251,22 @@ function handleRevisitPOI(poi) {
   }
 }
 
+function handleChallengeSettlementBoss() {
+  const data = visitingSettlementData.value;
+  if (!data || !data.abandoned) return;
+  const boss = generateSettlementBoss(data.buildings ?? [], data.guardian_boss ?? null);
+  showVisitorSettlement.value = false;
+  encounter.value = { type: "combat", enemy: boss };
+  enemyHP.value = boss.currentHP;
+  nextEnemyAttack.value =
+    Math.floor(Math.random() * (boss.maxDamage - boss.minDamage + 1)) + boss.minDamage;
+  enemyNextAction.value = "attack";
+  combatEncountersFought.value++;
+  settlementBossActive.value = true;
+  log(`⚔ A <strong>${boss.name}</strong> rises to defend the ruins of <em>${data.town_name}</em>!`);
+  logEnemyAction(enemyNextAction, nextEnemyAttack);
+}
+
 function startQuestCombat(bossType) {
   const boss = generateMiniBoss(bossType, enemyDifficultyLevel.value);
   encounter.value = { type: "combat", enemy: boss };
@@ -1316,7 +1340,7 @@ async function openSettlement() {
 // visitors get a read-only view of whoever claimed it.
 async function openPageSettlement() {
   if (!pageSettlement.value) return;
-  if (pageSettlement.value.owner_id === user.value?.id) {
+  if (pageSettlement.value.owner_id === user.value?.id && settlementId.value === pageSettlement.value.id) {
     openSettlement();
   } else {
     const full = await loadSettlementFull(pageSettlement.value.id);
@@ -1411,6 +1435,39 @@ async function handleSettlementChangeTerrain({ cellIndex, terrainType }) {
   settlement.value = { ...settlement.value, terrain };
   await saveTerrain(settlementId.value, terrain);
 }
+
+watch(encounter, async (newVal, oldVal) => {
+  if (settlementBossActive.value && oldVal?.type === "combat" && newVal === null) {
+    settlementBossActive.value = false;
+    const data = visitingSettlementData.value;
+    if (!defeated.value && enemyHP.value <= 0 && data) {
+      // Player won — claim the settlement
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (currentUser) {
+        await claimSettlement(
+          data.id,
+          currentUser.id,
+          playerName.value,
+          currentUser.email,
+          daysCount.value
+        );
+        // Grant the loot
+        playerGold.value += oldVal.enemy?.goldReward ?? 0;
+        inventory.value.scrapMetal = (inventory.value.scrapMetal ?? 0) + (oldVal.enemy?.scrapReward ?? 0);
+        // Transfer settlement ownership to this player
+        settlementId.value = data.id;
+        pageSettlement.value = null; // banner will reload on next tick
+        loadPageSettlement(current.value);
+        log(`🏰 <strong>${data.town_name}</strong> has been liberated! You are now its lord.`);
+        await triggerAutoSave();
+      }
+    } else if (!defeated.value) {
+      log(`⚔ You retreat from the ruins. The guardian still holds the settlement.`);
+    }
+    visitingSettlementData.value = null;
+    return;
+  }
+});
 
 watch(encounter, (newVal, oldVal) => {
   if (!questCombatActive.value) return;
@@ -1715,6 +1772,17 @@ function restoreGameState(s) {
 async function handleRestart() {
   const { data: { user: currentUser } } = await supabase.auth.getUser();
   if (currentUser) {
+    // Mark the player's settlement as abandoned before wiping their save.
+    // Use settlementId from state if available; otherwise query by owner_id.
+    if (settlementId.value) {
+      await markAbandoned(
+        settlementId.value,
+        settlement.value?.buildings ?? [],
+        daysCount.value
+      );
+    } else {
+      await markAbandonedByOwner(currentUser.id, daysCount.value);
+    }
     await supabase.from("saves").delete().eq("user_id", currentUser.id);
   }
   location.reload();

@@ -143,23 +143,43 @@
           <button class="history-toggle-btn" @click="showHistory = !showHistory">
             📖 {{ showHistory ? 'Hide' : 'Show' }} History Book
           </button>
+          <div v-if="props.readOnly && settlement.abandoned && guardianBossName" class="challenge-blurb">
+            <span class="challenge-blurb-text">A <strong>{{ guardianBossName }}</strong> guards these ruins.</span>
+            <button
+              class="challenge-boss-btn"
+              :disabled="!props.canChallenge"
+              :title="!props.canChallenge ? 'You cannot challenge right now' : ''"
+              @click="$emit('challenge-boss')"
+            >⚔ Challenge</button>
+          </div>
           <button class="settlement-close-btn" @click="$emit('close')">⎯ Leave Settlement ⎯</button>
         </div>
         <div v-if="showHistory" class="history-list">
           <div class="history-title">📖 Lords of {{ settlement.town_name }}</div>
-          <div
-            v-for="(entry, i) in settlement.lord_history"
-            :key="i"
-            class="history-entry"
-          >
-            <span class="history-lord-name">{{ entry.playerName }}</span>
-            <span class="history-days">
-              Day {{ entry.startDay }}
-              <template v-if="entry.endDay"> – Day {{ entry.endDay }}</template>
-              <template v-else> – present</template>
-            </span>
-            <span v-if="entry.endReason" class="history-end-reason">{{ entry.endReason }}</span>
-          </div>
+          <template v-for="(entry, i) in settlement.lord_history" :key="i">
+            <!-- Lord tenure entry -->
+            <div v-if="!entry.type" class="history-entry">
+              <span class="history-lord-name">{{ entry.playerName }}</span>
+              <span class="history-days">
+                Day {{ entry.startDay }}
+                <template v-if="entry.endDay"> – Day {{ entry.endDay }}</template>
+                <template v-else> – present</template>
+              </span>
+              <span v-if="entry.endReason" class="history-end-reason">{{ entry.endReason }}</span>
+            </div>
+            <!-- Event: abandoned -->
+            <div v-else-if="entry.type === 'abandoned'" class="history-event history-event-abandoned">
+              🏚 Settlement abandoned on Day {{ entry.day }}
+            </div>
+            <!-- Event: terrorized -->
+            <div v-else-if="entry.type === 'terrorized'" class="history-event history-event-terrorized">
+              ☠ Terrorized by a {{ SETTLEMENT_BOSS_DEFS[entry.bossKey]?.name ?? entry.bossKey }} since Day {{ entry.day }}
+            </div>
+            <!-- Event: claimed -->
+            <div v-else-if="entry.type === 'claimed'" class="history-event history-event-claimed">
+              ⚔ {{ entry.playerName }} defeated the guardian on Day {{ entry.day }}
+            </div>
+          </template>
           <div v-if="!settlement.lord_history?.length" class="history-empty">No history yet.</div>
         </div>
       </div>
@@ -208,6 +228,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from "vue";
 import { BUILDING_DEFS, TERRAIN_PAINTS, computeYield } from "@/utils/buildingDefs.js";
+import { SETTLEMENT_BOSS_DEFS } from "@/utils/settlementBossGenerator.js";
 
 const CELL_SIZE = 32;
 const COLS = 20;
@@ -313,10 +334,11 @@ const props = defineProps({
   isOwner:      { type: Boolean, default: true },
   readOnly:     { type: Boolean, default: false },
   canShortRest: { type: Boolean, default: true },
+  canChallenge: { type: Boolean, default: false },
   clicksSince:  { type: Number, default: 0 },
 });
 
-const emit = defineEmits(["close", "collect", "place-building", "remove-building", "change-terrain", "open-forge", "short-rest"]);
+const emit = defineEmits(["close", "collect", "place-building", "remove-building", "change-terrain", "open-forge", "short-rest", "challenge-boss"]);
 
 const showHistory          = ref(false);
 const showPalette          = ref(false);
@@ -345,9 +367,18 @@ function showPlacementError(msg) {
 }
 
 // ── Computed ───────────────────────────────────────────────────────────────
+const lordEntries = computed(() =>
+  (props.settlement.lord_history ?? []).filter(e => !e.type)
+);
+
 const currentLord = computed(() => {
-  const h = props.settlement.lord_history ?? [];
-  return h.find(e => !e.endDay) ?? h[h.length - 1] ?? null;
+  const entries = lordEntries.value;
+  return entries.find(e => !e.endDay) ?? entries[entries.length - 1] ?? null;
+});
+
+const guardianBossName = computed(() => {
+  const key = props.settlement.guardian_boss;
+  return key ? (SETTLEMENT_BOSS_DEFS[key]?.name ?? key) : null;
 });
 
 const pending = computed(() =>

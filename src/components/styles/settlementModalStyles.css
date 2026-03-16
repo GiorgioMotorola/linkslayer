@@ -530,6 +530,40 @@
 
 .history-empty { font-size: 0.8rem; color: #5a4030; font-style: italic; }
 
+.history-event {
+  font-size: 0.78rem;
+  font-style: italic;
+  padding: 2px 0;
+}
+.history-event-abandoned  { color: #8a6040; }
+.history-event-terrorized { color: #b05050; }
+.history-event-claimed    { color: #5a9060; }
+
+/* ── Challenge blurb (abandoned settlement visitor view) ── */
+.challenge-blurb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+}
+.challenge-blurb-text {
+  font-size: 0.8rem;
+  color: #c06060;
+}
+.challenge-boss-btn {
+  background: #6b1515;
+  border: 1px solid #9b2525;
+  color: #f5c0c0;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.challenge-boss-btn:hover:not(:disabled) { background: #8b1515; }
+.challenge-boss-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
 @media screen and (max-width: 600px) {
   .canvas-cell-label {
 font-size: .80rem;
