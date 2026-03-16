@@ -240,7 +240,7 @@ const SPRITE_DEFS = {
   road_h:        { src: new URL("../assets/path.png", import.meta.url).href, sx: 0, sy: 32, sw: 16, sh: 16 },
   fence:         { src: new URL("../assets/path.png", import.meta.url).href, sx: 148, sy: 48, sw: 16, sh: 16 },
   fence_h:       { src: new URL("../assets/path.png", import.meta.url).href, sx: 136, sy: 48, sw: 16, sh: 16 },
-  bridge:        { src: new URL("../assets/settlement/miniworld/Miscellaneous/Bridge.png",     import.meta.url).href, sx: 10, sy: 0, sw: 8, sh: 32 },
+  bridge:        { src: new URL("../assets/settlement/miniworld/Miscellaneous/Bridge.png",     import.meta.url).href, sx: 8, sy: 16, sw: 16, sh: 16 },
   castle:        { src: new URL("../assets/settlement/miniworld/Buildings/Red/RedKeep.png",      import.meta.url).href, sx:  0, sy:  0, sw: 32, sh: 32},
   house:         { src: new URL("../assets/settlement/miniworld/Buildings/Wood/Houses.png",    import.meta.url).href, sx:  16, sy:  32, sw: 16, sh: 16},
   apothecary:    { src: new URL("../assets/settlement/miniworld/Buildings/Cyan/CyanBarracks.png", import.meta.url).href, sx:  16, sy: 0, sw: 16, sh: 16 },
