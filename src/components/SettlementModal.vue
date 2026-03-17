@@ -139,19 +139,20 @@
 
       <!-- History book toggle -->
       <div class="settlement-history">
+        <div v-if="props.readOnly && settlement.abandoned && guardianBossName" class="challenge-blurb">
+          <span class="challenge-blurb-text">A <strong>{{ guardianBossName }}</strong> guards these ruins.</span>
+          <button
+            class="challenge-boss-btn"
+            :disabled="!props.canChallenge"
+            :title="props.playerHasSettlement ? 'You already are a lord of a settlement.' : (!props.canChallenge ? 'You cannot challenge right now.' : '')"
+            @click="$emit('challenge-boss')"
+          >⚔ Challenge</button>
+          <span v-if="props.playerHasSettlement" class="challenge-owned-msg">You already are a lord of a settlement.</span>
+        </div>
         <div class="settlement-history-bar">
           <button class="history-toggle-btn" @click="showHistory = !showHistory">
             📖 {{ showHistory ? 'Hide' : 'Show' }} History Book
           </button>
-          <div v-if="props.readOnly && settlement.abandoned && guardianBossName" class="challenge-blurb">
-            <span class="challenge-blurb-text">A <strong>{{ guardianBossName }}</strong> guards these ruins.</span>
-            <button
-              class="challenge-boss-btn"
-              :disabled="!props.canChallenge"
-              :title="!props.canChallenge ? 'You cannot challenge right now' : ''"
-              @click="$emit('challenge-boss')"
-            >⚔ Challenge</button>
-          </div>
           <button class="settlement-close-btn" @click="$emit('close')">⎯ Leave Settlement ⎯</button>
         </div>
         <div v-if="showHistory" class="history-list">
@@ -234,97 +235,204 @@ const CELL_SIZE = 32;
 const COLS = 20;
 const ROWS = 16;
 
-const TERRAIN_COLORS = {
-  grass:        "#136d15",
-  river:        "#2979c8",
-  rock:         "#16c60c",
-  tree:         "#2d6e2d",
-  pine_tree:    "#1a5c1a",
-  coconut_tree: "#4a8c2a",
-  dead_tree:    "#7a6040",
-  winter_tree:  "#8ab0c8",
-  wheatfield:   "#c8a040",
-  white_flower: "#e08080",
-  yellow_white_flower: "#e08080",
-  pink_flower: "#e08080",
-};
 
-// MiniWorld sprite sheet definitions: { src, sx, sy, sw, sh }
-// sw/sh = source crop size (16 = 1 tile, 32 = 2×2 tiles for large buildings)
-const SPRITE_DEFS = {
-  grass:         { src: new URL("../assets/path.png", import.meta.url).href, sx: 16, sy: 0, sw: 16, sh: 16 },
-  white_flower:        { src: new URL("../assets/flowers.png",     import.meta.url).href, sx:  0, sy: 16, sw: 16, sh: 16 },
-  yellow_white_flower:        { src: new URL("../assets/flowers.png",     import.meta.url).href, sx:  16, sy: 16, sw: 16, sh: 16 },
-  pink_flower:        { src: new URL("../assets/flowers.png",     import.meta.url).href, sx:  32, sy: 0, sw: 16, sh: 16 },
-  river:         { src: new URL("../assets/TileSetV2.png",             import.meta.url).href, sx:  128, sy: 304, sw: 16, sh: 16 },
-  road:          { src: new URL("../assets/path.png", import.meta.url).href, sx: 0, sy: 32, sw: 16, sh: 16 },
-  road_h:        { src: new URL("../assets/path.png", import.meta.url).href, sx: 0, sy: 32, sw: 16, sh: 16 },
-  fence:         { src: new URL("../assets/path.png", import.meta.url).href, sx: 148, sy: 48, sw: 16, sh: 16 },
-  fence_h:       { src: new URL("../assets/path.png", import.meta.url).href, sx: 136, sy: 48, sw: 16, sh: 16 },
-  bridge:        { src: new URL("../assets/settlement/miniworld/Miscellaneous/Bridge.png",     import.meta.url).href, sx: 8, sy: 16, sw: 16, sh: 16 },
-  castle:        { src: new URL("../assets/settlement/miniworld/Buildings/Red/RedKeep.png",      import.meta.url).href, sx:  0, sy:  0, sw: 32, sh: 32},
-  house:         { src: new URL("../assets/settlement/miniworld/Buildings/Wood/Houses.png",    import.meta.url).href, sx:  16, sy:  32, sw: 16, sh: 16},
-  apothecary:    { src: new URL("../assets/settlement/miniworld/Buildings/Cyan/CyanBarracks.png", import.meta.url).href, sx:  16, sy: 0, sw: 16, sh: 16 },
-  smithy:        { src: new URL("../assets/settlement/miniworld/Buildings/Enemy/Orc/AllBuildingsPreview.png", import.meta.url).href, sx:  16, sy:  145, sw: 16, sh: 16 },
-  church:        { src: new URL("../assets/settlement/miniworld/Buildings/Wood/Chapels.png",   import.meta.url).href, sx:  16, sy:  16, sw: 16, sh: 16 },
-  general_store: { src: new URL("../assets/settlement/miniworld/Buildings/Lime/LimeMarket.png",    import.meta.url).href, sx:  0, sy:  0, sw: 16, sh: 16 },
-  mill:          { src: new URL("../assets/settlement/miniworld/Buildings/Wood/Resources.png",    import.meta.url).href, sx:  16, sy: 16, sw: 16, sh: 16 },
-  horse_stable:  { src: new URL("../assets/settlement/miniworld/Buildings/Purple/PurpleBarracks.png",  import.meta.url).href, sx:  16, sy:  0, sw: 16, sh: 16},
-  mine:          { src: new URL("../assets/settlement/miniworld/Buildings/Wood/CaveV2.png",    import.meta.url).href, sx:  0, sy:  0, sw: 16, sh: 16 },
-  tree:          { src: new URL("../assets/settlement/miniworld/Nature/Trees.png",             import.meta.url).href, sx:  48, sy:  0, sw: 16, sh: 16 },
-  rock:          { src: new URL("../assets/settlement/miniworld/Nature/Rocks.png",             import.meta.url).href, sx:  16, sy:  0, sw: 16, sh: 16 },
-  pine_tree:     { src: new URL("../assets/settlement/miniworld/Nature/PineTrees.png",         import.meta.url).href, sx:   16, sy:  0, sw: 16, sh: 16 },
-  coconut_tree:  { src: new URL("../assets/settlement/miniworld/Nature/CoconutTrees.png",      import.meta.url).href, sx:   32, sy:  0, sw: 16, sh: 16 },
-  dead_tree:     { src: new URL("../assets/settlement/miniworld/Nature/DeadTrees.png",         import.meta.url).href, sx:   0, sy:  0, sw: 16, sh: 16 },
-  winter_tree:   { src: new URL("../assets/settlement/miniworld/Nature/WinterTrees.png",       import.meta.url).href, sx:   32, sy:  0, sw: 16, sh: 16 },
-  wheatfield:    { src: new URL("../assets/settlement/miniworld/Nature/Wheatfield.png",        import.meta.url).href, sx:   48, sy:  0, sw: 16, sh: 16 },
-  well:          { src: new URL("../assets/settlement/miniworld/Miscellaneous/Well.png",       import.meta.url).href, sx:   0, sy:  0, sw: 16, sh: 16 },
-  tavern:        { src: new URL("../assets/settlement/miniworld/Buildings/Wood/Taverns.png",   import.meta.url).href, sx:   0, sy:  0, sw: 16, sh: 16 },
-};
-
-// tileImages[key] = { img, sx, sy, sw, sh }
-const tileImages = {};
-const imagesReady = { value: false };
 const paletteUrls = ref({});
+let parchmentCanvas = null;
 
-async function preloadImages() {
-  imagesReady.value = false;
+// ── Parchment texture (generated once, reused every draw) ─────────────────
+function generateParchmentTexture(w, h) {
+  const off = document.createElement("canvas");
+  off.width = w; off.height = h;
+  const pctx = off.getContext("2d");
 
-  // Load each unique sheet path once
-  const pathToImg = {};
-  await Promise.all(
-    [...new Set(Object.values(SPRITE_DEFS).map(d => d.src))].map(src =>
-      new Promise(resolve => {
-        const img = new Image();
-        pathToImg[src] = img;   // assign before setting src (cached images fire onload synchronously)
-        img.onload  = resolve;
-        img.onerror = resolve;
-        img.src = src;
-      })
-    )
-  );
+  // Base warm parchment
+  pctx.fillStyle = "#e8d49a";
+  pctx.fillRect(0, 0, w, h);
 
-  // Wire tileImages with sprite coords
-  for (const [key, def] of Object.entries(SPRITE_DEFS)) {
-    tileImages[key] = { img: pathToImg[def.src], sx: def.sx, sy: def.sy, sw: def.sw, sh: def.sh };
+  // Fiber streaks — faint horizontal bands
+  for (let fy = 0; fy < h; fy += 3) {
+    const alpha = (Math.sin(fy * 0.7) * 0.012 + 0.012);
+    pctx.fillStyle = `rgba(120,80,20,${alpha.toFixed(3)})`;
+    pctx.fillRect(0, fy, w, 2);
   }
 
-  // Pre-render 32×32 palette thumbnails as data URLs
+  // Noise grain via ImageData (seeded LCG for stability)
+  const imageData = pctx.getImageData(0, 0, w, h);
+  const data = imageData.data;
+  let seed = 0xdeadbeef;
+  const rand = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 0xffffffff; };
+  for (let i = 0; i < data.length; i += 4) {
+    const n = (rand() - 0.5) * 28;
+    data[i]     = Math.min(255, Math.max(0, data[i]     + n));
+    data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + n * 0.75));
+    data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + n * 0.3));
+  }
+  pctx.putImageData(imageData, 0, 0);
+
+  // Vignette — darker aged edges
+  const vg = pctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.25, w / 2, h / 2, Math.max(w, h) * 0.78);
+  vg.addColorStop(0, "rgba(0,0,0,0)");
+  vg.addColorStop(1, "rgba(90,50,10,0.45)");
+  pctx.fillStyle = vg;
+  pctx.fillRect(0, 0, w, h);
+
+  return off;
+}
+
+// ── Canvas map-style drawing helpers ──────────────────────────────────────
+
+const BUILDING_STYLES = {
+  house:         { wall: "#e8dcc0", roof: "#b86840", ink: "#6a3820" },
+  tavern:        { wall: "#d4c0a0", roof: "#7a3010", ink: "#501808" },
+  castle:        { wall: "#ccc4b0", roof: "#8a8878", ink: "#404038" },
+  church:        { wall: "#f0ece0", roof: "#c0b8a0", ink: "#404040" },
+  smithy:        { wall: "#b0a890", roof: "#545048", ink: "#282820" },
+  apothecary:    { wall: "#c8d8b8", roof: "#4a7848", ink: "#284030" },
+  general_store: { wall: "#d8c8a0", roof: "#9a7030", ink: "#4a3010" },
+  horse_stable:  { wall: "#c8b890", roof: "#7a5228", ink: "#3a2010" },
+};
+
+function drawCanvasBuilding(ctx, bx, by, wPx, hPx, type) {
+  const cfg = BUILDING_STYLES[type];
+  if (!cfg) return;
+  const pad = Math.max(1, Math.min(wPx, hPx) * 0.06);
+  const ix = bx + pad, iy = by + pad, iw = wPx - pad * 2, ih = hPx - pad * 2;
+  const roofH = ih * 0.55;
+  const lw = Math.max(0.8, Math.min(wPx, hPx) * 0.025);
+
+  // Wall
+  ctx.fillStyle = cfg.wall;
+  ctx.fillRect(ix, iy + roofH, iw, ih - roofH);
+  // Roof
+  ctx.fillStyle = cfg.roof;
+  ctx.fillRect(ix, iy, iw, roofH);
+  // Eave line
+  ctx.strokeStyle = cfg.ink; ctx.lineWidth = lw;
+  ctx.beginPath(); ctx.moveTo(ix, iy + roofH); ctx.lineTo(ix + iw, iy + roofH); ctx.stroke();
+  // Outline
+  ctx.strokeRect(ix, iy, iw, ih);
+
+  if (type === "castle") {
+    const tw = Math.max(3, Math.min(wPx, hPx) * 0.13);
+    ctx.fillStyle = cfg.roof;
+    for (const [tx, ty] of [[ix, iy],[ix+iw-tw, iy],[ix, iy+ih-tw],[ix+iw-tw, iy+ih-tw]]) {
+      ctx.fillRect(tx, ty, tw, tw);
+      ctx.strokeRect(tx, ty, tw, tw);
+    }
+    // Battlements hint
+    ctx.fillStyle = cfg.wall;
+    const bStep = tw * 0.6;
+    for (let bx2 = ix + tw; bx2 < ix + iw - tw - bStep; bx2 += bStep * 2) {
+      ctx.fillRect(bx2, iy, bStep, lw * 3);
+    }
+  }
+
+  if (type === "church") {
+    const cxb = bx + wPx / 2;
+    const crossH = roofH * 0.55;
+    const crossW = Math.max(1.5, iw * 0.12);
+    const crossTop = iy + roofH * 0.1;
+    ctx.fillStyle = cfg.wall;
+    ctx.fillRect(cxb - crossW / 2, crossTop, crossW, crossH);
+    ctx.fillRect(cxb - crossW, crossTop + crossH * 0.28, crossW * 2, crossW);
+  }
+
+  if (type === "horse_stable") {
+    // Stall dividers
+    ctx.strokeStyle = cfg.ink; ctx.lineWidth = lw * 0.7;
+    const stalls = 3;
+    for (let s = 1; s < stalls; s++) {
+      const sx2 = ix + (iw / stalls) * s;
+      ctx.beginPath(); ctx.moveTo(sx2, iy + roofH); ctx.lineTo(sx2, iy + ih); ctx.stroke();
+    }
+  }
+}
+
+function drawCanvasTree(ctx, x, y, _type, cellSize) {
+  const cx = x + cellSize / 2;
+  const cy = y + cellSize / 2;
+  const r  = cellSize * 0.40;
+  const bumps = 9;
+
+  // Seeded rand so the shape is stable per cell position
+  let seed = (x * 73856093) ^ (y * 19349663);
+  const rand = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 0xffffffff; };
+
+  // Build lumpy canopy: vary radius at each point, connect with quadratic curves
+  const pts = Array.from({ length: bumps }, (_, i) => {
+    const angle = (i / bumps) * Math.PI * 2 - Math.PI / 2;
+    const wobble = r * (0.72 + rand() * 0.40); // radius between 72%–112% of r
+    return { x: cx + Math.cos(angle) * wobble, y: cy + Math.sin(angle) * wobble };
+  });
+
+  ctx.fillStyle = "#4a7840";
+  ctx.beginPath();
+  ctx.moveTo((pts[0].x + pts[bumps - 1].x) / 2, (pts[0].y + pts[bumps - 1].y) / 2);
+  for (let i = 0; i < bumps; i++) {
+    const curr = pts[i];
+    const next = pts[(i + 1) % bumps];
+    ctx.quadraticCurveTo(curr.x, curr.y, (curr.x + next.x) / 2, (curr.y + next.y) / 2);
+  }
+  ctx.closePath();
+  ctx.fill();
+
+  // Darker ink outline
+  ctx.strokeStyle = "#2a4828"; ctx.lineWidth = 0.7; ctx.stroke();
+
+  // Small shadow ellipse under canopy for depth
+  ctx.fillStyle = "rgba(30,50,20,0.18)";
+  ctx.beginPath(); ctx.ellipse(cx + r * 0.2, cy + r * 0.55, r * 0.55, r * 0.22, 0, 0, Math.PI * 2); ctx.fill();
+}
+
+function generatePaletteThumbnails() {
   const off = document.createElement("canvas");
-  off.width = 32; off.height = 32;
+  off.width = 48; off.height = 48;
   const pctx = off.getContext("2d");
-  pctx.imageSmoothingEnabled = false;
   const urls = {};
-  for (const [key, tile] of Object.entries(tileImages)) {
-    const { img, sx, sy, sw, sh } = tile;
-    if (!img?.complete || img.naturalWidth === 0) continue;
-    pctx.clearRect(0, 0, 32, 32);
-    pctx.drawImage(img, sx, sy, sw, sh, 0, 0, 32, 32);
+
+  for (const key of Object.keys(BUILDING_STYLES)) {
+    pctx.clearRect(0, 0, 48, 48);
+    pctx.fillStyle = "#FCF5E5";
+    pctx.fillRect(0, 0, 48, 48);
+    drawCanvasBuilding(pctx, 0, 0, 48, 48, key);
     urls[key] = off.toDataURL();
   }
-  paletteUrls.value = urls;
 
-  imagesReady.value = true;
+  // Road
+  pctx.clearRect(0, 0, 48, 48);
+  pctx.fillStyle = "#050505"; pctx.fillRect(0, 0, 48, 48);
+  pctx.strokeStyle = "#050505"; pctx.lineWidth = 1;
+  pctx.strokeRect(1, 1, 46, 46);
+  urls["road"] = off.toDataURL();
+
+  // Fence
+  pctx.clearRect(0, 0, 48, 48);
+  pctx.fillStyle = "#b8c880"; pctx.fillRect(0, 0, 48, 48);
+  pctx.strokeStyle = "#7a5020"; pctx.lineWidth = 2;
+  pctx.beginPath(); pctx.moveTo(0, 24); pctx.lineTo(48, 24); pctx.stroke();
+  pctx.fillStyle = "#7a5020";
+  pctx.fillRect(10, 10, 6, 28); pctx.fillRect(32, 10, 6, 28);
+  urls["fence"] = off.toDataURL();
+
+  // Bridge
+  pctx.clearRect(0, 0, 48, 48);
+  pctx.fillStyle = "#a8c8e8"; pctx.fillRect(0, 0, 48, 48);
+  pctx.fillStyle = "#c0a870"; pctx.fillRect(4, 8, 40, 32);
+  pctx.strokeStyle = "#7a5828"; pctx.lineWidth = 1;
+  for (let px = 8; px < 44; px += 8) {
+    pctx.beginPath(); pctx.moveTo(px, 8); pctx.lineTo(px, 40); pctx.stroke();
+  }
+  pctx.strokeRect(4, 8, 40, 32);
+  urls["bridge"] = off.toDataURL();
+
+  paletteUrls.value = urls;
+}
+
+function preloadImages() {
+  generatePaletteThumbnails();
+  // Parchment texture sized to the canvas (generated once)
+  const canvas = canvasRef.value;
+  if (canvas) parchmentCanvas = generateParchmentTexture(canvas.width, canvas.height);
   drawGrid();
 }
 
@@ -334,7 +442,8 @@ const props = defineProps({
   isOwner:      { type: Boolean, default: true },
   readOnly:     { type: Boolean, default: false },
   canShortRest: { type: Boolean, default: true },
-  canChallenge: { type: Boolean, default: false },
+  canChallenge:        { type: Boolean, default: false },
+  playerHasSettlement: { type: Boolean, default: false },
   clicksSince:  { type: Number, default: 0 },
 });
 
@@ -405,20 +514,31 @@ const hoveredLabel = computed(() => {
   return tile.charAt(0).toUpperCase() + tile.slice(1);
 });
 
-// ── Large-building set (occupy 2×2 cells) ──────────────────────────────────
-const LARGE_BUILDINGS = new Set(["castle"]);
+// ── Building size registry (w cols × h rows) ───────────────────────────────
+const BUILDING_SIZES = {
+  castle:        { w: 2, h: 2 },
+  house:         { w: 2, h: 2 },
+  horse_stable:  { w: 2, h: 2 },
+  smithy:        { w: 2, h: 2 },
+  apothecary:    { w: 2, h: 2 },
+  church:        { w: 2, h: 2 },
+  general_store: { w: 2, h: 2 },
+  tavern:        { w: 2, h: 2 },
+};
 
-function isLarge(type) { return LARGE_BUILDINGS.has(type); }
+function buildingSize(type) { return BUILDING_SIZES[type] ?? { w: 1, h: 1 }; }
+function isLarge(type) { const { w, h } = buildingSize(type); return w > 1 || h > 1; }
 
 // ── Grid helpers ───────────────────────────────────────────────────────────
 function buildingAt(cellIndex) {
   const col = cellIndex % COLS;
   const row = Math.floor(cellIndex / COLS);
   return (props.settlement.buildings ?? []).find(b => {
-    if (!isLarge(b.type)) return b.cellIndex === cellIndex;
+    const { w, h } = buildingSize(b.type);
+    if (w === 1 && h === 1) return b.cellIndex === cellIndex;
     const bc = b.cellIndex % COLS;
     const br = Math.floor(b.cellIndex / COLS);
-    return col >= bc && col <= bc + 1 && row >= br && row <= br + 1;
+    return col >= bc && col < bc + w && row >= br && row < br + h;
   }) ?? null;
 }
 
@@ -433,34 +553,70 @@ function drawGrid() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.imageSmoothingEnabled = false;
 
-  // Pass 1: terrain tiles
+  const TALL_TREES = new Set(["tree"]);
+
+  // Parchment base
+  if (parchmentCanvas) {
+    ctx.drawImage(parchmentCanvas, 0, 0);
+  } else {
+    ctx.fillStyle = "#e8d49a";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  // Pass 1a: hand-drawn terrain tiles
   for (let i = 0; i < COLS * ROWS; i++) {
     const col = i % COLS;
     const row = Math.floor(i / COLS);
     const x   = col * CELL_SIZE;
     const y   = row * CELL_SIZE;
+    const cx  = x + CELL_SIZE / 2;
+    const cy  = y + CELL_SIZE / 2;
     const tile = terrain[i] ?? "grass";
 
-    const isRiver = tile === "river";
-    // Base fill color (fallback)
-    ctx.fillStyle = isRiver ? TERRAIN_COLORS.river : TERRAIN_COLORS.grass;
-    ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
-
-    // Base: grass sprite under everything (skip for river which has its own full tile)
-    if (!isRiver) {
-      const g = tileImages["grass"];
-      if (g?.img?.complete && g.img.naturalWidth > 0) {
-        ctx.drawImage(g.img, g.sx, g.sy, g.sw, g.sh, x, y, CELL_SIZE, CELL_SIZE);
+    if (tile === "river") {
+      ctx.fillStyle = "#a8c8e8";
+      ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+      ctx.strokeStyle = "rgba(60,120,200,0.35)";
+      ctx.lineWidth = 0.8;
+      for (let hy = y + 3; hy < y + CELL_SIZE; hy += 4) {
+        ctx.beginPath(); ctx.moveTo(x, hy); ctx.lineTo(x + CELL_SIZE, hy); ctx.stroke();
       }
-    }
-
-    // Overlay: river / rock / tree on top of grass
-    if (tile !== "grass") {
-      const t = tileImages[tile];
-      if (t?.img?.complete && t.img.naturalWidth > 0) {
-        ctx.drawImage(t.img, t.sx, t.sy, t.sw, t.sh, x, y, CELL_SIZE, CELL_SIZE);
+    } else if (tile === "rock") {
+      ctx.fillStyle = "#b8c880";
+      ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+      ctx.fillStyle = "#a09880";
+      ctx.beginPath(); ctx.ellipse(cx - 3, cy + 1, 4, 3, -0.3, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(cx + 3, cy - 1, 3, 2,  0.3, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#7a7060"; ctx.lineWidth = 0.5; ctx.stroke();
+    } else if (tile === "wheatfield") {
+      ctx.fillStyle = "#e8d478";
+      ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+      ctx.strokeStyle = "#a87e30"; ctx.lineWidth = 0.8;
+      for (let wx = x + 3; wx < x + CELL_SIZE - 1; wx += 4) {
+        ctx.beginPath(); ctx.moveTo(wx, y + CELL_SIZE * 0.75); ctx.lineTo(wx, y + CELL_SIZE * 0.25); ctx.stroke();
       }
+    } else if (tile === "white_flower" || tile === "yellow_white_flower" || tile === "pink_flower") {
+      ctx.fillStyle = "#b8c880";
+      ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+      ctx.fillStyle = tile === "pink_flower" ? "#e890b8" : tile === "yellow_white_flower" ? "#e8d050" : "#f4f0e0";
+      for (const [dx, dy] of [[0.25,0.3],[0.65,0.25],[0.5,0.65],[0.2,0.7],[0.75,0.65]]) {
+        ctx.beginPath(); ctx.arc(x + dx * CELL_SIZE, y + dy * CELL_SIZE, 1.8, 0, Math.PI * 2); ctx.fill();
+      }
+    } else {
+      // grass (and tree cells — ground layer only, tree sprite drawn later)
+      ctx.fillStyle = "#b8c880";
+      ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
     }
+  }
+
+  // Faint grid lines for usability
+  ctx.strokeStyle = "rgba(100,80,40,0.12)";
+  ctx.lineWidth = 0.5;
+  for (let c = 0; c <= COLS; c++) {
+    ctx.beginPath(); ctx.moveTo(c * CELL_SIZE, 0); ctx.lineTo(c * CELL_SIZE, canvas.height); ctx.stroke();
+  }
+  for (let r = 0; r <= ROWS; r++) {
+    ctx.beginPath(); ctx.moveTo(0, r * CELL_SIZE); ctx.lineTo(canvas.width, r * CELL_SIZE); ctx.stroke();
   }
 
   // Pass 2: buildings (each drawn once at its anchor)
@@ -469,85 +625,121 @@ function drawGrid() {
     if (drawn.has(building.cellIndex)) continue;
     drawn.add(building.cellIndex);
 
-    const bc   = building.cellIndex % COLS;
-    const br   = Math.floor(building.cellIndex / COLS);
-    const bx   = bc * CELL_SIZE;
-    const by   = br * CELL_SIZE;
-    const size = isLarge(building.type) ? CELL_SIZE * 2 : CELL_SIZE;
-
-    const drawRoadTile = (key, rotated) => {
-      const t = tileImages[key];
-      if (!t?.img?.complete || !t.img.naturalWidth) return;
-      if (rotated) {
-        ctx.save();
-        ctx.translate(bx + size / 2, by + size / 2);
-        ctx.rotate(Math.PI / 2);
-        ctx.drawImage(t.img, t.sx, t.sy, t.sw, t.sh, -size / 2, -size / 2, size, size);
-        ctx.restore();
-      } else {
-        ctx.drawImage(t.img, t.sx, t.sy, t.sw, t.sh, bx, by, size, size);
-      }
-    };
-
-    const getNeighbors = (type) => {
-      const cells = new Set((props.settlement.buildings ?? []).filter(b => b.type === type).map(b => b.cellIndex));
-      const col = building.cellIndex % COLS;
-      const hasH = (col > 0 && cells.has(building.cellIndex - 1)) || (col < COLS - 1 && cells.has(building.cellIndex + 1));
-      const hasV = cells.has(building.cellIndex - COLS) || cells.has(building.cellIndex + COLS);
-      return { hasH, hasV };
-    };
+    const bc  = building.cellIndex % COLS;
+    const br  = Math.floor(building.cellIndex / COLS);
+    const bx  = bc * CELL_SIZE;
+    const by  = br * CELL_SIZE;
+    const { w: bw, h: bh } = buildingSize(building.type);
+    const wPx = bw * CELL_SIZE;
+    const hPx = bh * CELL_SIZE;
 
     if (building.type === "road") {
-      const { hasH, hasV } = getNeighbors("road");
-      if (hasH && hasV) {
-        drawRoadTile("road_h", true);
-        ctx.fillStyle = "#eaa56c";
-        ctx.fillRect(bx + size * 0.1, by, size * 0.7, size);
-      } else if (hasH) {
-        drawRoadTile("road_h", true);
+      const roadCells = new Set((props.settlement.buildings ?? []).filter(b => b.type === "road").map(b => b.cellIndex));
+      const col = building.cellIndex % COLS;
+      const hasN = roadCells.has(building.cellIndex - COLS);
+      const hasS = roadCells.has(building.cellIndex + COLS);
+      const hasE = col < COLS - 1 && roadCells.has(building.cellIndex + 1);
+      const hasW = col > 0 && roadCells.has(building.cellIndex - 1);
+      const mcx = bx + CELL_SIZE / 2, mcy = by + CELL_SIZE / 2;
+      const eN = { x: mcx, y: by },
+            eS = { x: mcx, y: by + CELL_SIZE },
+            eE = { x: bx + CELL_SIZE, y: mcy },
+            eW = { x: bx, y: mcy };
+      const connections = [hasN, hasS, hasE, hasW].filter(Boolean).length;
+      ctx.strokeStyle = "#050505"; ctx.lineWidth = 2; ctx.lineCap = "round";
+
+      if (connections === 0) {
+        ctx.beginPath(); ctx.arc(mcx, mcy, 2, 0, Math.PI * 2); ctx.stroke();
+      } else if (hasN && hasS && !hasE && !hasW) {
+        ctx.beginPath(); ctx.moveTo(eN.x, eN.y); ctx.lineTo(eS.x, eS.y); ctx.stroke();
+      } else if (hasE && hasW && !hasN && !hasS) {
+        ctx.beginPath(); ctx.moveTo(eW.x, eW.y); ctx.lineTo(eE.x, eE.y); ctx.stroke();
+      } else if (connections === 2 && !(hasN && hasS) && !(hasE && hasW)) {
+        // Corner — curve inward through cell center
+        let start, end;
+        if      (hasN && hasE) { start = eN; end = eE; }
+        else if (hasN && hasW) { start = eN; end = eW; }
+        else if (hasS && hasE) { start = eS; end = eE; }
+        else                   { start = eS; end = eW; }
+        const cp = { x: mcx, y: mcy };
+        ctx.beginPath();
+        ctx.moveTo(start.x, start.y);
+        ctx.quadraticCurveTo(cp.x, cp.y, end.x, end.y);
+        ctx.stroke();
       } else {
-        drawRoadTile("road", false);
+        // T-junction or cross — straight lines through center
+        ctx.beginPath();
+        if (hasN) { ctx.moveTo(mcx, mcy); ctx.lineTo(eN.x, eN.y); }
+        if (hasS) { ctx.moveTo(mcx, mcy); ctx.lineTo(eS.x, eS.y); }
+        if (hasE) { ctx.moveTo(mcx, mcy); ctx.lineTo(eE.x, eE.y); }
+        if (hasW) { ctx.moveTo(mcx, mcy); ctx.lineTo(eW.x, eW.y); }
+        ctx.stroke();
       }
+
     } else if (building.type === "fence") {
-      const { hasH, hasV } = getNeighbors("fence");
-      if (hasH && hasV) {
-        drawRoadTile("fence", false);   // horizontal (native orientation)
-        drawRoadTile("fence_h", true);  // vertical (rotated) on top
-      } else if (hasH) {
-        drawRoadTile("fence", false);   // horizontal — native, no rotation
-      } else {
-        drawRoadTile("fence_h", true);  // vertical — rotate the horizontal tile
+      const fenceCells = new Set((props.settlement.buildings ?? []).filter(b => b.type === "fence").map(b => b.cellIndex));
+      const col = building.cellIndex % COLS;
+      const hasH = (col > 0 && fenceCells.has(building.cellIndex - 1)) || (col < COLS - 1 && fenceCells.has(building.cellIndex + 1));
+      const hasV = fenceCells.has(building.cellIndex - COLS) || fenceCells.has(building.cellIndex + COLS);
+      ctx.strokeStyle = "#7a5020"; ctx.lineWidth = 1.5;
+      if (hasH || (!hasH && !hasV)) {
+        ctx.beginPath(); ctx.moveTo(bx, by + hPx / 2); ctx.lineTo(bx + wPx, by + hPx / 2); ctx.stroke();
       }
+      if (hasV || (!hasH && !hasV)) {
+        ctx.beginPath(); ctx.moveTo(bx + wPx / 2, by); ctx.lineTo(bx + wPx / 2, by + hPx); ctx.stroke();
+      }
+      // Post
+      ctx.fillStyle = "#7a5020";
+      ctx.fillRect(bx + wPx * 0.38, by + hPx * 0.38, wPx * 0.24, hPx * 0.24);
+
+    } else if (building.type === "bridge") {
+      ctx.fillStyle = "#c0a870"; ctx.fillRect(bx, by, wPx, hPx);
+      ctx.strokeStyle = "#7a5828"; ctx.lineWidth = 0.8;
+      for (let px = bx + 3; px < bx + wPx - 1; px += 5) {
+        ctx.beginPath(); ctx.moveTo(px, by); ctx.lineTo(px, by + hPx); ctx.stroke();
+      }
+      ctx.strokeRect(bx, by, wPx, hPx);
+
     } else {
-      const t = tileImages[building.type];
-      if (t?.img?.complete && t.img.naturalWidth > 0) {
-        ctx.drawImage(t.img, t.sx, t.sy, t.sw, t.sh, bx, by, size, size);
+      drawCanvasBuilding(ctx, bx, by, wPx, hPx, building.type);
+
+      // Entrance path — only on south (wall/light) side, connecting road center to building edge
+      const def = BUILDING_DEFS[building.type];
+      if (def?.category === "structure") {
+        const roadCells = new Set((props.settlement.buildings ?? []).filter(b => b.type === "road").map(b => b.cellIndex));
+        const hasRoadS = Array.from({ length: bw }, (_, i) => (br + bh) * COLS + bc + i).some(c => roadCells.has(c));
+        if (hasRoadS) {
+          const bcx = bx + wPx / 2;
+          const roadCenterY = by + hPx + CELL_SIZE / 2; // center of road cell below
+          ctx.strokeStyle = "#050505"; ctx.lineWidth = 1.5; ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.moveTo(bcx, roadCenterY);
+          ctx.lineTo(bcx, by + hPx);
+          ctx.stroke();
+        }
       }
     }
-
-    // Name label for structure buildings only (skip terrain-category and unlabelled)
-    const _bdef = BUILDING_DEFS[building.type];
-    // if (_bdef?.category === "structure" && _bdef?.emoji) {
-    //   const label = _bdef.emoji;
-    //   const cx = bx + size / 2;
-    //   const cy = by + 8;
-    //   ctx.font = "20px sans-serif";
-    //   ctx.textAlign = "center";
-    //   ctx.fillStyle = "rgba(0,0,0,0.55)";
-    //   ctx.fillText(label, cx + 1, cy + 1);
-    //   ctx.fillStyle = "#FFFFFF";
-    //   ctx.fillText(label, cx, cy);
-    // }
   }
 
-  // Pass 3: hover highlight (2×2 for large building selection, 1×1 otherwise)
+  // Pass 2b: trees on top of buildings (1×1 map symbols)
+  for (let i = 0; i < COLS * ROWS; i++) {
+    const tile = terrain[i] ?? "grass";
+    if (!TALL_TREES.has(tile)) continue;
+    const col = i % COLS;
+    const row = Math.floor(i / COLS);
+    const x   = col * CELL_SIZE;
+    const y   = row * CELL_SIZE;
+    drawCanvasTree(ctx, x, y, tile, CELL_SIZE);
+  }
+
+
+  // Pass 4: hover highlight sized to the selected building's footprint
   if (hovered !== null) {
     const hc = hovered % COLS;
     const hr = Math.floor(hovered / COLS);
-    const large = selectedBuildingType.value && isLarge(selectedBuildingType.value);
-    const hSize = large ? CELL_SIZE * 2 : CELL_SIZE;
+    const { w: hw, h: hh } = selectedBuildingType.value ? buildingSize(selectedBuildingType.value) : { w: 1, h: 1 };
     ctx.fillStyle = "rgba(255,255,255,0.30)";
-    ctx.fillRect(hc * CELL_SIZE, hr * CELL_SIZE, hSize, hSize);
+    ctx.fillRect(hc * CELL_SIZE, hr * CELL_SIZE, hw * CELL_SIZE, hh * CELL_SIZE);
   }
 }
 
@@ -651,10 +843,14 @@ function handleCellClick(cellIndex) {
     }
 
     if (isLarge(selectedBuildingType.value)) {
+      const { w, h } = buildingSize(selectedBuildingType.value);
       const col = cellIndex % COLS;
       const row = Math.floor(cellIndex / COLS);
-      if (col + 1 >= COLS || row + 1 >= ROWS) return;
-      const footprint = [cellIndex, cellIndex + 1, cellIndex + COLS, cellIndex + COLS + 1];
+      if (col + w > COLS || row + h > ROWS) return;
+      const footprint = [];
+      for (let dr = 0; dr < h; dr++)
+        for (let dc = 0; dc < w; dc++)
+          footprint.push(cellIndex + dr * COLS + dc);
       if (footprint.some(c => buildingAt(c))) return;
     }
 
@@ -695,7 +891,7 @@ watch(canvasRef, (el) => { if (el) preloadImages(); });
 
 watch(
   [() => props.settlement.buildings, () => props.settlement.terrain, selectedBuildingType],
-  () => imagesReady.value ? drawGrid() : preloadImages(),
+  () => drawGrid(),
   { deep: true }
 );
 

@@ -496,6 +496,7 @@
     @remove-building="handleSettlementRemoveBuilding"
     @change-terrain="handleSettlementChangeTerrain"
     :canShortRest="canShortRestAtSettlement"
+
     @open-forge="showForge = true"
     @short-rest="handleSettlementShortRest"
   />
@@ -508,6 +509,8 @@
     :isOwner="false"
     :readOnly="true"
     :canChallenge="canChallengeSettlement"
+    :playerHasSettlement="!!settlementId"
+
     @close="showVisitorSettlement = false; visitingSettlementData = null"
     @challenge-boss="handleChallengeSettlementBoss"
   />
@@ -1058,7 +1061,7 @@ const isIdle = computed(() =>
   !showShopModal.value
 );
 const canShortRestAtSettlement = computed(() => settlementShortRestDay.value !== daysCount.value);
-const canChallengeSettlement   = computed(() => isIdle.value && !settlementBossActive.value);
+const canChallengeSettlement   = computed(() => isIdle.value && !settlementBossActive.value && !settlementId.value);
 const isEnemyVenomed = computed(() => enemyStatusEffects.value?.some(e => e.type === "poison") ?? false);
 const isEnemyBleeding = computed(() => enemyStatusEffects.value?.some(e => e.type === "bleed") ?? false);
 

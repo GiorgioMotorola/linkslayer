@@ -4,10 +4,6 @@ export const TERRAIN_EMOJIS = {
   river:        "🟦",
   rock:         "🪨",
   tree:         "🌲",
-  pine_tree:    "🌲",
-  coconut_tree: "🌴",
-  dead_tree:    "🪵",
-  winter_tree:  "🌨️",
   wheatfield:   "🌾",
   white_flower:       "🌸",
   yellow_white_flower:       "🌸",
@@ -26,10 +22,6 @@ export const TERRAIN_PAINTS = {
   paint_river:        { name: "Water",        cost: 0, description: "It's Water.",              paintsTerrain: "river"        },
   paint_rock:         { name: "Rock",         cost: 0, description: "It's a Rock.",               paintsTerrain: "rock"         },
   paint_tree:         { name: "Tree",         cost: 0, description: "It's a Tree.",               paintsTerrain: "tree"         },
-  paint_pine_tree:    { name: "Pine Tree",    cost: 0, description: "It's a Pine Tree.",          paintsTerrain: "pine_tree"    },
-  paint_coconut_tree: { name: "Coconut Tree", cost: 0, description: "It's a Coconut Tree.",       paintsTerrain: "coconut_tree" },
-  paint_dead_tree:    { name: "Post",    cost: 0, description: "Can be used as a fence or whatever I dont care.",          paintsTerrain: "dead_tree"    },
-  paint_winter_tree:  { name: "Fir Tree",  cost: 0, description: "It's a Fir Tree.", paintsTerrain: "winter_tree"  },
   paint_wheatfield:   { name: "Wheatfield",   cost: 0, description: "It's Wheat.",         paintsTerrain: "wheatfield"   },
   paint_white_flower:       { name: "White Flower",   cost: 0, description: "It's a White Flower.",         paintsTerrain: "white_flower"   },
   paint_white_yellow_flower:       { name: "Yellow/White Flower",   cost: 0, description: "It's a Yellow/White Flower.",         paintsTerrain: "yellow_white_flower"   },
@@ -63,17 +55,6 @@ export const BUILDING_DEFS = {
     yieldType: null,
     requiresTerrain: "river",
   },
-  mill: {
-    name: "Mill",
-    emoji: "🌾",
-    cost: 40,
-    description: "Earns 1g per click. Must be adjacent to a river tile.",
-    category: "structure",
-    yieldType: "gold",
-    yieldAmount: 1,
-    yieldEvery: 1,
-    requiresAdjacentTerrain: "river",
-  },
   general_store: {
     name: "General Store",
     emoji: "🏪",
@@ -88,7 +69,7 @@ export const BUILDING_DEFS = {
     name: "Smithy",
     emoji: "⚒️",
     cost: 50,
-    description: "Earns 1g per click. Produces 1 Scrap Metal per 25 clicks. Requires a Mine on the map.",
+    description: "Earns 1g per click. Produces 1 Scrap Metal per 25 clicks.",
     category: "structure",
     yieldType: "gold",
     yieldAmount: 1,
@@ -96,16 +77,6 @@ export const BUILDING_DEFS = {
     bonusYieldType: "scrap",
     bonusYieldAmount: 1,
     bonusYieldEvery: 25,
-    requiresBuildingOnMap: "mine",
-  },
-  mine: {
-    name: "Mine",
-    emoji: "⛏️",
-    cost: 20,
-    description: "Produces ore (enables the Smithy). Must be adjacent to a rock tile.",
-    category: "structure",
-    yieldType: null,
-    requiresAdjacentTerrain: "rock",
   },
   church: {
     name: "Church",
@@ -158,13 +129,6 @@ export const BUILDING_DEFS = {
     grantsForge: true,
     maxPerMap: 1,
   },
-  well: {
-    name: "Well",
-    cost: 10,
-    description: "A decorative village well. Purely cosmetic.",
-    category: "terrain",
-    yieldType: null,
-  },
   tavern: {
     name: "Tavern",
     emoji: "🍺",
@@ -199,7 +163,6 @@ export function computeYield(buildings, terrain, clicksSince) {
   let scrap = 0;
   let healthPotions = 0;
 
-  const hasMine = buildings.some(b => b.type === "mine");
   const villagers = buildings
     .filter(b => b.type === "house")
     .length * (BUILDING_DEFS.house.villagersPerBuilding ?? 5);
@@ -208,9 +171,6 @@ export function computeYield(buildings, terrain, clicksSince) {
   for (const building of buildings) {
     const def = BUILDING_DEFS[building.type];
     if (!def) continue;
-
-    // Validate runtime constraints
-    if (def.requiresBuildingOnMap === "mine" && !hasMine) continue;
 
     // Primary yield
     if (def.yieldType === "gold" && def.yieldEvery) {

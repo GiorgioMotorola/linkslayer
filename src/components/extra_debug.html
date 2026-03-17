@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body style="background:#333;margin:0">
+<canvas id="c"></canvas>
+<div id="info" style="color:white;font:12px monospace;position:fixed;top:0;left:120px"></div>
+<script>
+const img = new Image();
+img.onload = () => {
+  const c = document.getElementById('c');
+  const scale = 4;
+  c.width = img.width * scale;
+  c.height = img.height * scale;
+  const ctx = c.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(img, 0, 0, img.width * scale, img.height * scale);
+  // Draw grid
+  ctx.strokeStyle = 'rgba(255,0,0,0.5)';
+  ctx.lineWidth = 1;
+  for(let x = 0; x <= img.width; x += 16) {
+    ctx.beginPath(); ctx.moveTo(x*scale,0); ctx.lineTo(x*scale,img.height*scale); ctx.stroke();
+  }
+  for(let y = 0; y <= img.height; y += 16) {
+    ctx.beginPath(); ctx.moveTo(0,y*scale); ctx.lineTo(img.width*scale,y*scale); ctx.stroke();
+    ctx.fillStyle='rgba(255,255,0,0.7)';
+    ctx.font='10px monospace';
+    ctx.fillText('y='+y, 2, y*scale+11);
+  }
+  c.onmousemove = (e) => {
+    const r = c.getBoundingClientRect();
+    const sx = Math.floor((e.clientX - r.left) / scale / 16) * 16;
+    const sy = Math.floor((e.clientY - r.top) / scale / 16) * 16;
+    document.getElementById('info').textContent = 'sx:'+sx+' sy:'+sy;
+  };
+};
+img.src = '../assets/ext/extra.png';
+</script>
+</body>
+</html>

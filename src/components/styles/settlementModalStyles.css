@@ -544,8 +544,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1;
+  flex-wrap: wrap;
   justify-content: center;
+  padding: 6px 12px;
+  background: #2a1010;
+  border-bottom: 1px solid #5c1a1a;
 }
 .challenge-blurb-text {
   font-size: 0.8rem;
@@ -563,6 +566,11 @@
 }
 .challenge-boss-btn:hover:not(:disabled) { background: #8b1515; }
 .challenge-boss-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.challenge-owned-msg {
+  font-size: 0.75rem;
+  color: #a07040;
+  font-style: italic;
+}
 
 @media screen and (max-width: 600px) {
   .canvas-cell-label {
