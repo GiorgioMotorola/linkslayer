@@ -282,70 +282,209 @@ function generateParchmentTexture(w, h) {
 // ── Canvas map-style drawing helpers ──────────────────────────────────────
 
 const BUILDING_STYLES = {
-  house:         { wall: "#e8dcc0", roof: "#b86840", ink: "#6a3820" },
+  house:         { wall: "#e8dcc0", roof: "#2a3a6a", ink: "#1a2848" },
   tavern:        { wall: "#d4c0a0", roof: "#7a3010", ink: "#501808" },
-  castle:        { wall: "#ccc4b0", roof: "#8a8878", ink: "#404038" },
+  castle:        { wall: "#ccc4b0", roof: "#1a3a8a", ink: "#0a1a50" },
   church:        { wall: "#f0ece0", roof: "#c0b8a0", ink: "#404040" },
-  smithy:        { wall: "#b0a890", roof: "#545048", ink: "#282820" },
-  apothecary:    { wall: "#c8d8b8", roof: "#4a7848", ink: "#284030" },
-  general_store: { wall: "#d8c8a0", roof: "#9a7030", ink: "#4a3010" },
+  smithy:        { wall: "#b0a890", roof: "#383838", ink: "#181818" },
+  apothecary:    { wall: "#c8d8b8", roof: "#3a7838", ink: "#1a4018" },
+  general_store: { wall: "#d8c8a0", roof: "#7a4828", ink: "#4a2810" },
   horse_stable:  { wall: "#c8b890", roof: "#7a5228", ink: "#3a2010" },
+  well:          { wall: "#c8b890", roof: "#707060", ink: "#3a3028" },
 };
 
 function drawCanvasBuilding(ctx, bx, by, wPx, hPx, type) {
   const cfg = BUILDING_STYLES[type];
   if (!cfg) return;
+
+  // ── Well ──────────────────────────────────────────────────────────────────
+  if (type === "well") {
+    const cx = bx + wPx / 2, cy = by + hPx / 2;
+    const r = Math.min(wPx, hPx) * 0.28;
+    ctx.fillStyle = "#b0a890";
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = cfg.ink; ctx.lineWidth = 0.8; ctx.stroke();
+    ctx.fillStyle = "#302820";
+    ctx.beginPath(); ctx.arc(cx, cy, r * 0.52, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "#6a4820"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(cx - r, cy - r * 0.6); ctx.lineTo(cx + r, cy - r * 0.6); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - r * 0.7, cy - r * 0.6); ctx.lineTo(cx - r * 0.7, cy + r * 0.3);
+    ctx.moveTo(cx + r * 0.7, cy - r * 0.6); ctx.lineTo(cx + r * 0.7, cy + r * 0.3);
+    ctx.stroke();
+    return;
+  }
+
+  // ── Church (2×2) ──────────────────────────────────────────────────────────
+  if (type === "church") {
+    const lw = Math.max(0.8, Math.min(wPx, hPx) * 0.018);
+    const pad = Math.max(1, Math.min(wPx, hPx) * 0.04);
+    ctx.strokeStyle = cfg.ink; ctx.lineWidth = lw;
+    // Nave — lower 55% height, full width
+    const nX = bx + pad, nY = by + hPx * 0.43, nW = wPx - pad * 2, nH = hPx * 0.53;
+    const nRoofH = nH * 0.28;
+    ctx.fillStyle = cfg.roof;
+    ctx.fillRect(nX, nY, nW, nRoofH);
+    ctx.fillStyle = cfg.wall;
+    ctx.fillRect(nX, nY + nRoofH, nW, nH - nRoofH);
+    ctx.strokeRect(nX, nY, nW, nH);
+    ctx.beginPath(); ctx.moveTo(nX, nY + nRoofH); ctx.lineTo(nX + nW, nY + nRoofH); ctx.stroke();
+    // Steeple tower — upper 60%, centered, narrow
+    const stW = wPx * 0.26, stH = hPx * 0.62;
+    const stX = bx + wPx / 2 - stW / 2, stY = by + pad;
+    const spireH = stH * 0.32;
+    // Tower body
+    ctx.fillStyle = cfg.wall;
+    ctx.fillRect(stX, stY + spireH, stW, stH - spireH);
+    // Spire (triangle)
+    ctx.fillStyle = cfg.roof;
+    ctx.beginPath();
+    ctx.moveTo(stX + stW / 2, stY);
+    ctx.lineTo(stX, stY + spireH);
+    ctx.lineTo(stX + stW, stY + spireH);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.strokeRect(stX, stY + spireH, stW, stH - spireH);
+    // Arrow-slit window in tower body
+    ctx.fillStyle = cfg.ink;
+    ctx.fillRect(stX + stW * 0.36, stY + spireH + (stH - spireH) * 0.3, stW * 0.28, (stH - spireH) * 0.28);
+    return;
+  }
+
+  // ── Castle (3×3) ──────────────────────────────────────────────────────────
+  if (type === "castle") {
+    const lw = Math.max(0.8, Math.min(wPx, hPx) * 0.012);
+    const pad = Math.max(2, Math.min(wPx, hPx) * 0.03);
+    ctx.strokeStyle = cfg.ink; ctx.lineWidth = lw;
+    // Curtain walls (outer shell)
+    ctx.fillStyle = cfg.wall;
+    ctx.fillRect(bx + pad, by + pad, wPx - pad * 2, hPx - pad * 2);
+    ctx.strokeRect(bx + pad, by + pad, wPx - pad * 2, hPx - pad * 2);
+    // Corner towers
+    const tw = Math.max(4, wPx * 0.16);
+    for (const [tx, ty] of [
+      [bx + pad, by + pad],
+      [bx + wPx - pad - tw, by + pad],
+      [bx + pad, by + hPx - pad - tw],
+      [bx + wPx - pad - tw, by + hPx - pad - tw],
+    ]) {
+      ctx.fillStyle = cfg.roof;
+      ctx.fillRect(tx, ty, tw, tw);
+      ctx.strokeRect(tx, ty, tw, tw);
+      // Crenels
+      const cw = tw * 0.25;
+      ctx.fillStyle = cfg.wall;
+      for (let c = 0; c < 3; c += 2) ctx.fillRect(tx + cw * c, ty, cw, lw * 4);
+    }
+    // Central keep
+    const kPad = wPx * 0.22;
+    const kX = bx + kPad, kY = by + kPad, kW = wPx - kPad * 2, kH = hPx - kPad * 2;
+    const kRoofH = kH * 0.42;
+    ctx.fillStyle = cfg.roof;
+    ctx.fillRect(kX, kY, kW, kRoofH);
+    ctx.fillStyle = cfg.wall;
+    ctx.fillRect(kX, kY + kRoofH, kW, kH - kRoofH);
+    ctx.strokeRect(kX, kY, kW, kH);
+    ctx.beginPath(); ctx.moveTo(kX, kY + kRoofH); ctx.lineTo(kX + kW, kY + kRoofH); ctx.stroke();
+    // Gatehouse arch at bottom centre
+    const gW = tw * 1.1, gX = bx + wPx / 2 - tw * 0.55, gY = by + hPx - pad - tw * 0.5;
+    ctx.fillStyle = cfg.ink;
+    ctx.fillRect(gX, gY, gW, tw * 0.5 + pad);
+    ctx.fillStyle = cfg.wall;
+    ctx.fillRect(gX + gW * 0.2, gY, gW * 0.6, tw * 0.38);
+    ctx.beginPath();
+    ctx.arc(gX + gW / 2, gY, gW * 0.3, Math.PI, 0);
+    ctx.fill();
+    return;
+  }
+
+  // ── Horse Stable (2×2, L-shape) ───────────────────────────────────────────
+  if (type === "horse_stable") {
+    const lw = Math.max(0.8, Math.min(wPx, hPx) * 0.018);
+    const pad = Math.max(1, Math.min(wPx, hPx) * 0.04);
+    ctx.strokeStyle = cfg.ink; ctx.lineWidth = lw;
+    // Main body — top 52% height, full width
+    const mainX = bx + pad, mainY = by + pad, mainW = wPx - pad * 2, mainH = hPx * 0.52;
+    const roofH = mainH * 0.42;
+    ctx.fillStyle = cfg.roof;
+    ctx.fillRect(mainX, mainY, mainW, roofH);
+    ctx.fillStyle = cfg.wall;
+    ctx.fillRect(mainX, mainY + roofH, mainW, mainH - roofH);
+    ctx.strokeRect(mainX, mainY, mainW, mainH);
+    ctx.beginPath(); ctx.moveTo(mainX, mainY + roofH); ctx.lineTo(mainX + mainW, mainY + roofH); ctx.stroke();
+    // Stall dividers
+    for (let s = 1; s < 3; s++) {
+      const sx = mainX + (mainW / 3) * s;
+      ctx.beginPath(); ctx.moveTo(sx, mainY + roofH); ctx.lineTo(sx, mainY + mainH); ctx.stroke();
+    }
+    // L-wing — left 44% width, lower 44% height
+    const wingX = bx + pad, wingY = by + hPx * 0.52, wingW = wPx * 0.44, wingH = hPx * 0.44;
+    const wingRoofH = wingH * 0.38;
+    ctx.fillStyle = cfg.roof;
+    ctx.fillRect(wingX, wingY, wingW, wingRoofH);
+    ctx.fillStyle = cfg.wall;
+    ctx.fillRect(wingX, wingY + wingRoofH, wingW, wingH - wingRoofH);
+    ctx.strokeRect(wingX, wingY, wingW, wingH);
+    ctx.beginPath(); ctx.moveTo(wingX, wingY + wingRoofH); ctx.lineTo(wingX + wingW, wingY + wingRoofH); ctx.stroke();
+    // Dashed paddock fence on the open right side
+    ctx.setLineDash([2, 3]);
+    ctx.beginPath();
+    ctx.moveTo(bx + wPx * 0.44 + pad, by + hPx * 0.52);
+    ctx.lineTo(bx + wPx - pad, by + hPx * 0.52);
+    ctx.lineTo(bx + wPx - pad, by + hPx - pad);
+    ctx.lineTo(bx + wPx * 0.44 + pad, by + hPx - pad);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    return;
+  }
+
+  // ── Tavern (2×3, back porch at top + main building below) ────────────────
+  if (type === "tavern") {
+    const lw = Math.max(0.8, Math.min(wPx, hPx) * 0.014);
+    const pad = Math.max(1, Math.min(wPx, hPx) * 0.03);
+    ctx.strokeStyle = cfg.ink; ctx.lineWidth = lw;
+    // Back porch — top 28% of height, full width, lean-to
+    const pX = bx + pad, pY = by + pad;
+    const pW = wPx - pad * 2, pH = hPx * 0.28;
+    const pRoofH = pH * 0.30;
+    ctx.fillStyle = "#c0a878";
+    ctx.fillRect(pX, pY, pW, pRoofH);
+    ctx.fillStyle = "rgba(220,195,155,0.55)";
+    ctx.fillRect(pX, pY + pRoofH, pW, pH - pRoofH);
+    ctx.strokeStyle = cfg.ink; ctx.lineWidth = lw * 0.8;
+    ctx.strokeRect(pX, pY, pW, pH);
+    ctx.beginPath(); ctx.moveTo(pX, pY + pRoofH); ctx.lineTo(pX + pW, pY + pRoofH); ctx.stroke();
+    // Porch posts
+    ctx.lineWidth = lw * 1.2;
+    ctx.beginPath();
+    ctx.moveTo(pX, pY + pRoofH); ctx.lineTo(pX, pY + pH);
+    ctx.moveTo(pX + pW, pY + pRoofH); ctx.lineTo(pX + pW, pY + pH);
+    ctx.stroke();
+    // Main building — lower 68% of height, full width
+    const mX = bx + pad, mY = by + hPx * 0.30, mW = wPx - pad * 2, mH = hPx * 0.68 - pad;
+    const roofH = mH * 0.38;
+    ctx.strokeStyle = cfg.ink; ctx.lineWidth = lw;
+    ctx.fillStyle = cfg.roof;
+    ctx.fillRect(mX, mY, mW, roofH);
+    ctx.fillStyle = cfg.wall;
+    ctx.fillRect(mX, mY + roofH, mW, mH - roofH);
+    ctx.strokeRect(mX, mY, mW, mH);
+    ctx.beginPath(); ctx.moveTo(mX, mY + roofH); ctx.lineTo(mX + mW, mY + roofH); ctx.stroke();
+    return;
+  }
+
+  // ── Generic building ──────────────────────────────────────────────────────
   const pad = Math.max(1, Math.min(wPx, hPx) * 0.06);
   const ix = bx + pad, iy = by + pad, iw = wPx - pad * 2, ih = hPx - pad * 2;
   const roofH = ih * 0.55;
   const lw = Math.max(0.8, Math.min(wPx, hPx) * 0.025);
 
-  // Wall
   ctx.fillStyle = cfg.wall;
   ctx.fillRect(ix, iy + roofH, iw, ih - roofH);
-  // Roof
   ctx.fillStyle = cfg.roof;
   ctx.fillRect(ix, iy, iw, roofH);
-  // Eave line
   ctx.strokeStyle = cfg.ink; ctx.lineWidth = lw;
   ctx.beginPath(); ctx.moveTo(ix, iy + roofH); ctx.lineTo(ix + iw, iy + roofH); ctx.stroke();
-  // Outline
   ctx.strokeRect(ix, iy, iw, ih);
-
-  if (type === "castle") {
-    const tw = Math.max(3, Math.min(wPx, hPx) * 0.13);
-    ctx.fillStyle = cfg.roof;
-    for (const [tx, ty] of [[ix, iy],[ix+iw-tw, iy],[ix, iy+ih-tw],[ix+iw-tw, iy+ih-tw]]) {
-      ctx.fillRect(tx, ty, tw, tw);
-      ctx.strokeRect(tx, ty, tw, tw);
-    }
-    // Battlements hint
-    ctx.fillStyle = cfg.wall;
-    const bStep = tw * 0.6;
-    for (let bx2 = ix + tw; bx2 < ix + iw - tw - bStep; bx2 += bStep * 2) {
-      ctx.fillRect(bx2, iy, bStep, lw * 3);
-    }
-  }
-
-  if (type === "church") {
-    const cxb = bx + wPx / 2;
-    const crossH = roofH * 0.55;
-    const crossW = Math.max(1.5, iw * 0.12);
-    const crossTop = iy + roofH * 0.1;
-    ctx.fillStyle = cfg.wall;
-    ctx.fillRect(cxb - crossW / 2, crossTop, crossW, crossH);
-    ctx.fillRect(cxb - crossW, crossTop + crossH * 0.28, crossW * 2, crossW);
-  }
-
-  if (type === "horse_stable") {
-    // Stall dividers
-    ctx.strokeStyle = cfg.ink; ctx.lineWidth = lw * 0.7;
-    const stalls = 3;
-    for (let s = 1; s < stalls; s++) {
-      const sx2 = ix + (iw / stalls) * s;
-      ctx.beginPath(); ctx.moveTo(sx2, iy + roofH); ctx.lineTo(sx2, iy + ih); ctx.stroke();
-    }
-  }
 }
 
 function drawCanvasTree(ctx, x, y, _type, cellSize) {
@@ -377,7 +516,7 @@ function drawCanvasTree(ctx, x, y, _type, cellSize) {
   ctx.fill();
 
   // Darker ink outline
-  ctx.strokeStyle = "#2a4828"; ctx.lineWidth = 0.7; ctx.stroke();
+  ctx.strokeStyle = "#2a4828"; ctx.lineWidth = 1.5; ctx.stroke();
 
   // Small shadow ellipse under canopy for depth
   ctx.fillStyle = "rgba(30,50,20,0.18)";
@@ -514,16 +653,12 @@ const hoveredLabel = computed(() => {
   return tile.charAt(0).toUpperCase() + tile.slice(1);
 });
 
-// ── Building size registry (w cols × h rows) ───────────────────────────────
+// ── Building size registry ──────────────────────────────────────────────────
 const BUILDING_SIZES = {
-  castle:        { w: 2, h: 2 },
-  house:         { w: 2, h: 2 },
-  horse_stable:  { w: 2, h: 2 },
-  smithy:        { w: 2, h: 2 },
-  apothecary:    { w: 2, h: 2 },
-  church:        { w: 2, h: 2 },
-  general_store: { w: 2, h: 2 },
-  tavern:        { w: 2, h: 2 },
+  church:       { w: 2, h: 2 },
+  castle:       { w: 3, h: 3 },
+  tavern:       { w: 2, h: 3 },
+  horse_stable: { w: 2, h: 2 },
 };
 
 function buildingSize(type) { return BUILDING_SIZES[type] ?? { w: 1, h: 1 }; }
@@ -576,10 +711,27 @@ function drawGrid() {
     if (tile === "river") {
       ctx.fillStyle = "#a8c8e8";
       ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
-      ctx.strokeStyle = "rgba(60,120,200,0.35)";
-      ctx.lineWidth = 0.8;
-      for (let hy = y + 3; hy < y + CELL_SIZE; hy += 4) {
-        ctx.beginPath(); ctx.moveTo(x, hy); ctx.lineTo(x + CELL_SIZE, hy); ctx.stroke();
+      ctx.strokeStyle = "rgba(60,120,200,0.30)";
+      ctx.lineWidth = 0.7;
+      // Seeded wave offset so adjacent tiles align naturally
+      let wseed = (x * 73856093) ^ (y * 19349663);
+      const wrand = () => { wseed = (wseed * 1664525 + 1013904223) >>> 0; return wseed / 0xffffffff; };
+      const phaseOffset = wrand() * Math.PI * 2;
+      for (let hy = y + 4; hy < y + CELL_SIZE - 1; hy += 5) {
+        const amp = 1.2;
+        const freq = (2 * Math.PI) / CELL_SIZE;
+        ctx.beginPath();
+        ctx.moveTo(x, hy + Math.sin(phaseOffset) * amp);
+        // Two quadratic curves across the tile width for an S-wave
+        ctx.quadraticCurveTo(
+          x + CELL_SIZE * 0.25, hy - amp,
+          x + CELL_SIZE * 0.5,  hy + Math.sin(phaseOffset + Math.PI) * amp
+        );
+        ctx.quadraticCurveTo(
+          x + CELL_SIZE * 0.75, hy + amp,
+          x + CELL_SIZE,        hy + Math.sin(phaseOffset + freq * CELL_SIZE) * amp
+        );
+        ctx.stroke();
       }
     } else if (tile === "rock") {
       ctx.fillStyle = "#b8c880";
@@ -660,10 +812,151 @@ function drawGrid() {
         ctx.fillStyle = centerColor;
         ctx.beginPath(); ctx.arc(fcx, fcy, petalSize * 0.55, 0, Math.PI * 2); ctx.fill();
       }
+    } else if (tile === "hill") {
+      ctx.fillStyle = "#b8c880"; ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+      ctx.strokeStyle = "#7a6840"; ctx.lineWidth = 0.7;
+      for (let h = 0; h < 3; h++) {
+        const ow = CELL_SIZE * (0.42 - h * 0.08);
+        const oy = cy + (h - 1) * 4;
+        ctx.beginPath(); ctx.ellipse(cx, oy + 3, ow, CELL_SIZE * 0.16, 0, Math.PI, 0, true); ctx.stroke();
+      }
+
+    } else if (tile === "mountain") {
+      ctx.fillStyle = "#b8c880"; ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+      // Two staggered peaks
+      const peaks = [{ px: cx - CELL_SIZE * 0.18, h: CELL_SIZE * 0.78 }, { px: cx + CELL_SIZE * 0.2, h: CELL_SIZE * 0.62 }];
+      for (const pk of peaks) {
+        ctx.fillStyle = "#9a9080";
+        ctx.beginPath();
+        ctx.moveTo(pk.px, y + CELL_SIZE - pk.h);
+        ctx.lineTo(pk.px - CELL_SIZE * 0.22, y + CELL_SIZE - 2);
+        ctx.lineTo(pk.px + CELL_SIZE * 0.22, y + CELL_SIZE - 2);
+        ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = "#5a5040"; ctx.lineWidth = 0.6; ctx.stroke();
+        // Snow cap
+        ctx.fillStyle = "#f0ece0";
+        ctx.beginPath();
+        ctx.moveTo(pk.px, y + CELL_SIZE - pk.h);
+        ctx.lineTo(pk.px - CELL_SIZE * 0.08, y + CELL_SIZE - pk.h + CELL_SIZE * 0.2);
+        ctx.lineTo(pk.px + CELL_SIZE * 0.08, y + CELL_SIZE - pk.h + CELL_SIZE * 0.2);
+        ctx.closePath(); ctx.fill();
+      }
+
+    } else if (tile === "farm") {
+      ctx.fillStyle = "#d8c860"; ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+      ctx.strokeStyle = "#8a6820"; ctx.lineWidth = 0.5;
+      // Crop rows
+      for (let fy = y + 4; fy < y + CELL_SIZE - 2; fy += 5) {
+        ctx.beginPath(); ctx.moveTo(x + 3, fy); ctx.lineTo(x + CELL_SIZE - 3, fy); ctx.stroke();
+      }
+      // Center divider
+      ctx.lineWidth = 0.8;
+      ctx.beginPath(); ctx.moveTo(cx, y + 2); ctx.lineTo(cx, y + CELL_SIZE - 2); ctx.stroke();
+      ctx.strokeRect(x + 2, y + 2, CELL_SIZE - 4, CELL_SIZE - 4);
+
+    } else if (tile === "cobblestone") {
+      ctx.fillStyle = "#b8b0a0"; ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+      let cseed = (x * 73856093) ^ (y * 19349663);
+      const crand = () => { cseed = (cseed * 1664525 + 1013904223) >>> 0; return cseed / 0xffffffff; };
+      const cobbles = [
+        [0.18, 0.18, 0.26, 0.20], [0.52, 0.12, 0.30, 0.20], [0.86, 0.20, 0.22, 0.22],
+        [0.12, 0.48, 0.28, 0.20], [0.46, 0.44, 0.26, 0.22], [0.80, 0.50, 0.24, 0.20],
+        [0.22, 0.74, 0.32, 0.20], [0.62, 0.72, 0.28, 0.20],
+      ];
+      for (const [ox, oy2, ow, oh] of cobbles) {
+        const shade = 0.84 + crand() * 0.16;
+        ctx.fillStyle = `rgb(${Math.round(185*shade)},${Math.round(175*shade)},${Math.round(158*shade)})`;
+        ctx.beginPath();
+        ctx.ellipse(x + ox * CELL_SIZE, y + oy2 * CELL_SIZE, ow * CELL_SIZE / 2, oh * CELL_SIZE / 2, crand() * 0.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#8a8070"; ctx.lineWidth = 0.5; ctx.stroke();
+      }
+
+    } else if (tile === "cemetery") {
+      ctx.fillStyle = "#b0b898"; ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+      ctx.strokeStyle = "#484840"; ctx.lineWidth = 0.9;
+      const crosses = [[0.22, 0.28], [0.65, 0.22], [0.38, 0.62], [0.72, 0.65]];
+      for (const [dcx, dcy] of crosses) {
+        const pcx = x + dcx * CELL_SIZE, pcy = y + dcy * CELL_SIZE;
+        const ch = CELL_SIZE * 0.14, cw = CELL_SIZE * 0.07;
+        ctx.beginPath();
+        ctx.moveTo(pcx, pcy - ch); ctx.lineTo(pcx, pcy + ch);
+        ctx.moveTo(pcx - cw * 1.4, pcy - ch * 0.3); ctx.lineTo(pcx + cw * 1.4, pcy - ch * 0.3);
+        ctx.stroke();
+      }
+
+    } else if (tile === "dock") {
+      ctx.fillStyle = "#a8c8e8"; ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+      const dw = CELL_SIZE * 0.38;
+      ctx.fillStyle = "#c0a060";
+      ctx.fillRect(cx - dw / 2, y, dw, CELL_SIZE);
+      ctx.strokeStyle = "#7a5020"; ctx.lineWidth = 0.5;
+      for (let ply = y + 4; ply < y + CELL_SIZE; ply += 5) {
+        ctx.beginPath(); ctx.moveTo(cx - dw / 2, ply); ctx.lineTo(cx + dw / 2, ply); ctx.stroke();
+      }
+      ctx.lineWidth = 0.8; ctx.strokeRect(cx - dw / 2, y, dw, CELL_SIZE);
+      // Support piles
+      ctx.strokeStyle = "#5a3810"; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(cx - dw / 2, y + CELL_SIZE * 0.4); ctx.lineTo(cx - dw / 2 - 3, y + CELL_SIZE);
+      ctx.moveTo(cx + dw / 2, y + CELL_SIZE * 0.4); ctx.lineTo(cx + dw / 2 + 3, y + CELL_SIZE);
+      ctx.stroke();
+
     } else {
       // grass (and tree cells — ground layer only, tree sprite drawn later)
       ctx.fillStyle = "#b8c880";
       ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+    }
+  }
+
+  // Pass 1b: round the land/water boundary corners
+  // For each river tile, if two orthogonal land neighbors share a corner, draw a
+  // pie-slice arc of the land color into that corner, creating a curved shoreline.
+  {
+    const crr = CELL_SIZE * 0.38; // corner rounding radius
+    const getTile = (c, r) => (c < 0 || c >= COLS || r < 0 || r >= ROWS) ? "grass" : (terrain[r * COLS + c] ?? "grass");
+    const shoreColor = (t) => {
+      if (t === "farm")        return "#d8c860";
+      if (t === "cobblestone") return "#b8b0a0";
+      if (t === "cemetery")    return "#b0b898";
+      if (t === "wheatfield")  return "#e8d478";
+      if (t === "river" || t === "dock") return "#a8c8e8";
+      return "#b8c880"; // grass / rock / hill / mountain / flowers — all green-ish
+    };
+    for (let i = 0; i < COLS * ROWS; i++) {
+      const tile = terrain[i] ?? "grass";
+      if (tile !== "river") continue;
+      const col = i % COLS;
+      const row = Math.floor(i / COLS);
+      const x   = col * CELL_SIZE;
+      const y   = row * CELL_SIZE;
+      const CS  = CELL_SIZE;
+      const L = getTile(col - 1, row), R = getTile(col + 1, row);
+      const T = getTile(col, row - 1), B = getTile(col, row + 1);
+      // Top-left corner: land above AND land to the left
+      if (L !== "river" && T !== "river") {
+        ctx.fillStyle = shoreColor(L);
+        ctx.beginPath(); ctx.moveTo(x, y);
+        ctx.arc(x, y, crr, 0, Math.PI / 2); ctx.closePath(); ctx.fill();
+      }
+      // Top-right corner
+      if (R !== "river" && T !== "river") {
+        ctx.fillStyle = shoreColor(R);
+        ctx.beginPath(); ctx.moveTo(x + CS, y);
+        ctx.arc(x + CS, y, crr, Math.PI / 2, Math.PI); ctx.closePath(); ctx.fill();
+      }
+      // Bottom-left corner
+      if (L !== "river" && B !== "river") {
+        ctx.fillStyle = shoreColor(L);
+        ctx.beginPath(); ctx.moveTo(x, y + CS);
+        ctx.arc(x, y + CS, crr, -Math.PI / 2, 0); ctx.closePath(); ctx.fill();
+      }
+      // Bottom-right corner
+      if (R !== "river" && B !== "river") {
+        ctx.fillStyle = shoreColor(R);
+        ctx.beginPath(); ctx.moveTo(x + CS, y + CS);
+        ctx.arc(x + CS, y + CS, crr, Math.PI, 3 * Math.PI / 2); ctx.closePath(); ctx.fill();
+      }
     }
   }
 
@@ -704,7 +997,7 @@ function drawGrid() {
             eE = { x: bx + CELL_SIZE, y: mcy },
             eW = { x: bx, y: mcy };
       const connections = [hasN, hasS, hasE, hasW].filter(Boolean).length;
-      ctx.strokeStyle = "#050505"; ctx.lineWidth = 2; ctx.lineCap = "round";
+      ctx.strokeStyle = "#ead0a8"; ctx.lineWidth = 6; ctx.lineCap = "round";
 
       if (connections === 0) {
         ctx.beginPath(); ctx.arc(mcx, mcy, 2, 0, Math.PI * 2); ctx.stroke();
@@ -761,15 +1054,15 @@ function drawGrid() {
     } else {
       drawCanvasBuilding(ctx, bx, by, wPx, hPx, building.type);
 
-      // Entrance path — only on south (wall/light) side, connecting road center to building edge
+      // Entrance path
       const def = BUILDING_DEFS[building.type];
       if (def?.category === "structure") {
         const roadCells = new Set((props.settlement.buildings ?? []).filter(b => b.type === "road").map(b => b.cellIndex));
         const hasRoadS = Array.from({ length: bw }, (_, i) => (br + bh) * COLS + bc + i).some(c => roadCells.has(c));
         if (hasRoadS) {
           const bcx = bx + wPx / 2;
-          const roadCenterY = by + hPx + CELL_SIZE / 2; // center of road cell below
-          ctx.strokeStyle = "#050505"; ctx.lineWidth = 1.5; ctx.lineCap = "round";
+          const roadCenterY = by + hPx + CELL_SIZE / 2;
+          ctx.strokeStyle = "#000000"; ctx.lineWidth = 1; ctx.lineCap = "round";
           ctx.beginPath();
           ctx.moveTo(bcx, roadCenterY);
           ctx.lineTo(bcx, by + hPx);
@@ -779,17 +1072,85 @@ function drawGrid() {
     }
   }
 
-  // Pass 2b: trees on top of buildings (1×1 map symbols)
+  // Pass 2b: trees
   for (let i = 0; i < COLS * ROWS; i++) {
     const tile = terrain[i] ?? "grass";
     if (!TALL_TREES.has(tile)) continue;
     const col = i % COLS;
     const row = Math.floor(i / COLS);
-    const x   = col * CELL_SIZE;
-    const y   = row * CELL_SIZE;
-    drawCanvasTree(ctx, x, y, tile, CELL_SIZE);
+    drawCanvasTree(ctx, col * CELL_SIZE, row * CELL_SIZE, tile, CELL_SIZE);
   }
 
+
+  // Pass 3: settlement name label
+  const townName = props.settlement.town_name ?? "";
+  if (townName) {
+    const labelY = canvas.height - 10;
+    ctx.font = "bold 13px Georgia, serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    // Shadow
+    ctx.fillStyle = "rgba(120,80,20,0.4)";
+    ctx.fillText(townName, canvas.width / 2 + 1, labelY + 1);
+    // Text
+    ctx.fillStyle = "#3a2808";
+    ctx.fillText(townName, canvas.width / 2, labelY);
+  }
+
+  // Pass 3b: compass rose (bottom-right corner)
+  {
+    const rx = canvas.width - 22, ry = canvas.height - 22, rs = 14;
+    const dirs = [
+      { angle: -Math.PI / 2, label: "N" },
+      { angle:  Math.PI / 2, label: "S" },
+      { angle:  0,           label: "E" },
+      { angle:  Math.PI,     label: "W" },
+    ];
+    // Arms
+    ctx.strokeStyle = "#5a3a10"; ctx.lineWidth = 1;
+    for (const d of dirs) {
+      ctx.beginPath();
+      ctx.moveTo(rx, ry);
+      ctx.lineTo(rx + Math.cos(d.angle) * rs, ry + Math.sin(d.angle) * rs);
+      ctx.stroke();
+    }
+    // Arrow heads (N/S/E/W triangles)
+    for (const d of dirs) {
+      const tipX = rx + Math.cos(d.angle) * rs;
+      const tipY = ry + Math.sin(d.angle) * rs;
+      const perpX = -Math.sin(d.angle) * 2.5;
+      const perpY =  Math.cos(d.angle) * 2.5;
+      ctx.fillStyle = d.label === "N" ? "#3a2808" : "#8a6830";
+      ctx.beginPath();
+      ctx.moveTo(tipX, tipY);
+      ctx.lineTo(rx + perpX, ry + perpY);
+      ctx.lineTo(rx - perpX, ry - perpY);
+      ctx.closePath(); ctx.fill();
+    }
+    // Center dot
+    ctx.fillStyle = "#3a2808";
+    ctx.beginPath(); ctx.arc(rx, ry, 2, 0, Math.PI * 2); ctx.fill();
+    // N label
+    ctx.font = "bold 7px Georgia, serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillStyle = "#3a2808";
+    ctx.fillText("N", rx + Math.cos(-Math.PI / 2) * (rs + 5), ry + Math.sin(-Math.PI / 2) * (rs + 5));
+  }
+
+  // Pass 3c: border frame
+  {
+    const m = 4; // margin from canvas edge
+    ctx.strokeStyle = "#7a5020"; ctx.lineWidth = 1.5;
+    ctx.strokeRect(m, m, canvas.width - m * 2, canvas.height - m * 2);
+    ctx.strokeStyle = "rgba(120,80,20,0.4)"; ctx.lineWidth = 0.6;
+    ctx.strokeRect(m + 3, m + 3, canvas.width - (m + 3) * 2, canvas.height - (m + 3) * 2);
+    // Corner ornaments
+    const corners = [[m, m], [canvas.width - m, m], [m, canvas.height - m], [canvas.width - m, canvas.height - m]];
+    ctx.fillStyle = "#7a5020";
+    for (const [cx2, cy2] of corners) {
+      ctx.beginPath(); ctx.arc(cx2, cy2, 2.5, 0, Math.PI * 2); ctx.fill();
+    }
+  }
 
   // Pass 4: hover highlight sized to the selected building's footprint
   if (hovered !== null) {
