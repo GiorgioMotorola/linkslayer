@@ -584,10 +584,39 @@ function drawGrid() {
     } else if (tile === "rock") {
       ctx.fillStyle = "#b8c880";
       ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
-      ctx.fillStyle = "#a09880";
-      ctx.beginPath(); ctx.ellipse(cx - 3, cy + 1, 4, 3, -0.3, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.ellipse(cx + 3, cy - 1, 3, 2,  0.3, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = "#7a7060"; ctx.lineWidth = 0.5; ctx.stroke();
+      // Cluster of 5 rocks with seeded positions
+      let rseed = (x * 73856093) ^ (y * 19349663);
+      const rrand = () => { rseed = (rseed * 1664525 + 1013904223) >>> 0; return rseed / 0xffffffff; };
+      const rockDefs = [
+        { ox: -0.28, oy: -0.10, rx: 0.20, ry: 0.13, angle: -0.3 },
+        { ox:  0.18, oy: -0.18, rx: 0.16, ry: 0.11, angle:  0.4 },
+        { ox: -0.08, oy:  0.18, rx: 0.18, ry: 0.12, angle:  0.1 },
+        { ox:  0.22, oy:  0.14, rx: 0.13, ry: 0.09, angle: -0.2 },
+        { ox: -0.22, oy:  0.22, rx: 0.11, ry: 0.08, angle:  0.5 },
+      ];
+      for (const rd of rockDefs) {
+        const shade = 0.82 + rrand() * 0.18;
+        const r = Math.round(160 * shade), g = Math.round(152 * shade), b = Math.round(128 * shade);
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.beginPath();
+        ctx.ellipse(
+          cx + rd.ox * CELL_SIZE, cy + rd.oy * CELL_SIZE,
+          rd.rx * CELL_SIZE, rd.ry * CELL_SIZE,
+          rd.angle, 0, Math.PI * 2
+        );
+        ctx.fill();
+        ctx.strokeStyle = "#6a6050"; ctx.lineWidth = 0.5; ctx.stroke();
+        // Highlight glint
+        ctx.fillStyle = "rgba(255,255,240,0.25)";
+        ctx.beginPath();
+        ctx.ellipse(
+          cx + rd.ox * CELL_SIZE - rd.rx * CELL_SIZE * 0.3,
+          cy + rd.oy * CELL_SIZE - rd.ry * CELL_SIZE * 0.3,
+          rd.rx * CELL_SIZE * 0.35, rd.ry * CELL_SIZE * 0.25,
+          rd.angle, 0, Math.PI * 2
+        );
+        ctx.fill();
+      }
     } else if (tile === "wheatfield") {
       ctx.fillStyle = "#e8d478";
       ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
@@ -598,9 +627,38 @@ function drawGrid() {
     } else if (tile === "white_flower" || tile === "yellow_white_flower" || tile === "pink_flower") {
       ctx.fillStyle = "#b8c880";
       ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
-      ctx.fillStyle = tile === "pink_flower" ? "#e890b8" : tile === "yellow_white_flower" ? "#e8d050" : "#f4f0e0";
-      for (const [dx, dy] of [[0.25,0.3],[0.65,0.25],[0.5,0.65],[0.2,0.7],[0.75,0.65]]) {
-        ctx.beginPath(); ctx.arc(x + dx * CELL_SIZE, y + dy * CELL_SIZE, 1.8, 0, Math.PI * 2); ctx.fill();
+      const petalColor = tile === "pink_flower" ? "#e890b8" : tile === "yellow_white_flower" ? "#e8c840" : "#f0ece0";
+      const centerColor = tile === "pink_flower" ? "#f8e040" : tile === "yellow_white_flower" ? "#f8f0a0" : "#f8e040";
+      // Seeded placement for 3 flowers per cell
+      let fseed = (x * 73856093) ^ (y * 19349663);
+      const frand = () => { fseed = (fseed * 1664525 + 1013904223) >>> 0; return fseed / 0xffffffff; };
+      const flowerPositions = [
+        { dx: 0.28 + frand() * 0.08, dy: 0.28 + frand() * 0.08 },
+        { dx: 0.58 + frand() * 0.10, dy: 0.22 + frand() * 0.10 },
+        { dx: 0.38 + frand() * 0.08, dy: 0.60 + frand() * 0.08 },
+      ];
+      for (const pos of flowerPositions) {
+        const fcx = x + pos.dx * CELL_SIZE;
+        const fcy = y + pos.dy * CELL_SIZE;
+        const petalSize = CELL_SIZE * 0.10;
+        const petalDist = CELL_SIZE * 0.09;
+        const rotation = frand() * Math.PI * 2;
+        // 5 petals
+        ctx.fillStyle = petalColor;
+        for (let p = 0; p < 5; p++) {
+          const angle = rotation + (p / 5) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.ellipse(
+            fcx + Math.cos(angle) * petalDist,
+            fcy + Math.sin(angle) * petalDist,
+            petalSize, petalSize * 0.6, angle, 0, Math.PI * 2
+          );
+          ctx.fill();
+        }
+        ctx.strokeStyle = "rgba(80,40,20,0.3)"; ctx.lineWidth = 0.3; ctx.stroke();
+        // Center
+        ctx.fillStyle = centerColor;
+        ctx.beginPath(); ctx.arc(fcx, fcy, petalSize * 0.55, 0, Math.PI * 2); ctx.fill();
       }
     } else {
       // grass (and tree cells — ground layer only, tree sprite drawn later)
