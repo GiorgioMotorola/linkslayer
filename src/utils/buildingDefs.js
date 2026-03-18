@@ -80,7 +80,7 @@ export const BUILDING_DEFS = {
     yieldAmount: 1,
     yieldEvery: 1,
     bonusYieldType: "scrap",
-    bonusYieldAmount: 1,
+    bonusYieldAmount: 3,
     bonusYieldEvery: 25,
   },
   church: {
@@ -96,7 +96,7 @@ export const BUILDING_DEFS = {
     name: "House",
     emoji: "🏠",
     cost: 25,
-    description: "Houses 5 villagers. Every 25 villagers earns 1g per click.",
+    description: "Houses 5 villagers. Every 10 villagers earns 1g per click.",
     category: "structure",
     yieldType: null,
     villagersPerBuilding: 5,
@@ -109,7 +109,7 @@ export const BUILDING_DEFS = {
     category: "structure",
     yieldType: "healthPotion",
     yieldAmount: 1,
-    yieldEvery: 50,
+    yieldEvery: 20,
   },
   horse_stable: {
     name: "Stable",
@@ -129,7 +129,7 @@ export const BUILDING_DEFS = {
     category: "structure",
     yieldType: "gold",
     yieldAmount: 3,
-    yieldEvery: 1,
+    yieldEvery: 2,
     grantsShortRest: true,
     grantsForge: true,
     maxPerMap: 1,
@@ -171,7 +171,7 @@ export function computeYield(buildings, terrain, clicksSince) {
   const villagers = buildings
     .filter(b => b.type === "house")
     .length * (BUILDING_DEFS.house.villagersPerBuilding ?? 5);
-  const houseGoldPerClick = Math.floor(villagers / 25);
+  const houseGoldPerClick = Math.floor(villagers / 10);
 
   for (const building of buildings) {
     const def = BUILDING_DEFS[building.type];
