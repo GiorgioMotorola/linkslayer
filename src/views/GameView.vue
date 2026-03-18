@@ -1411,11 +1411,11 @@ async function handleSettlementCollect() {
   await triggerAutoSave();
 }
 
-async function handleSettlementPlaceBuilding({ cellIndex, type, cost }) {
+async function handleSettlementPlaceBuilding({ cellIndex, type, cost, name }) {
   if (!settlementId.value || !settlement.value) return;
   if (playerGold.value < cost) return;
   const buildings = [...(settlement.value.buildings ?? [])];
-  buildings.push({ cellIndex, type, totalEarned: { gold: 0, scrap: 0, healthPotions: 0 } });
+  buildings.push({ cellIndex, type, name: name ?? null, totalEarned: { gold: 0, scrap: 0, healthPotions: 0 } });
   settlement.value = { ...settlement.value, buildings };
   playerGold.value -= cost;
   await saveBuildings(settlementId.value, buildings);

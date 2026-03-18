@@ -168,7 +168,6 @@
 .settlement-canvas {
   display: block;
   max-width: 100%;
-  image-rendering: pixelated;
 }
 
 .canvas-cell-label {
@@ -354,6 +353,27 @@
   color: #c8a96e;
   margin-top: 4px;
 }
+.placement-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.placement-name-label {
+  font-size: 0.82rem;
+  color: #a08060;
+  white-space: nowrap;
+}
+.placement-name-input {
+  flex: 1;
+  background: #1a1918;
+  border: 1px solid #4a3820;
+  border-radius: 4px;
+  color: #f5deb3;
+  font-size: 0.88rem;
+  padding: 4px 8px;
+  outline: none;
+}
+.placement-name-input:focus { border-color: #8a6428; }
 .placement-confirm-actions {
   display: flex;
   gap: 10px;

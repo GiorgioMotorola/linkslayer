@@ -50,7 +50,7 @@
         <div class="building-info-header">
           <img :src="paletteUrls[selectedBuilding.building.type]" class="building-info-img" />
           <div>
-            <div class="building-info-name">{{ selectedBuilding.def.name }}</div>
+            <div class="building-info-name">{{ selectedBuilding.building.name || selectedBuilding.def.name }}</div>
             <div class="building-info-worker">👤 {{ workerName(selectedBuilding.building.cellIndex) }}</div>
           </div>
         </div>
@@ -197,6 +197,16 @@
             <div class="placement-confirm-desc">{{ pendingPlacement.def.description }}</div>
             <div class="placement-confirm-cost">Cost: {{ pendingPlacement.def.cost }}g</div>
           </div>
+        </div>
+        <div class="placement-name-row">
+          <label class="placement-name-label">Name</label>
+          <input
+            class="placement-name-input"
+            v-model="pendingPlacementName"
+            :placeholder="pendingPlacement.def.name"
+            maxlength="24"
+            @keyup.enter="confirmPlacement"
+          />
         </div>
         <div class="placement-confirm-actions">
           <button class="placement-confirm-yes" @click="confirmPlacement">✓ Place</button>
@@ -594,8 +604,9 @@ const selectedBuildingType = ref(null);
 const canvasRef      = ref(null);
 const hoveredCell    = ref(null);
 const placementError     = ref(null);
-const pendingPlacement   = ref(null); // { cellIndex, type, def }
-const pendingDeconstruct = ref(null); // { building, def }
+const pendingPlacement     = ref(null); // { cellIndex, type, def }
+const pendingPlacementName = ref("");
+const pendingDeconstruct   = ref(null); // { building, def }
 const selectedBuilding = ref(null); // { building, def } — info panel
 let   placementErrorTimer = null;
 
@@ -970,7 +981,16 @@ function drawGrid() {
     ctx.beginPath(); ctx.moveTo(0, r * CELL_SIZE); ctx.lineTo(canvas.width, r * CELL_SIZE); ctx.stroke();
   }
 
-  // Pass 2: buildings (each drawn once at its anchor)
+  // Pass 2: trees first so buildings paint over them
+  for (let i = 0; i < COLS * ROWS; i++) {
+    const tile = terrain[i] ?? "grass";
+    if (!TALL_TREES.has(tile)) continue;
+    const col = i % COLS;
+    const row = Math.floor(i / COLS);
+    drawCanvasTree(ctx, col * CELL_SIZE, row * CELL_SIZE, tile, CELL_SIZE);
+  }
+
+  // Pass 2b: buildings (each drawn once at its anchor)
   const drawn = new Set();
   for (const building of (props.settlement.buildings ?? [])) {
     if (drawn.has(building.cellIndex)) continue;
@@ -1062,7 +1082,7 @@ function drawGrid() {
         if (hasRoadS) {
           const bcx = bx + wPx / 2;
           const roadCenterY = by + hPx + CELL_SIZE / 2;
-          ctx.strokeStyle = "#000000"; ctx.lineWidth = 1; ctx.lineCap = "round";
+          ctx.strokeStyle = "#ead0a8"; ctx.lineWidth = 6; ctx.lineCap = "round";
           ctx.beginPath();
           ctx.moveTo(bcx, roadCenterY);
           ctx.lineTo(bcx, by + hPx);
@@ -1072,15 +1092,66 @@ function drawGrid() {
     }
   }
 
-  // Pass 2b: trees
-  for (let i = 0; i < COLS * ROWS; i++) {
-    const tile = terrain[i] ?? "grass";
-    if (!TALL_TREES.has(tile)) continue;
-    const col = i % COLS;
-    const row = Math.floor(i / COLS);
-    drawCanvasTree(ctx, col * CELL_SIZE, row * CELL_SIZE, tile, CELL_SIZE);
-  }
+  // Pass 2c: building name labels
+  {
+    const NO_LABEL = new Set(["road", "fence", "bridge"]);
+    const drawn = new Set();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    const labelFontSize = window.innerWidth < 640 ? 10 : 11;
+    const lineH = labelFontSize + 3;
+    ctx.font = `italic ${labelFontSize}px Georgia, serif`;
 
+    // Collect all individual labels
+    const labels = [];
+    for (const building of (props.settlement.buildings ?? [])) {
+      if (drawn.has(building.cellIndex)) continue;
+      drawn.add(building.cellIndex);
+      if (NO_LABEL.has(building.type)) continue;
+      const def = BUILDING_DEFS[building.type];
+      if (!def) continue;
+      const label = building.name || def.name;
+      const bc = building.cellIndex % COLS;
+      const br = Math.floor(building.cellIndex / COLS);
+      const { w: bw } = buildingSize(building.type);
+      const cx = (bc + bw / 2) * CELL_SIZE;
+      const ty = br * CELL_SIZE - 2;
+      const tw = ctx.measureText(label).width;
+      labels.push({ cx, ty, label, tw });
+    }
+
+    // Cluster labels that overlap horizontally on the same row
+    const clusters = [];
+    for (const lbl of labels) {
+      let merged = false;
+      for (const cluster of clusters) {
+        const overlapsAny = cluster.items.some(existing =>
+          Math.abs(lbl.ty - existing.ty) < lineH &&
+          Math.abs(lbl.cx - existing.cx) < (lbl.tw + existing.tw) / 2 + 4
+        );
+        if (overlapsAny) { cluster.items.push(lbl); merged = true; break; }
+      }
+      if (!merged) clusters.push({ items: [lbl] });
+    }
+
+    // Draw each cluster as a stacked label
+    const pad = 2;
+    for (const { items } of clusters) {
+      const lines = items.map(l => l.label);
+      const n = lines.length;
+      const maxTw = Math.max(...items.map(l => ctx.measureText(l.label).width));
+      const avgCx = items.reduce((s, l) => s + l.cx, 0) / n;
+      const minTy = Math.min(...items.map(l => l.ty));
+
+      ctx.fillStyle = "rgba(0,0,0,0.55)";
+      ctx.fillRect(avgCx - maxTw / 2 - pad, minTy - n * lineH - pad, maxTw + pad * 2, n * lineH + pad * 2);
+
+      ctx.fillStyle = "#ffffff";
+      for (let i = 0; i < n; i++) {
+        ctx.fillText(lines[i], avgCx, minTy - (n - 1 - i) * lineH);
+      }
+    }
+  }
 
   // Pass 3: settlement name label
   const townName = props.settlement.town_name ?? "";
@@ -1277,6 +1348,7 @@ function handleCellClick(cellIndex) {
     if (skipConfirm) {
       emit("place-building", { cellIndex, type: selectedBuildingType.value, cost: def.cost });
     } else {
+      pendingPlacementName.value = "";
       pendingPlacement.value = { cellIndex, type: selectedBuildingType.value, def };
     }
   }
@@ -1285,8 +1357,10 @@ function handleCellClick(cellIndex) {
 function confirmPlacement() {
   const p = pendingPlacement.value;
   if (!p) return;
-  emit("place-building", { cellIndex: p.cellIndex, type: p.type, cost: p.def.cost });
+  const name = pendingPlacementName.value.trim() || p.def.name;
+  emit("place-building", { cellIndex: p.cellIndex, type: p.type, cost: p.def.cost, name });
   pendingPlacement.value = null;
+  pendingPlacementName.value = "";
 }
 
 function cancelPlacement() {
