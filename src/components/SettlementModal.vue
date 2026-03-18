@@ -15,12 +15,10 @@
         <template v-if="props.readOnly">
           <span class="lord-label">🏴 Claimed by</span>
           <span class="lord-name">{{ (currentLord.signInEmail ?? currentLord.playerName ?? "").split("@")[0] }}</span>
-          <span class="lord-since"> as {{ currentLord.playerName }}</span>
         </template>
         <template v-else>
           <span class="lord-label">👑 Lord</span>
           <span class="lord-name">{{ currentLord.playerName }}</span>
-          <span class="lord-since"> · Day {{ currentLord.startDay }}</span>
         </template>
       </div>
 
@@ -161,24 +159,20 @@
             <!-- Lord tenure entry -->
             <div v-if="!entry.type" class="history-entry">
               <span class="history-lord-name">{{ entry.playerName }}</span>
-              <span class="history-days">
-                Day {{ entry.startDay }}
-                <template v-if="entry.endDay"> – Day {{ entry.endDay }}</template>
-                <template v-else> – present</template>
-              </span>
+              <span v-if="!entry.endDay" class="history-days">– present</span>
               <span v-if="entry.endReason" class="history-end-reason">{{ entry.endReason }}</span>
             </div>
             <!-- Event: abandoned -->
             <div v-else-if="entry.type === 'abandoned'" class="history-event history-event-abandoned">
-              🏚 Settlement abandoned on Day {{ entry.day }}
+              🏚 Settlement abandoned
             </div>
             <!-- Event: terrorized -->
             <div v-else-if="entry.type === 'terrorized'" class="history-event history-event-terrorized">
-              ☠ Terrorized by a {{ SETTLEMENT_BOSS_DEFS[entry.bossKey]?.name ?? entry.bossKey }} since Day {{ entry.day }}
+              ☠ Terrorized by a {{ SETTLEMENT_BOSS_DEFS[entry.bossKey]?.name ?? entry.bossKey }}
             </div>
             <!-- Event: claimed -->
             <div v-else-if="entry.type === 'claimed'" class="history-event history-event-claimed">
-              ⚔ {{ entry.playerName }} defeated the guardian on Day {{ entry.day }}
+              ⚔ {{ entry.playerName }} defeated the guardian
             </div>
           </template>
           <div v-if="!settlement.lord_history?.length" class="history-empty">No history yet.</div>
@@ -1124,7 +1118,7 @@ function drawGrid() {
     const hc = hovered % COLS;
     const hr = Math.floor(hovered / COLS);
     const { w: hw, h: hh } = selectedBuildingType.value ? buildingSize(selectedBuildingType.value) : { w: 1, h: 1 };
-    ctx.fillStyle = "rgba(255,255,255,0.30)";
+    ctx.fillStyle = "rgba(0,0,0,0.22)";
     ctx.fillRect(hc * CELL_SIZE, hr * CELL_SIZE, hw * CELL_SIZE, hh * CELL_SIZE);
   }
 }
