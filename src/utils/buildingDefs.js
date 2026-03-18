@@ -8,11 +8,8 @@ export const TERRAIN_EMOJIS = {
   white_flower:       "🌸",
   yellow_white_flower:"🌸",
   pink_flower:        "🌸",
-  hill:               "⛰️",
-  mountain:           "🏔️",
   farm:               "🌾",
-  cobblestone:        "🪨",
-  cemetery:           "✝️",
+  well:               "🪣",
   dock:               "⚓",
 };
 
@@ -32,11 +29,8 @@ export const TERRAIN_PAINTS = {
   paint_white_flower:        { name: "White Flower",       cost: 0, description: "It's a White Flower.",        paintsTerrain: "white_flower"        },
   paint_white_yellow_flower: { name: "Yellow/White Flower", cost: 0, description: "It's a Yellow/White Flower.", paintsTerrain: "yellow_white_flower" },
   pink_flower:               { name: "Pink Flower",         cost: 0, description: "It's a Pink Flower.",         paintsTerrain: "pink_flower"         },
-  paint_hill:                { name: "Hill",                cost: 0, description: "Rolling hills.",               paintsTerrain: "hill"                },
-  paint_mountain:            { name: "Mountain",            cost: 0, description: "A rocky mountain.",            paintsTerrain: "mountain"            },
   paint_farm:                { name: "Farm",                cost: 0, description: "Crop fields.",                 paintsTerrain: "farm"                },
-  paint_cobblestone:         { name: "Cobblestone",         cost: 0, description: "Cobbled ground.",              paintsTerrain: "cobblestone"         },
-  paint_cemetery:            { name: "Cemetery",            cost: 0, description: "A burial ground.",             paintsTerrain: "cemetery"            },
+  paint_well:                { name: "Well",                cost: 0, description: "A stone well.",               paintsTerrain: "well"                },
   paint_dock:                { name: "Dock",                cost: 0, description: "A dock. Place on water.",      paintsTerrain: "dock"                },
 };
 
@@ -149,16 +143,6 @@ export const BUILDING_DEFS = {
     yieldType: "gold",
     yieldAmount: 1,
     yieldEvery: 1,
-  },
-  well: {
-    name: "Well",
-    emoji: "🪣",
-    cost: 30,
-    description: "Produces 1 Health Potion per 75 clicks.",
-    category: "structure",
-    yieldType: "healthPotion",
-    yieldAmount: 1,
-    yieldEvery: 75,
   },
 };
 

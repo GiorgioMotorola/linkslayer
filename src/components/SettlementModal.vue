@@ -255,34 +255,27 @@ function generateParchmentTexture(w, h) {
   off.width = w; off.height = h;
   const pctx = off.getContext("2d");
 
-  // Base warm parchment
-  pctx.fillStyle = "#e8d49a";
+  // White paper base
+  pctx.fillStyle = "#f8f8f6";
   pctx.fillRect(0, 0, w, h);
 
-  // Fiber streaks — faint horizontal bands
-  for (let fy = 0; fy < h; fy += 3) {
-    const alpha = (Math.sin(fy * 0.7) * 0.012 + 0.012);
-    pctx.fillStyle = `rgba(120,80,20,${alpha.toFixed(3)})`;
-    pctx.fillRect(0, fy, w, 2);
-  }
-
-  // Noise grain via ImageData (seeded LCG for stability)
+  // Subtle paper grain
   const imageData = pctx.getImageData(0, 0, w, h);
   const data = imageData.data;
   let seed = 0xdeadbeef;
   const rand = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 0xffffffff; };
   for (let i = 0; i < data.length; i += 4) {
-    const n = (rand() - 0.5) * 28;
+    const n = (rand() - 0.5) * 10;
     data[i]     = Math.min(255, Math.max(0, data[i]     + n));
-    data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + n * 0.75));
-    data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + n * 0.3));
+    data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + n));
+    data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + n));
   }
   pctx.putImageData(imageData, 0, 0);
 
-  // Vignette — darker aged edges
-  const vg = pctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.25, w / 2, h / 2, Math.max(w, h) * 0.78);
+  // Very light vignette
+  const vg = pctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.3, w / 2, h / 2, Math.max(w, h) * 0.82);
   vg.addColorStop(0, "rgba(0,0,0,0)");
-  vg.addColorStop(1, "rgba(90,50,10,0.45)");
+  vg.addColorStop(1, "rgba(0,0,0,0.12)");
   pctx.fillStyle = vg;
   pctx.fillRect(0, 0, w, h);
 
@@ -292,38 +285,19 @@ function generateParchmentTexture(w, h) {
 // ── Canvas map-style drawing helpers ──────────────────────────────────────
 
 const BUILDING_STYLES = {
-  house:         { wall: "#e8dcc0", roof: "#2a3a6a", ink: "#1a2848" },
-  tavern:        { wall: "#d4c0a0", roof: "#9b1c1c", ink: "#5a0a0a" },
-  castle:        { wall: "#ccc4b0", roof: "#1a3a8a", ink: "#0a1a50" },
-  church:        { wall: "#f0ece0", roof: "#c0b8a0", ink: "#404040" },
-  smithy:        { wall: "#b0a890", roof: "#383838", ink: "#181818" },
-  apothecary:    { wall: "#c8d8b8", roof: "#3a7838", ink: "#1a4018" },
-  general_store: { wall: "#d8c8a0", roof: "#7a4828", ink: "#4a2810" },
-  horse_stable:  { wall: "#c8b890", roof: "#7a5228", ink: "#3a2010" },
-  well:          { wall: "#c8b890", roof: "#707060", ink: "#3a3028" },
+  house:         { wall: "#f5f5f2", roof: "#EDEFF4", ink: "#020202" },
+  tavern:        { wall: "#f5f5f2", roof: "#F5EAEA", ink: "#020202" },
+  castle:        { wall: "#f5f5f2", roof: "#E5EAF3", ink: "#020202" },
+  church:        { wall: "#f5f5f2", roof: "#E0DCD6", ink: "#020202" },
+  smithy:        { wall: "#f5f5f2", roof: "#DEDEDE", ink: "#020202" },
+  apothecary:    { wall: "#f5f5f2", roof: "#E7EDE6", ink: "#020202" },
+  general_store: { wall: "#f5f5f2", roof: "#E0E8EC", ink: "#020202" },
+  horse_stable:  { wall: "#f5f5f2", roof: "#ECE4E0", ink: "#020202" },
 };
 
 function drawCanvasBuilding(ctx, bx, by, wPx, hPx, type) {
   const cfg = BUILDING_STYLES[type];
   if (!cfg) return;
-
-  // ── Well ──────────────────────────────────────────────────────────────────
-  if (type === "well") {
-    const cx = bx + wPx / 2, cy = by + hPx / 2;
-    const r = Math.min(wPx, hPx) * 0.28;
-    ctx.fillStyle = "#b0a890";
-    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = cfg.ink; ctx.lineWidth = 0.8; ctx.stroke();
-    ctx.fillStyle = "#302820";
-    ctx.beginPath(); ctx.arc(cx, cy, r * 0.52, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = "#6a4820"; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(cx - r, cy - r * 0.6); ctx.lineTo(cx + r, cy - r * 0.6); ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(cx - r * 0.7, cy - r * 0.6); ctx.lineTo(cx - r * 0.7, cy + r * 0.3);
-    ctx.moveTo(cx + r * 0.7, cy - r * 0.6); ctx.lineTo(cx + r * 0.7, cy + r * 0.3);
-    ctx.stroke();
-    return;
-  }
 
   // ── Church (2×2) ──────────────────────────────────────────────────────────
   if (type === "church") {
@@ -447,41 +421,6 @@ function drawCanvasBuilding(ctx, bx, by, wPx, hPx, type) {
     return;
   }
 
-  // ── Tavern (2×2, back porch at top + main building below) ────────────────
-  if (type === "tavern") {
-    const lw = Math.max(0.8, Math.min(wPx, hPx) * 0.014);
-    const pad = Math.max(1, Math.min(wPx, hPx) * 0.03);
-    ctx.strokeStyle = cfg.ink; ctx.lineWidth = lw;
-    // Back porch — top 28% of height, full width, lean-to
-    const pX = bx + pad, pY = by + pad;
-    const pW = wPx - pad * 2, pH = hPx * 0.28;
-    const pRoofH = pH * 0.30;
-    ctx.fillStyle = "#c0a878";
-    ctx.fillRect(pX, pY, pW, pRoofH);
-    ctx.fillStyle = "rgba(220,195,155,0.55)";
-    ctx.fillRect(pX, pY + pRoofH, pW, pH - pRoofH);
-    ctx.strokeStyle = cfg.ink; ctx.lineWidth = lw * 0.8;
-    ctx.strokeRect(pX, pY, pW, pH);
-    ctx.beginPath(); ctx.moveTo(pX, pY + pRoofH); ctx.lineTo(pX + pW, pY + pRoofH); ctx.stroke();
-    // Porch posts
-    ctx.lineWidth = lw * 1.2;
-    ctx.beginPath();
-    ctx.moveTo(pX, pY + pRoofH); ctx.lineTo(pX, pY + pH);
-    ctx.moveTo(pX + pW, pY + pRoofH); ctx.lineTo(pX + pW, pY + pH);
-    ctx.stroke();
-    // Main building — lower 68% of height, full width
-    const mX = bx + pad, mY = by + hPx * 0.30, mW = wPx - pad * 2, mH = hPx * 0.68 - pad;
-    const roofH = mH * 0.38;
-    ctx.strokeStyle = cfg.ink; ctx.lineWidth = lw;
-    ctx.fillStyle = cfg.roof;
-    ctx.fillRect(mX, mY, mW, roofH);
-    ctx.fillStyle = cfg.wall;
-    ctx.fillRect(mX, mY + roofH, mW, mH - roofH);
-    ctx.strokeRect(mX, mY, mW, mH);
-    ctx.beginPath(); ctx.moveTo(mX, mY + roofH); ctx.lineTo(mX + mW, mY + roofH); ctx.stroke();
-    return;
-  }
-
   // ── Generic building ──────────────────────────────────────────────────────
   const pad = Math.max(1, Math.min(wPx, hPx) * 0.06);
   const ix = bx + pad, iy = by + pad, iw = wPx - pad * 2, ih = hPx - pad * 2;
@@ -514,7 +453,7 @@ function drawCanvasTree(ctx, x, y, _type, cellSize) {
     return { x: cx + Math.cos(angle) * wobble, y: cy + Math.sin(angle) * wobble };
   });
 
-  ctx.fillStyle = "#4a7840";
+  ctx.fillStyle = "#BDD9B7";
   ctx.beginPath();
   ctx.moveTo((pts[0].x + pts[bumps - 1].x) / 2, (pts[0].y + pts[bumps - 1].y) / 2);
   for (let i = 0; i < bumps; i++) {
@@ -557,7 +496,7 @@ function generatePaletteThumbnails() {
   // Fence
   pctx.clearRect(0, 0, 48, 48);
   pctx.fillStyle = "#b8c880"; pctx.fillRect(0, 0, 48, 48);
-  pctx.strokeStyle = "#7a5020"; pctx.lineWidth = 2;
+  pctx.strokeStyle = "#F2E2CF"; pctx.lineWidth = 2;
   pctx.beginPath(); pctx.moveTo(0, 24); pctx.lineTo(48, 24); pctx.stroke();
   pctx.fillStyle = "#7a5020";
   pctx.fillRect(10, 10, 6, 28); pctx.fillRect(32, 10, 6, 28);
@@ -705,7 +644,7 @@ function drawGrid() {
   if (parchmentCanvas) {
     ctx.drawImage(parchmentCanvas, 0, 0);
   } else {
-    ctx.fillStyle = "#e8d49a";
+    ctx.fillStyle = "#f8f8f6";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
@@ -720,9 +659,9 @@ function drawGrid() {
     const tile = terrain[i] ?? "grass";
 
     if (tile === "river") {
-      ctx.fillStyle = "#a8c8e8";
+      ctx.fillStyle = "#0F5E9C";
       ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
-      ctx.strokeStyle = "rgba(60,120,200,0.30)";
+      ctx.strokeStyle = "rgba(20,60,150,0.28)";
       ctx.lineWidth = 0.7;
       // Seeded wave offset so adjacent tiles align naturally
       let wseed = (x * 73856093) ^ (y * 19349663);
@@ -745,7 +684,7 @@ function drawGrid() {
         ctx.stroke();
       }
     } else if (tile === "rock") {
-      ctx.fillStyle = "#b8c880";
+      ctx.fillStyle = "#FAFCF7";
       ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
       // Cluster of 5 rocks with seeded positions
       let rseed = (x * 73856093) ^ (y * 19349663);
@@ -768,7 +707,7 @@ function drawGrid() {
           rd.angle, 0, Math.PI * 2
         );
         ctx.fill();
-        ctx.strokeStyle = "#6a6050"; ctx.lineWidth = 0.5; ctx.stroke();
+        ctx.strokeStyle = "#2a2a20"; ctx.lineWidth = 0.5; ctx.stroke();
         // Highlight glint
         ctx.fillStyle = "rgba(255,255,240,0.25)";
         ctx.beginPath();
@@ -781,14 +720,14 @@ function drawGrid() {
         ctx.fill();
       }
     } else if (tile === "wheatfield") {
-      ctx.fillStyle = "#e8d478";
+      ctx.fillStyle = "#ede8a8";
       ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
-      ctx.strokeStyle = "#a87e30"; ctx.lineWidth = 0.8;
+      ctx.strokeStyle = "#7a5810"; ctx.lineWidth = 0.8;
       for (let wx = x + 3; wx < x + CELL_SIZE - 1; wx += 4) {
         ctx.beginPath(); ctx.moveTo(wx, y + CELL_SIZE * 0.75); ctx.lineTo(wx, y + CELL_SIZE * 0.25); ctx.stroke();
       }
     } else if (tile === "white_flower" || tile === "yellow_white_flower" || tile === "pink_flower") {
-      ctx.fillStyle = "#b8c880";
+      ctx.fillStyle = "#FAFCF7";
       ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
       const petalColor = tile === "pink_flower" ? "#e890b8" : tile === "yellow_white_flower" ? "#e8c840" : "#f0ece0";
       const centerColor = tile === "pink_flower" ? "#f8e040" : tile === "yellow_white_flower" ? "#f8f0a0" : "#f8e040";
@@ -823,39 +762,9 @@ function drawGrid() {
         ctx.fillStyle = centerColor;
         ctx.beginPath(); ctx.arc(fcx, fcy, petalSize * 0.55, 0, Math.PI * 2); ctx.fill();
       }
-    } else if (tile === "hill") {
-      ctx.fillStyle = "#b8c880"; ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
-      ctx.strokeStyle = "#7a6840"; ctx.lineWidth = 0.7;
-      for (let h = 0; h < 3; h++) {
-        const ow = CELL_SIZE * (0.42 - h * 0.08);
-        const oy = cy + (h - 1) * 4;
-        ctx.beginPath(); ctx.ellipse(cx, oy + 3, ow, CELL_SIZE * 0.16, 0, Math.PI, 0, true); ctx.stroke();
-      }
-
-    } else if (tile === "mountain") {
-      ctx.fillStyle = "#b8c880"; ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
-      // Two staggered peaks
-      const peaks = [{ px: cx - CELL_SIZE * 0.18, h: CELL_SIZE * 0.78 }, { px: cx + CELL_SIZE * 0.2, h: CELL_SIZE * 0.62 }];
-      for (const pk of peaks) {
-        ctx.fillStyle = "#9a9080";
-        ctx.beginPath();
-        ctx.moveTo(pk.px, y + CELL_SIZE - pk.h);
-        ctx.lineTo(pk.px - CELL_SIZE * 0.22, y + CELL_SIZE - 2);
-        ctx.lineTo(pk.px + CELL_SIZE * 0.22, y + CELL_SIZE - 2);
-        ctx.closePath(); ctx.fill();
-        ctx.strokeStyle = "#5a5040"; ctx.lineWidth = 0.6; ctx.stroke();
-        // Snow cap
-        ctx.fillStyle = "#f0ece0";
-        ctx.beginPath();
-        ctx.moveTo(pk.px, y + CELL_SIZE - pk.h);
-        ctx.lineTo(pk.px - CELL_SIZE * 0.08, y + CELL_SIZE - pk.h + CELL_SIZE * 0.2);
-        ctx.lineTo(pk.px + CELL_SIZE * 0.08, y + CELL_SIZE - pk.h + CELL_SIZE * 0.2);
-        ctx.closePath(); ctx.fill();
-      }
-
     } else if (tile === "farm") {
-      ctx.fillStyle = "#d8c860"; ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
-      ctx.strokeStyle = "#8a6820"; ctx.lineWidth = 0.5;
+      ctx.fillStyle = "#F6F3D2"; ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+      ctx.strokeStyle = "#6a5010"; ctx.lineWidth = 0.5;
       // Crop rows
       for (let fy = y + 4; fy < y + CELL_SIZE - 2; fy += 5) {
         ctx.beginPath(); ctx.moveTo(x + 3, fy); ctx.lineTo(x + CELL_SIZE - 3, fy); ctx.stroke();
@@ -865,43 +774,28 @@ function drawGrid() {
       ctx.beginPath(); ctx.moveTo(cx, y + 2); ctx.lineTo(cx, y + CELL_SIZE - 2); ctx.stroke();
       ctx.strokeRect(x + 2, y + 2, CELL_SIZE - 4, CELL_SIZE - 4);
 
-    } else if (tile === "cobblestone") {
-      ctx.fillStyle = "#b8b0a0"; ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
-      let cseed = (x * 73856093) ^ (y * 19349663);
-      const crand = () => { cseed = (cseed * 1664525 + 1013904223) >>> 0; return cseed / 0xffffffff; };
-      const cobbles = [
-        [0.18, 0.18, 0.26, 0.20], [0.52, 0.12, 0.30, 0.20], [0.86, 0.20, 0.22, 0.22],
-        [0.12, 0.48, 0.28, 0.20], [0.46, 0.44, 0.26, 0.22], [0.80, 0.50, 0.24, 0.20],
-        [0.22, 0.74, 0.32, 0.20], [0.62, 0.72, 0.28, 0.20],
-      ];
-      for (const [ox, oy2, ow, oh] of cobbles) {
-        const shade = 0.84 + crand() * 0.16;
-        ctx.fillStyle = `rgb(${Math.round(185*shade)},${Math.round(175*shade)},${Math.round(158*shade)})`;
-        ctx.beginPath();
-        ctx.ellipse(x + ox * CELL_SIZE, y + oy2 * CELL_SIZE, ow * CELL_SIZE / 2, oh * CELL_SIZE / 2, crand() * 0.6, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = "#8a8070"; ctx.lineWidth = 0.5; ctx.stroke();
-      }
-
-    } else if (tile === "cemetery") {
-      ctx.fillStyle = "#b0b898"; ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
-      ctx.strokeStyle = "#484840"; ctx.lineWidth = 0.9;
-      const crosses = [[0.22, 0.28], [0.65, 0.22], [0.38, 0.62], [0.72, 0.65]];
-      for (const [dcx, dcy] of crosses) {
-        const pcx = x + dcx * CELL_SIZE, pcy = y + dcy * CELL_SIZE;
-        const ch = CELL_SIZE * 0.14, cw = CELL_SIZE * 0.07;
-        ctx.beginPath();
-        ctx.moveTo(pcx, pcy - ch); ctx.lineTo(pcx, pcy + ch);
-        ctx.moveTo(pcx - cw * 1.4, pcy - ch * 0.3); ctx.lineTo(pcx + cw * 1.4, pcy - ch * 0.3);
-        ctx.stroke();
-      }
+    } else if (tile === "well") {
+      ctx.fillStyle = "#FAFCF7"; ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+      const wcx = cx, wcy = cy;
+      const r = CELL_SIZE * 0.28;
+      ctx.fillStyle = "#e8e4dc";
+      ctx.beginPath(); ctx.arc(wcx, wcy, r, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#1a1a14"; ctx.lineWidth = 0.8; ctx.stroke();
+      ctx.fillStyle = "#1a1a18";
+      ctx.beginPath(); ctx.arc(wcx, wcy, r * 0.52, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#1a1a14"; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(wcx - r, wcy - r * 0.6); ctx.lineTo(wcx + r, wcy - r * 0.6); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(wcx - r * 0.7, wcy - r * 0.6); ctx.lineTo(wcx - r * 0.7, wcy + r * 0.3);
+      ctx.moveTo(wcx + r * 0.7, wcy - r * 0.6); ctx.lineTo(wcx + r * 0.7, wcy + r * 0.3);
+      ctx.stroke();
 
     } else if (tile === "dock") {
-      ctx.fillStyle = "#a8c8e8"; ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+      ctx.fillStyle = "#0F5E9C"; ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
       const dw = CELL_SIZE * 0.38;
       ctx.fillStyle = "#c0a060";
       ctx.fillRect(cx - dw / 2, y, dw, CELL_SIZE);
-      ctx.strokeStyle = "#7a5020"; ctx.lineWidth = 0.5;
+      ctx.strokeStyle = "#F2E2CF"; ctx.lineWidth = 0.5;
       for (let ply = y + 4; ply < y + CELL_SIZE; ply += 5) {
         ctx.beginPath(); ctx.moveTo(cx - dw / 2, ply); ctx.lineTo(cx + dw / 2, ply); ctx.stroke();
       }
@@ -915,7 +809,7 @@ function drawGrid() {
 
     } else {
       // grass (and tree cells — ground layer only, tree sprite drawn later)
-      ctx.fillStyle = "#b8c880";
+      ctx.fillStyle = "#FAFCF7";
       ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
     }
   }
@@ -927,12 +821,10 @@ function drawGrid() {
     const crr = CELL_SIZE * 0.38; // corner rounding radius
     const getTile = (c, r) => (c < 0 || c >= COLS || r < 0 || r >= ROWS) ? "grass" : (terrain[r * COLS + c] ?? "grass");
     const shoreColor = (t) => {
-      if (t === "farm")        return "#d8c860";
-      if (t === "cobblestone") return "#b8b0a0";
-      if (t === "cemetery")    return "#b0b898";
-      if (t === "wheatfield")  return "#e8d478";
-      if (t === "river" || t === "dock") return "#a8c8e8";
-      return "#b8c880"; // grass / rock / hill / mountain / flowers — all green-ish
+      if (t === "farm")        return "#eee8a8";
+      if (t === "wheatfield")  return "#ede8a8";
+      if (t === "river" || t === "dock") return "#0F5E9C";
+      return "#FAFCF7"; // grass / rock / hill / mountain / flowers
     };
     for (let i = 0; i < COLS * ROWS; i++) {
       const tile = terrain[i] ?? "grass";
@@ -1017,7 +909,8 @@ function drawGrid() {
             eE = { x: bx + CELL_SIZE, y: mcy },
             eW = { x: bx, y: mcy };
       const connections = [hasN, hasS, hasE, hasW].filter(Boolean).length;
-      ctx.strokeStyle = "#ead0a8"; ctx.lineWidth = 6; ctx.lineCap = "round";
+      ctx.strokeStyle = "#000000"; ctx.lineWidth = 1; ctx.lineCap = "round";
+      ctx.setLineDash([2, 4]);
 
       if (connections === 0) {
         ctx.beginPath(); ctx.arc(mcx, mcy, 2, 0, Math.PI * 2); ctx.stroke();
@@ -1046,13 +939,14 @@ function drawGrid() {
         if (hasW) { ctx.moveTo(mcx, mcy); ctx.lineTo(eW.x, eW.y); }
         ctx.stroke();
       }
+      ctx.setLineDash([]);
 
     } else if (building.type === "fence") {
       const fenceCells = new Set((props.settlement.buildings ?? []).filter(b => b.type === "fence").map(b => b.cellIndex));
       const col = building.cellIndex % COLS;
       const hasH = (col > 0 && fenceCells.has(building.cellIndex - 1)) || (col < COLS - 1 && fenceCells.has(building.cellIndex + 1));
       const hasV = fenceCells.has(building.cellIndex - COLS) || fenceCells.has(building.cellIndex + COLS);
-      ctx.strokeStyle = "#7a5020"; ctx.lineWidth = 1.5;
+      ctx.strokeStyle = "#AA702D"; ctx.lineWidth = 1.5;
       if (hasH || (!hasH && !hasV)) {
         ctx.beginPath(); ctx.moveTo(bx, by + hPx / 2); ctx.lineTo(bx + wPx, by + hPx / 2); ctx.stroke();
       }
@@ -1060,7 +954,7 @@ function drawGrid() {
         ctx.beginPath(); ctx.moveTo(bx + wPx / 2, by); ctx.lineTo(bx + wPx / 2, by + hPx); ctx.stroke();
       }
       // Post
-      ctx.fillStyle = "#7a5020";
+      ctx.fillStyle = "#835622";
       ctx.fillRect(bx + wPx * 0.38, by + hPx * 0.38, wPx * 0.24, hPx * 0.24);
 
     } else if (building.type === "bridge") {
@@ -1082,11 +976,13 @@ function drawGrid() {
         if (hasRoadS) {
           const bcx = bx + wPx / 2;
           const roadCenterY = by + hPx + CELL_SIZE / 2;
-          ctx.strokeStyle = "#ead0a8"; ctx.lineWidth = 6; ctx.lineCap = "round";
+          ctx.strokeStyle = "#000000"; ctx.lineWidth = 1; ctx.lineCap = "round";
+          ctx.setLineDash([3, 4]);
           ctx.beginPath();
           ctx.moveTo(bcx, roadCenterY);
           ctx.lineTo(bcx, by + hPx);
           ctx.stroke();
+          ctx.setLineDash([]);
         }
       }
     }
@@ -1094,7 +990,7 @@ function drawGrid() {
 
   // Pass 2c: building name labels
   {
-    const NO_LABEL = new Set(["road", "fence", "bridge"]);
+    const NO_LABEL = new Set(["road", "fence", "bridge", "well"]);
     const drawn = new Set();
     ctx.textAlign = "center";
     ctx.textBaseline = "bottom";
@@ -1143,7 +1039,7 @@ function drawGrid() {
       const avgCx = items.reduce((s, l) => s + l.cx, 0) / n;
       const minTy = Math.min(...items.map(l => l.ty));
 
-      ctx.fillStyle = "rgba(0,0,0,0.55)";
+      ctx.fillStyle = "rgba(0,0,0,0.80)";
       ctx.fillRect(avgCx - maxTw / 2 - pad, minTy - n * lineH - pad, maxTw + pad * 2, n * lineH + pad * 2);
 
       ctx.fillStyle = "#ffffff";
@@ -1157,14 +1053,14 @@ function drawGrid() {
   const townName = props.settlement.town_name ?? "";
   if (townName) {
     const labelY = canvas.height - 10;
-    ctx.font = "bold 13px Georgia, serif";
+    ctx.font = "bold 20px Georgia, serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "bottom";
     // Shadow
     ctx.fillStyle = "rgba(120,80,20,0.4)";
     ctx.fillText(townName, canvas.width / 2 + 1, labelY + 1);
     // Text
-    ctx.fillStyle = "#3a2808";
+    ctx.fillStyle = "#102341";
     ctx.fillText(townName, canvas.width / 2, labelY);
   }
 
@@ -1191,7 +1087,7 @@ function drawGrid() {
       const tipY = ry + Math.sin(d.angle) * rs;
       const perpX = -Math.sin(d.angle) * 2.5;
       const perpY =  Math.cos(d.angle) * 2.5;
-      ctx.fillStyle = d.label === "N" ? "#3a2808" : "#8a6830";
+      ctx.fillStyle = d.label === "N" ? "#102341" : "#102341";
       ctx.beginPath();
       ctx.moveTo(tipX, tipY);
       ctx.lineTo(rx + perpX, ry + perpY);
@@ -1199,25 +1095,25 @@ function drawGrid() {
       ctx.closePath(); ctx.fill();
     }
     // Center dot
-    ctx.fillStyle = "#3a2808";
+    ctx.fillStyle = "#102341";
     ctx.beginPath(); ctx.arc(rx, ry, 2, 0, Math.PI * 2); ctx.fill();
     // N label
-    ctx.font = "bold 7px Georgia, serif";
+    ctx.font = "bold 11px Georgia, serif";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.fillStyle = "#3a2808";
+    ctx.fillStyle = "#102341";
     ctx.fillText("N", rx + Math.cos(-Math.PI / 2) * (rs + 5), ry + Math.sin(-Math.PI / 2) * (rs + 5));
   }
 
   // Pass 3c: border frame
   {
     const m = 4; // margin from canvas edge
-    ctx.strokeStyle = "#7a5020"; ctx.lineWidth = 1.5;
+    ctx.strokeStyle = "#AC181C"; ctx.lineWidth = 1.5;
     ctx.strokeRect(m, m, canvas.width - m * 2, canvas.height - m * 2);
-    ctx.strokeStyle = "rgba(120,80,20,0.4)"; ctx.lineWidth = 0.6;
+    ctx.strokeStyle = "#F09294"; ctx.lineWidth = 0.6;
     ctx.strokeRect(m + 3, m + 3, canvas.width - (m + 3) * 2, canvas.height - (m + 3) * 2);
     // Corner ornaments
     const corners = [[m, m], [canvas.width - m, m], [m, canvas.height - m], [canvas.width - m, canvas.height - m]];
-    ctx.fillStyle = "#7a5020";
+    ctx.fillStyle = "#AC181C";
     for (const [cx2, cy2] of corners) {
       ctx.beginPath(); ctx.arc(cx2, cy2, 2.5, 0, Math.PI * 2); ctx.fill();
     }
