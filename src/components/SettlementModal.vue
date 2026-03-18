@@ -293,7 +293,7 @@ function generateParchmentTexture(w, h) {
 
 const BUILDING_STYLES = {
   house:         { wall: "#e8dcc0", roof: "#2a3a6a", ink: "#1a2848" },
-  tavern:        { wall: "#d4c0a0", roof: "#7a3010", ink: "#501808" },
+  tavern:        { wall: "#d4c0a0", roof: "#9b1c1c", ink: "#5a0a0a" },
   castle:        { wall: "#ccc4b0", roof: "#1a3a8a", ink: "#0a1a50" },
   church:        { wall: "#f0ece0", roof: "#c0b8a0", ink: "#404040" },
   smithy:        { wall: "#b0a890", roof: "#383838", ink: "#181818" },
@@ -447,7 +447,7 @@ function drawCanvasBuilding(ctx, bx, by, wPx, hPx, type) {
     return;
   }
 
-  // ── Tavern (2×3, back porch at top + main building below) ────────────────
+  // ── Tavern (2×2, back porch at top + main building below) ────────────────
   if (type === "tavern") {
     const lw = Math.max(0.8, Math.min(wPx, hPx) * 0.014);
     const pad = Math.max(1, Math.min(wPx, hPx) * 0.03);
@@ -668,7 +668,7 @@ const hoveredLabel = computed(() => {
 const BUILDING_SIZES = {
   church:       { w: 2, h: 2 },
   castle:       { w: 3, h: 3 },
-  tavern:       { w: 2, h: 3 },
+  tavern:       { w: 2, h: 2 },
   horse_stable: { w: 2, h: 2 },
 };
 
