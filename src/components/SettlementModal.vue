@@ -232,12 +232,12 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
-import { BUILDING_DEFS, TERRAIN_PAINTS, computeYield } from "@/utils/buildingDefs.js";
+import { BUILDING_DEFS, TERRAIN_PAINTS, computeYield, isRoadConnected as _isRoadConnected, GRID_COLS, GRID_ROWS } from "@/utils/buildingDefs.js";
 import { SETTLEMENT_BOSS_DEFS } from "@/utils/settlementBossGenerator.js";
 
 const CELL_SIZE = 32;
-const COLS = 20;
-const ROWS = 16;
+const COLS = GRID_COLS;
+const ROWS = GRID_ROWS;
 
 
 const paletteUrls = ref({});
@@ -610,75 +610,8 @@ function buildingSize(type) { return BUILDING_SIZES[type] ?? { w: 1, h: 1 }; }
 function isLarge(type) { const { w, h } = buildingSize(type); return w > 1 || h > 1; }
 
 // ── Road connectivity check ─────────────────────────────────────────────────
-// Returns true if the given cell (structure footprint) is reachable from any
-// existing structure via a contiguous chain of road/bridge tiles.
-// First building placed is always allowed (no existing structures yet).
 function isRoadConnected(cellIndex, type) {
-  const allBuildings = props.settlement.buildings ?? [];
-
-  // Separate into: structures, roads/bridges
-  const structureCells  = new Set();
-  const pathCells       = new Set();
-
-  for (const b of allBuildings) {
-    const { w, h } = buildingSize(b.type);
-    const cells = [];
-    for (let dr = 0; dr < h; dr++)
-      for (let dc = 0; dc < w; dc++)
-        cells.push(b.cellIndex + dr * COLS + dc);
-
-    if (b.type === "road" || b.type === "bridge") cells.forEach(c => pathCells.add(c));
-    else                                           cells.forEach(c => structureCells.add(c));
-  }
-
-  // First building — always allowed
-  if (structureCells.size === 0) return true;
-
-  // New building footprint
-  const { w, h } = buildingSize(type);
-  const newCells = [];
-  for (let dr = 0; dr < h; dr++)
-    for (let dc = 0; dc < w; dc++)
-      newCells.push(cellIndex + dr * COLS + dc);
-
-  function neighbors(idx) {
-    const c = idx % COLS, r = Math.floor(idx / COLS);
-    return [
-      r > 0       ? idx - COLS : -1,
-      r < ROWS-1  ? idx + COLS : -1,
-      c > 0       ? idx - 1    : -1,
-      c < COLS-1  ? idx + 1    : -1,
-    ].filter(n => n >= 0);
-  }
-
-  // BFS: flood-fill through pathCells starting from cells adjacent to existing structures
-  const reachable = new Set();
-  const queue = [];
-  for (const sc of structureCells) {
-    for (const n of neighbors(sc)) {
-      if (pathCells.has(n) && !reachable.has(n)) {
-        reachable.add(n);
-        queue.push(n);
-      }
-    }
-  }
-  let i = 0;
-  while (i < queue.length) {
-    const cur = queue[i++];
-    for (const n of neighbors(cur)) {
-      if (pathCells.has(n) && !reachable.has(n)) {
-        reachable.add(n);
-        queue.push(n);
-      }
-    }
-  }
-
-  // New building is connected if any of its cells borders a reachable path cell
-  for (const fc of newCells)
-    for (const n of neighbors(fc))
-      if (reachable.has(n)) return true;
-
-  return false;
+  return _isRoadConnected(cellIndex, type, props.settlement.buildings ?? []);
 }
 
 // ── Grid helpers ───────────────────────────────────────────────────────────
@@ -974,6 +907,11 @@ function drawGrid() {
   }
 
   // Pass 2b: buildings (each drawn once at its anchor)
+  // Find the generator — first non-road, non-bridge structure placed
+  const generatorBuilding = (props.settlement.buildings ?? []).find(
+    b => b.type !== "road" && b.type !== "bridge" && b.type !== "fence" && BUILDING_DEFS[b.type]?.category === "structure"
+  ) ?? null;
+
   const drawn = new Set();
   for (const building of (props.settlement.buildings ?? [])) {
     if (drawn.has(building.cellIndex)) continue;
@@ -1058,6 +996,23 @@ function drawGrid() {
 
     } else {
       drawCanvasBuilding(ctx, bx, by, wPx, hPx, building.type);
+
+      // Generator crown — small ⚡ badge on the first-placed structure
+      if (generatorBuilding && building.cellIndex === generatorBuilding.cellIndex) {
+        const badgeSize = 10;
+        const badgeX = bx + wPx - badgeSize - 1;
+        const badgeY = by + 1;
+        ctx.save();
+        ctx.fillStyle = "rgba(255,200,0,0.92)";
+        ctx.beginPath();
+        ctx.arc(badgeX + badgeSize / 2, badgeY + badgeSize / 2, badgeSize / 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.font = `bold ${badgeSize - 1}px sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("⚡", badgeX + badgeSize / 2, badgeY + badgeSize / 2 + 0.5);
+        ctx.restore();
+      }
 
       // Entrance path
       const def = BUILDING_DEFS[building.type];

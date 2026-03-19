@@ -152,6 +152,88 @@ export const BUILDING_DEFS = {
   },
 };
 
+// ── Grid constants ─────────────────────────────────────────────────────────
+export const GRID_COLS = 20;
+export const GRID_ROWS = 16;
+
+// ── Building size registry (mirrors SettlementModal) ───────────────────────
+const BUILDING_SIZES_DEF = { castle: { w: 2, h: 2 } };
+function buildingSizeDef(type) { return BUILDING_SIZES_DEF[type] ?? { w: 1, h: 1 }; }
+
+/**
+ * Pure road-connectivity check.
+ * The FIRST structure ever placed is the "generator" — the power source.
+ * All other structures must trace a road/bridge path back to it.
+ * Roads and bridges themselves are never checked (they're the wiring).
+ */
+export function isRoadConnected(cellIndex, type, buildings) {
+  const COLS = GRID_COLS;
+  const ROWS = GRID_ROWS;
+
+  const pathCells = new Set();
+  const structures = []; // non-road, non-bridge, in placement order
+
+  for (const b of buildings) {
+    const { w, h } = buildingSizeDef(b.type);
+    const cells = [];
+    for (let dr = 0; dr < h; dr++)
+      for (let dc = 0; dc < w; dc++)
+        cells.push(b.cellIndex + dr * COLS + dc);
+    if (b.type === "road" || b.type === "bridge") {
+      cells.forEach(c => pathCells.add(c));
+    } else {
+      structures.push({ b, cells });
+    }
+  }
+
+  // First structure = generator, always connected
+  if (structures.length === 0) return true;
+
+  const generator = structures[0];
+
+  // Check if the building being evaluated IS the generator
+  const { w, h } = buildingSizeDef(type);
+  const newCells = [];
+  for (let dr = 0; dr < h; dr++)
+    for (let dc = 0; dc < w; dc++)
+      newCells.push(cellIndex + dr * COLS + dc);
+
+  if (newCells[0] === generator.b.cellIndex) return true;
+
+  function neighbors(idx) {
+    const c = idx % COLS, r = Math.floor(idx / COLS);
+    return [
+      r > 0      ? idx - COLS : -1,
+      r < ROWS-1 ? idx + COLS : -1,
+      c > 0      ? idx - 1    : -1,
+      c < COLS-1 ? idx + 1    : -1,
+    ].filter(n => n >= 0);
+  }
+
+  // BFS: flood from the generator's cells through road/bridge tiles only
+  const reachable = new Set();
+  const queue = [];
+  for (const gc of generator.cells) {
+    for (const n of neighbors(gc)) {
+      if (pathCells.has(n) && !reachable.has(n)) { reachable.add(n); queue.push(n); }
+    }
+  }
+  let qi = 0;
+  while (qi < queue.length) {
+    const cur = queue[qi++];
+    for (const n of neighbors(cur)) {
+      if (pathCells.has(n) && !reachable.has(n)) { reachable.add(n); queue.push(n); }
+    }
+  }
+
+  // Target building is powered if any of its cells borders a reachable road cell
+  for (const fc of newCells)
+    for (const n of neighbors(fc))
+      if (reachable.has(n)) return true;
+
+  return false;
+}
+
 // ── Economy helpers ────────────────────────────────────────────────────────
 
 /**
@@ -174,12 +256,19 @@ export function computeYield(buildings, terrain, clicksSince) {
   let scrap = 0;
   let healthPotions = 0;
 
-  const villagers = buildings
+  // Only road-connected structures contribute resources
+  const connected = buildings.filter(b => {
+    const def = BUILDING_DEFS[b.type];
+    if (def?.category !== "structure") return false;
+    return isRoadConnected(b.cellIndex, b.type, buildings);
+  });
+
+  const villagers = connected
     .filter(b => b.type === "house")
     .length * (BUILDING_DEFS.house.villagersPerBuilding ?? 5);
   const houseGoldPerClick = Math.floor(villagers / 15);
 
-  for (const building of buildings) {
+  for (const building of connected) {
     const def = BUILDING_DEFS[building.type];
     if (!def) continue;
 

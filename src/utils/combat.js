@@ -15,6 +15,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     defenseAugment,
     ironWillUsed,
     bloodpactActive,
+    playerEnrageCharges,
   } = player;
 
   const {
@@ -80,7 +81,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
   let enemyActionCountered = false;
   let enemyAttemptedAttack = false;
 
-  if (playerAction === "attack_steady" || playerAction === "attack_power" || playerAction === "attack_reckless") {
+  if (playerAction === "attack_steady" || playerAction === "attack_power" || playerAction === "attack_enraged") {
     let randomDamage = Math.floor(Math.random() * 5) + 2;
     if (playerClass.value.name === "Fighter") randomDamage += 1;
     if (playerClass.value.name === "Rogue" && Math.random() < 0.25) {
@@ -100,11 +101,12 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     if (playerAction === "attack_power") {
       damageMultiplier = 1.5;
       attackName = "lands a power strike";
-      hitThreshold = 7;
-    } else if (playerAction === "attack_reckless") {
+      hitThreshold = 10; // 50% — was 7
+    } else if (playerAction === "attack_enraged") {
       damageMultiplier = 2.0;
-      attackName = "swings recklessly";
-      hitThreshold = 13;
+      attackName = "unleashes an enraged strike";
+      // No roll — guaranteed hit, rage consumed
+      if (playerEnrageCharges) playerEnrageCharges.value = 0;
     }
 
     let didHit = true;
@@ -133,8 +135,12 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       }
     } else {
       damageToEnemy = 0;
-      const missPenalty = playerAction === "attack_reckless" ? 3 : playerAction === "attack_power" ? 2 : 1;
+      const missPenalty = playerAction === "attack_power" ? 3 : 1;
       playerHP.value = Math.max(playerHP.value - missPenalty, 0);
+      // Miss penalty damage also counts as a rage charge
+      if (playerEnrageCharges && missPenalty > 0) {
+        playerEnrageCharges.value = Math.min(3, playerEnrageCharges.value + 1);
+      }
       utils.onCombatResult?.({ type: "miss_penalty", amount: missPenalty });
       log(
         `💨 <span class="player-name">${playerName.value}</span> ${attackName} but misses — ${formattedTitle} seizes the opening and deals ${missPenalty} damage.`
@@ -481,14 +487,14 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
         if (enemyActionCountered) {
           log(`🛡️ <span class="player-name">${playerName.value}</span> resists the confusion!`);
         } else {
-          const actions = ["attack_steady", "attack_power", "attack_reckless", "defend", "special", "flee"];
+          const actions = ["attack_steady", "attack_power", "attack_enraged", "defend", "special", "flee"];
           const shuffled = actions.sort(() => Math.random() - 0.5);
           const blocked = shuffled.slice(0, 2);
           if (confusedAction) {
             confusedAction.value = blocked;
             confusedTurnsLeft.value = 1;
           }
-          const labels = { attack_steady: "Steady", attack_power: "Power", attack_reckless: "Reckless", defend: "Defend", special: "Special", flee: "Flee" };
+          const labels = { attack_steady: "Steady", attack_power: "Power", attack_enraged: "Enraged", defend: "Defend", special: "Special", flee: "Flee" };
           const lockedNames = blocked.map(a => `<strong>${labels[a]}</strong>`).join(" and ");
           log(`🌀 ${formattedTitle} clouds <span class="player-name">${playerName.value}</span>'s mind! ${lockedNames} locked for 1 turn.`);
         }
@@ -510,7 +516,13 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
 
   if (typeof damageToPlayer === "number" && !isNaN(damageToPlayer)) {
     playerHP.value = Math.max(playerHP.value - damageToPlayer, 0);
-    if (damageToPlayer > 0) utils.onCombatResult?.({ type: "taken", amount: damageToPlayer });
+    if (damageToPlayer > 0) {
+      utils.onCombatResult?.({ type: "taken", amount: damageToPlayer });
+      // Every hit taken (including defended hits) charges Enraged by 1 (max 3)
+      if (playerEnrageCharges) {
+        playerEnrageCharges.value = Math.min(3, playerEnrageCharges.value + 1);
+      }
+    }
   } else {
     console.error(
       "ERROR: damageToPlayer is not a valid number, defaulting to 0 damage.",

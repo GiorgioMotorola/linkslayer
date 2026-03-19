@@ -72,15 +72,16 @@
               :disabled="combatLocked || confusedAction.includes('attack_power')"
               @click="handleAction('attack_power')"
             >
-              ⚔ Power (70% Success | 1.5x dmg | miss -2hp)
+              ⚔ Power (50% Success | 1.5x dmg | miss -3hp)
             </button>
 
             <button
-              :class="{ 'btn-anim-attack': activeAction === 'attack_reckless' }"
-              :disabled="combatLocked || confusedAction.includes('attack_reckless')"
-              @click="handleAction('attack_reckless')"
+              :class="{ 'btn-anim-attack': activeAction === 'attack_enraged', 'btn-enraged-ready': enrageCharges >= 3 }"
+              :disabled="combatLocked || confusedAction.includes('attack_enraged') || enrageCharges < 3"
+              @click="handleAction('attack_enraged')"
+              :title="enrageCharges < 3 ? `Enraged: ${enrageCharges}/3 hits needed` : 'Enraged — guaranteed 2x damage!'"
             >
-              ⚔ Reckless (40% Success | 2x dmg | miss -3hp)
+             ⚔ Enrage (2x dmg | guaranteed)
             </button>
 
             <button
@@ -416,6 +417,7 @@ const props = defineProps({
   hasCoolerStick: { type: Boolean, default: false },
   hasEvenCoolerStick: { type: Boolean, default: false },
   scrapMetal: { type: Number, default: 0 },
+  enrageCharges: { type: Number, default: 0 },
 });
 
 const emit = defineEmits([
@@ -724,7 +726,7 @@ const defendButtonLabel = computed(() => {
 
 
 const confusedActionLabel = computed(() => {
-  const labels = { attack_steady: "Steady", attack_power: "Power", attack_reckless: "Reckless", defend: "Defend", special: props.playerClass?.special ?? "Special", flee: "Flee" };
+  const labels = { attack_steady: "Steady", attack_power: "Power", attack_enraged: "Enraged", defend: "Defend", special: props.playerClass?.special ?? "Special", flee: "Flee" };
   return props.confusedAction.map(a => labels[a] ?? a).join(" & ");
 });
 
@@ -1273,7 +1275,7 @@ function handleAction(action) {
   emit("action", action);
 
   let animClass = "";
-  if (action === "attack_steady" || action === "attack_power" || action === "attack_reckless") {
+  if (action === "attack_steady" || action === "attack_power" || action === "attack_enraged") {
     animClass = "container-anim-attack";
   } else if (action === "defend") {
     animClass = "container-anim-defend";

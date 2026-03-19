@@ -17,8 +17,8 @@
         <h3>Combat</h3>
         <ul>
           <li><strong>Steady Strike</strong> — a reliable auto-hit attack. Safe but modest damage.</li>
-          <li><strong>Power Strike</strong> — 1.5× damage, but you need a 7+ on a d20 to connect.</li>
-          <li><strong>Reckless Strike</strong> — 2× damage, but requires a 13+ and a miss deals damage to you.</li>
+          <li><strong>Power Strike</strong> — 1.5× damage, needs a 10+ on a d20. A miss deals 3 damage to you.</li>
+          <li><strong>Enraged</strong> — guaranteed 2× damage, no roll. Unlocks after taking damage 3 times in the current fight. Resets after use.</li>
           <li><strong>Class Ability</strong> — your class's unique skill. Powerful but limited uses.</li>
           <li><strong>Defend</strong> — brace for impact, reducing incoming damage by 10%.</li>
           <li><strong>Flee</strong> — roll a d20 (need 7+) to escape. Bosses cannot be fled from.</li>

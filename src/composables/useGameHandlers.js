@@ -104,6 +104,7 @@ export function useGameHandlers(deps) {
     enrageBonus,
     ironWillUsed,
     bloodpactActive,
+    playerEnrageCharges,
     DEFAULT_ENEMY_HP,
     confusedAction,
     confusedTurnsLeft,
@@ -413,6 +414,7 @@ export function useGameHandlers(deps) {
         defenseAugment,
         ironWillUsed,
         bloodpactActive,
+        playerEnrageCharges,
       },
       enemy: {
         enemyHP,
@@ -670,5 +672,6 @@ export function useGameHandlers(deps) {
     lastDamageTaken,
     counterResult,
     daysCount,
+    playerEnrageCharges,
   };
 }

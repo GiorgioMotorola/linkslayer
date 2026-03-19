@@ -57,6 +57,7 @@
     :lastDamageDealt="lastDamageDealt"
     :lastDamageTaken="lastDamageTaken"
     :counterResult="counterResult"
+    :enrageCharges="playerEnrageCharges"
     :specialTier="specialTier"
     :playerGoal="playerGoal"
     :enemyStatusEffects="enemyStatusEffects"
@@ -923,6 +924,7 @@ const {
   lastDamageTaken,
   counterResult,
   daysCount,
+  playerEnrageCharges,
 } = useGameHandlers({
   gameFlow,
   log,

@@ -1607,6 +1607,15 @@ button:hover {
   color: #c0392b !important;
 }
 
+@keyframes enrage-pulse {
+  0%, 100% { box-shadow: 0 0 4px 1px rgba(220, 90, 0, 0.5); }
+  50%       { box-shadow: 0 0 10px 3px rgba(220, 90, 0, 0.9); }
+}
+.btn-enraged-ready {
+  color: #e8610a !important;
+  animation: enrage-pulse 1.2s ease-in-out infinite;
+}
+
 .intent-countered .intent-text {
   text-decoration: line-through;
   opacity: 0.55;

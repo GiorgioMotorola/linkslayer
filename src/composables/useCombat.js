@@ -19,6 +19,7 @@ export function useCombat() {
 
   const ironWillUsed = ref(false);
   const bloodpactActive = ref(false);
+  const playerEnrageCharges = ref(0); // 0–3; reaches 3 → Enraged available
 
   const DEFAULT_ENEMY_HP = 25;
 
@@ -67,6 +68,7 @@ export function useCombat() {
       confusedTurnsLeft.value = 0;
       ironWillUsed.value = false;
       bloodpactActive.value = false;
+      playerEnrageCharges.value = 0;
     }
   });
 
@@ -127,6 +129,7 @@ export function useCombat() {
 
     ironWillUsed,
     bloodpactActive,
+    playerEnrageCharges,
 
     decideEnemyAction,
     handleCloseEncounter,
