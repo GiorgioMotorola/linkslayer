@@ -231,7 +231,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { BUILDING_DEFS, TERRAIN_PAINTS, computeYield } from "@/utils/buildingDefs.js";
 import { SETTLEMENT_BOSS_DEFS } from "@/utils/settlementBossGenerator.js";
 
@@ -531,6 +531,10 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "collect", "place-building", "remove-building", "change-terrain", "open-forge", "short-rest", "challenge-boss"]);
 
+// ── Pulse animation state ───────────────────────────────────────────────────
+let pulseRafId = null;
+let pulseT     = 0;
+
 const showHistory          = ref(false);
 const showPalette          = ref(false);
 const selectedBuildingType = ref(null);
@@ -599,14 +603,83 @@ const hoveredLabel = computed(() => {
 
 // ── Building size registry ──────────────────────────────────────────────────
 const BUILDING_SIZES = {
-  church:       { w: 2, h: 2 },
-  castle:       { w: 3, h: 3 },
-  tavern:       { w: 2, h: 2 },
-  horse_stable: { w: 2, h: 2 },
+  castle: { w: 2, h: 2 },
 };
 
 function buildingSize(type) { return BUILDING_SIZES[type] ?? { w: 1, h: 1 }; }
 function isLarge(type) { const { w, h } = buildingSize(type); return w > 1 || h > 1; }
+
+// ── Road connectivity check ─────────────────────────────────────────────────
+// Returns true if the given cell (structure footprint) is reachable from any
+// existing structure via a contiguous chain of road/bridge tiles.
+// First building placed is always allowed (no existing structures yet).
+function isRoadConnected(cellIndex, type) {
+  const allBuildings = props.settlement.buildings ?? [];
+
+  // Separate into: structures, roads/bridges
+  const structureCells  = new Set();
+  const pathCells       = new Set();
+
+  for (const b of allBuildings) {
+    const { w, h } = buildingSize(b.type);
+    const cells = [];
+    for (let dr = 0; dr < h; dr++)
+      for (let dc = 0; dc < w; dc++)
+        cells.push(b.cellIndex + dr * COLS + dc);
+
+    if (b.type === "road" || b.type === "bridge") cells.forEach(c => pathCells.add(c));
+    else                                           cells.forEach(c => structureCells.add(c));
+  }
+
+  // First building — always allowed
+  if (structureCells.size === 0) return true;
+
+  // New building footprint
+  const { w, h } = buildingSize(type);
+  const newCells = [];
+  for (let dr = 0; dr < h; dr++)
+    for (let dc = 0; dc < w; dc++)
+      newCells.push(cellIndex + dr * COLS + dc);
+
+  function neighbors(idx) {
+    const c = idx % COLS, r = Math.floor(idx / COLS);
+    return [
+      r > 0       ? idx - COLS : -1,
+      r < ROWS-1  ? idx + COLS : -1,
+      c > 0       ? idx - 1    : -1,
+      c < COLS-1  ? idx + 1    : -1,
+    ].filter(n => n >= 0);
+  }
+
+  // BFS: flood-fill through pathCells starting from cells adjacent to existing structures
+  const reachable = new Set();
+  const queue = [];
+  for (const sc of structureCells) {
+    for (const n of neighbors(sc)) {
+      if (pathCells.has(n) && !reachable.has(n)) {
+        reachable.add(n);
+        queue.push(n);
+      }
+    }
+  }
+  let i = 0;
+  while (i < queue.length) {
+    const cur = queue[i++];
+    for (const n of neighbors(cur)) {
+      if (pathCells.has(n) && !reachable.has(n)) {
+        reachable.add(n);
+        queue.push(n);
+      }
+    }
+  }
+
+  // New building is connected if any of its cells borders a reachable path cell
+  for (const fc of newCells)
+    for (const n of neighbors(fc))
+      if (reachable.has(n)) return true;
+
+  return false;
+}
 
 // ── Grid helpers ───────────────────────────────────────────────────────────
 function buildingAt(cellIndex) {
@@ -620,6 +693,30 @@ function buildingAt(cellIndex) {
     return col >= bc && col < bc + w && row >= br && row < br + h;
   }) ?? null;
 }
+
+// ── Pulse animation loop ────────────────────────────────────────────────────
+function hasDisconnectedStructures() {
+  return (props.settlement.buildings ?? []).some(b => {
+    const def = BUILDING_DEFS[b.type];
+    return def?.category === "structure" && !isRoadConnected(b.cellIndex, b.type);
+  });
+}
+
+function startPulseLoop() {
+  if (pulseRafId !== null) return;
+  function tick() {
+    pulseT += 0.04;
+    drawGrid();
+    pulseRafId = hasDisconnectedStructures() ? requestAnimationFrame(tick) : null;
+  }
+  pulseRafId = requestAnimationFrame(tick);
+}
+
+function stopPulseLoop() {
+  if (pulseRafId !== null) { cancelAnimationFrame(pulseRafId); pulseRafId = null; }
+}
+
+onBeforeUnmount(stopPulseLoop);
 
 // ── Canvas drawing ─────────────────────────────────────────────────────────
 function drawGrid() {
@@ -982,6 +1079,36 @@ function drawGrid() {
     }
   }
 
+  // Pass 2b-glow: red pulsating border on disconnected structures
+  {
+    const pulse = 0.5 + 0.5 * Math.sin(pulseT * 2.5);   // 0..1 smooth cycle
+    const alpha = 0.55 + 0.45 * pulse;
+    const blur  = 6 + 10 * pulse;
+    let anyDisconnected = false;
+    const drawnGlow = new Set();
+    for (const building of (props.settlement.buildings ?? [])) {
+      if (drawnGlow.has(building.cellIndex)) continue;
+      drawnGlow.add(building.cellIndex);
+      const def = BUILDING_DEFS[building.type];
+      if (def?.category !== "structure") continue;
+      if (isRoadConnected(building.cellIndex, building.type)) continue;
+      anyDisconnected = true;
+      const bc = building.cellIndex % COLS;
+      const br = Math.floor(building.cellIndex / COLS);
+      const { w, h } = buildingSize(building.type);
+      const bx = bc * CELL_SIZE, by = br * CELL_SIZE;
+      const wPx = w * CELL_SIZE, hPx = h * CELL_SIZE;
+      ctx.save();
+      ctx.shadowColor = `rgba(220,30,30,${alpha})`;
+      ctx.shadowBlur  = blur;
+      ctx.strokeStyle = `rgba(220,30,30,${alpha})`;
+      ctx.lineWidth   = 2;
+      ctx.strokeRect(bx + 1, by + 1, wPx - 2, hPx - 2);
+      ctx.restore();
+    }
+    if (anyDisconnected) startPulseLoop();
+  }
+
   // Pass 2c: building name labels
   {
     const NO_LABEL = new Set(["road", "fence", "bridge", "well"]);
@@ -1220,6 +1347,15 @@ function handleCellClick(cellIndex) {
     if (def.maxPerMap) {
       const count = props.settlement.buildings?.filter(b => b.type === selectedBuildingType.value).length ?? 0;
       if (count >= def.maxPerMap) { showPlacementError(`Only ${def.maxPerMap} allowed per settlement`); return; }
+    }
+    if (def.maxPerHouses) {
+      const houseCount = props.settlement.buildings?.filter(b => b.type === "house").length ?? 0;
+      const thisCount  = props.settlement.buildings?.filter(b => b.type === selectedBuildingType.value).length ?? 0;
+      const allowed    = 1 + Math.floor(houseCount / def.maxPerHouses);
+      if (thisCount >= allowed) {
+        const housesNeeded = def.maxPerHouses * thisCount;
+        showPlacementError(`Requires ${housesNeeded} houses to place another ${def.name}`); return;
+      }
     }
 
     if (isLarge(selectedBuildingType.value)) {

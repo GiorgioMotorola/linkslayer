@@ -6,25 +6,25 @@
 export const SETTLEMENT_BOSS_DEFS = {
   ancient_dragon: {
     name: "Ancient Dragon",
-    baseHP: 100,
-    minBaseDamage: 14,
-    maxBaseDamage: 22,
+    baseHP: 1,
+    minBaseDamage: 1,
+    maxBaseDamage: 1,
     goldReward: 200,
     scrapReward: 8,
   },
   gnoll_army: {
     name: "Gnoll Army",
-    baseHP: 100,
-    minBaseDamage: 9,
-    maxBaseDamage: 15,
+    baseHP: 1,
+    minBaseDamage: 1,
+    maxBaseDamage: 1,
     goldReward: 120,
     scrapReward: 6,
   },
   oblex: {
     name: "Oblex",
-    baseHP: 100,
-    minBaseDamage: 7,
-    maxBaseDamage: 13,
+    baseHP: 1,
+    minBaseDamage: 1,
+    maxBaseDamage: 1,
     goldReward: 80,
     scrapReward: 4,
   },
@@ -51,7 +51,7 @@ export function generateSettlementBoss(buildings, overrideKey = null) {
   const key   = overrideKey ?? assignSettlementBossKey(buildings);
   const def   = SETTLEMENT_BOSS_DEFS[key];
 
-  const hp          = def.baseHP + count * 8;
+  const hp          = def.baseHP + count * 3;
   const dmgBonus    = Math.floor(count * 0.5);
 
   return {

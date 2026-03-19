@@ -64,17 +64,18 @@ export const BUILDING_DEFS = {
     name: "General Store",
     emoji: "🏪",
     cost: 35,
-    description: "Earns 1g per click.",
+    description: "Earns 1g per click. Limit: 1 per 3 houses.",
     category: "structure",
     yieldType: "gold",
     yieldAmount: 1,
     yieldEvery: 1,
+    maxPerHouses: 3,
   },
   smithy: {
     name: "Smithy",
     emoji: "⚒️",
     cost: 50,
-    description: "Earns 1g per click. Produces 1 Scrap Metal per 25 clicks.",
+    description: "Earns 1g per click. Produces 3 Scrap Metal per 25 clicks. Limit: 1 per 3 houses.",
     category: "structure",
     yieldType: "gold",
     yieldAmount: 1,
@@ -82,21 +83,23 @@ export const BUILDING_DEFS = {
     bonusYieldType: "scrap",
     bonusYieldAmount: 3,
     bonusYieldEvery: 25,
+    maxPerHouses: 3,
   },
   church: {
     name: "Church",
     emoji: "⛪",
     cost: 60,
-    description: "Attracts +1 villager to the attractive scale.",
+    description: "Attracts +1 villager to the attractive scale. Limit: 1 per 3 houses.",
     category: "structure",
     yieldType: null,
     attractionBonus: 1,
+    maxPerHouses: 3,
   },
   house: {
     name: "House",
     emoji: "🏠",
     cost: 25,
-    description: "Houses 5 villagers. Every 10 villagers earns 1g per click.",
+    description: "Houses 5 villagers. Every 3 houses earns 1g per click.",
     category: "structure",
     yieldType: null,
     villagersPerBuilding: 5,
@@ -105,21 +108,23 @@ export const BUILDING_DEFS = {
     name: "Apothecary",
     emoji: "⚗️",
     cost: 75,
-    description: "Produces 1 Health Potion per 50 clicks.",
+    description: "Produces 1 Health Potion per 20 clicks. Limit: 1 per 3 houses.",
     category: "structure",
     yieldType: "healthPotion",
     yieldAmount: 1,
     yieldEvery: 20,
+    maxPerHouses: 3,
   },
   horse_stable: {
     name: "Stable",
     emoji: "🐎",
     cost: 100,
-    description: "Earns 2g per click.",
+    description: "Earns 2g per click. Limit: 1 per 3 houses.",
     category: "structure",
     yieldType: "gold",
     yieldAmount: 2,
     yieldEvery: 1,
+    maxPerHouses: 3,
   },
   castle: {
     name: "Castle",
@@ -138,11 +143,12 @@ export const BUILDING_DEFS = {
     name: "Tavern",
     emoji: "🍺",
     cost: 60,
-    description: "Earns 1g per click.",
+    description: "Earns 1g per click. Limit: 1 per 3 houses.",
     category: "structure",
     yieldType: "gold",
     yieldAmount: 1,
     yieldEvery: 1,
+    maxPerHouses: 3,
   },
 };
 
@@ -171,7 +177,7 @@ export function computeYield(buildings, terrain, clicksSince) {
   const villagers = buildings
     .filter(b => b.type === "house")
     .length * (BUILDING_DEFS.house.villagersPerBuilding ?? 5);
-  const houseGoldPerClick = Math.floor(villagers / 10);
+  const houseGoldPerClick = Math.floor(villagers / 15);
 
   for (const building of buildings) {
     const def = BUILDING_DEFS[building.type];

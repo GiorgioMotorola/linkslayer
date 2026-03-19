@@ -17,8 +17,6 @@ export function useModals() {
   watch(showRestModal, (newValue) => {
     if (newValue) {
       restModalCount.value++;
-    } else if (restModalCount.value > 0 && restModalCount.value % 2 === 0) {
-      longRestDismissCount.value++;
     }
   });
 

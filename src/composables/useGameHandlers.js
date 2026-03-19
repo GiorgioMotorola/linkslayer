@@ -52,7 +52,7 @@ export function useGameHandlers(deps) {
     markBossDefeated,
   } = gameFlow;
 
-  const { showRestModal, showShopModal, showTipsModal, restModalCount, showCampfireOverlay, campfireReward, showRuneCacheModal, runeCacheReward, showDogNameModal } = modals;
+  const { showRestModal, showShopModal, showTipsModal, restModalCount, longRestDismissCount, showCampfireOverlay, campfireReward, showRuneCacheModal, runeCacheReward, showDogNameModal } = modals;
 
   const {
     playerClass,
@@ -389,6 +389,7 @@ export function useGameHandlers(deps) {
   function callHandleSleep() {
     enemyDifficultyLevel.value = enemyDifficultyLevel.value + 1;
     daysCount.value = daysCount.value + 1;
+    longRestDismissCount.value++;
     log(`⚔️ The world gets ${enemyDifficultyLevel.value} times more dangerous.`);
     showRestModal.value = false;
   }
