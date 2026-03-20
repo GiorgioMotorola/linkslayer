@@ -1052,7 +1052,9 @@ function zoneWidth(zone) {
   padding: 0 6px;
   height: 26px;
   cursor: pointer;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .stepper-btn:hover { background: #263348; color: #c8d8e8; }
 .stepper-val {
@@ -1086,4 +1088,77 @@ function zoneWidth(zone) {
 .stock-btn-backpack:hover { background: #263348; }
 .stock-btn-sell { background: #1f2010; border-color: #4a4020; color: #d4a94a; }
 .stock-btn-sell:hover { background: #2a2a18; }
+
+/* ─── MOBILE ─── */
+@media (max-width: 520px) {
+  .brewery-panel {
+    width: 100vw;
+    max-height: 100dvh;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+  }
+
+  .brewery-content {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  /* Ingredient picker — full screen, drop Flavour + Yield columns */
+  .ingredient-picker {
+    width: 100vw;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+
+  .ing-list-header,
+  .ing-list-row {
+    grid-template-columns: 1fr 50px 58px;
+  }
+
+  .ing-col-tag,
+  .ing-col-yield {
+    display: none;
+  }
+
+  .ing-col-name {
+    font-size: 0.8rem;
+  }
+
+  /* Brew adjuncts — stack vertically */
+  .brew-adjuncts {
+    flex-direction: column;
+  }
+
+  .brew-adjunct-slot {
+    min-width: unset;
+  }
+
+  /* Brew bases — fill row */
+  .brew-base-btn {
+    min-width: unset;
+    flex: 1;
+  }
+
+  /* Stock rows — allow label to wrap so buttons don't overflow */
+  .stock-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .stock-row-label {
+    width: 100%;
+    white-space: normal;
+  }
+
+  .farm-grid {
+    gap: 6px;
+  }
+
+  .farm-slot {
+    min-height: 68px;
+    padding: 7px 5px;
+  }
+}
 </style>
