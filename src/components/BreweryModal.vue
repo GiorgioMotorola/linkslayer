@@ -175,16 +175,19 @@
             <!-- Quality bar -->
             <div class="quality-bar-wrapper">
               <div class="quality-bar-title">Quality</div>
-              <div class="quality-bar">
-                <div
-                  v-for="zone in QUALITY_ZONES"
-                  :key="zone.label"
-                  :class="['quality-zone', { current: currentZone.label === zone.label }]"
-                  :style="{ background: zoneColor(zone.label), flex: zoneWidth(zone) }"
-                  :title="zone.label"
-                >
-                  <span class="quality-zone-label">{{ zone.label === 'Too Early' ? 'Early' : zone.label }}</span>
+              <div class="quality-bar-outer">
+                <div class="quality-bar">
+                  <div
+                    v-for="zone in QUALITY_ZONES"
+                    :key="zone.label"
+                    class="quality-zone"
+                    :style="{ background: zoneColor(zone.label), flex: zoneWidth(zone) }"
+                    :title="zone.label"
+                  >
+                    <span class="quality-zone-label">{{ zone.label === 'Too Early' ? 'Early' : zone.label }}</span>
+                  </div>
                 </div>
+                <div class="quality-marker" :style="{ left: markerPct + '%' }"></div>
               </div>
               <div class="quality-indicator-row">
                 <span class="quality-current-label" :style="{ color: zoneColor(currentZone.label) }">
@@ -212,7 +215,7 @@
                 :title="!currentZone.canBottle ? 'The brew needs more time' : ''"
                 @click="bottleBrew"
               >
-                🍾 Bottle It!
+                🍾 Bottle
               </button>
               <span v-if="!currentZone.canBottle" class="brew-too-early">
                 Needs {{ GROW_CLICKS - clickDelta }} more clicks
@@ -612,12 +615,13 @@ const ZONE_COLORS = {
   "Swill":          "#2c3e50",
 };
 function zoneColor(label) { return ZONE_COLORS[label] ?? "#999"; }
+// Proportional zone widths based on actual click ranges; Swill capped at 12
+const SWILL_DISPLAY = 12;
+const QUALITY_BAR_MAX = QUALITY_ZONES.reduce((acc, z) => acc + (z.max === Infinity ? SWILL_DISPLAY : z.max - z.min + 1), 0);
 function zoneWidth(zone) {
-  // Give equal visual weight to finite zones; swill is capped
-  if (zone.label === "Too Early") return 1;
-  if (zone.label === "Swill") return 1;
-  return 1;
+  return zone.max === Infinity ? SWILL_DISPLAY : zone.max - zone.min + 1;
 }
+const markerPct = computed(() => Math.min((clickDelta.value / QUALITY_BAR_MAX) * 100, 99.5));
 </script>
 
 <style scoped>
@@ -940,25 +944,30 @@ function zoneWidth(zone) {
 
 .quality-bar-wrapper { display: flex; flex-direction: column; gap: 5px; }
 .quality-bar-title { font-size: 0.75rem; color: #7a9ab8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.quality-bar-outer {
+  position: relative;
+  padding-bottom: 5px;
+}
+
 .quality-bar {
   display: flex;
   border-radius: 5px;
   overflow: hidden;
-  height: 28px;
+  height: 22px;
   border: 1px solid #2d3f55;
 }
+
 .quality-zone {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1;
-  transition: filter 0.2s;
-  filter: brightness(0.55);
+  opacity: 0.65;
   min-width: 0;
 }
-.quality-zone.current { filter: brightness(1); box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5); }
+
 .quality-zone-label {
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   font-weight: 600;
   color: #fff;
   text-shadow: 0 1px 2px rgba(0,0,0,0.8);
@@ -966,6 +975,29 @@ function zoneWidth(zone) {
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0 2px;
+}
+
+.quality-marker {
+  position: absolute;
+  top: -3px;
+  height: 28px;
+  width: 3px;
+  background: #fff;
+  border-radius: 2px;
+  transform: translateX(-50%);
+  box-shadow: 0 0 6px rgba(255,255,255,0.85), 0 0 2px #fff;
+  pointer-events: none;
+  transition: left 0.4s ease;
+}
+
+.quality-marker::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: #fff;
 }
 
 .quality-indicator-row {

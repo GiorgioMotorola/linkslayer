@@ -62,7 +62,7 @@ export const SYNERGY_RULES = [
 ];
 
 // Wild synergy fires when either adjunct is "wild"
-export const WILD_SYNERGY = { name: "Feral", sellMod: -2, hpMod: 6, bottleMod: 0 };
+export const WILD_SYNERGY = { name: "Wild-Fermented", sellMod: -2, hpMod: 6, bottleMod: 0 };
 
 export function findSynergy(adj1Key, adj2Key) {
   if (!adj1Key || !adj2Key) return null;
