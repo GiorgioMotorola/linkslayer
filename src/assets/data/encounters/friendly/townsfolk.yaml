@@ -153,13 +153,13 @@
           goldCost: 10
           responseText: "Hanni produces a small, glowing vial. 'This special brew will set you right. Just 10 gold, for my troubles.'"
           flow: close_encounter
-        - text: Do you have any ale? (2 Gold, +15 HP)
+        - text: Do you have any whisky? (2 Gold, +15 HP)
           effect: item
-          details: beer-cost-blur
+          details: whisky-cost-blur
           healthAmount: 15
           goldCost: 2
           amount: 4
-          responseText: "Hanni chuckles, pulling out a tankard. 'Always got some homebrew for a parched throat. Just 2 gold, but it's strong stuff.'"
+          responseText: "Hanni chuckles, pulling a flask from her apron. 'Always got something for a parched throat. Just 2 gold, but it's strong stuff.'"
           flow: close_encounter
         - text: "'Never mind, I'm alright now.'"
           flow: dialogue_branch

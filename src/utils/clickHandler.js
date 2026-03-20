@@ -133,6 +133,32 @@ export async function handleClick({
     !gameData.bossSpawned.value &&
     !gameData.bossDefeated.value;
 
+  // Treasure map check — fires even through cloak (player deliberately navigated here)
+  if (!isBossClick) {
+    const openMaps = (playerState.inventory?.value?.treasureMaps ?? []).filter(
+      (m) => m.opened && !m.collected && m.article === title
+    );
+    if (openMaps.length > 0) {
+      const map = openMaps[0];
+      enemyState.encounter.value = {
+        type: "lore",
+        lore: {
+          id: "treasure_map_reward",
+          name: "X Marks the Spot",
+          text: `Parchment in hand, you've arrived. The hill, the stone, the old dead tree — it all matches the Cartographer's diagram exactly. And there it is: a patch of disturbed earth, right where the X should be.`,
+          options: [
+            {
+              text: "Start digging.",
+              result: "treasure_reward",
+              mapId: map.id,
+            },
+          ],
+        },
+      };
+      return;
+    }
+  }
+
   if (
     playerState.clickCount.value > 0 &&
     playerState.clickCount.value % 12 === 0 &&

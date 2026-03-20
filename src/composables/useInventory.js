@@ -58,6 +58,9 @@ export function useInventory() {
     settlementFlag: 0,
     pendingWeaponAugments: [],
     pendingDefenseAugments: [],
+    beers: [],
+    roadIngredients: {},
+    treasureMaps: [],
   });
 
   const goldPouchAccumulatedGold = ref(0);

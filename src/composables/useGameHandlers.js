@@ -10,9 +10,9 @@ import { handleEnemyTurn as externalHandleEnemyTurn } from "@/utils/enemyTurnHan
 import { handleMiniBossLootDrop } from "@/utils/miniBossLootHandler";
 import { handleShopPurchase as externalHandleShopPurchase } from "@/utils/itemHandlers";
 import { getRandomChain } from "@/utils/randomPair";
-
 export function useGameHandlers(deps) {
   const daysCount = ref(1);
+
   const {
     gameFlow,
     log,

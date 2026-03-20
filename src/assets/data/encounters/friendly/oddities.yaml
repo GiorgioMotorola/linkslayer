@@ -19,22 +19,22 @@
 
 - id: npc_004
   name: TJ the Golden
-  greeting: "'Take a seat, will ya? I am cracking beers and listening to Steely Dan.'"
+  greeting: "'Take a seat, will ya? I am pouring whisky and listening to Steely Dan.'"
   options:
-    - text: Take a seat, crack a beer, and listen to Steely Dan
+    - text: Take a seat, pour a whisky, and listen to Steely Dan
       result: item
-      details: beer-health
-      responseText: "Your mind and body are restored by a father's kindness and you gain +5 HP, and your vision is blurry from the delicious beer."
+      details: whisky-health
+      responseText: "Your mind and body are restored by a father's kindness and you gain +5 HP, and your vision is blurry from the smooth whisky."
     - text: "'No thanks, I only like to Imagine the Dragon I am going to fight later.'"
       result: none
       responseText: "'Alright. Suit yourself, padre.'"
     - text: "'No thanks, I have no time to learn the saxophone.'"
       result: none
       responseText: "'They got a name for the winners in the world. I hope you have a name for when you lose.'"
-    - text: "'Hell yeah I'd have a beer.'"
+    - text: "'Hell yeah I'd have a whisky.'"
       result: item
-      details: beer-health
-      responseText: "Your mind and body are restored by a father's kindness and you gain +5 HP, and your vision is blurry from the delicious beer."
+      details: whisky-health
+      responseText: "Your mind and body are restored by a father's kindness and you gain +5 HP, and your vision is blurry from the smooth whisky."
 
 - id: npc_006
   name: Evil Tom

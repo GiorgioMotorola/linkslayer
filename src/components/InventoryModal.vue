@@ -526,6 +526,26 @@
           </div>
         </template>
 
+        <!-- Brewed Beers -->
+        <template v-for="(beer, idx) in (inventory.beers ?? [])" :key="'beer-' + idx">
+          <div class="item-slot-wrapper">
+            <div class="item-details-box">
+              <div class="item-name-quantity">
+                <span class="item-name">🍺 {{ beer.name }}</span>
+                <span class="item-count">x{{ beer.qty }}</span>
+              </div>
+              <div class="item-description">
+                {{ beer.quality }} brew · Restores {{ beer.hp }} HP.
+                <template v-if="beer.poisonClicks > 0"> ☠ Warning: poisons for {{ beer.poisonClicks }} clicks.</template>
+                <span class="hp-status"> — HP: {{ playerHP }}/{{ effectiveMaxHP }}</span>
+              </div>
+            </div>
+            <div class="item-button-box">
+              <button class="buy-button-details" @click.stop="$emit('use-beer', idx)">Drink</button>
+            </div>
+          </div>
+        </template>
+
         <!-- Settlement Flag -->
         <div v-if="inventory.settlementFlag > 0" class="item-slot-wrapper" :class="{ 'item-slot-claimed': props.pageSettlementClaimedBy }">
           <div class="item-details-box">
@@ -549,6 +569,39 @@
             </button>
           </div>
         </div>
+
+        <!-- Treasure Maps -->
+        <template v-for="map in (inventory.treasureMaps ?? []).filter(m => !m.collected)" :key="map.id">
+          <div class="item-slot-wrapper">
+            <div class="item-details-box">
+              <div class="item-name-quantity">
+                <span class="item-name">Treasure Map</span>
+                <span class="item-count">
+                  {{ map.opened ? `— ${map.article.replace(/_/g, ' ')} (X Marks the Spot)` : '— Sealed' }}
+                </span>
+              </div>
+              <div class="item-description">
+                <template v-if="map.opened">
+                  Navigate to <em>{{ map.article.replace(/_/g, ' ') }}</em> to claim your treasure.
+                </template>
+                <template v-else>
+                  A sealed map from The Blacklisted Cartographer. Open it to reveal your destination.
+                </template>
+              </div>
+            </div>
+            <div class="item-button-box">
+              <button
+                v-if="!map.opened"
+                class="buy-button-details"
+                :disabled="!props.isIdle"
+                @click.stop="$emit('use-item', 'treasureMap', map.id)"
+              >
+                Open
+              </button>
+              <span v-else class="map-active-label">Active</span>
+            </div>
+          </div>
+        </template>
 
         <div
           v-if="isInventoryEmpty"
@@ -688,7 +741,7 @@ const props = defineProps({
   pageSettlementClaimedBy: { type: String,  default: null },
 });
 
-const emit = defineEmits(["close", "use-item", "visit-settlement"]);
+const emit = defineEmits(["close", "use-item", "use-beer", "visit-settlement"]);
 
 const uniquePendingWeapon  = computed(() => [...new Set(props.pendingWeaponAugments)]);
 const uniquePendingDefense = computed(() => [...new Set(props.pendingDefenseAugments)]);
@@ -696,7 +749,9 @@ const uniquePendingDefense = computed(() => [...new Set(props.pendingDefenseAugm
 const isInventoryEmpty = computed(() => {
   if (props.weaponAugment || props.defenseAugment) return false;
   if (props.pendingWeaponAugments.length || props.pendingDefenseAugments.length) return false;
-  const skip = new Set(["questScrolls", "settlementFlag"]);
+  if (props.inventory.beers?.length > 0) return false;
+  if ((props.inventory.treasureMaps ?? []).some((m) => !m.collected)) return false;
+  const skip = new Set(["questScrolls", "settlementFlag", "beers", "roadIngredients", "treasureMaps"]);
   for (const key in props.inventory) {
     if (skip.has(key)) continue;
     if (

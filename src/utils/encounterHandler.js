@@ -1,5 +1,54 @@
 import { generateEnemy } from "@/utils/encounterGenerator";
 import { generateMiniBoss } from "@/utils/miniBossGenerator";
+import { getRandomTreasureMapArticle } from "@/utils/treasureMapArticles";
+
+const TREASURE_AUGMENT_POOL = [
+  { type: "weaponAugment", key: "bleedEdge",    name: "Serrated Edge" },
+  { type: "weaponAugment", key: "venomCoat",    name: "Venom Coat" },
+  { type: "weaponAugment", key: "thunderstrike", name: "Thunderstrike Rune" },
+  { type: "weaponAugment", key: "emberTemper",  name: "Ember Temper" },
+  { type: "weaponAugment", key: "cursedRune",   name: "Cursed Rune" },
+  { type: "weaponAugment", key: "soulShard",    name: "Soul Shard" },
+  { type: "defenseAugment", key: "thornplate",  name: "Thornplate" },
+  { type: "defenseAugment", key: "stoneskin",   name: "Stoneskin" },
+  { type: "defenseAugment", key: "bloodpactRune", name: "Bloodpact Rune" },
+  { type: "defenseAugment", key: "ironWill",    name: "Iron Will" },
+  { type: "defenseAugment", key: "wardensWard", name: "Warden's Ward" },
+  { type: "defenseAugment", key: "frostbound",  name: "Frostbound" },
+];
+
+const TREASURE_OTHER_POOL = [
+  { type: "scrap",         amount: 25,  name: "25 Scrap Metal" },
+  { type: "healthPotions", amount: 10,  name: "10 Major Health Potions" },
+  { type: "gold",          amount: 200, name: "200 Gold Pieces" },
+];
+
+function pickTreasureReward() {
+  const pool = [...TREASURE_AUGMENT_POOL, ...TREASURE_OTHER_POOL];
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function applyTreasureReward(reward, playerState, utilityFunctions) {
+  const { inventory, playerGold, playerName } = playerState;
+  const { log } = utilityFunctions;
+  if (reward.type === "weaponAugment") {
+    inventory.value.pendingWeaponAugments = [...(inventory.value.pendingWeaponAugments ?? []), reward.key];
+    log(`⚔️ <span class="player-name">${playerName.value}</span> unearthed a <strong>${reward.name}</strong> weapon augment. It's been added to your pending augments.`);
+  } else if (reward.type === "defenseAugment") {
+    inventory.value.pendingDefenseAugments = [...(inventory.value.pendingDefenseAugments ?? []), reward.key];
+    log(`🛡️ <span class="player-name">${playerName.value}</span> unearthed a <strong>${reward.name}</strong> defense augment. It's been added to your pending augments.`);
+  } else if (reward.type === "scrap") {
+    inventory.value.scrapMetal = (inventory.value.scrapMetal || 0) + reward.amount;
+    log(`🔩 <span class="player-name">${playerName.value}</span> unearthed ${reward.amount} Scrap Metal.`);
+  } else if (reward.type === "healthPotions") {
+    inventory.value.healthPotions = (inventory.value.healthPotions || 0) + reward.amount;
+    log(`🧪 <span class="player-name">${playerName.value}</span> unearthed ${reward.amount} Major Health Potions.`);
+  } else if (reward.type === "gold") {
+    playerGold.value += reward.amount;
+    log(`💰 <span class="player-name">${playerName.value}</span> unearthed ${reward.amount} Gold Pieces.`);
+  }
+  return reward;
+}
 
 function applyOptionEffects({
   effectType,
@@ -53,11 +102,11 @@ function applyOptionEffects({
           `🔩 <span class="player-name">${playerName.value}</span> found ${scrapAmount} Scrap Metal.`
         );
       }
-      if (option.details === "beer") {
+      if (option.details === "whisky") {
         const duration = Number(option.amount) || 4;
         blurClicksLeft.value += duration;
         log(
-          `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision becomes blurry for ${duration} clicks.`
+          `🥃 <span class="player-name">${playerName.value}</span> knocks back the whisky. Your vision becomes blurry for ${duration} clicks.`
         );
       }
       if (option.details === "poison") {
@@ -70,7 +119,7 @@ function applyOptionEffects({
           `🤢 <span class="player-name">${playerName.value}</span> is poisoned. You will lose ${damage} HP for the next ${duration} clicks.`
         );
       }
-      if (option.details === "beer-health") {
+      if (option.details === "whisky-health") {
         const duration = Number(option.amount) || 4;
         const healthAmount = Number(option.healthAmount) || 5;
 
@@ -80,7 +129,7 @@ function applyOptionEffects({
           Number(effectiveMaxHP || 0)
         );
         log(
-          `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision blurs for ${duration} clicks and you gained ${healthAmount} HP.`
+          `🥃 <span class="player-name">${playerName.value}</span> knocks back the whisky. Your vision blurs for ${duration} clicks and you gained ${healthAmount} HP.`
         );
       }
       if (option.details === "gold") {
@@ -109,7 +158,7 @@ function applyOptionEffects({
           );
         }
       }
-      if (option.details === "beer-cost-blur") {
+      if (option.details === "whisky-cost-blur") {
         const duration = Number(option.amount) || 4;
         const goldCost = Number(option.goldCost) || 0;
         const healthAmount = Number(option.healthAmount) || 0;
@@ -122,7 +171,7 @@ function applyOptionEffects({
           );
           playerGold.value -= goldCost;
           log(
-            `🍺 <span class="player-name">${playerName.value}</span> chugs the beer. Your vision blurs for ${duration} clicks and you gained ${healthAmount} HP, but lost ${goldCost} Gold.`
+            `🥃 <span class="player-name">${playerName.value}</span> knocks back the whisky. Your vision blurs for ${duration} clicks and you gained ${healthAmount} HP, but lost ${goldCost} Gold.`
           );
         } else {
           log(
@@ -344,6 +393,48 @@ export function handleEncounterOption({
         return;
       }
     }
+  }
+
+  if (option.result === "treasure_map") {
+    const cost = Number(option.cost) || 50;
+    const { inventory, playerGold, playerName } = playerState;
+    const { log } = utilityFunctions;
+    if (playerGold.value < cost) {
+      log(`❌ You need ${cost}g to buy this map. You have ${playerGold.value}g.`);
+      return; // stay on encounter, don't close
+    }
+    playerGold.value -= cost;
+    const article = getRandomTreasureMapArticle(inventory.value.treasureMaps ?? []);
+    const newMap = {
+      id: `tmap_${Date.now()}`,
+      article,
+      opened: false,
+      collected: false,
+      tier: option.tier ?? "common",
+    };
+    inventory.value.treasureMaps = [...(inventory.value.treasureMaps ?? []), newMap];
+    log(`🗺️ <span class="player-name">${playerName.value}</span> received a Treasure Map — Sealed. Open it from your backpack when you're ready.`);
+    if (option.responseText && canShowFinalScene) {
+      showFinalScene(option.responseText, currentEncounter, enemyState);
+    } else {
+      enemyState.encounter.value = null;
+      modalState.bossOverlay.value = false;
+    }
+    return;
+  }
+
+  if (option.result === "treasure_reward") {
+    const maps = playerState.inventory.value.treasureMaps ?? [];
+    const mapIdx = maps.findIndex((m) => m.id === option.mapId);
+    if (mapIdx >= 0) {
+      maps[mapIdx].collected = true;
+      playerState.inventory.value.treasureMaps = [...maps];
+    }
+    const reward = pickTreasureReward();
+    applyTreasureReward(reward, playerState, utilityFunctions);
+    const rewardText = `The Blacklisted Cartographer's map was worth every coin. You found: <strong>${reward.name}</strong>.`;
+    showFinalScene(rewardText, currentEncounter, enemyState);
+    return;
   }
 
   if (option.flow === "close_encounter") {

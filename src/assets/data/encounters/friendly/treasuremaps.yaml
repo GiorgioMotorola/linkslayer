@@ -1,0 +1,95 @@
+- id: npc_cartographer_1
+  name: The Blacklisted Cartographer
+  greeting: "A figure leans against a mossy stone, coat pinned all over with rolled parchments. They look up slowly. 'You've got the look of someone who doesn't mind a detour' They tap a plain-sealed scroll on the rock beside them. 'Forty gold. One map. Take it or leave it.'"
+  dialogueNodes:
+    start:
+      text: "A plain scroll sealed in dark wax sits on the rock. The Cartographer doesn't elaborate. They just watch you."
+      options:
+        - text: "Buy the map (40g)."
+          result: treasure_map
+          tier: common
+          cost: 40
+          responseText: "They slide it across without a word. 'Follow it exactly.' Then they pull their coat closed and are simply gone. Then the poke their head around the corner to see if you're still looking. You wave. Then they are gone."
+        - text: "Leave it."
+          flow: close_encounter
+          responseText: "The Cartographer shrugs and pockets the scroll. 'Your road, your choice.' They don't look up again."
+
+- id: npc_cartographer_2
+  name: The Blacklisted Cartographer
+  greeting: "Sitting on a low wall, barely visible under a coat layered with charts, the figure glances up as you pass. 'Sixty gold,' they say, before you've spoken. 'For a map that leads somewhere worth going. It's a map if you know what that is.'"
+  dialogueNodes:
+    start:
+      text: "They hold up a scroll bound with a thin strip of leather. The edges are worn but the ink looks precise. They set it on the wall between you and fold their hands."
+      options:
+        - text: "Buy the map (60g)."
+          result: treasure_map
+          tier: common
+          cost: 60
+          responseText: "'Smart.' They push the scroll toward you and stand up. 'You'll know the spot when you see it.' They walk off before you can ask anything else. Then they look back and start to say something but decide not to. Then they leave for real."
+        - text: "Leave it."
+          flow: close_encounter
+          responseText: "They pick it back up without comment. 'Someone else will.' They settle back against the wall and close their eyes."
+
+- id: npc_cartographer_3
+  name: The Blacklisted Cartographer
+  greeting: "The figure steps out of the treeline just ahead of you, as if they'd been waiting. 'I've been carrying this one long enough.' They hold up a scroll threaded with copper wire. 'Eighty gold. I've verified every mark on it personally. It's not a trick. If it was a trick, I would have to tell you. '"
+  dialogueNodes:
+    start:
+      text: "The copper-threaded scroll sits in their open palm. They don't move to put it away. The markings on the visible edge look meticulous."
+      options:
+        - text: "Buy the map (80g)."
+          result: treasure_map
+          tier: uncommon
+          cost: 80
+          responseText: "They place it in your hand and step back. 'Three years of work, right there. Don't waste it.' Then they turn and disappear into the trees. But you see the trees rustling. You clearly see them. You decide to lean into the bit and make a 'Where did they go?' action with your face and hands."
+        - text: "Leave it."
+          flow: close_encounter
+          responseText: "They close their hand around it and nod once. 'Fair enough.' They step back into the treeline without another word."
+
+- id: npc_cartographer_4
+  name: The Blacklisted Cartographer
+  greeting: "You almost walk past them. They're crouched by a stone, studying something in the dirt, and only look up when you're nearly gone. 'A hundred gold,' they call after you. 'For somewhere most people never find. I drew the map myself. The guilds didn't like that.' They hold up a scroll sealed with red wax."
+  dialogueNodes:
+    start:
+      text: "The red-waxed scroll sits balanced on their knee. They watch you with calm, patient eyes. 'I'm not going to explain it further. The map does that.'"
+      options:
+        - text: "Buy the map (100g)."
+          result: treasure_map
+          tier: uncommon
+          cost: 100
+          responseText: "They hand it over with a small nod. 'You won't regret it.' They stand, dust off their coat, and walk away without looking back."
+        - text: "Leave it."
+          flow: close_encounter
+          responseText: "They pocket it smoothly. 'Not everyone's looking for what's hidden.' They go back to studying the dirt."
+
+- id: npc_cartographer_5
+  name: The Blacklisted Cartographer
+  greeting: "The figure is already watching you from across the road, coat covered in rolled charts, arms folded. As you get closer they speak. 'I've got one left from the western surveys. A hundred and twenty gold. It's not cheap because I'm greedy... it's cheap because what it leads to is worth considerably more than that.' A scroll bound in cracked black leather rests on the post beside them."
+  dialogueNodes:
+    start:
+      text: "The leather-bound scroll has a small seal stamped with a symbol you don't recognise. The Cartographer doesn't move to pick it up. They just wait."
+      options:
+        - text: "Buy the map (120g)."
+          result: treasure_map
+          tier: rare
+          cost: 120
+          responseText: "They exhale slowly when you take it. 'Good.' Their voice drops. 'Don't tell anyone I sold it to you.' They step off the post and walk into the fog. The fog clears pretty quickly, actually. They seem startled of that fact and run away."
+        - text: "Leave it."
+          flow: close_encounter
+          responseText: "A brief pause. 'You're sure.' It's not a question. They pick up the scroll, tuck it inside their coat, and leave without another word."
+
+- id: npc_cartographer_6
+  name: The Blacklisted Cartographer
+  greeting: "They're sitting on a rock in the middle of nowhere, as if they'd known you'd come this way. Their coat is pinned with more charts than you can count. They hold up a scroll sealed in black wax without preamble. 'This one got me blacklisted from the Cartographers' Guild, the Merchant Surveyors, and one institution whose name I've agreed not to repeat. A hundred and fifty gold. It's the last one I have like it.'"
+  dialogueNodes:
+    start:
+      text: "The black-waxed scroll sits across their knees. The seal is intact. They meet your eyes and don't look away. 'Take it or don't. I'll find someone else eventually.'"
+      options:
+        - text: "Buy the map (150g)."
+          result: treasure_map
+          tier: rare
+          cost: 150
+          responseText: "They stand as they hand it over, coat rustling with a hundred maps that aren't this one. 'The seal breaks clean. Read it carefully.' There is a slight pause. Then they say 'Seriously, don't tell anyone about why I was kicked out of the Cartographers Club or whatever I called it before'. Then they run away."
+        - text: "Leave it."
+          flow: close_encounter
+          responseText: "They nod slowly, as if they'd expected it. 'Someone will.' They lean back on the rock and stare up at the sky. They seem content to wait forever."

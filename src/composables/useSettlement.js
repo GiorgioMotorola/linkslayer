@@ -4,6 +4,16 @@ import { generateTerrain } from "@/utils/terrainGenerator.js";
 import { computeYield } from "@/utils/buildingDefs.js";
 import { assignSettlementBossKey } from "@/utils/settlementBossGenerator.js";
 
+// Brewery state is embedded inside the buildings JSONB array as a hidden sentinel
+// so it persists without needing a separate DB column.
+const BREWERY_KEY = "__brewery__";
+
+export function getBreweryStateFromBuildings(buildings) {
+  if (!buildings) return null;
+  const entry = buildings.find(b => b.type === BREWERY_KEY);
+  return entry?.breweryData ?? null;
+}
+
 export function useSettlement() {
   const settlement = ref(null);
   const isLoadingSettlement = ref(false);
@@ -257,6 +267,18 @@ export function useSettlement() {
    * Claim an abandoned settlement after defeating the guardian boss.
    * Transfers ownership, clears abandoned flag, and records history events.
    */
+  async function saveBreweryState(sId, breweryState) {
+    // Embed brewery state as a hidden sentinel at the end of the buildings array.
+    // This avoids needing a separate brewery_state DB column.
+    const current = settlement.value?.buildings ?? [];
+    const filtered = current.filter(b => b.type !== BREWERY_KEY);
+    const updated = [...filtered, { type: BREWERY_KEY, cellIndex: -1, breweryData: breweryState }];
+    await saveBuildings(sId, updated);
+    if (settlement.value) {
+      settlement.value = { ...settlement.value, buildings: updated };
+    }
+  }
+
   async function claimSettlement(settlementId, newOwnerId, playerName, signInEmail, day) {
     const { data } = await supabase
       .from("settlements")
@@ -314,5 +336,6 @@ export function useSettlement() {
     markAbandoned,
     markAbandonedByOwner,
     claimSettlement,
+    saveBreweryState,
   };
 }

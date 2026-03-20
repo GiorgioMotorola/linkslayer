@@ -201,6 +201,7 @@
         :longRestsUsed="longRestsUsed"
         :scrapMetal="inventory.scrapMetal"
         :restModalCount="restModalCount"
+        :isLongRest="isLongRest"
         :specialTier="specialTier"
         :offeringPot="offeringPot"
         :playerGold="playerGold"
@@ -261,6 +262,7 @@
         :inventory="inventory"
         @close="closeInventoryModal"
         @use-item="handleUseInventoryItem"
+        @use-beer="handleUseBeer"
         :is-cloak-active="isCloakActive"
         :cloak-clicks-remaining="cloakClicksRemaining"
         :is-health-regen-active="healthRegenActive"
@@ -307,6 +309,7 @@
         embedded
         :inventory="inventory"
         @use-item="handleUseInventoryItem"
+        @use-beer="handleUseBeer"
         :is-cloak-active="isCloakActive"
         :cloak-clicks-remaining="cloakClicksRemaining"
         :is-health-regen-active="healthRegenActive"
@@ -499,6 +502,7 @@
     :canShortRest="canShortRestAtSettlement"
 
     @open-forge="showForge = true"
+    @open-brewery="showBrewery = true"
     @short-rest="handleSettlementShortRest"
   />
 
@@ -511,9 +515,21 @@
     :readOnly="true"
     :canChallenge="canChallengeSettlement"
     :playerHasSettlement="!!settlementId"
+    :tavernBeers="visitingTavernBeers"
 
     @close="showVisitorSettlement = false; visitingSettlementData = null"
     @challenge-boss="handleChallengeSettlementBoss"
+    @open-tavern="showTavernBeerModal = true"
+  />
+
+  <!-- Tavern Beer Shop (visitor buying from another player's tavern) -->
+  <TavernBeerModal
+    v-if="showTavernBeerModal && visitingSettlementData"
+    :beers="visitingTavernBeers"
+    :playerGold="playerGold"
+    :townName="visitingSettlementData.town_name"
+    @buy="handleVisitorTavernBuy"
+    @close="showTavernBeerModal = false"
   />
 
   <Transition name="rest-backdrop">
@@ -556,6 +572,22 @@
   />
   </Transition>
 
+  <BreweryModal
+    v-if="showBrewery && settlement"
+    :breweryState="getBreweryStateFromBuildings(settlement?.buildings)"
+    :playerGold="playerGold"
+    :playerName="playerName"
+    :currentClickCount="clickCount"
+    :hasTavern="settlementHasTavern"
+    @close="showBrewery = false"
+    @update-brewery="handleBreweryUpdate"
+    @spend-gold="(amt) => { playerGold -= amt }"
+    @earn-gold="(amt) => { playerGold += amt }"
+    @add-to-backpack-ingredient="handleBreweryIngredientToBackpack"
+    @add-to-backpack-beer="handleBreweryBeerToBackpack"
+    @list-in-tavern="handleBreweryListInTavern"
+  />
+
 </template>
 
 <script setup>
@@ -578,6 +610,8 @@ import DogNameModal from "@/components/DogNameModal.vue";
 import JourneyRecapModal from "@/components/JourneyRecapModal.vue";
 import TavernShopModal from "@/components/TavernShopModal.vue";
 import ForgeModal from "@/components/ForgeModal.vue";
+import BreweryModal from "@/components/BreweryModal.vue";
+import TavernBeerModal from "@/components/TavernBeerModal.vue";
 import SettlementModal from "@/components/SettlementModal.vue";
 
 import { shopItems as allShopItems } from "@/utils/shopItems";
@@ -598,7 +632,7 @@ import { useInventory } from "@/composables/useInventory";
 import { useStatusEffects } from "@/composables/useStatusEffects";
 import { useCombat } from "@/composables/useCombat";
 import { useGameHandlers } from "@/composables/useGameHandlers";
-import { useSettlement } from "@/composables/useSettlement";
+import { useSettlement, getBreweryStateFromBuildings } from "@/composables/useSettlement";
 
 const gameFlow = useGameFlow();
 const {
@@ -668,7 +702,8 @@ const pageSettlementClaimedBy = computed(() => {
     ?? "Someone";
   return stored.split("@")[0];
 });
-const showForge = ref(false);
+const showForge   = ref(false);
+const showBrewery = ref(false);
 
 const showDieSlayer = ref(false);
 const dieSlayerSource = ref("shop");
@@ -1022,6 +1057,7 @@ const lastSettlementVisitClickCount = ref(0);
 const showSettlementView      = ref(false);
 const visitingSettlementData  = ref(null);  // full settlement object for a visitor view
 const showVisitorSettlement   = ref(false);
+const showTavernBeerModal     = ref(false);
 const settlementBossActive    = ref(false); // true while challenging an abandoned settlement's guardian
 const settlementShortRestDay  = ref(0);     // daysCount value when settlement short rest was last used
 const showTownNamingModal     = ref(false);
@@ -1035,6 +1071,7 @@ const {
   loadSettlementFull,
   saveBuildings,
   saveTerrain,
+  saveBreweryState,
   getSettlementByWikiTitle,
   markAbandoned,
   markAbandonedByOwner,
@@ -1054,6 +1091,15 @@ const questStatus = computed(() => {
   if ((inventory.value.questScrolls ?? 0) > 0 && activeQuestId.value === boardQuest.value?.id) return "scroll";
   if (activeQuestId.value === boardQuest.value?.id) return "progress";
   return "none";
+});
+
+// Derive short/long rest from click position within the day — same formula as the sky track.
+// This is immune to restModalCount drift (e.g. save-timing races that flip the parity).
+const isLongRest = computed(() => {
+  const adjusted = clickCount.value - longRestDismissCount.value * 24;
+  if (adjusted <= 0) return false;
+  const pos = (adjusted - 1) % 24;
+  return pos === 23; // position 23 = click 24 of the day = long rest
 });
 
 const isIdle = computed(() =>
@@ -1089,6 +1135,88 @@ function handleForge({ type, scrapUsed }) {
     shieldBonus.value += upgrades;
     log(`⚒️ <span class="player-name">${playerName.value}</span> forged ${scrapUsed} scrap into +${upgrades} Defense Bonus.`);
   }
+}
+
+const settlementHasTavern = computed(() =>
+  (settlement.value?.buildings ?? []).some(b => b.type === "tavern")
+);
+
+async function handleBreweryUpdate(newState) {
+  if (!settlementId.value || !settlement.value) return;
+  await saveBreweryState(settlementId.value, newState);
+}
+
+function handleBreweryIngredientToBackpack({ key, qty }) {
+  const road = inventory.value.roadIngredients ?? {};
+  road[key] = (road[key] ?? 0) + qty;
+  inventory.value.roadIngredients = { ...road };
+  log(`🌿 Added ${qty}× ${key.replace(/_/g, " ")} to your backpack.`);
+}
+
+function handleBreweryBeerToBackpack(beer) {
+  const beers = inventory.value.beers ?? [];
+  const existing = beers.find(b => b.name === beer.name && b.quality === beer.quality);
+  if (existing) {
+    existing.qty += beer.qty;
+  } else {
+    beers.push({ ...beer });
+  }
+  inventory.value.beers = [...beers];
+  log(`🍾 Added ${beer.qty}× "${beer.name}" to your backpack.`);
+}
+
+function handleBreweryListInTavern(beer) {
+  log(`🏰 "${beer.name}" listed in the tavern for ${beer.sellPrice}g each.`);
+}
+
+function handleUseBeer(idx) {
+  const beers = [...(inventory.value.beers ?? [])];
+  const beer = beers[idx];
+  if (!beer) return;
+  playerHP.value = Math.min(effectiveMaxHP.value, playerHP.value + beer.hp);
+  log(`🍺 You drink "${beer.name}" and restore ${beer.hp} HP.`);
+  if (beer.poisonClicks > 0) {
+    poisonedClicksLeft.value = (poisonedClicksLeft.value ?? 0) + beer.poisonClicks;
+    log(`☠ The swill courses through you — poisoned for ${beer.poisonClicks} clicks.`);
+  }
+  if (beer.qty > 1) beers[idx] = { ...beer, qty: beer.qty - 1 };
+  else beers.splice(idx, 1);
+  inventory.value.beers = beers;
+}
+
+const visitingTavernBeers = computed(() => {
+  const data = visitingSettlementData.value;
+  if (!data) return [];
+  const state = getBreweryStateFromBuildings(data.buildings ?? []);
+  return (state?.tavernStock ?? []).filter(b => b.qty > 0);
+});
+
+async function handleVisitorTavernBuy({ beer, idx }) {
+  if (playerGold.value < beer.sellPrice) return;
+  playerGold.value -= beer.sellPrice;
+  handleBreweryBeerToBackpack({ ...beer, qty: 1 });
+  log(`🍺 Bought "${beer.name}" from the tavern for ${beer.sellPrice}g.`);
+
+  // Update visiting settlement: decrement tavernStock, add gold to pending
+  const data = visitingSettlementData.value;
+  if (!data) return;
+  const brewState = getBreweryStateFromBuildings(data.buildings ?? []);
+  if (!brewState) return;
+  const tavernStock = [...(brewState.tavernStock ?? [])];
+  if (tavernStock[idx]) {
+    tavernStock[idx] = { ...tavernStock[idx], qty: tavernStock[idx].qty - 1 };
+    if (tavernStock[idx].qty <= 0) tavernStock.splice(idx, 1);
+  }
+  brewState.tavernStock = tavernStock;
+  // Save updated brewery state back to visiting settlement
+  const filtered = (data.buildings ?? []).filter(b => b.type !== "__brewery__");
+  const updatedBuildings = [...filtered, { type: "__brewery__", cellIndex: -1, breweryData: brewState }];
+  visitingSettlementData.value = { ...data, buildings: updatedBuildings };
+  await supabase.from("settlements").update({
+    buildings: updatedBuildings,
+    pending_gold: (data.pending_gold ?? 0) + beer.sellPrice,
+    updated_at: new Date().toISOString(),
+  }).eq("id", data.id);
 }
 
 function handleAugmentBuy(item) {
@@ -1493,7 +1621,7 @@ watch(encounter, (newVal, oldVal) => {
   }
 });
 
-function handleUseInventoryItem(itemType) {
+function handleUseInventoryItem(itemType, mapId) {
   if (itemType === "compass") {
     itemHandlers.useCompass();
   } else if (itemType === "healthPotion") {
@@ -1556,6 +1684,14 @@ function handleUseInventoryItem(itemType) {
     advanceQuestStep(0);
     showQuestNotification.value = true;
     setTimeout(() => { showQuestNotification.value = false; }, 6000);
+  } else if (itemType === "treasureMap") {
+    const maps = inventory.value.treasureMaps ?? [];
+    const map = maps.find((m) => m.id === mapId);
+    if (!map || map.opened) return;
+    map.opened = true;
+    inventory.value.treasureMaps = [...maps];
+    log(`🗺️ You break the wax seal and unroll the map. Your destination: <strong>${map.article.replace(/_/g, " ")}</strong>. Navigate there to claim your treasure.`);
+    closeInventoryModal();
   }
 }
 

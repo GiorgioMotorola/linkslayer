@@ -101,6 +101,9 @@
               <button class="build-popup-btn" :disabled="!props.canShortRest" :title="!props.canShortRest ? 'Already rested today' : ''" @click="$emit('short-rest')">Short Rest</button>
               <span v-if="!props.canShortRest" class="castle-rest-used">Already rested today</span>
             </template>
+            <template v-if="hasBrewerySetup && !props.readOnly">
+              <button class="build-popup-btn" @click="$emit('open-brewery')">Brewery</button>
+            </template>
             <div v-if="showPalette" class="build-popup">
               <div class="build-popup-title">Buildings</div>
               <button
@@ -137,6 +140,11 @@
 
       <!-- History book toggle -->
       <div class="settlement-history">
+        <div v-if="props.readOnly && props.tavernBeers?.length" class="tavern-visit-bar">
+          <button class="tavern-visit-btn" @click="$emit('open-tavern')">🍺 Visit Tavern</button>
+          <span class="tavern-visit-hint">{{ props.tavernBeers.length }} beer{{ props.tavernBeers.length !== 1 ? 's' : '' }} on tap</span>
+        </div>
+
         <div v-if="props.readOnly && settlement.abandoned && guardianBossName" class="challenge-blurb">
           <span class="challenge-blurb-text">A <strong>{{ guardianBossName }}</strong> guards these ruins.</span>
           <button
@@ -287,6 +295,8 @@ const BUILDING_STYLES = {
   apothecary:    { wall: "#f5f5f2", roof: "#E7EDE6", ink: "#020202" },
   general_store: { wall: "#f5f5f2", roof: "#E0E8EC", ink: "#020202" },
   horse_stable:  { wall: "#f5f5f2", roof: "#ECE4E0", ink: "#020202" },
+  farm:          { wall: "#f5f2e0", roof: "#D4822A", ink: "#020202" },
+  brewery:       { wall: "#f5f5f2", roof: "#8B6914", ink: "#020202" },
 };
 
 function drawCanvasBuilding(ctx, bx, by, wPx, hPx, type) {
@@ -415,6 +425,85 @@ function drawCanvasBuilding(ctx, bx, by, wPx, hPx, type) {
     return;
   }
 
+  // ── Farm (3×3) — barn + crop rows ─────────────────────────────────────────
+  if (type === "farm") {
+    const cfg2 = BUILDING_STYLES.farm;
+    const lw = Math.max(0.8, Math.min(wPx, hPx) * 0.010);
+    const pad = Math.max(2, Math.min(wPx, hPx) * 0.03);
+    ctx.strokeStyle = cfg2.ink; ctx.lineWidth = lw;
+
+    // Fence perimeter
+    ctx.strokeStyle = "#7a5020"; ctx.lineWidth = 1.2; ctx.setLineDash([3, 3]);
+    ctx.strokeRect(bx + pad, by + pad, wPx - pad * 2, hPx - pad * 2);
+    ctx.setLineDash([]);
+
+    // Barn (top-left 40% × 35%)
+    const barnW = wPx * 0.40, barnH = hPx * 0.35;
+    const barnX = bx + pad * 2, barnY = by + pad * 2;
+    const barnRoofH = barnH * 0.38;
+    ctx.fillStyle = cfg2.roof;
+    ctx.fillRect(barnX, barnY, barnW, barnRoofH);
+    ctx.fillStyle = cfg2.wall;
+    ctx.fillRect(barnX, barnY + barnRoofH, barnW, barnH - barnRoofH);
+    ctx.strokeStyle = cfg2.ink; ctx.lineWidth = lw;
+    ctx.strokeRect(barnX, barnY, barnW, barnH);
+    ctx.beginPath(); ctx.moveTo(barnX, barnY + barnRoofH); ctx.lineTo(barnX + barnW, barnY + barnRoofH); ctx.stroke();
+    // Barn door
+    const dw = barnW * 0.28, dh = barnH * 0.30;
+    ctx.fillStyle = "#5a3010";
+    ctx.fillRect(barnX + barnW * 0.36, barnY + barnH - dh, dw, dh);
+
+    // Crop field rows (rest of the area)
+    const fieldX = bx + pad * 2;
+    const fieldY = barnY + barnH + 4;
+    const fieldW = wPx - pad * 4;
+    const fieldH = hPx - (barnH + pad * 3) - 4;
+    ctx.fillStyle = "#e8e0a0";
+    ctx.fillRect(fieldX, fieldY, fieldW, fieldH);
+    ctx.strokeStyle = "#7a5010"; ctx.lineWidth = 0.6;
+    ctx.strokeRect(fieldX, fieldY, fieldW, fieldH);
+    // Crop rows
+    ctx.strokeStyle = "#5a3808"; ctx.lineWidth = 0.5;
+    const rowSpacing = Math.max(4, fieldH / 6);
+    for (let ry = fieldY + rowSpacing * 0.5; ry < fieldY + fieldH - 2; ry += rowSpacing) {
+      ctx.beginPath(); ctx.moveTo(fieldX + 3, ry); ctx.lineTo(fieldX + fieldW - 3, ry); ctx.stroke();
+    }
+    // Crop divider
+    const midX = fieldX + fieldW * 0.5;
+    ctx.lineWidth = 0.8;
+    ctx.beginPath(); ctx.moveTo(midX, fieldY + 2); ctx.lineTo(midX, fieldY + fieldH - 2); ctx.stroke();
+    return;
+  }
+
+  // ── Brewery (1×1) — squat building with barrel ─────────────────────────────
+  if (type === "brewery") {
+    const cfg2 = BUILDING_STYLES.brewery;
+    const lw = Math.max(0.8, Math.min(wPx, hPx) * 0.025);
+    const pad = Math.max(1, Math.min(wPx, hPx) * 0.06);
+    const ix = bx + pad, iy = by + pad, iw = wPx - pad * 2, ih = hPx - pad * 2;
+    const roofH = ih * 0.45;
+    // Building body
+    ctx.fillStyle = cfg2.wall;
+    ctx.fillRect(ix, iy + roofH, iw, ih - roofH);
+    ctx.fillStyle = cfg2.roof;
+    ctx.fillRect(ix, iy, iw, roofH);
+    ctx.strokeStyle = cfg2.ink; ctx.lineWidth = lw;
+    ctx.beginPath(); ctx.moveTo(ix, iy + roofH); ctx.lineTo(ix + iw, iy + roofH); ctx.stroke();
+    ctx.strokeRect(ix, iy, iw, ih);
+    // Small barrel in the lower half
+    const barlW = iw * 0.36, barlH = (ih - roofH) * 0.6;
+    const barlX = ix + iw * 0.32, barlY = iy + roofH + (ih - roofH) * 0.18;
+    ctx.fillStyle = "#8B5E3C";
+    ctx.fillRect(barlX, barlY, barlW, barlH);
+    ctx.strokeStyle = "#3a1808"; ctx.lineWidth = 0.7;
+    ctx.strokeRect(barlX, barlY, barlW, barlH);
+    // Barrel hoops
+    ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(barlX, barlY + barlH * 0.35); ctx.lineTo(barlX + barlW, barlY + barlH * 0.35); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(barlX, barlY + barlH * 0.65); ctx.lineTo(barlX + barlW, barlY + barlH * 0.65); ctx.stroke();
+    return;
+  }
+
   // ── Generic building ──────────────────────────────────────────────────────
   const pad = Math.max(1, Math.min(wPx, hPx) * 0.06);
   const ix = bx + pad, iy = by + pad, iw = wPx - pad * 2, ih = hPx - pad * 2;
@@ -527,9 +616,10 @@ const props = defineProps({
   canChallenge:        { type: Boolean, default: false },
   playerHasSettlement: { type: Boolean, default: false },
   clicksSince:  { type: Number, default: 0 },
+  tavernBeers:  { type: Array,   default: () => [] },
 });
 
-const emit = defineEmits(["close", "collect", "place-building", "remove-building", "change-terrain", "open-forge", "short-rest", "challenge-boss"]);
+const emit = defineEmits(["close", "collect", "place-building", "remove-building", "change-terrain", "open-forge", "open-brewery", "short-rest", "challenge-boss", "open-tavern"]);
 
 // ── Pulse animation state ───────────────────────────────────────────────────
 let pulseRafId = null;
@@ -592,6 +682,11 @@ const hasCastle = computed(() =>
   (props.settlement.buildings ?? []).some(b => b.type === "castle")
 );
 
+const hasBrewerySetup = computed(() =>
+  (props.settlement.buildings ?? []).some(b => b.type === "farm") &&
+  (props.settlement.buildings ?? []).some(b => b.type === "brewery")
+);
+
 const hoveredLabel = computed(() => {
   if (hoveredCell.value === null) return 'None';
   const i = hoveredCell.value;
@@ -604,6 +699,7 @@ const hoveredLabel = computed(() => {
 // ── Building size registry ──────────────────────────────────────────────────
 const BUILDING_SIZES = {
   castle: { w: 2, h: 2 },
+  farm:   { w: 3, h: 3 },
 };
 
 function buildingSize(type) { return BUILDING_SIZES[type] ?? { w: 1, h: 1 }; }
@@ -618,7 +714,7 @@ function isRoadConnected(cellIndex, type) {
 function buildingAt(cellIndex) {
   const col = cellIndex % COLS;
   const row = Math.floor(cellIndex / COLS);
-  return (props.settlement.buildings ?? []).find(b => {
+  return (props.settlement.buildings ?? []).filter(b => !b.type?.startsWith("__")).find(b => {
     const { w, h } = buildingSize(b.type);
     if (w === 1 && h === 1) return b.cellIndex === cellIndex;
     const bc = b.cellIndex % COLS;
@@ -629,7 +725,7 @@ function buildingAt(cellIndex) {
 
 // ── Pulse animation loop ────────────────────────────────────────────────────
 function hasDisconnectedStructures() {
-  return (props.settlement.buildings ?? []).some(b => {
+  return (props.settlement.buildings ?? []).filter(b => !b.type?.startsWith("__")).some(b => {
     const def = BUILDING_DEFS[b.type];
     return def?.category === "structure" && !isRoadConnected(b.cellIndex, b.type);
   });
@@ -907,13 +1003,15 @@ function drawGrid() {
   }
 
   // Pass 2b: buildings (each drawn once at its anchor)
+  const visibleBuildings = (props.settlement.buildings ?? []).filter(b => !b.type?.startsWith("__"));
+
   // Find the generator — first non-road, non-bridge structure placed
-  const generatorBuilding = (props.settlement.buildings ?? []).find(
+  const generatorBuilding = visibleBuildings.find(
     b => b.type !== "road" && b.type !== "bridge" && b.type !== "fence" && BUILDING_DEFS[b.type]?.category === "structure"
   ) ?? null;
 
   const drawn = new Set();
-  for (const building of (props.settlement.buildings ?? [])) {
+  for (const building of visibleBuildings) {
     if (drawn.has(building.cellIndex)) continue;
     drawn.add(building.cellIndex);
 
@@ -1041,7 +1139,7 @@ function drawGrid() {
     const blur  = 6 + 10 * pulse;
     let anyDisconnected = false;
     const drawnGlow = new Set();
-    for (const building of (props.settlement.buildings ?? [])) {
+    for (const building of visibleBuildings) {
       if (drawnGlow.has(building.cellIndex)) continue;
       drawnGlow.add(building.cellIndex);
       const def = BUILDING_DEFS[building.type];
@@ -1076,7 +1174,7 @@ function drawGrid() {
 
     // Collect all individual labels
     const labels = [];
-    for (const building of (props.settlement.buildings ?? [])) {
+    for (const building of visibleBuildings) {
       if (drawn.has(building.cellIndex)) continue;
       drawn.add(building.cellIndex);
       if (NO_LABEL.has(building.type)) continue;

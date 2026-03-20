@@ -188,6 +188,7 @@ const props = defineProps({
   longRestsUsed: Number,
   scrapMetal: { type: Number, default: 0 },
   restModalCount: Number,
+  isLongRest: { type: Boolean, default: false },
   specialTier: { type: Number, default: 1 },
   offeringPot: { type: Number, default: 0 },
   playerGold: { type: Number, default: 0 },
@@ -277,8 +278,8 @@ const longRestLabel = computed(() => {
 const longRestHp = computed(() => [20, 25, 30, 50][props.campTier] ?? 20);
 const longRestSpecials = computed(() => [1, 1, 2, 2][props.campTier] ?? 1);
 
-const shouldShowLongRest = computed(() => props.restModalCount % 2 === 0);
-const shouldShowShortRest = computed(() => props.restModalCount % 2 !== 0);
+const shouldShowLongRest = computed(() => props.isLongRest);
+const shouldShowShortRest = computed(() => !props.isLongRest);
 
 const overlayClass = computed(() => {
   if (shouldShowShortRest.value) return "overlay-campfire";

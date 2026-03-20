@@ -139,6 +139,24 @@ export const BUILDING_DEFS = {
     grantsForge: true,
     maxPerMap: 1,
   },
+  farm: {
+    name: "Farm",
+    emoji: "🌾",
+    cost: 80,
+    description: "A working farm. Grow ingredients for the brewery. Limit: 1 per settlement.",
+    category: "structure",
+    yieldType: null,
+    maxPerMap: 1,
+  },
+  brewery: {
+    name: "Brewery",
+    emoji: "🍺",
+    cost: 100,
+    description: "A brewery. Brew beer from farm ingredients. Requires a Farm. Limit: 1 per settlement.",
+    category: "structure",
+    yieldType: null,
+    maxPerMap: 1,
+  },
   tavern: {
     name: "Tavern",
     emoji: "🍺",
@@ -157,7 +175,7 @@ export const GRID_COLS = 20;
 export const GRID_ROWS = 16;
 
 // ── Building size registry (mirrors SettlementModal) ───────────────────────
-const BUILDING_SIZES_DEF = { castle: { w: 2, h: 2 } };
+const BUILDING_SIZES_DEF = { castle: { w: 2, h: 2 }, farm: { w: 3, h: 3 } };
 function buildingSizeDef(type) { return BUILDING_SIZES_DEF[type] ?? { w: 1, h: 1 }; }
 
 /**
@@ -174,6 +192,7 @@ export function isRoadConnected(cellIndex, type, buildings) {
   const structures = []; // non-road, non-bridge, in placement order
 
   for (const b of buildings) {
+    if (b.type.startsWith("__")) continue; // skip system/sentinel entries
     const { w, h } = buildingSizeDef(b.type);
     const cells = [];
     for (let dr = 0; dr < h; dr++)
@@ -256,8 +275,9 @@ export function computeYield(buildings, terrain, clicksSince) {
   let scrap = 0;
   let healthPotions = 0;
 
-  // Only road-connected structures contribute resources
+  // Only road-connected structures contribute resources (exclude system sentinels)
   const connected = buildings.filter(b => {
+    if (b.type.startsWith("__")) return false;
     const def = BUILDING_DEFS[b.type];
     if (def?.category !== "structure") return false;
     return isRoadConnected(b.cellIndex, b.type, buildings);

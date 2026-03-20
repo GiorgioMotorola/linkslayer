@@ -166,7 +166,6 @@ const skyTrackStyle = computed(() => ({
 
 const emit = defineEmits(["link-clicked", "open-map", "open-settlement"]);
 
-
 const articleHtml = ref("");
 const errorMessage = ref("");
 const isFadingOut = ref(false);

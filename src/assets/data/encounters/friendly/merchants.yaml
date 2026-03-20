@@ -19,14 +19,14 @@
   greeting: "As you push open the heavy wooden door, the warm, boisterous air of 'The Drunken Dragon Inn' washes over you. Laughter, clinking tankards, and the murmur of countless conversations fill the room. Travelers and dock workers alike are gathered, sharing tales and drinks. The barkeep nods a greeting from behind a polished counter."
   dialogueNodes:
     start:
-      text: "The Drunken Dragon Inn is a lively place. The smell of roasted meat and ale hangs heavy in the air."
+      text: "The Drunken Dragon Inn is a lively place. The smell of roasted meat and whisky hangs heavy in the air."
       options:
-        - text: Order a hearty ale and find a quiet corner to listen.
+        - text: Order a whisky and find a quiet corner to listen.
           effect: item
-          details: beer
+          details: whisky
           amount: 4
           healthAmount: 1
-          responseText: "You enjoy a fine, free ale, the blur of the drink helping you relax as you soak in the atmosphere. You feel a little healthier. The night passes peacefully."
+          responseText: "You knock back a free whisky, the warm blur of it helping you relax as you soak in the atmosphere. You feel a little healthier. The night passes peacefully."
           flow: close_encounter
         - text: Approach the rosy-cheeked dwarf at the end of the bar.
           flow: dialogue_branch
@@ -35,27 +35,27 @@
           flow: close_encounter
           responseText: You prefer the quiet of the road. You slip out, leaving the merriment behind.
     talk_to_mornik:
-      text: "You sidle up to the dwarf, who looks up with a grin. 'Well, hello there, stranger. Name's Mornik Ironaxe. Care for a drink? On me.' He shoves a tankard of potent-smelling brew into your hand."
+      text: "You sidle up to the dwarf, who looks up with a grin. 'Well, hello there, stranger. Name's Mornik Ironaxe. Care for a drink? On me.' He shoves a battered flask of something sharp-smelling into your hand."
       options:
         - text: "Accept Mornik's drink."
           effect: item
-          details: beer-health
+          details: whisky-health
           healthAmount: 1
           amount: 6
-          responseText: "You take a long swig of the free ale. It's strong, but surprisingly refreshing, and you feel a little healthier. Mornik claps you on the back."
+          responseText: "You take a long pull of the whisky. It's strong and burns going down, but there's warmth behind it. You feel a little healthier. Mornik claps you on the back."
           flow: dialogue_branch
           next_node_id: mornik_conversation
         - text: Politely decline the drink.
-          responseText: "Mornik shrugs. 'Suit yourself. More for me, then.' He goes back to his ale."
+          responseText: "Mornik shrugs. 'Suit yourself. More for me, then.' He takes a long pull from the flask himself."
           flow: close_encounter
     mornik_conversation:
-      text: "Mornik, now a fast friend, launches into a series of wild tales about his mining days, interrupted only by more rounds of drinks. The night blurs into a haze of laughter and increasingly improbable stories. You feel your head getting heavy..."
+      text: "Mornik, now a fast friend, launches into a series of wild tales about his mining days, interrupted only by more rounds of whisky. The night blurs into a haze of laughter and increasingly improbable stories. You feel your head getting heavy..."
       options:
         - text: "Try to keep up with Mornik's drinking."
-          effect: beer
+          effect: whisky
           amount: 10
           healthAmount: 1
-          responseText: "You match Mornik drink for drink. The world spins, and the last thing you remember is a loud dwarf singing about a pickaxe. You feel a tiny bit healthier from all the free ale."
+          responseText: "You match Mornik pull for pull. The world spins, and the last thing you remember is a loud dwarf singing about a pickaxe. You feel a tiny bit healthier from all the free whisky."
           flow: dialogue_branch
           next_node_id: wake_up_hangover
         - text: Ask Mornik about his life as a dwarf.
