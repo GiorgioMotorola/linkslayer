@@ -4,39 +4,39 @@ export const GROW_CLICKS = 24; // clicks for any ingredient to fully grow
 
 // 15 ingredients: Common (5g), Uncommon (10g), Rare (20g)
 export const INGREDIENTS = {
-  hops:        { name: "Hops",        tier: "common",   cost: 5,  tag: "bitter",  descriptor: "Hopped",      hpMod:  2, sellMod:  1, bottleMod: -1, yieldMin: 2, yieldMax: 3 },
-  ginger:      { name: "Ginger",      tier: "common",   cost: 5,  tag: "spicy",   descriptor: "Ginger",      hpMod:  3, sellMod:  1, bottleMod:  0, yieldMin: 2, yieldMax: 3 },
-  rye:         { name: "Rye",         tier: "common",   cost: 5,  tag: "grain",   descriptor: "Rye",         hpMod:  3, sellMod:  1, bottleMod:  0, yieldMin: 2, yieldMax: 3 },
-  nettles:     { name: "Nettles",     tier: "common",   cost: 5,  tag: "herbal",  descriptor: "Nettle",      hpMod:  3, sellMod:  1, bottleMod:  2, yieldMin: 2, yieldMax: 3 },
-  meadowsweet: { name: "Meadowsweet", tier: "common",   cost: 5,  tag: "floral",  descriptor: "Meadow",      hpMod:  3, sellMod:  3, bottleMod:  0, yieldMin: 2, yieldMax: 3 },
-  charcoal:    { name: "Charcoal",    tier: "common",   cost: 5,  tag: "smoky",   descriptor: "Charcoal",    hpMod:  2, sellMod:  1, bottleMod:  0, yieldMin: 2, yieldMax: 3 },
-  honey:       { name: "Honey",       tier: "uncommon", cost: 10, tag: "sweet",   descriptor: "Honey",       hpMod:  5, sellMod:  2, bottleMod:  0, yieldMin: 3, yieldMax: 4 },
-  elderflower: { name: "Elderflower", tier: "uncommon", cost: 10, tag: "floral",  descriptor: "Elderflower", hpMod:  2, sellMod:  3, bottleMod:  1, yieldMin: 3, yieldMax: 4 },
-  blackberry:  { name: "Blackberry",  tier: "uncommon", cost: 10, tag: "fruity",  descriptor: "Blackberry",  hpMod:  4, sellMod:  2, bottleMod:  1, yieldMin: 3, yieldMax: 4 },
-  juniper:     { name: "Juniper",     tier: "uncommon", cost: 10, tag: "bitter",  descriptor: "Juniper",     hpMod:  1, sellMod:  2, bottleMod:  0, yieldMin: 3, yieldMax: 4 },
-  chestnuts:   { name: "Chestnuts",   tier: "uncommon", cost: 10, tag: "nutty",   descriptor: "Chestnut",    hpMod:  2, sellMod:  2, bottleMod:  0, yieldMin: 3, yieldMax: 4 },
-  vanilla:     { name: "Vanilla",     tier: "rare",     cost: 20, tag: "sweet",   descriptor: "Vanilla",     hpMod:  4, sellMod:  3, bottleMod:  0, yieldMin: 3, yieldMax: 4 },
-  wild_yeast:  { name: "Wild Yeast",  tier: "rare",     cost: 20, tag: "wild",    descriptor: "Wild",        hpMod:  1, sellMod:  1, bottleMod:  3, yieldMin: 3, yieldMax: 4 },
-  oak_chips:   { name: "Oak Chips",   tier: "rare",     cost: 20, tag: "oaky",    descriptor: "Oak",         hpMod:  1, sellMod:  2, bottleMod: -1, yieldMin: 3, yieldMax: 4 },
-  pine_resin:  { name: "Pine Resin",  tier: "rare",     cost: 20, tag: "piney",   descriptor: "Pine",        hpMod:  1, sellMod:  1, bottleMod: -1, yieldMin: 3, yieldMax: 4 },
+  hops:        { name: "Hops",        tier: "common",   cost: 5,  tag: "bitter",  descriptor: "Hopped",      hpMod:  1, sellMod:  1, bottleMod: -1, yieldMin: 3, yieldMax: 5 },
+  ginger:      { name: "Ginger",      tier: "common",   cost: 5,  tag: "spicy",   descriptor: "Ginger",      hpMod:  1, sellMod:  1, bottleMod:  0, yieldMin: 3, yieldMax: 5 },
+  rye:         { name: "Rye",         tier: "common",   cost: 5,  tag: "grain",   descriptor: "Rye",         hpMod:  1, sellMod:  1, bottleMod:  0, yieldMin: 3, yieldMax: 5 },
+  nettles:     { name: "Nettles",     tier: "common",   cost: 5,  tag: "herbal",  descriptor: "Nettle",      hpMod:  2, sellMod:  1, bottleMod:  2, yieldMin: 3, yieldMax: 5 },
+  meadowsweet: { name: "Meadowsweet", tier: "common",   cost: 5,  tag: "floral",  descriptor: "Meadow",      hpMod:  1, sellMod:  3, bottleMod:  0, yieldMin: 3, yieldMax: 5 },
+  charcoal:    { name: "Charcoal",    tier: "common",   cost: 5,  tag: "smoky",   descriptor: "Charcoal",    hpMod:  1, sellMod:  1, bottleMod:  0, yieldMin: 3, yieldMax: 5 },
+  honey:       { name: "Honey",       tier: "uncommon", cost: 10, tag: "sweet",   descriptor: "Honey",       hpMod:  2, sellMod:  2, bottleMod:  0, yieldMin: 4, yieldMax: 6 },
+  elderflower: { name: "Elderflower", tier: "uncommon", cost: 10, tag: "floral",  descriptor: "Elderflower", hpMod:  1, sellMod:  3, bottleMod:  1, yieldMin: 4, yieldMax: 6 },
+  blackberry:  { name: "Blackberry",  tier: "uncommon", cost: 10, tag: "fruity",  descriptor: "Blackberry",  hpMod:  2, sellMod:  2, bottleMod:  1, yieldMin: 4, yieldMax: 6 },
+  juniper:     { name: "Juniper",     tier: "uncommon", cost: 10, tag: "bitter",  descriptor: "Juniper",     hpMod:  1, sellMod:  2, bottleMod:  0, yieldMin: 4, yieldMax: 6 },
+  chestnuts:   { name: "Chestnuts",   tier: "uncommon", cost: 10, tag: "nutty",   descriptor: "Chestnut",    hpMod:  1, sellMod:  2, bottleMod:  0, yieldMin: 4, yieldMax: 6 },
+  vanilla:     { name: "Vanilla",     tier: "rare",     cost: 20, tag: "sweet",   descriptor: "Vanilla",     hpMod:  2, sellMod:  3, bottleMod:  0, yieldMin: 5, yieldMax: 7 },
+  wild_yeast:  { name: "Wild Yeast",  tier: "rare",     cost: 20, tag: "wild",    descriptor: "Wild",        hpMod:  1, sellMod:  1, bottleMod:  3, yieldMin: 5, yieldMax: 7 },
+  oak_chips:   { name: "Oak Chips",   tier: "rare",     cost: 20, tag: "oaky",    descriptor: "Oak",         hpMod:  1, sellMod:  2, bottleMod: -1, yieldMin: 5, yieldMax: 7 },
+  pine_resin:  { name: "Pine Resin",  tier: "rare",     cost: 20, tag: "piney",   descriptor: "Pine",        hpMod:  1, sellMod:  1, bottleMod: -1, yieldMin: 5, yieldMax: 7 },
 };
 
 // 5 bases (purchased with gold, no inventory slot needed)
 export const BASES = {
-  pale_ale: { name: "Pale Ale", cost: 15, bottles: 8,  baseHP: 20, baseSell: 8  },
-  wheat:    { name: "Wheat",    cost: 12, bottles: 10, baseHP: 18, baseSell: 7  },
-  stout:    { name: "Stout",    cost: 20, bottles: 7,  baseHP: 25, baseSell: 10 },
-  ipa:      { name: "IPA",      cost: 18, bottles: 8,  baseHP: 22, baseSell: 9  },
-  sour:     { name: "Sour",     cost: 22, bottles: 7,  baseHP: 20, baseSell: 11 },
+  pale_ale: { name: "Pale Ale", cost: 15, bottles: 14, baseHP: 8,  baseSell: 5 },
+  wheat:    { name: "Wheat",    cost: 12, bottles: 16, baseHP: 7,  baseSell: 4 },
+  stout:    { name: "Stout",    cost: 20, bottles: 12, baseHP: 10, baseSell: 6 },
+  ipa:      { name: "IPA",      cost: 18, bottles: 14, baseHP: 9,  baseSell: 5 },
+  sour:     { name: "Sour",     cost: 22, bottles: 12, baseHP: 8,  baseSell: 6 },
 };
 
 // Quality zones based on click-delta since brew started
 export const QUALITY_ZONES = [
   { label: "Too Early",      min: 0,   max: 23,       canBottle: false, bottleMod:  0, hpMod:   0, sellMod:  0, isSwill: false },
-  { label: "Rough",          min: 24,  max: 35,       canBottle: true,  bottleMod: -2, hpMod:  -5, sellMod: -3, isSwill: false },
+  { label: "Rough",          min: 24,  max: 35,       canBottle: true,  bottleMod: -2, hpMod:  -3, sellMod: -3, isSwill: false },
   { label: "Decent",         min: 36,  max: 45,       canBottle: true,  bottleMod: -1, hpMod:   0, sellMod: -1, isSwill: false },
-  { label: "Perfect",        min: 46,  max: 55,       canBottle: true,  bottleMod:  0, hpMod:   5, sellMod:  3, isSwill: false },
-  { label: "Over-Fermented", min: 56,  max: 65,       canBottle: true,  bottleMod: -1, hpMod:  -3, sellMod: -2, isSwill: false },
+  { label: "Perfect",        min: 46,  max: 55,       canBottle: true,  bottleMod:  0, hpMod:   3, sellMod:  3, isSwill: false },
+  { label: "Over-Fermented", min: 56,  max: 65,       canBottle: true,  bottleMod: -1, hpMod:  -2, sellMod: -2, isSwill: false },
   { label: "Swill",          min: 66,  max: Infinity, canBottle: true,  bottleMod: -4, hpMod: -15, sellMod: -5, isSwill: true  },
 ];
 
@@ -48,11 +48,11 @@ export function getQualityZone(clickDelta) {
 // Synergy rules (tag-pair → bonus)
 export const SYNERGY_RULES = [
   { tags: ["bitter", "bitter"],  name: "Double Bitter",    sellMod: 5, hpMod: 3, bottleMod: 0 },
-  { tags: ["sweet",  "sweet"],   name: "Candied",          sellMod: 4, hpMod: 5, bottleMod: 0 },
+  { tags: ["sweet",  "sweet"],   name: "Candied",          sellMod: 4, hpMod: 3, bottleMod: 0 },
   { tags: ["floral", "floral"],  name: "Bloom",            sellMod: 6, hpMod: 2, bottleMod: 0 },
   { tags: ["bitter", "sweet"],   name: "Balanced",         sellMod: 2, hpMod: 3, bottleMod: 0 },
   { tags: ["spicy",  "bitter"],  name: "Fire & Brimstone", sellMod: 3, hpMod: 4, bottleMod: 0 },
-  { tags: ["fruity", "sweet"],   name: "Orchard",          sellMod: 4, hpMod: 5, bottleMod: 0 },
+  { tags: ["fruity", "sweet"],   name: "Orchard",          sellMod: 4, hpMod: 3, bottleMod: 0 },
   { tags: ["smoky",  "oaky"],    name: "Barrel Smoked",    sellMod: 5, hpMod: 2, bottleMod: 1 },
   { tags: ["herbal", "floral"],  name: "Garden Brew",      sellMod: 4, hpMod: 3, bottleMod: 0 },
   { tags: ["grain",  "grain"],   name: "Double Grain",     sellMod: 2, hpMod: 0, bottleMod: 1 },
@@ -62,7 +62,7 @@ export const SYNERGY_RULES = [
 ];
 
 // Wild synergy fires when either adjunct is "wild"
-export const WILD_SYNERGY = { name: "Wild-Fermented", sellMod: -2, hpMod: 6, bottleMod: 0 };
+export const WILD_SYNERGY = { name: "Wild-Fermented", sellMod: -2, hpMod: 4, bottleMod: 0 };
 
 export function findSynergy(adj1Key, adj2Key) {
   if (!adj1Key || !adj2Key) return null;
