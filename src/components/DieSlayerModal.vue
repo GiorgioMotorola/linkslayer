@@ -1,7 +1,7 @@
 <template>
   <div class="die-slayer-overlay">
     <div class="die-slayer-modal">
-
+      <img :src="dieSlayerImg" class="modal-banner-img" alt="" />
       <div class="ds-title">
         ⚔ Die Slayer
         <span class="ds-gold-display">💰 {{ playerGold }}g</span>
@@ -217,6 +217,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
+
+const dieSlayerImg = new URL("../assets/dieslayer-img.jpg", import.meta.url).href;
 
 const props = defineProps({
   playerGold: { type: Number, required: true },

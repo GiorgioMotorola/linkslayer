@@ -1,7 +1,7 @@
 <template>
   <div class="tshop-overlay" @click.self="$emit('close')">
     <div class="tshop-modal">
-
+      <img :src="fenceImg" class="modal-banner-img" alt="" />
       <div class="tshop-header">
         <div class="tshop-title">THE FENCE</div>
         <div class="tshop-gold">{{ playerGold }} Gold</div>
@@ -137,6 +137,8 @@
 import { ref } from "vue";
 import { shopItems } from "@/utils/shopItems";
 
+const fenceImg = new URL("../assets/fence-img.png", import.meta.url).href;
+
 const props = defineProps({
   campTier:               { type: Number, default: 0 },
   playerGold:             { type: Number, default: 0 },
@@ -182,6 +184,14 @@ function isAugOwned(type, key) {
   box-shadow: -10px 0 50px rgba(0,0,0,0.75);
   overflow: hidden;
   font-family: "IBM Plex Sans", sans-serif;
+}
+
+.modal-banner-img {
+  display: block;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .tshop-modal {

@@ -146,6 +146,7 @@
         </div>
 
         <div v-if="props.readOnly && settlement.abandoned && guardianBossName" class="challenge-blurb">
+          <img :src="ruinsImg" class="ruins-banner-img" alt="" />
           <span class="challenge-blurb-text">A <strong>{{ guardianBossName }}</strong> guards these ruins.</span>
           <button
             class="challenge-boss-btn"
@@ -242,6 +243,8 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { BUILDING_DEFS, TERRAIN_PAINTS, computeYield, isRoadConnected as _isRoadConnected, GRID_COLS, GRID_ROWS } from "@/utils/buildingDefs.js";
 import { SETTLEMENT_BOSS_DEFS } from "@/utils/settlementBossGenerator.js";
+
+const ruinsImg = new URL("../assets/ruins-img.jpg", import.meta.url).href;
 
 const CELL_SIZE = 32;
 const COLS = GRID_COLS;

@@ -1,7 +1,7 @@
 <template>
   <div class="shop-overlay" @click.self="$emit('close')">
     <div class="shop-modal">
-      
+      <img :src="shopImg" class="modal-banner-img" alt="" />
       <div class="shop-header">
         <div class="shop-title">THE SHOP</div>
         <div class="shop-gold">{{ playerGold }} Gold</div>
@@ -56,6 +56,8 @@
 <script setup>
 import { ref } from "vue";
 // import "./styles/shopModalStyles.css";
+
+const shopImg = new URL("../assets/shop-img.jpg", import.meta.url).href;
 
 const props = defineProps({
   playerGold: Number,
@@ -116,6 +118,14 @@ function showToast(message, isError = false) {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.modal-banner-img {
+  display: block;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .shop-header {

@@ -1,6 +1,5 @@
-import { nextTick } from "vue";
 import { getRandomBoss, isBoss } from "@/utils/bossGenerator";
-import { rollEncounter, generateEnemy, npcData, loreData } from "@/utils/encounterGenerator";
+import { rollEncounter, npcData, loreData } from "@/utils/encounterGenerator";
 import { shopItems } from "@/utils/shopItems";
 
 const DOG_EXCLUDED = new Set([
@@ -219,30 +218,36 @@ export async function handleClick({
         utilityFunctions.log(`${lore.text}`);
       }
     } else if (roll.type === "combat") {
-      const enemy = roll.enemy;
+      const enemies = roll.enemies;
+      const enemy = enemies?.[0];
       if (!enemy) {
         console.warn("Could not generate enemy, skipping combat encounter.");
       } else {
-        fullEncounter = roll;
+        fullEncounter = { ...roll, targetIndex: 0, enemy };
         enemyState.enemyHP.value = enemy.currentHP;
         enemyState.currentEnemy.value = enemy;
         playerState.combatEncountersFought.value++;
-      }
 
-      enemyState.nextEnemyAttack.value =
-        Math.floor(Math.random() * (enemy.maxDamage - enemy.minDamage + 1)) +
-        enemy.minDamage;
-      enemyState.enemyNextAction.value = "attack";
+        enemyState.nextEnemyAttack.value =
+          Math.floor(Math.random() * (enemy.maxDamage - enemy.minDamage + 1)) +
+          enemy.minDamage;
+        enemyState.enemyNextAction.value = "attack";
+      }
     }
 
     if (fullEncounter) {
       enemyState.encounter.value = fullEncounter;
 
       if (fullEncounter.type === "combat") {
+        const groupSize = fullEncounter.enemies?.length ?? 1;
+        const enemyName = fullEncounter.enemy.name ?? "Enemy";
+        const enemyLabel = groupSize > 1
+          ? `<strong>${enemyName}s</strong>`
+          : `a <strong>${enemyName}</strong>`;
         utilityFunctions.log(
-          `🗡️ You've been attacked by <strong>${
+          `🗡️ You've been attacked near <strong>${
             gameData.formattedTitle.value
-          }</strong> ${fullEncounter.enemy.name ?? ""}. What do you do?`
+          }</strong> by ${enemyLabel}. What do you do?`
         );
         utilityFunctions.logEnemyAction(enemyState.enemyNextAction, enemyState.nextEnemyAttack);
       }

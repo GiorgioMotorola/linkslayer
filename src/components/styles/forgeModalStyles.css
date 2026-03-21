@@ -22,6 +22,15 @@
   transform: translateX(100%);
 }
 
+.modal-banner-img {
+  display: block;
+  width: calc(100% + 3.2rem);
+  margin: -1.4rem -1.6rem 1rem -1.6rem;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 0;
+}
+
 .forge-modal {
   background: rgba(14, 8, 3, 0.98);
   border-left: 1px solid rgba(148, 92, 28, 0.3);

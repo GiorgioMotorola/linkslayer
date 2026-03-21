@@ -1,6 +1,7 @@
 <template>
   <div class="forge-overlay" @click.self="$emit('close')">
     <div class="forge-modal">
+      <img :src="forgeImg" class="modal-banner-img" alt="" />
       <div class="forge-title">⚒️ The Forge</div>
 
       <div class="forge-scrap">
@@ -115,6 +116,8 @@
 
 <script setup>
 import { ref, computed } from "vue";
+
+const forgeImg = new URL("../assets/forge-img.png", import.meta.url).href;
 
 const AUGMENT_LABELS = {
   bleedEdge:    "Serrated Edge",

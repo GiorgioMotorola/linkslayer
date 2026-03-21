@@ -1,4 +1,4 @@
-import { generateEnemy } from "@/utils/encounterGenerator";
+import { generateEnemy, generateEnemyGroup } from "@/utils/encounterGenerator";
 import { generateMiniBoss } from "@/utils/miniBossGenerator";
 import { getRandomTreasureMapArticle } from "@/utils/treasureMapArticles";
 
@@ -437,6 +437,23 @@ export function handleEncounterOption({
     return;
   }
 
+  if (option.result === "days_increase") {
+    const amount = Number(option.amount) || 50;
+    const { daysCount, playerName } = playerState;
+    const { log } = utilityFunctions;
+    if (daysCount) {
+      daysCount.value += amount;
+    }
+    log(`⏳ <span class="player-name">${playerName.value}</span> lost ${amount} days to the suspended sands.`);
+    if (option.responseText && canShowFinalScene) {
+      showFinalScene(option.responseText, currentEncounter, enemyState);
+    } else {
+      enemyState.encounter.value = null;
+      modalState.bossOverlay.value = false;
+    }
+    return;
+  }
+
   if (option.flow === "close_encounter") {
     if (option.responseText && canShowFinalScene) {
       showFinalScene(option.responseText, currentEncounter, enemyState);
@@ -448,7 +465,8 @@ export function handleEncounterOption({
   }
 
   if (option.result === "combat") {
-    const enemy = generateEnemy();
+    const enemies = generateEnemyGroup();
+    const enemy = enemies?.[0];
     if (!enemy) {
       console.warn("Could not generate enemy from option, skipping combat.");
       enemyState.encounter.value = null;
@@ -458,7 +476,9 @@ export function handleEncounterOption({
 
     enemyState.encounter.value = {
       type: "combat",
-      enemy: enemy,
+      enemies,
+      targetIndex: 0,
+      enemy,
     };
     enemyState.enemyHP.value = enemy.currentHP;
     enemyState.nextEnemyAttack.value =
@@ -466,10 +486,13 @@ export function handleEncounterOption({
       enemy.minDamage;
     enemyState.enemyNextAction.value = "attack";
     playerState.combatEncountersFought.value++;
+    const groupSize = enemies.length;
+    const enemyName = enemy.name ?? "Enemy";
+    const enemyLabel = groupSize > 1
+      ? `<strong>${enemyName}s</strong>`
+      : `a <strong>${enemyName}</strong>`;
     utilityFunctions.log(
-      `🗡️ Your choice has resulted in combat and you have been attacked by <strong>${
-        gameData.formattedTitle
-      }</strong> ${enemy.name ?? ""}. What do you do?`
+      `🗡️ Your choice has led to combat — you are attacked by ${enemyLabel}. What do you do?`
     );
     return;
   }

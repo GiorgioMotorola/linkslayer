@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { classes } from "@/utils/classes";
 import { isBoss } from "@/utils/bossGenerator";
 import { handleCombatAction } from "@/utils/combat";
@@ -111,6 +111,15 @@ export function useGameHandlers(deps) {
     decideEnemyAction,
     handleCloseEncounter,
   } = combat;
+
+  // Keep encounter.enemies[targetIndex].currentHP in sync with enemyHP ref
+  watch(enemyHP, (newHP) => {
+    const enc = encounter.value;
+    if (enc?.enemies) {
+      const idx = enc.targetIndex ?? 0;
+      if (enc.enemies[idx]) enc.enemies[idx].currentHP = newHP;
+    }
+  });
 
   const counterResult = ref(null);
 
@@ -237,6 +246,59 @@ export function useGameHandlers(deps) {
         enemyNextAction.value = null;
       }, 1400);
     }, victoryDelay);
+  }
+
+  function onEnemyKilled(defeatedEnemyData) {
+    const enc = encounter.value;
+    if (!enc?.enemies) {
+      // Single-enemy or boss — use old victory path
+      onVictory();
+      return;
+    }
+
+    // Mark the targeted enemy as dead
+    const targetIdx = enc.targetIndex ?? 0;
+    enc.enemies[targetIdx].currentHP = 0;
+
+    // Find next alive enemy
+    const nextIdx = enc.enemies.findIndex((e, i) => i !== targetIdx && e.currentHP > 0);
+    if (nextIdx === -1) {
+      // All enemies dead — full victory
+      onVictory();
+      return;
+    }
+
+    // Clear the dead enemy's telegraphed action immediately
+    enemyNextAction.value = null;
+    nextEnemyAttack.value = null;
+
+    // Switch to next alive enemy — mutate in place to avoid triggering encounter watchers
+    const nextEnemy = enc.enemies[nextIdx];
+    const victoryDelay = isDiceAnimating
+      ? DICE_TICKS * DICE_TICK_MS + DISPLAY_MS
+      : DISPLAY_MS;
+    setTimeout(() => {
+      encounter.value.targetIndex = nextIdx;
+      encounter.value.enemy = nextEnemy;
+      enemyHP.value = nextEnemy.currentHP;
+      log(`⚔️ <span class="player-name">${playerName.value}</span> now faces ${nextEnemy.name}!`);
+      gotoEnemyTurn();
+    }, victoryDelay);
+  }
+
+  function handleSwitchTarget(newIndex) {
+    const enc = encounter.value;
+    if (!enc?.enemies) return;
+    const target = enc.enemies[newIndex];
+    if (!target || target.currentHP <= 0) return;
+    // Mutate in place — avoid replacing the ref value which triggers watchers
+    encounter.value.targetIndex = newIndex;
+    encounter.value.enemy = target;
+    enemyHP.value = target.currentHP;
+    enemyNextAction.value = "attack";
+    nextEnemyAttack.value =
+      Math.floor(Math.random() * (target.maxDamage - target.minDamage + 1)) +
+      target.minDamage;
   }
 
   function onCombatResult({ type, amount }) {
@@ -451,6 +513,7 @@ export function useGameHandlers(deps) {
         onCombatResult,
         onCounterResult,
         onVictory,
+        onEnemyKilled,
         onFleeSuccess,
       },
       itemEffects: {
@@ -517,6 +580,7 @@ export function useGameHandlers(deps) {
         shortcutsUsedCount,
         inventory,
         effectiveMaxHP: effectiveMaxHP.value,
+        daysCount,
       },
       gameData: {
         chain,
@@ -673,5 +737,6 @@ export function useGameHandlers(deps) {
     counterResult,
     daysCount,
     playerEnrageCharges,
+    handleSwitchTarget,
   };
 }

@@ -50,9 +50,14 @@
   <CombatOverlay
     :inEncounter="props.isInCombat"
     :playerClass="props.playerClass"
+    :playerHP="props.playerHP"
+    :playerMaxHP="props.playerMaxHP"
+    :enemyHP="props.enemyHP"
     :articleTitle="props.articleTitle"
     :lastDamageDealt="props.lastDamageDealt"
     :lastDamageTaken="props.lastDamageTaken"
+    :encounter="props.encounter"
+    @switch-target="$emit('switch-target', $event)"
   />
   <div class="article" :class="{ 'blurred-content': isBlurred || props.isInCombat }">
     <div v-if="inEncounter" class="overlay"></div>
@@ -92,12 +97,14 @@ const props = defineProps({
   playerClass: { type: Object, default: null },
   isInCombat: { type: Boolean, default: false },
   playerHP: { type: Number, default: 0 },
+  playerMaxHP: { type: Number, default: 1 },
   enemyHP: { type: Number, default: 0 },
   lastDamageDealt: { type: Number, default: null },
   lastDamageTaken: { type: Number, default: null },
   enemyStatusEffects: { type: Array, default: () => [] },
   settlementOnThisPage: { type: Object, default: null },
   settlementClaimedBy:  { type: String, default: "" },
+  encounter: { type: Object, default: null },
 });
 
 function dayWeather(day) {
@@ -164,7 +171,7 @@ const skyTrackStyle = computed(() => ({
   background: `radial-gradient(ellipse 15% 100% at ${skyPercent.value}% 50%, ${skyColor.value}, transparent), #1a1a1a`
 }));
 
-const emit = defineEmits(["link-clicked", "open-map", "open-settlement"]);
+const emit = defineEmits(["link-clicked", "open-map", "open-settlement", "switch-target"]);
 
 const articleHtml = ref("");
 const errorMessage = ref("");

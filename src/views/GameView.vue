@@ -66,6 +66,7 @@
     :autoSaveFeedback="autoSaveFeedback"
     :scrapMetal="inventory.scrapMetal"
     @restart="handleRestart"
+    @switch-target="handleSwitchTarget"
   />
 
   <Transition name="sleep-fade">
@@ -173,6 +174,7 @@
         @link-clicked="handleLinkClicked"
         @open-map="hubOpen = true; hubTab = 'map'"
         @open-settlement="openPageSettlement"
+        @switch-target="handleSwitchTarget"
         :path="path"
         :fullChain="chain"
         :currentTargetIndex="currentTargetIndex"
@@ -184,10 +186,12 @@
         :playerClass="playerClass"
         :isInCombat="isInCombat"
         :playerHP="playerHP"
+        :playerMaxHP="effectiveMaxHP"
         :enemyHP="enemyHP"
         :lastDamageDealt="lastDamageDealt"
         :lastDamageTaken="lastDamageTaken"
         :enemyStatusEffects="enemyStatusEffects"
+        :encounter="encounter"
       />
 
       <Transition name="rest-backdrop">
@@ -960,6 +964,7 @@ const {
   counterResult,
   daysCount,
   playerEnrageCharges,
+  handleSwitchTarget,
 } = useGameHandlers({
   gameFlow,
   log,
@@ -1177,6 +1182,7 @@ function handleUseBeer(idx) {
   log(`🍺 You drink "${beer.name}" and restore ${beer.hp} HP.`);
   if (beer.poisonClicks > 0) {
     poisonedClicksLeft.value = (poisonedClicksLeft.value ?? 0) + beer.poisonClicks;
+    poisonDamagePerClick.value = 1;
     log(`☠ The swill courses through you — poisoned for ${beer.poisonClicks} clicks.`);
   }
   if (beer.qty > 1) beers[idx] = { ...beer, qty: beer.qty - 1 };

@@ -374,14 +374,13 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       log(`💠 Soul Shard pulses — you recover ${soulHeal} HP from the fallen.`);
     }
     const defeatedEnemyData = encounter.value?.enemy;
-    utils.onVictory?.(defeatedEnemyData);
+    utils.onEnemyKilled?.(defeatedEnemyData);
     handleLootDrop(defeatedEnemyData);
 
     if (enemiesKilled) enemiesKilled.value++;
     combatWinsSinceLastCapIncrease.value++;
     if (combatWinsSinceLastCapIncrease.value >= 5) {
       hpCapBonus.value += 10;
-
       log(
         `🎉 You have gained experience from defeating the evil in this land and your maximum HP increased by <strong>10</strong>. New max HP: ${effectiveMaxHP.value}`
       );
@@ -544,7 +543,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       if (enemyHP.value <= 0) {
         log(`💀 <span class="player-name">${playerName.value}</span> defeated ${formattedTitle} with Thornplate!`);
         const defeatedEnemyData = encounter.value?.enemy;
-        utils.onVictory?.(defeatedEnemyData);
+        utils.onEnemyKilled?.(defeatedEnemyData);
         handleLootDrop(defeatedEnemyData);
         if (enemiesKilled) enemiesKilled.value++;
         combatWinsSinceLastCapIncrease.value++;
@@ -584,6 +583,33 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     clearTimer();
     setDefeated();
     return;
+  }
+
+  // One other enemy in the group auto-attacks for max 3 damage
+  const enc = encounter.value;
+  if (enc?.enemies && enc.enemies.length > 1) {
+    const targetIdx = enc.targetIndex ?? 0;
+    const sidekick = enc.enemies.find((e, i) => i !== targetIdx && e.currentHP > 0);
+    if (sidekick) {
+      const other = sidekick;
+      const rawDmg = Math.min(Math.floor(Math.random() * (other.maxDamage - other.minDamage + 1)) + other.minDamage, 3);
+      const reduced = Math.max(0, rawDmg - Math.floor(shieldBonus.value / 2.333));
+      playerHP.value = Math.max(playerHP.value - reduced, 0);
+      if (reduced > 0) {
+        utils.onCombatResult?.({ type: "taken", amount: reduced });
+        if (playerEnrageCharges) {
+          playerEnrageCharges.value = Math.min(3, playerEnrageCharges.value + 1);
+        }
+      }
+      log(`💥 ${other.name} also strikes <span class="player-name">${playerName.value}</span> for ${reduced} damage.`);
+      if (playerHP.value <= 0) {
+        log(`💀 <span class="player-name">${playerName.value}</span> was defeated.`);
+        encounter.value = null;
+        clearTimer();
+        setDefeated();
+        return;
+      }
+    }
   }
 
   const counterableActions = ["steal", "enrage", "confuse", "summon"];

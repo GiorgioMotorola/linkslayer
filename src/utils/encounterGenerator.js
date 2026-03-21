@@ -34,14 +34,23 @@ export function rollEncounter(difficultyLevel) {
   }
 
   // Combat (all other rolls)
+  const enemies = generateEnemyGroup(difficultyLevel);
   return {
     type: "combat",
-    enemy: generateEnemy(difficultyLevel),
+    enemies,
+    targetIndex: 0,
+    enemy: enemies[0],
   };
 }
 
-export function generateEnemy(difficultyLevel = 0) {
+export function generateEnemyGroup(difficultyLevel = 0) {
+  const count = Math.floor(Math.random() * 5) + 1;
   const enemyData = ENEMY_TYPES[Math.floor(Math.random() * ENEMY_TYPES.length)];
+  return Array.from({ length: count }, () => generateEnemy(difficultyLevel, enemyData));
+}
+
+export function generateEnemy(difficultyLevel = 0, enemyData = null) {
+  if (!enemyData) enemyData = ENEMY_TYPES[Math.floor(Math.random() * ENEMY_TYPES.length)];
 
   const scaledMinHP = enemyData.minHP + 2 * difficultyLevel;
   const scaledMaxHP = enemyData.maxHP + 2 * difficultyLevel;
@@ -55,6 +64,7 @@ export function generateEnemy(difficultyLevel = 0) {
   return {
     ...enemyData,
     currentHP: hp,
+    maxHP: hp,
     minDamage: scaledMinDamage,
     maxDamage: scaledMaxDamage,
   };

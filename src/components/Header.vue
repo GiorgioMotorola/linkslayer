@@ -6,28 +6,6 @@
     <transition name="encounter-fade" mode="out-in">
       <div v-if="encounter" class="encounter-dashboard">
         <div v-if="encounter.type === 'combat'">
-          <div class="combat-hp-bar">
-            <div class="combat-hp-player" :class="{ 'hp-counting': isPlayerHpAnimating }">
-              ❤️ {{ displayedPlayerHP }}
-              <transition name="delta-fade">
-                <span v-if="lastDamageTaken" class="hp-delta hp-delta-taken">-{{ lastDamageTaken }}</span>
-              </transition>
-            </div>
-            <div class="combat-hp-vs">⚔️</div>
-            <div class="combat-hp-enemy" :class="{ 'hp-counting': isEnemyHpAnimating }">
-              💀 {{ displayedEnemyHP }}
-              <span
-                v-for="fx in enemyStatusIcons"
-                :key="fx.key"
-                class="enemy-status-icon"
-                :class="{ 'status-icon-new': flashingStatusKeys.has(fx.key) }"
-                :title="fx.label"
-              >{{ fx.icon }}</span>
-              <transition name="delta-fade">
-                <span v-if="lastDamageDealt" class="hp-delta hp-delta-dealt">-{{ lastDamageDealt }}</span>
-              </transition>
-            </div>
-          </div>
           <div class="attack-line" v-html="typedLine"></div>
 
           <Teleport to="body">
@@ -432,6 +410,7 @@ const emit = defineEmits([
   "show-tips",
   "use-compass",
   "open-hub",
+  "switch-target",
 ]);
 
 const { user: authUser, signIn, signUp, signOut } = useAuth();
@@ -680,34 +659,6 @@ const badgeBottomStyle = computed(() => ({
   bottom: `${headerHeight.value + 8}px`,
 }));
 
-const enemyStatusIcons = computed(() => {
-  const effects = props.enemyStatusEffects ?? [];
-  const icons = [];
-  if (effects.some(e => e.type === "bleed"))   icons.push({ icon: "🩸", key: "bleed",   label: "Bleeding" });
-  if (effects.some(e => e.type === "poison"))  icons.push({ icon: "☠️", key: "poison",  label: "Poisoned" });
-  if (effects.some(e => e.type === "fire"))    icons.push({ icon: "🔥", key: "fire",    label: "On Fire" });
-  if (effects.some(e => e.type === "weaken"))  icons.push({ icon: "💫", key: "weaken",  label: "Weakened" });
-  if (effects.some(e => e.type === "chill"))   icons.push({ icon: "❄️", key: "chill",   label: "Chilled" });
-  return icons;
-});
-
-// Flash animation tracking for newly applied status effects
-const flashingStatusKeys = ref(new Set());
-
-watch(() => props.enemyStatusEffects, (newEffects, oldEffects) => {
-  const oldTypes = new Set((oldEffects ?? []).map(e => e.type));
-  const newTypes = new Set(newEffects.map(e => e.type));
-  for (const type of newTypes) {
-    if (!oldTypes.has(type)) {
-      flashingStatusKeys.value = new Set([...flashingStatusKeys.value, type]);
-      setTimeout(() => {
-        const next = new Set(flashingStatusKeys.value);
-        next.delete(type);
-        flashingStatusKeys.value = next;
-      }, 700);
-    }
-  }
-}, { deep: true });
 
 const diceRollBadgeStyle = computed(() => ({
   bottom: `${headerHeight.value + 8 + 62}px`,
@@ -807,12 +758,20 @@ const playerSpecialAbilityName = computed(() => {
   return tierData?.name ?? props.playerClass?.special ?? "Special";
 });
 
+const otherEnemiesNote = computed(() => {
+  const enc = props.encounter;
+  if (!enc?.enemies || enc.enemies.length <= 1) return "";
+  const alive = enc.enemies.filter((e, i) => i !== enc.targetIndex && e.currentHP > 0);
+  if (alive.length === 0) return "";
+  return ` (+${alive.length} other${alive.length > 1 ? 's' : ''} auto-attack)`;
+});
+
 const enemyIntentMessage = computed(() => {
   if (!props.enemyNextAction) return "";
 
   switch (props.enemyNextAction) {
     case "attack":
-      return `Enemy attacking for ${props.nextEnemyAttack} dmg`;
+      return `Enemy attacking for ${props.nextEnemyAttack} dmg${otherEnemiesNote.value}`;
     case "defend":
       return "Enemy defending";
     case "flee":
@@ -996,12 +955,22 @@ watch(
 
 watch(
   () => props.encounter,
-  (newEncounter) => {
+  (newEncounter, oldEncounter) => {
     if (!newEncounter) {
       typedLine.value = "";
       typedGreeting.value = "";
       clearInterval(typeInterval);
       currentDialogueNodeId.value = null;
+      return;
+    }
+
+    // Skip re-firing the combat message when just switching targets within the same group
+    if (
+      newEncounter?.type === "combat" &&
+      oldEncounter?.type === "combat" &&
+      newEncounter?.enemies != null &&
+      newEncounter.enemies === oldEncounter?.enemies
+    ) {
       return;
     }
 
@@ -1054,11 +1023,12 @@ watch(
           props.formattedTitle ?? "an unknown location"
         }</strong>. (HP: ${newEncounter.enemy.currentHP}) What do you do?`;
       } else {
+        const _groupSize = newEncounter.enemies?.length ?? 1;
+        const _enemyName = newEncounter.enemy.name ?? "Unknown Enemy";
+        const _enemyLabel = _groupSize > 1 ? `${_enemyName}s` : _enemyName;
         let baseCombatMessage = `🗡️ You've been attacked by <strong>${
           props.formattedTitle ?? "an unknown location"
-        }</strong> ${newEncounter.enemy.name ?? "Unknown Enemy"}. (HP: ${
-          newEncounter.enemy.currentHP
-        }) What do you do?`;
+        }</strong> ${_enemyLabel}. (HP: ${newEncounter.enemy.currentHP}) What do you do?`;
 
         if (newEncounter.enemy?.message) {
           fullText = `${baseCombatMessage}<br><br>${newEncounter.enemy.message}`;
@@ -1172,11 +1142,21 @@ watch(longRestsUsedCount, (newVal, oldVal) => {
 
 watch(
   () => props.encounter,
-  (newEncounter) => {
+  (newEncounter, oldEncounter) => {
     if (!newEncounter) {
       typedLine.value = "";
       typedGreeting.value = "";
       clearInterval(typeInterval);
+      return;
+    }
+
+    // Skip re-firing the combat message when just switching targets within the same group
+    if (
+      newEncounter?.type === "combat" &&
+      oldEncounter?.type === "combat" &&
+      newEncounter?.enemies != null &&
+      newEncounter.enemies === oldEncounter?.enemies
+    ) {
       return;
     }
 
@@ -1191,11 +1171,10 @@ watch(
       } else if (newEncounter.enemy?.message) {
         fullText = newEncounter.enemy.message;
       } else {
-        fullText = `🗡️ You've been attacked by <strong>${
-          props.formattedTitle
-        }</strong> ${newEncounter.enemy.name ?? ""}. (HP: ${
-          newEncounter.enemy.currentHP
-        }) What do you do?`;
+        const _gs = newEncounter.enemies?.length ?? 1;
+        const _en = newEncounter.enemy.name ?? "";
+        const _el = _gs > 1 ? `${_en}s` : _en;
+        fullText = `🗡️ You've been attacked by <strong>${props.formattedTitle}</strong> ${_el}. (HP: ${newEncounter.enemy.currentHP}) What do you do?`;
       }
     } else {
       fullText = "⚠️ Unknown encounter type.";
