@@ -9,6 +9,28 @@
         <span class="forge-scrap-count">{{ scrapMetal }}</span>
       </div>
 
+      <!-- Weapon Equip Section -->
+      <div v-if="showWeaponSection" class="forge-augments forge-weapons-section">
+        <div class="forge-augment-title">⚔️ Special Weapons</div>
+        <div class="forge-weapon-row">
+          <div class="forge-weapon-equipped">
+            <span class="forge-weapon-equipped-label">Equipped:</span>
+            <span class="forge-weapon-equipped-name">{{ equippedWeaponName }}</span>
+          </div>
+          <div v-if="uniquePendingWeapons.length > 0" class="forge-augment-pending">
+            <button
+              v-for="wid in uniquePendingWeapons"
+              :key="wid"
+              class="forge-augment-btn"
+              @click="equipWeapon(wid)"
+            >
+              Equip: {{ weaponName(wid) }}
+            </button>
+          </div>
+        </div>
+        <div v-if="equippedWeapon" class="forge-weapon-desc">{{ equippedWeaponDesc }}</div>
+      </div>
+
       <div class="forge-columns">
         <!-- Weapon Column -->
         <div class="forge-col">
@@ -116,6 +138,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { WEAPONS, getWeapon } from "@/utils/weapons";
 
 const forgeImg = new URL("../assets/forge-img.png", import.meta.url).href;
 
@@ -142,9 +165,11 @@ const props = defineProps({
   defenseAugment:         { type: String, default: "" },
   pendingWeaponAugments:  { type: Array,  default: () => [] },
   pendingDefenseAugments: { type: Array,  default: () => [] },
+  pendingWeapons:         { type: Array,  default: () => [] },
+  equippedWeapon:         { type: String, default: null },
 });
 
-const emit = defineEmits(["close", "forge", "install-augment"]);
+const emit = defineEmits(["close", "forge", "install-augment", "equip-weapon"]);
 
 const weaponAlloc = ref(0);
 const defenseAlloc = ref(0);
@@ -206,6 +231,20 @@ function augmentLabel(key) {
 function installAugment(type, key) {
   emit("install-augment", { type, key });
   triggerSparks(type === "weapon" ? weaponBursts : defenseBursts);
+}
+
+const uniquePendingWeapons = computed(() => [...new Set(props.pendingWeapons)]);
+const showWeaponSection = computed(() => props.equippedWeapon || props.pendingWeapons.length > 0);
+const equippedWeaponName = computed(() => props.equippedWeapon ? (getWeapon(props.equippedWeapon)?.name ?? props.equippedWeapon) : "Base Sword");
+const equippedWeaponDesc = computed(() => props.equippedWeapon ? (getWeapon(props.equippedWeapon)?.description ?? "") : "");
+
+function weaponName(id) {
+  return getWeapon(id)?.name ?? id;
+}
+
+function equipWeapon(id) {
+  emit("equip-weapon", id);
+  triggerSparks(weaponBursts);
 }
 </script>
 

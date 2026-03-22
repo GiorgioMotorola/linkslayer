@@ -6,7 +6,7 @@ import { handleRest } from "@/utils/restHandler";
 import { handleClick as externalHandleClick } from "@/utils/clickHandler.js";
 import { handleEncounterOption as externalHandleEncounterOption } from "@/utils/encounterHandler";
 import { handleLootDrop as externalHandleLootDrop } from "@/utils/lootHandler";
-import { handleEnemyTurn as externalHandleEnemyTurn } from "@/utils/enemyTurnHandler";
+import { handleEnemyTurn as externalHandleEnemyTurn, buildGroupIntents } from "@/utils/enemyTurnHandler";
 import { handleMiniBossLootDrop } from "@/utils/miniBossLootHandler";
 import { handleShopPurchase as externalHandleShopPurchase } from "@/utils/itemHandlers";
 import { getRandomChain } from "@/utils/randomPair";
@@ -74,6 +74,7 @@ export function useGameHandlers(deps) {
     campTier,
     weaponAugment,
     defenseAugment,
+    equippedWeapon,
   } = player;
 
   const {
@@ -97,6 +98,7 @@ export function useGameHandlers(deps) {
     enemyHP,
     nextEnemyAttack,
     enemyNextAction,
+    enemyIntents,
     enemyTurnKey,
     currentEnemy,
     enemyStatusEffects,
@@ -112,6 +114,23 @@ export function useGameHandlers(deps) {
     handleCloseEncounter,
   } = combat;
 
+  // Assign per-enemy intents only when first entering a multi-enemy combat.
+  // Mutations like targetIndex changes spread-replace the object, so guard with
+  // oldEnc?.type !== "combat" to avoid re-rolling intents mid-round.
+  watch(encounter, (newEnc, oldEnc) => {
+    const enteringCombat = newEnc?.type === "combat" && oldEnc?.type !== "combat";
+    const enemiesGrew = newEnc?.type === "combat" &&
+      newEnc.enemies?.length > 1 &&
+      newEnc.enemies?.length !== oldEnc?.enemies?.length;
+    if ((enteringCombat || enemiesGrew) && newEnc.enemies?.length > 1) {
+      const intents = buildGroupIntents(newEnc.enemies, enrageBonus.value ?? 0, decideEnemyAction);
+      enemyIntents.value = intents;
+      const targetIntent = intents[newEnc.targetIndex ?? 0];
+      enemyNextAction.value = targetIntent?.action ?? "idle";
+      nextEnemyAttack.value = targetIntent?.damage ?? null;
+    }
+  });
+
   // Keep encounter.enemies[targetIndex].currentHP in sync with enemyHP ref
   watch(enemyHP, (newHP) => {
     const enc = encounter.value;
@@ -122,6 +141,7 @@ export function useGameHandlers(deps) {
   });
 
   const counterResult = ref(null);
+  const victoryLoot = ref("");
 
   function onCounterResult({ succeeded, delay }) {
     const ms = delay !== undefined ? delay : DICE_TICKS * DICE_TICK_MS + 150;
@@ -132,13 +152,19 @@ export function useGameHandlers(deps) {
 
   const lastDiceRoll = ref(null);
   const lastDamageDealt = ref(null);
+  const enemyHitKey = ref(0);
   const lastDamageTaken = ref(null);
+  const playerHitKey = ref(0);
+  const lastGoldStolen = ref(null);
 
+  let diceResolve = null;
+  let diceClearResolve = null;
   let diceRollTimer = null;
   let diceAnimInterval = null;
   let diceBonusInterval = null;
   let dealtTimer = null;
   let takenTimer = null;
+  let goldStolenTimer = null;
   let isDiceAnimating = false;
   let pendingDealt = null;
   let pendingTaken = null;
@@ -148,10 +174,12 @@ export function useGameHandlers(deps) {
   const DICE_TICK_MS = 80;
   const DISPLAY_MS = 3000;
   const DEALT_TO_TAKEN_DELAY = 600;
+  const DICE_SETTLE_DELAY = 500; // pause after dice lands before revealing results
 
   function showDealt(amount) {
     clearTimeout(dealtTimer);
     lastDamageDealt.value = amount;
+    enemyHitKey.value++;
     dealtTimer = setTimeout(() => { lastDamageDealt.value = null; }, DISPLAY_MS);
   }
 
@@ -159,8 +187,15 @@ export function useGameHandlers(deps) {
     setTimeout(() => {
       clearTimeout(takenTimer);
       lastDamageTaken.value = amount;
+      playerHitKey.value++;
       takenTimer = setTimeout(() => { lastDamageTaken.value = null; }, DISPLAY_MS);
     }, delay);
+  }
+
+  function onGoldStolen(amount) {
+    clearTimeout(goldStolenTimer);
+    lastGoldStolen.value = amount;
+    goldStolenTimer = setTimeout(() => { lastGoldStolen.value = null; }, DISPLAY_MS);
   }
 
   function onDiceRoll({ roll, rawRoll = roll, bonus = 0, threshold, didHit }) {
@@ -185,6 +220,7 @@ export function useGameHandlers(deps) {
         pendingTaken = null;
         pendingMissPenalty = null;
       }
+      if (diceResolve) { const r = diceResolve; diceResolve = null; r(); }
     }
 
     lastDiceRoll.value = { roll: Math.floor(Math.random() * 20) + 1, threshold, didHit, isRolling: true, bonus: 0 };
@@ -219,11 +255,12 @@ export function useGameHandlers(deps) {
     const bonusExtra = bonus > 0 ? bonus * BONUS_TICK_MS + 400 : 0;
     diceRollTimer = setTimeout(() => {
       lastDiceRoll.value = null;
+      if (diceClearResolve) { const r = diceClearResolve; diceClearResolve = null; r(); }
     }, DICE_TICKS * DICE_TICK_MS + DISPLAY_MS + bonusExtra);
   }
 
   function onFleeSuccess() {
-    const cardDelay = DICE_TICKS * DICE_TICK_MS + 400;
+    const cardDelay = isDiceAnimating ? DICE_TICKS * DICE_TICK_MS + 400 : 400;
     setTimeout(() => {
       enemyTurnKey.value++;
       enemyNextAction.value = "fled";
@@ -235,16 +272,14 @@ export function useGameHandlers(deps) {
   }
 
   function onVictory() {
+    handleLoot(encounter.value?.enemy);
     const victoryDelay = isDiceAnimating
       ? DICE_TICKS * DICE_TICK_MS + DISPLAY_MS
       : DISPLAY_MS;
     setTimeout(() => {
       enemyTurnKey.value++;
       enemyNextAction.value = "victory";
-      setTimeout(() => {
-        encounter.value = null;
-        enemyNextAction.value = null;
-      }, 1400);
+      // Encounter stays open until player clicks "Continue Your Journey"
     }, victoryDelay);
   }
 
@@ -295,10 +330,36 @@ export function useGameHandlers(deps) {
     encounter.value.targetIndex = newIndex;
     encounter.value.enemy = target;
     enemyHP.value = target.currentHP;
-    enemyNextAction.value = "attack";
-    nextEnemyAttack.value =
-      Math.floor(Math.random() * (target.maxDamage - target.minDamage + 1)) +
-      target.minDamage;
+    // Sync intent from the pre-assigned per-enemy intent (don't re-roll)
+    const intent = enemyIntents.value[newIndex];
+    if (intent) {
+      enemyNextAction.value = intent.action ?? "attack";
+      nextEnemyAttack.value = intent.damage ?? null;
+    } else {
+      // Intents not assigned yet — keep a tentative attack value
+      enemyNextAction.value = "attack";
+      nextEnemyAttack.value =
+        Math.floor(Math.random() * (target.maxDamage - target.minDamage + 1)) +
+        target.minDamage;
+    }
+  }
+
+  function waitForDice() {
+    if (!isDiceAnimating) return Promise.resolve();
+    return new Promise((resolve) => {
+      diceResolve = () => setTimeout(resolve, DICE_SETTLE_DELAY);
+    });
+  }
+
+  function waitForDiceClear() {
+    if (lastDiceRoll.value === null) return Promise.resolve();
+    return new Promise((resolve) => { diceClearResolve = resolve; });
+  }
+
+  // Between queued actions: wait for dice to clear AND ensure a minimum visible pause
+  function waitForInterAction() {
+    const minPause = new Promise(r => setTimeout(r, 1400));
+    return Promise.all([waitForDiceClear(), minPause]);
   }
 
   function onCombatResult({ type, amount }) {
@@ -332,6 +393,7 @@ export function useGameHandlers(deps) {
         playerGold,
         effectiveMaxHP: effectiveMaxHP.value,
         inventory,
+        equippedWeapon,
       },
       utilityFunctions: {
         log,
@@ -343,15 +405,21 @@ export function useGameHandlers(deps) {
       log(
         `✨ The ${defeatedEnemyData.name} dissipates, leaving no worldly possessions behind.`
       );
+      victoryLoot.value = "";
       markBossDefeated();
     } else if (defeatedEnemyData.isMiniBoss) {
       handleMiniBossLootDrop(lootHandlerArgs);
+      victoryLoot.value = "";
     } else {
-      externalHandleLootDrop({ ...lootHandlerArgs, bountyScrollActive });
+      const enemyCount = encounter.value?.enemies?.length ?? 1;
+      const drops = externalHandleLootDrop({ ...lootHandlerArgs, bountyScrollActive, enemyCount });
+      victoryLoot.value = drops?.join(" · ") ?? "";
     }
   }
 
   function handleCloseEncounterWrapper() {
+    enemyNextAction.value = null;
+    victoryLoot.value = "";
     handleCloseEncounter({
       bossDefeated,
       current,
@@ -409,6 +477,7 @@ export function useGameHandlers(deps) {
         encounterMessage,
         nextEnemyAttack,
         enemyNextAction,
+        enemyIntents,
         currentEnemy,
       },
       utilityFunctions: {
@@ -457,81 +526,114 @@ export function useGameHandlers(deps) {
     showRestModal.value = false;
   }
 
-  function handleCombatActionWrapper(playerAction) {
-    handleCombatAction({
-      player: {
-        playerHP,
-        playerClass,
-        specialUsesLeft,
-        weaponBonus,
-        shieldBonus,
-        playerName,
-        dogName,
-        action: playerAction,
-        effectiveMaxHP,
-        totalSpecialsUsed,
-        specialTier,
-        playerGold,
-        weaponAugment,
-        defenseAugment,
-        ironWillUsed,
-        bloodpactActive,
-        playerEnrageCharges,
-      },
-      enemy: {
-        enemyHP,
-        encounter,
-        nextEnemyAttack,
-        enemyNextAction,
-        enemyStatusEffects,
-        enemyIsStunned,
-        enrageBonus,
-        confusedAction,
-        confusedTurnsLeft,
-      },
-      state: {
-        log,
-        formattedTitle: formattedTitle.value,
-        DEFAULT_ENEMY_HP,
-        isBoss,
-        combatWinsSinceLastCapIncrease,
-        hpCapBonus,
-        enemiesKilled,
-      },
-      utils: {
-        clearTimer: () => clearInterval(timerInterval),
-        setDefeated: () => {
-          showRecap.value = true;
-          recapType.value = 'defeat';
-          clearInterval(timerInterval);
+  async function handleCombatActionWrapper(playerAction) {
+    // playerAction is either a string (instant: defend/flee) or an array of queued actions
+    const isQueue = Array.isArray(playerAction);
+    const actions = isQueue
+      ? playerAction
+      : [{ action: playerAction, targetIndex: encounter.value?.targetIndex ?? 0 }];
+
+    for (let i = 0; i < actions.length; i++) {
+      if (encounter.value === null) break; // combat ended mid-queue
+
+      const { action: singleAction, targetIndex: actionTargetIndex } = actions[i];
+      const isLast = i === actions.length - 1;
+
+      // Switch target if this queued action targets a different enemy
+      if (isQueue && typeof actionTargetIndex === "number" && encounter.value?.targetIndex !== actionTargetIndex) {
+        encounter.value = { ...encounter.value, targetIndex: actionTargetIndex };
+      }
+
+      // Snapshot intents (still needed by runSidekickAttacks); do NOT clear — intents stay frozen until enemy turn fires
+      const combatIntentsSnapshot = [...(enemyIntents.value)];
+
+      await handleCombatAction({
+        player: {
+          playerHP,
+          playerClass,
+          specialUsesLeft,
+          weaponBonus,
+          shieldBonus,
+          playerName,
+          dogName,
+          action: singleAction,
+          effectiveMaxHP,
+          totalSpecialsUsed,
+          specialTier,
+          playerGold,
+          weaponAugment,
+          defenseAugment,
+          equippedWeapon,
+          ironWillUsed,
+          bloodpactActive,
+          playerEnrageCharges,
         },
-        handleLootDrop: handleLoot,
-        markBossDefeated,
-        gotoEnemyTurn,
-        bossOverlay: bossOverlay,
-        onDiceRoll,
-        onCombatResult,
-        onCounterResult,
-        onVictory,
-        onEnemyKilled,
-        onFleeSuccess,
-      },
-      itemEffects: {
-        serratedDaggerActive,
-        luckyFleeActive,
-        wardingShieldHitsRemaining,
-        coolerStickBonus: (inventory.value.coolerStickItem > 0 ? 2 : 0) + (inventory.value.evenCoolerStickItem > 0 ? 3 : 0),
-      },
-    });
+        enemy: {
+          enemyHP,
+          encounter,
+          nextEnemyAttack,
+          enemyNextAction,
+          enemyStatusEffects,
+          enemyIsStunned,
+          enrageBonus,
+          confusedAction,
+          confusedTurnsLeft,
+        },
+        state: {
+          log,
+          formattedTitle: formattedTitle.value,
+          DEFAULT_ENEMY_HP,
+          isBoss,
+          combatWinsSinceLastCapIncrease,
+          hpCapBonus,
+          enemiesKilled,
+        },
+        utils: {
+          clearTimer: () => clearInterval(timerInterval),
+          setDefeated: () => {
+            showRecap.value = true;
+            recapType.value = 'defeat';
+            clearInterval(timerInterval);
+          },
+          handleLootDrop: handleLoot,
+          markBossDefeated,
+          gotoEnemyTurn,
+          bossOverlay: bossOverlay,
+          onDiceRoll,
+          waitForDice,
+          onCombatResult,
+          onCounterResult,
+          onVictory,
+          onEnemyKilled,
+          onFleeSuccess,
+          onGoldStolen,
+          onHpCapIncrease: () => {
+            const bonus = "💪 Max HP +10";
+            victoryLoot.value = victoryLoot.value ? `${victoryLoot.value} · ${bonus}` : bonus;
+          },
+          enemyIntents,
+          enemyIntentsSnapshot: combatIntentsSnapshot,
+          skipEnemyTurn: !isLast,
+        },
+        itemEffects: {
+          serratedDaggerActive,
+          luckyFleeActive,
+          wardingShieldHitsRemaining,
+          coolerStickBonus: (inventory.value.coolerStickItem > 0 ? 2 : 0) + (inventory.value.evenCoolerStickItem > 0 ? 3 : 0),
+        },
+      });
+
+      // Between queued actions: wait for dice result to fully display before starting the next roll
+      if (!isLast) await waitForInterAction();
+    }
   }
 
   function gotoEnemyTurn() {
-    const hadDice = isDiceAnimating;
-    const intentDelay = (hadDice ? DICE_TICKS * DICE_TICK_MS : 0) + DEALT_TO_TAKEN_DELAY + 400;
-    setTimeout(() => {
-      counterResult.value = null;
-      enemyTurnKey.value++;
-      externalHandleEnemyTurn({
+    // Synchronous — intents must be set before Vue flushes DOM updates,
+    // otherwise nextEnemyAttack.value is stale when the player clicks (breaks brace).
+    counterResult.value = null;
+    enemyTurnKey.value++;
+    externalHandleEnemyTurn({
       enemyState: {
         enemyStatusEffects,
         enemyHP,
@@ -539,6 +641,7 @@ export function useGameHandlers(deps) {
         enemyIsStunned,
         enemyNextAction,
         nextEnemyAttack,
+        enemyIntents,
         enrageBonus,
       },
       playerState: {
@@ -554,9 +657,9 @@ export function useGameHandlers(deps) {
         formattedTitle: formattedTitle,
         decideEnemyAction: decideEnemyAction,
         logEnemyAction: logEnemyAction,
+        onEnemyKilled,
       },
     });
-    }, intentDelay);
   }
 
   async function callHandleEncounterOption(option) {
@@ -733,10 +836,15 @@ export function useGameHandlers(deps) {
     handleCloseEncounterWrapper,
     lastDiceRoll,
     lastDamageDealt,
+    enemyHitKey,
     lastDamageTaken,
+    playerHitKey,
+    lastGoldStolen,
     counterResult,
     daysCount,
     playerEnrageCharges,
     handleSwitchTarget,
+    victoryLoot,
+    enemyIntents,
   };
 }

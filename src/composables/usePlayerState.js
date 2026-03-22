@@ -19,6 +19,7 @@ export function usePlayerState(hpCapBonus) {
   const campTier = ref(0); // 0=ground, 1=sleeping bag, 2=pillow, 3=tent
   const weaponAugment = ref(""); // installed weapon augment key
   const defenseAugment = ref(""); // installed defense augment key
+  const equippedWeapon = ref(null); // equipped special weapon id, null = base sword
 
   const effectiveMaxHP = computed(() => {
     return playerClass.value ? playerClass.value.maxHP + hpCapBonus.value : 0;
@@ -44,5 +45,6 @@ export function usePlayerState(hpCapBonus) {
     campTier,
     weaponAugment,
     defenseAugment,
+    equippedWeapon,
   };
 }

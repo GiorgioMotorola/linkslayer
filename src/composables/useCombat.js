@@ -8,6 +8,7 @@ export function useCombat() {
   const enemyHP = ref(25);
   const nextEnemyAttack = ref(null);
   const enemyNextAction = ref("attack");
+  const enemyIntents = ref([]); // per-enemy intent: [{ action, damage }]
   const enemyTurnKey = ref(0);
   const currentEnemy = ref(null);
   const enemyStatusEffects = ref([]);
@@ -88,6 +89,13 @@ export function useCombat() {
     return "attack";
   }
 
+  // Reset turn counter at the start of each new combat encounter
+  watch(encounter, (newVal, oldVal) => {
+    if (newVal?.type === "combat" && oldVal?.type !== "combat") {
+      enemyTurnKey.value = 0;
+    }
+  });
+
   function handleCloseEncounter(deps) {
     const { bossDefeated, current, chain, journeyLength, currentTargetIndex, path, timerInterval } = deps;
 
@@ -117,6 +125,7 @@ export function useCombat() {
     enemyHP,
     nextEnemyAttack,
     enemyNextAction,
+    enemyIntents,
     enemyTurnKey,
     currentEnemy,
     enemyStatusEffects,

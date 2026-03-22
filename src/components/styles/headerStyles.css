@@ -1046,6 +1046,143 @@ header {
   color: #000000;
 }
 
+/* ── Combat action icon-box grid ─────────────────────────────────────── */
+.combat-actions-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.action-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  min-height: 64px;
+  padding: 6px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  background: rgba(20, 20, 30, 0.7);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.08s;
+  margin-bottom: 0;
+  gap: 4px;
+}
+
+.action-box:hover:not(:disabled) {
+  background: rgba(50, 50, 70, 0.85);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.action-box:active:not(:disabled) {
+  transform: scale(0.88);
+  filter: brightness(1.3);
+  transition: transform 0.06s ease;
+}
+
+.action-box:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+.action-box-active {
+  border-color: rgba(255, 255, 255, 0.7) !important;
+  background: rgba(60, 60, 90, 0.9) !important;
+}
+
+.action-box-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.action-box-label {
+  font-size: 10px;
+  text-align: center;
+  line-height: 1.2;
+  color: inherit;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 58px;
+}
+
+/* ── Action queue row ────────────────────────────────────────────────── */
+.action-queue-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.action-slots {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+}
+
+.action-slot {
+  flex: 1;
+  min-width: 60px;
+  height: 34px;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #aaa;
+  cursor: default;
+  padding: 0 6px;
+}
+
+.action-slot-filled {
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.45);
+  background: rgba(50, 50, 70, 0.7);
+  color: #eee;
+  cursor: pointer;
+}
+
+.action-slot-filled:hover {
+  border-color: #e05050;
+  color: #ff8888;
+}
+
+.slot-empty-indicator {
+  opacity: 0.35;
+}
+
+.btn-confirm-turn {
+  white-space: nowrap;
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 220, 60, 0.5);
+  border-radius: 6px;
+  background: rgba(40, 35, 0, 0.8);
+  color: #ffe066;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  margin-bottom: 0;
+  height: 34px;
+  display: flex;
+  align-items: center;
+}
+
+.btn-confirm-turn:hover:not(:disabled) {
+  background: rgba(70, 60, 0, 0.9);
+  border-color: rgba(255, 220, 60, 0.85);
+}
+
+.btn-confirm-turn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
 button {
   display: flex;
   flex-direction: column;
@@ -1070,152 +1207,43 @@ button:hover {
   margin-bottom: 1rem;
 }
 
-.enemy-intent {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
+
+.victory-panel {
+  margin-top: 10px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 15px;
-  width: 340px;
-  max-width: 90vw;
-  border: 2px solid;
-  z-index: 110;
-  animation: pulse-glow-centered 2s ease-in-out infinite;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  flex-direction: column;
+  gap: 6px;
 }
 
-.intent-icon {
-  font-size: 24px;
-  animation: bounce 1s ease-in-out infinite;
+.victory-panel .dialogue-options::before {
+  display: none;
 }
 
-.intent-text {
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.victory-panel .dialogue-options {
+  border-top: none;
+  margin-top: 4px;
+  padding-top: 0;
 }
 
-.enemy-intent {
-  background: #0d0d0d;
-  color: #f0f0f0;
+.victory-panel .dialogue-options button {
+  color: #e03030;
+  font-weight: normal;
+  background: none;
+  border: none;
+  border-radius: 0;
+  text-align: left;
 }
 
-.intent-attack {
-  border-color: #7a1a1a;
-  box-shadow: 0 0 10px 2px rgba(180, 30, 30, 0.4);
-}
-
-.intent-defend {
-  border-color: #1a3a7a;
-  box-shadow: 0 0 10px 2px rgba(30, 60, 180, 0.4);
-}
-
-.intent-flee {
-  border-color: #7a5a00;
-  box-shadow: 0 0 10px 2px rgba(160, 110, 0, 0.4);
-}
-
-.intent-trip {
-  border-color: #1a6a1a;
-  box-shadow: 0 0 10px 2px rgba(30, 140, 30, 0.4);
-}
-
-.intent-default {
-  border-color: #333;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-}
-
-.intent-victory {
-  border-color: #c9a227;
+.victory-loot {
+  font-size: 0.85rem;
   color: #f0c040;
-  box-shadow: 0 0 14px 3px rgba(201, 162, 39, 0.45);
-  animation: victory-pulse 1s ease-in-out infinite alternate;
+  font-family: "IBM Plex Mono", monospace, sans-serif;
+  padding: 4px 8px;
+  background: rgba(201, 162, 39, 0.12);
+  border-radius: 6px;
+  border: 1px solid rgba(201, 162, 39, 0.3);
 }
 
-.intent-fled {
-  border-color: #4a9eca;
-  color: #7dd3f5;
-  box-shadow: 0 0 14px 3px rgba(74, 158, 202, 0.4);
-  animation: victory-pulse 1s ease-in-out infinite alternate;
-}
-
-.intent-stunned {
-  border-color: #9b7fd4;
-  color: #c8a8f0;
-  box-shadow: 0 0 14px 3px rgba(155, 127, 212, 0.4);
-  animation: victory-pulse 1.4s ease-in-out infinite alternate;
-}
-
-.intent-steal {
-  border-color: #a07000;
-  box-shadow: 0 0 10px 2px rgba(200, 150, 0, 0.4);
-}
-
-.intent-enrage {
-  border-color: #b03020;
-  box-shadow: 0 0 12px 3px rgba(220, 60, 30, 0.5);
-  animation: victory-pulse 0.8s ease-in-out infinite alternate;
-}
-
-.intent-confuse {
-  border-color: #7030a0;
-  box-shadow: 0 0 12px 3px rgba(140, 60, 200, 0.45);
-}
-
-.intent-summon {
-  border-color: #205080;
-  box-shadow: 0 0 10px 2px rgba(40, 100, 160, 0.4);
-}
-
-.intent-damage {
-  color: #e53935;
-  font-weight: 700;
-}
-
-@keyframes victory-pulse {
-  from { box-shadow: 0 0 10px 2px rgba(201, 162, 39, 0.35); }
-  to   { box-shadow: 0 0 20px 6px rgba(201, 162, 39, 0.65); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.02);
-    opacity: 0.95;
-  }
-}
-
-@keyframes pulse-glow-centered {
-  0%, 100% {
-    transform: translateX(-50%) scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: translateX(-50%) scale(1.03);
-    opacity: 0.92;
-  }
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-3px);
-  }
-}
-
-.darkened-header .enemy-intent {
-  filter: brightness(0.85);
-}
 
 .oh-no {
   display: none;
@@ -1651,6 +1679,37 @@ button:hover {
   color: #c0392b !important;
 }
 
+/* ── Wind-up BRACE highlight ─────────────────────────────────────────── */
+.btn-wind-up {
+  border-color: #e8900a !important;
+  color: #ffe066 !important;
+  animation: wind-up-pulse 0.7s ease-in-out infinite;
+}
+.btn-brace-label {
+  font-weight: bold;
+  letter-spacing: 0.05em;
+}
+@keyframes wind-up-pulse {
+  0%, 100% { box-shadow: 0 0 6px 2px rgba(232, 144, 10, 0.55); }
+  50%       { box-shadow: 0 0 18px 6px rgba(255, 190, 20, 0.9); }
+}
+
+/* ── Exploit opportunity button ──────────────────────────────────────── */
+.btn-exploit {
+  border-color: #c8a800 !important;
+  color: #ffe94d !important;
+  background: rgba(60, 45, 0, 0.85) !important;
+  animation: exploit-pulse 0.9s ease-in-out infinite, exploit-enter 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes exploit-pulse {
+  0%, 100% { box-shadow: 0 0 8px 2px rgba(220, 180, 0, 0.5); }
+  50%       { box-shadow: 0 0 22px 8px rgba(255, 215, 0, 0.9); }
+}
+@keyframes exploit-enter {
+  from { transform: scaleY(0.4) scaleX(0.95); opacity: 0; }
+  to   { transform: scaleY(1)   scaleX(1);    opacity: 1; }
+}
+
 @keyframes enrage-pulse {
   0%, 100% { box-shadow: 0 0 4px 1px rgba(220, 90, 0, 0.5); }
   50%       { box-shadow: 0 0 10px 3px rgba(220, 90, 0, 0.9); }
@@ -1658,6 +1717,47 @@ button:hover {
 .btn-enraged-ready {
   color: #e8610a !important;
   animation: enrage-pulse 1.2s ease-in-out infinite;
+}
+
+/* ── Per-action button colors ─────────────────────────────────────────────── */
+.btn-action-steady { color: #7ab4ff; }
+.btn-action-steady:hover:not(:disabled) {
+  color: #aad0ff;
+  text-shadow: 0 0 8px rgba(100, 160, 255, 0.6);
+}
+
+.btn-action-power { color: #cc88ff; }
+.btn-action-power:hover:not(:disabled) {
+  color: #e8b8ff;
+  text-shadow: 0 0 10px rgba(180, 80, 255, 0.7);
+  animation: power-shimmer 0.55s ease forwards;
+}
+@keyframes power-shimmer {
+  0%   { filter: brightness(1); }
+  40%  { filter: brightness(1.4) drop-shadow(0 0 6px rgba(180,80,255,0.8)); }
+  100% { filter: brightness(1.15); }
+}
+
+.btn-action-enrage { color: #ff9944; }
+.btn-enraged-ready:hover:not(:disabled) {
+  animation: enrage-pulse 0.5s ease-in-out infinite !important;
+  text-shadow: 0 0 12px rgba(255, 100, 0, 0.9);
+}
+
+.btn-action-special { color: #66ddaa; }
+.btn-action-special:hover:not(:disabled) {
+  color: #99ffcc;
+  text-shadow: 0 0 10px rgba(80, 220, 150, 0.7);
+}
+
+.btn-action-flee { color: #aaaaaa; }
+.btn-action-flee:hover:not(:disabled) { color: #cccccc; }
+
+/* ── Click punch animation ────────────────────────────────────────────────── */
+.btn-group button:active:not(:disabled) {
+  transform: scale(0.9) !important;
+  transition: transform 0.06s ease !important;
+  filter: brightness(1.3);
 }
 
 .intent-countered .intent-text {

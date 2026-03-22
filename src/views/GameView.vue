@@ -18,6 +18,7 @@
     :enemyTurnKey="enemyTurnKey"
     :message="encounterMessage"
     @action="handleCombatActionWrapper"
+    @confirm-turn="handleCombatActionWrapper"
     @option-chosen="handleOptionChosen"
     @close="handleCloseEncounterWrapper"
     :playerName="playerName"
@@ -44,6 +45,7 @@
     :wardingShieldHitsRemaining="wardingShieldHitsRemaining"
     :isEnemyVenomed="isEnemyVenomed"
     :isEnemyBleeding="isEnemyBleeding"
+    :isEnemyOnFire="isEnemyOnFire"
     :weaponAugment="weaponAugment"
     :defenseAugment="defenseAugment"
     :bountyScrollActive="bountyScrollActive"
@@ -67,6 +69,10 @@
     :scrapMetal="inventory.scrapMetal"
     @restart="handleRestart"
     @switch-target="handleSwitchTarget"
+    :victoryLoot="victoryLoot"
+    :equippedWeaponId="equippedWeapon"
+    :enemyIntents="enemyIntents"
+    :maxActionsPerTurn="maxActionsPerTurn"
   />
 
   <Transition name="sleep-fade">
@@ -190,9 +196,20 @@
         :enemyHP="enemyHP"
         :lastDamageDealt="lastDamageDealt"
         :lastDamageTaken="lastDamageTaken"
+        :enemyHitKey="enemyHitKey"
+        :playerHitKey="playerHitKey"
         :enemyStatusEffects="enemyStatusEffects"
         :encounter="encounter"
+        :enemyNextAction="enemyNextAction"
+        :nextEnemyAttack="nextEnemyAttack"
+        :enemyIntents="enemyIntents"
+        :enemyTurnKey="enemyTurnKey"
       />
+
+      <!-- Gold stolen popup -->
+      <div v-if="lastGoldStolen" :key="goldPopupKey" class="gold-stolen-popup">
+        +{{ lastGoldStolen }} 💰
+      </div>
 
       <Transition name="rest-backdrop">
         <div v-if="showRestModal" class="rest-backdrop"></div>
@@ -292,6 +309,8 @@
         :defenseAugment="defenseAugment"
         :pendingWeaponAugments="inventory.pendingWeaponAugments ?? []"
         :pendingDefenseAugments="inventory.pendingDefenseAugments ?? []"
+        :equippedWeapon="equippedWeapon"
+        :pendingWeapons="inventory.pendingWeapons ?? []"
         :hasSettlement="!!settlementId"
         :pageSettlementClaimedBy="pageSettlement && pageSettlement.owner_id !== user.value?.id ? (pageSettlement.lord_history?.[0]?.playerName ?? 'another player') : null"
         @visit-settlement="openSettlement"
@@ -342,6 +361,8 @@
         :defenseAugment="defenseAugment"
         :pendingWeaponAugments="inventory.pendingWeaponAugments ?? []"
         :pendingDefenseAugments="inventory.pendingDefenseAugments ?? []"
+        :equippedWeapon="equippedWeapon"
+        :pendingWeapons="inventory.pendingWeapons ?? []"
       />
     </template>
     <template #map>
@@ -550,10 +571,12 @@
     :pendingDefenseAugments="inventory.pendingDefenseAugments ?? []"
     :hasSettlementFlag="inventory.settlementFlag > 0"
     :hasSettlement="!!settlementId"
+    :extraActions="inventory.extraActions ?? 0"
     @close="showTavernShop = false"
     @buy="handleTavernShopBuy"
     @buy-augment="handleAugmentBuy"
     @buy-flag="handleBuySettlementFlag"
+    @buy-extra-action="handleExtraActionBuy"
   />
   </Transition>
 
@@ -570,9 +593,12 @@
     :defenseAugment="defenseAugment"
     :pendingWeaponAugments="inventory.pendingWeaponAugments ?? []"
     :pendingDefenseAugments="inventory.pendingDefenseAugments ?? []"
+    :pendingWeapons="inventory.pendingWeapons ?? []"
+    :equippedWeapon="equippedWeapon"
     @close="showForge = false"
     @forge="handleForge"
     @install-augment="handleInstallAugment"
+    @equip-weapon="handleEquipWeapon"
   />
   </Transition>
 
@@ -624,6 +650,7 @@ import { generateMiniBoss } from "@/utils/miniBossGenerator";
 import { generateSettlementBoss } from "@/utils/settlementBossGenerator";
 import { npcData, loreData } from "@/utils/encounterGenerator";
 import { QUESTS } from "@/utils/quests";
+import { getWeapon } from "@/utils/weapons";
 import { classes } from "@/utils/classes";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/composables/useAuth";
@@ -799,6 +826,7 @@ const {
   campTier,
   weaponAugment,
   defenseAugment,
+  equippedWeapon,
 } = player;
 
 function onDogNamed(name) {
@@ -960,11 +988,17 @@ const {
   handleCloseEncounterWrapper,
   lastDiceRoll,
   lastDamageDealt,
+  enemyHitKey,
   lastDamageTaken,
+  playerHitKey,
+  lastGoldStolen,
   counterResult,
   daysCount,
   playerEnrageCharges,
   handleSwitchTarget,
+  victoryLoot,
+  enemyIntents,
+
 } = useGameHandlers({
   gameFlow,
   log,
@@ -1113,10 +1147,12 @@ const isIdle = computed(() =>
   !showRestModal.value &&
   !showShopModal.value
 );
+const maxActionsPerTurn = computed(() => 1 + (inventory.value.extraActions ?? 0));
 const canShortRestAtSettlement = computed(() => settlementShortRestDay.value !== daysCount.value);
 const canChallengeSettlement   = computed(() => isIdle.value && !settlementBossActive.value && !settlementId.value);
 const isEnemyVenomed = computed(() => enemyStatusEffects.value?.some(e => e.type === "poison") ?? false);
 const isEnemyBleeding = computed(() => enemyStatusEffects.value?.some(e => e.type === "bleed") ?? false);
+const isEnemyOnFire = computed(() => enemyStatusEffects.value?.some(e => e.type === "fire") ?? false);
 
 const CAMP_NAMES = ["", "Sleeping Bag", "Pillow", "Tent"];
 const CAMP_COSTS = [0, 50, 75, 100];
@@ -1127,6 +1163,17 @@ function handleTavernShopBuy(tier) {
   playerGold.value -= cost;
   campTier.value = tier;
   log(`🏕️ You purchase a ${CAMP_NAMES[tier]}. Your long rest has improved.`);
+  saveGame();
+}
+
+function handleExtraActionBuy(tier) {
+  const costs = { 1: 150, 2: 300 };
+  const cost = costs[tier];
+  if (!cost || playerGold.value < cost) return;
+  playerGold.value -= cost;
+  inventory.value.extraActions = tier;
+  const names = { 1: "Quick Hands Charm", 2: "Swift Strike Rune" };
+  log(`⚡ You purchase the ${names[tier]}. You now have ${1 + tier} combat actions per turn.`);
   saveGame();
 }
 
@@ -1258,6 +1305,22 @@ function handleInstallAugment({ type, key }) {
     defenseAugment.value = key;
     log(`⚒️ <span class="player-name">${playerName.value}</span> installs <strong>${AUGMENT_LABELS[key] ?? key}</strong> on their armor!`);
   }
+}
+
+const goldPopupKey = ref(0);
+watch(lastGoldStolen, (val) => { if (val) goldPopupKey.value++; });
+
+function handleEquipWeapon(weaponId) {
+  const pending = inventory.value.pendingWeapons ?? [];
+  const idx = pending.indexOf(weaponId);
+  if (idx !== -1) pending.splice(idx, 1);
+  if (equippedWeapon.value && equippedWeapon.value !== weaponId) {
+    pending.push(equippedWeapon.value);
+  }
+  equippedWeapon.value = weaponId;
+  const weaponName = getWeapon(weaponId)?.name ?? weaponId;
+  log(`⚒️ <span class="player-name">${playerName.value}</span> equips the <strong>${weaponName}</strong>!`);
+  saveGame();
 }
 
 function handleTakeQuest() {
@@ -1835,6 +1898,7 @@ async function saveGame() {
       campTier: campTier.value,
       weaponAugment: weaponAugment.value,
       defenseAugment: defenseAugment.value,
+      equippedWeapon: equippedWeapon.value,
       markedPOIs: [...markedPOIs.value],
       engagedPOIs: [...engagedPOIs.value],
       settlementFlagOffered: settlementFlagOffered.value,
@@ -1906,6 +1970,7 @@ function restoreGameState(s) {
   campTier.value = s.campTier ?? 0;
   weaponAugment.value = s.weaponAugment ?? "";
   defenseAugment.value = s.defenseAugment ?? "";
+  equippedWeapon.value = s.equippedWeapon ?? null;
   goldPouchAccumulatedGold.value = s.goldPouchAccumulatedGold ?? 0;
   markedPOIs.value = s.markedPOIs ?? [];
   engagedPOIs.value = s.engagedPOIs ?? [];
@@ -1958,4 +2023,28 @@ watch(user, async (newUser, oldUser) => {
 
 <style scoped>
 @import "./styles/gameViewStyles.css";
+</style>
+
+<style>
+.gold-stolen-popup {
+  position: fixed;
+  bottom: calc(clamp(260px, 60vh, 500px) + clamp(120px, 18vh, 220px) + 20px);
+  left: 25%;
+  transform: translateX(-50%);
+  font-size: 30px;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 2px 10px #000, 0 0 24px rgba(255,210,0,0.95);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 9999;
+  animation: gold-stolen-float 2.8s ease-out forwards;
+}
+
+@keyframes gold-stolen-float {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(0);    }
+  15%  { opacity: 1; transform: translateX(-50%) translateY(-12px); }
+  70%  { opacity: 1; transform: translateX(-50%) translateY(-36px); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-56px); }
+}
 </style>

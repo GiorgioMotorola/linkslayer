@@ -495,6 +495,38 @@
           </div>
         </template>
 
+        <!-- Equipped special weapon -->
+        <template v-if="equippedWeapon">
+          <div class="item-slot-wrapper augment-slot-wrapper">
+            <div class="item-details-box">
+              <div class="item-name-quantity">
+                <span class="item-name">{{ getWeapon(equippedWeapon)?.name ?? equippedWeapon }}</span>
+                <span class="augment-type-tag">⚔️ Special Weapon</span>
+              </div>
+              <div class="item-description">{{ getWeapon(equippedWeapon)?.description ?? "" }}</div>
+            </div>
+            <div class="item-button-box">
+              <span class="augment-equipped-tag">Equipped</span>
+            </div>
+          </div>
+        </template>
+
+        <!-- Pending (unequipped) special weapons -->
+        <template v-for="wid in uniquePendingWeapons" :key="'wpn-' + wid">
+          <div class="item-slot-wrapper augment-slot-wrapper">
+            <div class="item-details-box">
+              <div class="item-name-quantity">
+                <span class="item-name">{{ getWeapon(wid)?.name ?? wid }}</span>
+                <span class="augment-type-tag">⚔️ Special Weapon</span>
+              </div>
+              <div class="item-description">{{ getWeapon(wid)?.description ?? "" }}</div>
+            </div>
+            <div class="item-button-box">
+              <span class="augment-pending-tag">Equip at Forge</span>
+            </div>
+          </div>
+        </template>
+
         <!-- Pending (uninstalled) augments -->
         <template v-for="key in uniquePendingWeapon" :key="'pw-' + key">
           <div class="item-slot-wrapper augment-slot-wrapper">
@@ -620,6 +652,7 @@
 <script setup>
 import { defineProps, defineEmits, computed } from "vue";
 import { shopItems } from "@/utils/shopItems.js";
+import { getWeapon } from "@/utils/weapons";
 
 const itemDesc = Object.fromEntries(
   shopItems.filter((i) => i.details && i.description).map((i) => [i.details, i.description])
@@ -737,18 +770,22 @@ const props = defineProps({
   defenseAugment:         { type: String,  default: "" },
   pendingWeaponAugments:  { type: Array,   default: () => [] },
   pendingDefenseAugments: { type: Array,   default: () => [] },
+  equippedWeapon:         { type: String,  default: null },
+  pendingWeapons:         { type: Array,   default: () => [] },
   hasSettlement:          { type: Boolean, default: false },
   pageSettlementClaimedBy: { type: String,  default: null },
 });
 
 const emit = defineEmits(["close", "use-item", "use-beer", "visit-settlement"]);
 
-const uniquePendingWeapon  = computed(() => [...new Set(props.pendingWeaponAugments)]);
-const uniquePendingDefense = computed(() => [...new Set(props.pendingDefenseAugments)]);
+const uniquePendingWeapon   = computed(() => [...new Set(props.pendingWeaponAugments)]);
+const uniquePendingDefense  = computed(() => [...new Set(props.pendingDefenseAugments)]);
+const uniquePendingWeapons  = computed(() => [...new Set(props.pendingWeapons)]);
 
 const isInventoryEmpty = computed(() => {
   if (props.weaponAugment || props.defenseAugment) return false;
   if (props.pendingWeaponAugments.length || props.pendingDefenseAugments.length) return false;
+  if (props.equippedWeapon || props.pendingWeapons.length) return false;
   if (props.inventory.beers?.length > 0) return false;
   if ((props.inventory.treasureMaps ?? []).some((m) => !m.collected)) return false;
   const skip = new Set(["questScrolls", "settlementFlag", "beers", "roadIngredients", "treasureMaps"]);

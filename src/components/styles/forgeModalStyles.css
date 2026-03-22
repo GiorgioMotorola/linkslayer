@@ -3,12 +3,19 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: 340px;
+  width: min(480px, 100vw);
   display: flex;
   flex-direction: column;
   z-index: 1100;
   box-shadow: -10px 0 50px rgba(0, 0, 0, 0.75);
   overflow-y: auto;
+}
+
+@media (max-width: 500px) {
+  .forge-overlay {
+    width: 100vw;
+    left: 0;
+  }
 }
 
 .forge-panel-enter-active {
@@ -343,4 +350,41 @@
   width: 1px;
   background: rgba(180, 130, 30, 0.25);
   margin: 0 0.25rem;
+}
+
+.forge-weapons-section {
+  margin-top: 0.5rem;
+}
+
+.forge-weapon-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.forge-weapon-equipped {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+}
+
+.forge-weapon-equipped-label {
+  color: #aaa;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.forge-weapon-equipped-name {
+  color: #e8c87a;
+  font-weight: 600;
+}
+
+.forge-weapon-desc {
+  font-size: 0.72rem;
+  color: #999;
+  font-style: italic;
+  margin-top: 0.25rem;
+  line-height: 1.4;
 }

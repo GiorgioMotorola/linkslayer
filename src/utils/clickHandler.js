@@ -1,6 +1,7 @@
 import { getRandomBoss, isBoss } from "@/utils/bossGenerator";
 import { rollEncounter, npcData, loreData } from "@/utils/encounterGenerator";
 import { shopItems } from "@/utils/shopItems";
+import { buildGroupIntents } from "@/utils/enemyTurnHandler";
 
 const DOG_EXCLUDED = new Set([
   "stickItem", "coolerStickItem", "evenCoolerStickItem", "dog",
@@ -228,10 +229,19 @@ export async function handleClick({
         enemyState.currentEnemy.value = enemy;
         playerState.combatEncountersFought.value++;
 
-        enemyState.nextEnemyAttack.value =
-          Math.floor(Math.random() * (enemy.maxDamage - enemy.minDamage + 1)) +
-          enemy.minDamage;
-        enemyState.enemyNextAction.value = "attack";
+        const allEnemies = fullEncounter.enemies;
+        if (allEnemies && allEnemies.length > 1) {
+          const intents = buildGroupIntents(allEnemies);
+          if (enemyState.enemyIntents) enemyState.enemyIntents.value = intents;
+          const targetIntent = intents[0];
+          enemyState.nextEnemyAttack.value = targetIntent?.damage ?? null;
+          enemyState.enemyNextAction.value = targetIntent?.action === "attack" ? "attack" : "idle";
+        } else {
+          enemyState.nextEnemyAttack.value =
+            Math.floor(Math.random() * (enemy.maxDamage - enemy.minDamage + 1)) +
+            enemy.minDamage;
+          enemyState.enemyNextAction.value = "attack";
+        }
       }
     }
 

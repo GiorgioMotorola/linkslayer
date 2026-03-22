@@ -1,4 +1,4 @@
-export function handleCombatAction({ player, enemy, state, utils, itemEffects = {} }) {
+export async function handleCombatAction({ player, enemy, state, utils, itemEffects = {} }) {
   const {
     playerHP,
     playerClass,
@@ -13,6 +13,7 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     playerGold,
     weaponAugment,
     defenseAugment,
+    equippedWeapon,
     ironWillUsed,
     bloodpactActive,
     playerEnrageCharges,
@@ -48,11 +49,87 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
   const {
     clearTimer,
     setDefeated,
-    handleLootDrop,
     gotoEnemyTurn,
   } = utils;
 
   const isBossFromState = state.isBoss;
+
+  // Process all non-target enemies' intents (attack, flee, enrage, confuse, steal, etc.)
+  // Returns true if the player was defeated.
+  function runSidekickAttacks() {
+    const enc = encounter.value;
+    if (!enc?.enemies || enc.enemies.length <= 1) return false;
+    const targetIdx = enc.targetIndex ?? 0;
+    // Use snapshot captured before intents were cleared for the "loading" UI
+    const intents = utils.enemyIntentsSnapshot ?? utils.enemyIntents?.value ?? [];
+
+    for (let i = 0; i < enc.enemies.length; i++) {
+      if (i === targetIdx) continue;
+      const intent = intents[i];
+      if (!intent || intent.action === "idle" || intent.action === "dead") continue;
+      const other = enc.enemies[i];
+      if (!other || other.currentHP <= 0 || other.turned) continue;
+
+      if (intent.action === "attack") {
+        const rawDmg = intent.damage ?? Math.floor(Math.random() * (other.maxDamage - other.minDamage + 1)) + other.minDamage;
+        let reduced = Math.max(0, rawDmg - Math.floor(shieldBonus.value / 2.333));
+        if (playerDefendedThisTurn) reduced = Math.max(0, Math.floor(reduced * 0.5));
+        playerHP.value = Math.max(playerHP.value - reduced, 0);
+        if (reduced > 0) {
+          utils.onCombatResult?.({ type: "taken", amount: reduced });
+          if (playerEnrageCharges) {
+            playerEnrageCharges.value = Math.min(3, playerEnrageCharges.value + 1);
+          }
+        }
+        log(`💥 ${other.name} also strikes <span class="player-name">${playerName.value}</span> for ${reduced} damage.`);
+        if (playerHP.value <= 0) {
+          log(`💀 <span class="player-name">${playerName.value}</span> was defeated.`);
+          encounter.value = null;
+          clearTimer();
+          setDefeated();
+          return true;
+        }
+
+      } else if (intent.action === "flee") {
+        log(`🏃 ${other.name} flees from the fight!`);
+        other.currentHP = 0;
+        other.fled = true;
+
+      } else if (intent.action === "enrage") {
+        if (enrageBonus) enrageBonus.value += 2;
+        log(`💢 ${other.name} enrages! Their attacks will hit harder.`);
+
+      } else if (intent.action === "confuse") {
+        const actions = ["attack_steady", "attack_power", "attack_enraged", "defend", "special", "flee"];
+        const blocked = actions.sort(() => Math.random() - 0.5).slice(0, 2);
+        if (confusedAction) {
+          confusedAction.value = blocked;
+          confusedTurnsLeft.value = 1;
+        }
+        const labels = { attack_steady: "Steady", attack_power: "Power", attack_enraged: "Enraged", defend: "Defend", special: "Special", flee: "Flee" };
+        const lockedNames = blocked.map(a => `<strong>${labels[a]}</strong>`).join(" and ");
+        log(`🌀 ${other.name} clouds <span class="player-name">${playerName.value}</span>'s mind! ${lockedNames} locked for 1 turn.`);
+
+      } else if (intent.action === "steal") {
+        const stealAmount = Math.min(playerGold?.value ?? 0, Math.floor(Math.random() * 6) + 3);
+        if (stealAmount > 0 && playerGold) {
+          playerGold.value -= stealAmount;
+          log(`💰 ${other.name} snatches ${stealAmount} gold from <span class="player-name">${playerName.value}</span>!`);
+        } else {
+          log(`💰 ${other.name} reaches for your gold — but finds nothing.`);
+        }
+
+      } else if (intent.action === "summon") {
+        const healAmount = 12;
+        other.currentHP = Math.min((other.currentHP ?? 0) + healAmount, other.maxHP ?? other.hp ?? 999);
+        log(`💚 ${other.name} heals for ${healAmount} HP!`);
+
+      } else if (intent.action === "trip") {
+        log(`🤾 ${other.name} trips <span class="player-name">${playerName.value}</span>!`);
+      }
+    }
+    return false;
+  }
 
   function tickConfusion() {
     if ((confusedTurnsLeft?.value ?? 0) > 0) {
@@ -64,6 +141,29 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     }
   }
   tickConfusion();
+
+  // Tick fire/status effects on non-target enemies (from Librarian's Staff, etc.)
+  function tickNonTargetStatusEffects() {
+    const enc = encounter.value;
+    if (!enc?.enemies) return;
+    const tidx = enc.targetIndex ?? 0;
+    for (let i = 0; i < enc.enemies.length; i++) {
+      if (i === tidx) continue;
+      const e = enc.enemies[i];
+      if (!e || e.currentHP <= 0 || e.turned || !e.statusEffects?.length) continue;
+      const remaining = [];
+      for (const eff of e.statusEffects) {
+        if (eff.type === "fire") {
+          e.currentHP = Math.max(0, e.currentHP - eff.damage);
+          log(`🔥 ${e.name} burns for ${eff.damage} damage!`);
+        }
+        eff.duration--;
+        if (eff.duration > 0) remaining.push(eff);
+      }
+      e.statusEffects = remaining;
+    }
+  }
+  tickNonTargetStatusEffects();
 
   let currentEnemyDamage = nextEnemyAttack.value;
   if (typeof currentEnemyDamage !== "number" || isNaN(currentEnemyDamage)) {
@@ -78,10 +178,13 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
   let damageToEnemy = 0;
   let skipEnemyCurrentTurn = false;
   let playerDefendedThisTurn = false;
+  let bracedSuccessfully = false;
   let enemyActionCountered = false;
   let enemyAttemptedAttack = false;
 
-  if (playerAction === "attack_steady" || playerAction === "attack_power" || playerAction === "attack_enraged") {
+  const isExploit = playerAction === "exploit";
+
+  if (playerAction === "attack_steady" || playerAction === "attack_power" || playerAction === "attack_enraged" || isExploit) {
     let randomDamage = Math.floor(Math.random() * 5) + 2;
     if (playerClass.value.name === "Fighter") randomDamage += 1;
     if (playerClass.value.name === "Rogue" && Math.random() < 0.25) {
@@ -105,8 +208,12 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     } else if (playerAction === "attack_enraged") {
       damageMultiplier = 2.0;
       attackName = "unleashes an enraged strike";
-      // No roll — guaranteed hit, rage consumed
+      // No hit threshold — enraged strike always lands; weapon specials roll their own dice
       if (playerEnrageCharges) playerEnrageCharges.value = 0;
+    } else if (isExploit) {
+      damageMultiplier = 1.5;
+      attackName = "exploits the opening";
+      hitThreshold = 9; // easier than power, but still requires reading the opening
     }
 
     let didHit = true;
@@ -114,13 +221,12 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       const rawRoll = Math.floor(Math.random() * 20) + 1;
       const roll = rawRoll + coolerStickBonus;
       didHit = roll >= hitThreshold;
-      utils.onDiceRoll?.({ roll, rawRoll, bonus: coolerStickBonus, threshold: hitThreshold, didHit });
       const dieClass = didHit ? "hit" : "miss";
       const dieFace = `<span class="dice-face ${dieClass}">${roll}</span>`;
       const bonusNote = coolerStickBonus > 0 ? ` (+${coolerStickBonus} stick)` : "";
-      log(
-        `🎲 ${dieFace}${bonusNote} (need ${hitThreshold}+) — ${didHit ? "Hit!" : "Miss!"}`
-      );
+      utils.onDiceRoll?.({ roll, rawRoll, bonus: coolerStickBonus, threshold: hitThreshold, didHit });
+      await utils.waitForDice?.();
+      log(`🎲 ${dieFace}${bonusNote} (need ${hitThreshold}+) — ${didHit ? "Hit!" : "Miss!"}`);
     }
 
     if (didHit) {
@@ -265,20 +371,57 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       }
     }
   } else if (playerAction === "defend") {
-    playerDefendedThisTurn = true;
     const counterableActions = ["steal", "enrage", "confuse", "summon"];
-    if (counterableActions.includes(enemyNextAction.value)) {
+    const isAttacking = enemyNextAction.value === "attack" || enemyNextAction.value === "attack_power";
+    // Mirror the UI's isWindUp: sum all attacking intents so multi-enemy total matches what the player sees
+    const braceIntents = utils.enemyIntents?.value ?? [];
+    const totalIncoming = braceIntents.length > 0
+      ? braceIntents.reduce((sum, intent) => {
+          if (intent && (intent.action === "attack" || intent.action === "attack_power")) {
+            return sum + (intent.damage ?? 0);
+          }
+          return sum;
+        }, 0)
+      : (isAttacking ? (currentEnemyDamage ?? 0) : 0);
+    const braceThreshold = Math.max(10, Math.floor((effectiveMaxHP.value ?? 50) * 0.15));
+    const isBrace = totalIncoming >= braceThreshold;
+
+    if (isBrace) {
+      // BRACE: high incoming hit — requires a dice roll (8+)
+      const braceRollThreshold = 8;
+      const rawRoll = Math.floor(Math.random() * 20) + 1;
+      const roll = rawRoll + coolerStickBonus;
+      const braceSuccess = roll >= braceRollThreshold;
+      const dieClass = braceSuccess ? "hit" : "miss";
+      const dieFace = `<span class="dice-face ${dieClass}">${roll}</span>`;
+      const bonusNote = coolerStickBonus > 0 ? ` (+${coolerStickBonus} stick)` : "";
+      utils.onDiceRoll?.({ roll, rawRoll, bonus: coolerStickBonus, threshold: braceRollThreshold, didHit: braceSuccess });
+      await utils.waitForDice?.();
+      if (braceSuccess) {
+        playerDefendedThisTurn = true;
+        bracedSuccessfully = true;
+        log(`🎲 ${dieFace}${bonusNote} (need ${braceRollThreshold}+) — 🛡️ Braced!`);
+      } else {
+        log(`🎲 ${dieFace}${bonusNote} (need ${braceRollThreshold}+) — Failed to brace! Taking full damage.`);
+      }
+    } else if (counterableActions.includes(enemyNextAction.value)) {
+      // Counter attempt — dice roll at 11+
       const rawRoll = Math.floor(Math.random() * 20) + 1;
       const roll = rawRoll + coolerStickBonus;
       const threshold = 11;
       const succeeded = roll >= threshold;
-      utils.onDiceRoll?.({ roll, rawRoll, bonus: coolerStickBonus, threshold, didHit: succeeded });
       const dieClass = succeeded ? "hit" : "miss";
       const dieFace = `<span class="dice-face ${dieClass}">${roll}</span>`;
       const bonusNote = coolerStickBonus > 0 ? ` (+${coolerStickBonus} stick)` : "";
+      utils.onDiceRoll?.({ roll, rawRoll, bonus: coolerStickBonus, threshold, didHit: succeeded });
+      await utils.waitForDice?.();
       log(`🎲 ${dieFace}${bonusNote} (need ${threshold}+) — ${succeeded ? "Countered!" : "Failed to counter!"}`);
       enemyActionCountered = succeeded;
-      utils.onCounterResult?.({ succeeded });
+      utils.onCounterResult?.({ succeeded, delay: 0 });
+      playerDefendedThisTurn = true;
+    } else {
+      // Regular defend — no roll, halves incoming damage
+      playerDefendedThisTurn = true;
     }
   } else if (playerAction === "flee") {
     if (isBossFromState(encounter.value?.enemy)) {
@@ -294,9 +437,10 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
         const fleeRoll = Math.floor(Math.random() * 20) + 1;
         const fleeThreshold = 7;
         const fleeSucceeded = fleeRoll >= fleeThreshold;
-        utils.onDiceRoll?.({ roll: fleeRoll, rawRoll: fleeRoll, bonus: 0, threshold: fleeThreshold, didHit: fleeSucceeded });
         const dieClass = fleeSucceeded ? "hit" : "miss";
         const dieFace = `<span class="dice-face ${dieClass}">${fleeRoll}</span>`;
+        utils.onDiceRoll?.({ roll: fleeRoll, rawRoll: fleeRoll, bonus: 0, threshold: fleeThreshold, didHit: fleeSucceeded });
+        await utils.waitForDice?.();
         log(`🎲 ${dieFace} (need ${fleeThreshold}+) — ${fleeSucceeded ? "Escaped!" : "Caught!"}`);
         if (fleeSucceeded) {
           log(`🏃 <span class="player-name">${playerName.value}</span> fled successfully.`);
@@ -328,12 +472,15 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
 
     if (
       enemyNextAction.value === "defend" &&
+      !isExploit &&
       !(playerAction === "special" && playerClass.value.name === "Rogue")
     ) {
       finalDamageToEnemy = Math.floor(finalDamageToEnemy * 0.5);
       log(
         `🛡️ ${formattedTitle} defends, reducing incoming damage to ${finalDamageToEnemy}HP.`
       );
+    } else if (enemyNextAction.value === "defend" && isExploit) {
+      log(`⚡ ${formattedTitle}'s guard is broken — full damage lands!`);
     }
     enemyHP.value -= finalDamageToEnemy;
     utils.onCombatResult?.({ type: "dealt", amount: finalDamageToEnemy });
@@ -361,6 +508,148 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
         log(`💫 Cursed Rune drains their strength — enemy Weakened (-2 dmg × 3 turns)!`);
       }
     }
+
+    // Conscriptor's Chain: turned ally strikes alongside the player this attack, then falls
+    const conscEnc = encounter.value;
+    const turnedAllyIdx = conscEnc?.enemies?.findIndex(e => e.turned && e.currentHP > 0) ?? -1;
+    if (turnedAllyIdx >= 0 && enemyHP.value > 0) {
+      const turnedAlly = conscEnc.enemies[turnedAllyIdx];
+      enemyHP.value = Math.max(0, enemyHP.value - finalDamageToEnemy);
+      utils.onCombatResult?.({ type: "dealt", amount: finalDamageToEnemy });
+      log(`⛓️ ${turnedAlly.name} fights for <span class="player-name">${playerName.value}</span> — strikes ${formattedTitle} for ${finalDamageToEnemy} damage, then collapses!`);
+      turnedAlly.currentHP = 0;
+      turnedAlly.turned = false;
+    }
+  }
+
+  // === Equipped Weapon Effects ===
+  const wepId = equippedWeapon?.value;
+
+  // Crossbow "Marksman": on enraged attack, fire a bolt at a random non-target for 10 damage
+  if (wepId === "crossbow" && playerAction === "attack_enraged" && damageToEnemy > 0) {
+    const enc = encounter.value;
+    if (enc?.enemies?.length > 1) {
+      const tidx = enc.targetIndex ?? 0;
+      const alive = enc.enemies.map((e, i) => ({ e, i })).filter(({ e, i }) => i !== tidx && e.currentHP > 0 && !e.turned);
+      if (alive.length > 0) {
+        const { e } = alive[Math.floor(Math.random() * alive.length)];
+        e.currentHP = Math.max(0, e.currentHP - 10);
+        log(`🏹 <span class="player-name">${playerName.value}</span>'s Crossbow fires — ${e.name} takes 10 damage!`);
+      }
+    }
+  }
+
+  // Flail "Sweep": enraged attack also hits all non-target enemies for half damage
+  if (wepId === "flail" && playerAction === "attack_enraged" && damageToEnemy > 0) {
+    const enc = encounter.value;
+    if (enc?.enemies?.length > 1) {
+      const tidx = enc.targetIndex ?? 0;
+      const sweepDmg = Math.max(1, Math.floor(damageToEnemy * 0.5));
+      for (let i = 0; i < enc.enemies.length; i++) {
+        if (i === tidx) continue;
+        const e = enc.enemies[i];
+        if (!e || e.currentHP <= 0) continue;
+        e.currentHP = Math.max(0, e.currentHP - sweepDmg);
+        log(`🔨 Flail sweeps ${e.name} for ${sweepDmg} damage!`);
+      }
+    }
+  }
+
+  // Shouting Halberd "Give Me Blood": 25% on attack_enraged to force non-targets to flee or trip
+  // Shouting Halberd "Give Me Blood": dice 10+ to force non-targets to flee or trip
+  if (wepId === "shouting_halberd" && playerAction === "attack_enraged" && damageToEnemy > 0) {
+    const halberdRoll = Math.floor(Math.random() * 20) + 1;
+    const halberdHit = halberdRoll >= 10;
+    utils.onDiceRoll?.({ roll: halberdRoll, rawRoll: halberdRoll, bonus: 0, threshold: 10, didHit: halberdHit });
+    await utils.waitForDice?.();
+    if (halberdHit) {
+      log(`🎲 <span class="dice-face hit">${halberdRoll}</span> — <em>Give Me Blood!</em> The Halberd screams!`);
+      const enc = encounter.value;
+      if (enc?.enemies?.length > 1) {
+        const tidx = enc.targetIndex ?? 0;
+        for (let i = 0; i < enc.enemies.length; i++) {
+          if (i === tidx) continue;
+          const e = enc.enemies[i];
+          if (!e || e.currentHP <= 0) continue;
+          if (Math.random() < 0.5) {
+            e.currentHP = 0;
+            e.fled = true;
+            log(`🏃 ${e.name} flees in terror!`);
+          } else {
+            log(`🤾 ${e.name} trips and falls — loses their next action!`);
+          }
+        }
+      }
+    } else {
+      log(`🎲 <span class="dice-face miss">${halberdRoll}</span> — Give Me Blood: the Halberd's shout falls silent.`);
+    }
+  }
+
+  // Rogue's Rapier "Greed is Good": dice 10+ to steal gold on attack_enraged
+  if (wepId === "rogues_rapier" && playerAction === "attack_enraged" && damageToEnemy > 0) {
+    const rapierRoll = Math.floor(Math.random() * 20) + 1;
+    const rapierHit = rapierRoll >= 10;
+    utils.onDiceRoll?.({ roll: rapierRoll, rawRoll: rapierRoll, bonus: 0, threshold: 10, didHit: rapierHit });
+    await utils.waitForDice?.();
+    if (rapierHit) {
+      const stealAmt = Math.floor(Math.random() * 16) + 10;
+      if (playerGold) playerGold.value = (playerGold.value ?? 0) + stealAmt;
+      utils.onGoldStolen?.(stealAmt);
+      log(`🎲 <span class="dice-face hit">${rapierRoll}</span> — <em>Greed is Good!</em> Pilfered ${stealAmt} gold from ${formattedTitle}!`);
+    } else {
+      log(`🎲 <span class="dice-face miss">${rapierRoll}</span> — Greed is Good: nothing to steal.`);
+    }
+  }
+
+  // Librarian's Staff "Burn enemies, not books": dice 10+ to set all non-targets on fire for 3 rounds
+  if (wepId === "librarians_staff" && playerAction === "attack_enraged" && damageToEnemy > 0) {
+    const staffRoll = Math.floor(Math.random() * 20) + 1;
+    const staffHit = staffRoll >= 10;
+    utils.onDiceRoll?.({ roll: staffRoll, rawRoll: staffRoll, bonus: 0, threshold: 10, didHit: staffHit });
+    await utils.waitForDice?.();
+    if (staffHit) {
+      log(`🎲 <span class="dice-face hit">${staffRoll}</span> — <em>Burn enemies, not books!</em>`);
+      const enc = encounter.value;
+      if (enc?.enemies?.length > 1) {
+        const tidx = enc.targetIndex ?? 0;
+        for (let i = 0; i < enc.enemies.length; i++) {
+          if (i === tidx) continue;
+          const e = enc.enemies[i];
+          if (!e || e.currentHP <= 0) continue;
+          e.statusEffects = e.statusEffects ?? [];
+          e.statusEffects.push({ type: "fire", damage: 5, duration: 3 });
+          log(`🔥 ${e.name} is set ablaze!`);
+        }
+      } else {
+        enemyStatusEffects.value.push({ type: "fire", damage: 5, duration: 3 });
+        log(`🔥 ${formattedTitle} is set ablaze!`);
+      }
+    } else {
+      log(`🎲 <span class="dice-face miss">${staffRoll}</span> — The staff's flames fizzle.`);
+    }
+  }
+
+  // Conscriptor's Chain "Conscript": dice 10+ to turn a non-target enemy to the player's side
+  if (wepId === "conscriptors_chain" && playerAction === "attack_enraged" && damageToEnemy > 0) {
+    const conscriptRoll = Math.floor(Math.random() * 20) + 1;
+    const conscriptHit = conscriptRoll >= 10;
+    utils.onDiceRoll?.({ roll: conscriptRoll, rawRoll: conscriptRoll, bonus: 0, threshold: 10, didHit: conscriptHit });
+    await utils.waitForDice?.();
+    if (conscriptHit) {
+      const enc = encounter.value;
+      const tidx = enc?.targetIndex ?? 0;
+      const candidates = enc?.enemies?.map((e, i) => ({ e, i }))
+        .filter(({ e, i }) => i !== tidx && e.currentHP > 0 && !e.turned) ?? [];
+      if (candidates.length > 0) {
+        const { e: victim } = candidates[Math.floor(Math.random() * candidates.length)];
+        victim.turned = true;
+        log(`🎲 <span class="dice-face hit">${conscriptRoll}</span> — <em>Conscripted!</em> ${victim.name} breaks rank — they fight for you next attack!`);
+      } else {
+        log(`🎲 <span class="dice-face hit">${conscriptRoll}</span> — Conscript: no enemy left to turn.`);
+      }
+    } else {
+      log(`🎲 <span class="dice-face miss">${conscriptRoll}</span> — Conscript: they resist the pull.`);
+    }
   }
 
   if (enemyHP.value <= 0) {
@@ -373,22 +662,28 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       playerHP.value = Math.min(playerHP.value + soulHeal, effectiveMaxHP.value);
       log(`💠 Soul Shard pulses — you recover ${soulHeal} HP from the fallen.`);
     }
+    // Other attacking enemies still deal damage even if you killed this one
+    if (runSidekickAttacks()) return;
+
     const defeatedEnemyData = encounter.value?.enemy;
     utils.onEnemyKilled?.(defeatedEnemyData);
-    handleLootDrop(defeatedEnemyData);
 
     if (enemiesKilled) enemiesKilled.value++;
     combatWinsSinceLastCapIncrease.value++;
-    if (combatWinsSinceLastCapIncrease.value >= 5) {
+    if (combatWinsSinceLastCapIncrease.value >= 10) {
       hpCapBonus.value += 10;
       log(
         `🎉 You have gained experience from defeating the evil in this land and your maximum HP increased by <strong>10</strong>. New max HP: ${effectiveMaxHP.value}`
       );
+      utils.onHpCapIncrease?.();
       combatWinsSinceLastCapIncrease.value = 0;
       playerHP.value = Math.min(playerHP.value, effectiveMaxHP.value);
     }
     return;
   }
+
+  // For multi-action turns: skip enemy response on intermediate actions
+  if (utils.skipEnemyTurn) return;
 
   if (!skipEnemyCurrentTurn) {
     if (enemyIsStunned.value) {
@@ -399,6 +694,12 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
       if (enemyNextAction.value === "attack") {
         enemyAttemptedAttack = true;
         damageToPlayer = currentEnemyDamage;
+
+        // 20% chance for enemy to land a brutal hit (1.5x damage)
+        if (Math.random() < 0.20) {
+          damageToPlayer = Math.floor(damageToPlayer * 1.5);
+          log(`💥 ${formattedTitle} lands a <strong>brutal hit</strong>!`);
+        }
 
         // Apply weaken/chill status debuffs on the enemy
         for (const eff of (enemyStatusEffects.value ?? [])) {
@@ -431,11 +732,12 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
           damageToPlayer - Math.floor(shieldBonus.value / 2.333)
         );
 
-        if (playerDefendedThisTurn) {
-          damageToPlayer = Math.max(0, Math.floor(damageToPlayer * 0.9));
-          log(
-            `🛡️ <span class="player-name">${playerName.value}</span> defended the attack, taking ${damageToPlayer} damage.`
-          );
+        if (bracedSuccessfully) {
+          damageToPlayer = Math.max(0, Math.floor(damageToPlayer * 0.2));
+          log(`🛡️ <em>BRACE!</em> <span class="player-name">${playerName.value}</span> absorbs the blow — only ${damageToPlayer} damage gets through!`);
+        } else if (playerDefendedThisTurn) {
+          damageToPlayer = Math.max(0, Math.floor(damageToPlayer * 0.5));
+          log(`🛡️ <span class="player-name">${playerName.value}</span> defended the attack, taking ${damageToPlayer} damage.`);
         } else {
           log(
             `💥 ${formattedTitle} attacks back and <span class="player-name">${playerName.value}</span> takes ${damageToPlayer} damage.`
@@ -544,12 +846,12 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
         log(`💀 <span class="player-name">${playerName.value}</span> defeated ${formattedTitle} with Thornplate!`);
         const defeatedEnemyData = encounter.value?.enemy;
         utils.onEnemyKilled?.(defeatedEnemyData);
-        handleLootDrop(defeatedEnemyData);
         if (enemiesKilled) enemiesKilled.value++;
         combatWinsSinceLastCapIncrease.value++;
-        if (combatWinsSinceLastCapIncrease.value >= 5) {
+        if (combatWinsSinceLastCapIncrease.value >= 10) {
           hpCapBonus.value += 10;
           log(`🎉 Your maximum HP increased by <strong>10</strong>. New max HP: ${effectiveMaxHP.value}`);
+          utils.onHpCapIncrease?.();
           combatWinsSinceLastCapIncrease.value = 0;
           playerHP.value = Math.min(playerHP.value, effectiveMaxHP.value);
         }
@@ -585,32 +887,8 @@ export function handleCombatAction({ player, enemy, state, utils, itemEffects = 
     return;
   }
 
-  // One other enemy in the group auto-attacks for max 3 damage
-  const enc = encounter.value;
-  if (enc?.enemies && enc.enemies.length > 1) {
-    const targetIdx = enc.targetIndex ?? 0;
-    const sidekick = enc.enemies.find((e, i) => i !== targetIdx && e.currentHP > 0);
-    if (sidekick) {
-      const other = sidekick;
-      const rawDmg = Math.min(Math.floor(Math.random() * (other.maxDamage - other.minDamage + 1)) + other.minDamage, 3);
-      const reduced = Math.max(0, rawDmg - Math.floor(shieldBonus.value / 2.333));
-      playerHP.value = Math.max(playerHP.value - reduced, 0);
-      if (reduced > 0) {
-        utils.onCombatResult?.({ type: "taken", amount: reduced });
-        if (playerEnrageCharges) {
-          playerEnrageCharges.value = Math.min(3, playerEnrageCharges.value + 1);
-        }
-      }
-      log(`💥 ${other.name} also strikes <span class="player-name">${playerName.value}</span> for ${reduced} damage.`);
-      if (playerHP.value <= 0) {
-        log(`💀 <span class="player-name">${playerName.value}</span> was defeated.`);
-        encounter.value = null;
-        clearTimer();
-        setDefeated();
-        return;
-      }
-    }
-  }
+  // Execute intents for all non-target enemies that were assigned to attack
+  if (runSidekickAttacks()) return;
 
   const counterableActions = ["steal", "enrage", "confuse", "summon"];
   if (counterableActions.includes(enemyNextAction.value) && !enemyActionCountered) {

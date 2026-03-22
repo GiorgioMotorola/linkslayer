@@ -57,6 +57,13 @@
     :lastDamageDealt="props.lastDamageDealt"
     :lastDamageTaken="props.lastDamageTaken"
     :encounter="props.encounter"
+    :enemyNextAction="props.enemyNextAction"
+    :nextEnemyAttack="props.nextEnemyAttack"
+    :enemyIntents="props.enemyIntents"
+    :enemyStatusEffects="props.enemyStatusEffects"
+    :enemyTurnKey="props.enemyTurnKey"
+    :enemyHitKey="props.enemyHitKey"
+    :playerHitKey="props.playerHitKey"
     @switch-target="$emit('switch-target', $event)"
   />
   <div class="article" :class="{ 'blurred-content': isBlurred || props.isInCombat }">
@@ -101,10 +108,16 @@ const props = defineProps({
   enemyHP: { type: Number, default: 0 },
   lastDamageDealt: { type: Number, default: null },
   lastDamageTaken: { type: Number, default: null },
-  enemyStatusEffects: { type: Array, default: () => [] },
+  enemyStatusEffects:  { type: Array, default: () => [] },
   settlementOnThisPage: { type: Object, default: null },
   settlementClaimedBy:  { type: String, default: "" },
-  encounter: { type: Object, default: null },
+  encounter:            { type: Object, default: null },
+  enemyNextAction:      { type: String, default: null },
+  nextEnemyAttack:      { type: Number, default: null },
+  enemyIntents:         { type: Array, default: () => [] },
+  enemyTurnKey:         { type: Number, default: 0 },
+  enemyHitKey:          { type: Number, default: 0 },
+  playerHitKey:         { type: Number, default: 0 },
 });
 
 function dayWeather(day) {

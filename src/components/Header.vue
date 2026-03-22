@@ -8,83 +8,124 @@
         <div v-if="encounter.type === 'combat'">
           <div class="attack-line" v-html="typedLine"></div>
 
-          <Teleport to="body">
-            <div v-if="enemyIntentMessage" class="enemy-intent" :class="enemyIntentClass" :style="badgeBottomStyle">
-              <div class="intent-icon">{{ enemyIntentIcon }}</div>
-              <div class="intent-text" v-html="displayedIntentHTML"></div>
-            </div>
-          </Teleport>
-
-          <Teleport to="body">
-            <transition name="dice-roll-fade">
-              <div
-                v-if="lastDiceRoll"
-                class="dice-roll-display"
-                :class="lastDiceRoll.isRolling ? 'dice-rolling' : (lastDiceRoll.didHit ? 'dice-hit' : 'dice-miss')"
-                :style="diceRollBadgeStyle"
-              >
-                <div class="dice-number">{{ lastDiceRoll.roll }}</div>
-                <div class="dice-label" v-if="!lastDiceRoll.isRolling">need {{ lastDiceRoll.threshold }}+</div>
-                <transition name="dice-bonus-pop">
-                  <div class="dice-bonus" v-if="lastDiceRoll.isBonusing">+{{ lastDiceRoll.bonus }}</div>
-                </transition>
-              </div>
-            </transition>
-          </Teleport>
-
           <div v-if="confusedAction.length > 0 && confusedTurnsLeft > 0" class="confused-notice">
             🌀 <strong>{{ confusedActionLabel }}</strong> locked ({{ confusedTurnsLeft }} turn{{ confusedTurnsLeft === 1 ? '' : 's' }} remaining)
           </div>
 
-          <div class="btn-group">
+          <!-- Action icon-box grid -->
+          <div v-if="props.enemyNextAction !== 'victory'" class="combat-actions-grid">
             <button
-              :class="{ 'btn-anim-attack': activeAction === 'attack_steady' }"
-              :disabled="combatLocked || confusedAction.includes('attack_steady')"
+              class="action-box btn-action-steady"
+              :class="{ 'action-box-active': activeAction === 'attack_steady' }"
+              :disabled="combatLocked || confusedAction.includes('attack_steady') || fleeQueued || braceQueued"
               @click="handleAction('attack_steady')"
+              title="100% Success | Normal dmg"
             >
-              ⚔ Steady (100% Success | Normal dmg)
+              <span class="action-box-icon">⚔</span>
+              <span class="action-box-label">Steady</span>
             </button>
 
             <button
-              :class="{ 'btn-anim-attack': activeAction === 'attack_power' }"
-              :disabled="combatLocked || confusedAction.includes('attack_power')"
+              class="action-box btn-action-power"
+              :class="{ 'action-box-active': activeAction === 'attack_power' }"
+              :disabled="combatLocked || confusedAction.includes('attack_power') || fleeQueued || braceQueued"
               @click="handleAction('attack_power')"
+              title="50% Success | 1.5x dmg | miss -3hp"
             >
-              ⚔ Power (50% Success | 1.5x dmg | miss -3hp)
+              <span class="action-box-icon">💥</span>
+              <span class="action-box-label">Power</span>
             </button>
 
             <button
-              :class="{ 'btn-anim-attack': activeAction === 'attack_enraged', 'btn-enraged-ready': enrageCharges >= 3 }"
-              :disabled="combatLocked || confusedAction.includes('attack_enraged') || enrageCharges < 3"
+              class="action-box btn-action-enrage"
+              :class="{ 'action-box-active': activeAction === 'attack_enraged', 'btn-enraged-ready': enrageCharges >= 3 }"
+              :disabled="combatLocked || confusedAction.includes('attack_enraged') || enrageCharges < 3 || lockedActions.some(a => a.action === 'attack_enraged') || fleeQueued || braceQueued"
               @click="handleAction('attack_enraged')"
-              :title="enrageCharges < 3 ? `Enraged: ${enrageCharges}/3 hits needed` : 'Enraged — guaranteed 2x damage!'"
+              :title="enrageCharges < 3 ? `${enrageButtonLabel}: ${enrageCharges}/3 hits needed` : `${enrageButtonLabel} — guaranteed 2x damage!`"
             >
-             ⚔ Enrage (2x dmg | guaranteed)
+              <span class="action-box-icon">🔥</span>
+              <span class="action-box-label">{{ enrageButtonLabel }}</span>
             </button>
 
             <button
-              :class="{ 'btn-anim-special': activeAction === 'special' }"
-              :disabled="combatLocked || confusedAction.includes('special')"
+              class="action-box btn-action-special"
+              :class="{ 'action-box-active': activeAction === 'special' }"
+              :disabled="combatLocked || confusedAction.includes('special') || fleeQueued || braceQueued || specialQueued"
               @click="handleAction('special')"
             >
-              ✦ {{ playerSpecialAbilityName }}
+              <span class="action-box-icon">✦</span>
+              <span class="action-box-label">{{ playerSpecialAbilityName }}</span>
+            </button>
+
+            <!-- Exploit button — appears when enemy is defending or tripped -->
+            <button
+              v-if="showExploit"
+              class="action-box btn-exploit"
+              :class="{ 'action-box-active': activeAction === 'exploit' }"
+              :disabled="combatLocked || fleeQueued || braceQueued || exploitAlreadyQueued"
+              @click="handleAction('exploit')"
+              title="1.5x dmg | ignores guard"
+            >
+              <span class="action-box-icon">⚡</span>
+              <span class="action-box-label">Exploit</span>
             </button>
 
             <button
-              :class="{ 'btn-anim-defend': activeAction === 'defend', 'btn-defend-counter': defendButtonLabel !== 'Defend' }"
-              :disabled="combatLocked || confusedAction.includes('defend')"
+              class="action-box"
+              :class="{
+                'action-box-active': activeAction === 'defend',
+                'btn-defend-counter': defendButtonLabel !== 'Defend',
+                'btn-wind-up': isWindUp,
+              }"
+              :disabled="combatLocked || confusedAction.includes('defend') || nonBraceQueued"
               @click="handleAction('defend')"
             >
-              🛡 {{ defendButtonLabel }}
+              <span class="action-box-icon">🛡</span>
+              <span class="action-box-label btn-brace-label" v-if="isWindUp">BRACE!</span>
+              <span class="action-box-label" v-else>{{ defendButtonLabel }}</span>
             </button>
 
             <button
-              :class="{ 'btn-anim-flee': activeAction === 'flee' }"
-              :disabled="combatLocked || confusedAction.includes('flee')"
+              class="action-box btn-action-flee"
+              :class="{ 'action-box-active': activeAction === 'flee' }"
+              :disabled="combatLocked || confusedAction.includes('flee') || nonFleeQueued"
               @click="handleAction('flee')"
             >
-              ↩ Flee
+              <span class="action-box-icon">↩</span>
+              <span class="action-box-label">Flee</span>
             </button>
+          </div>
+
+          <!-- Action queue row — always shown during combat -->
+          <div v-if="props.enemyNextAction !== 'victory'" class="action-queue-row">
+            <div class="action-slots">
+              <div
+                v-for="i in props.maxActionsPerTurn"
+                :key="i"
+                class="action-slot"
+                :class="{ 'action-slot-filled': lockedActions[i-1], 'action-slot-empty': !lockedActions[i-1] }"
+                @click="lockedActions[i-1] && lockedActions.splice(i-1, 1)"
+              >
+                <span v-if="lockedActions[i-1]">{{ actionSlotLabel(lockedActions[i-1].action) }} ✕</span>
+                <span v-else class="slot-empty-indicator">—</span>
+              </div>
+            </div>
+            <button
+              class="btn-confirm-turn"
+              :disabled="combatLocked || lockedActions.length === 0"
+              @click="confirmTurn"
+            >
+              ⚡ Confirm
+            </button>
+          </div>
+
+          <div v-if="props.enemyNextAction === 'victory'" class="victory-panel">
+            <div v-if="props.victoryLoot" class="victory-loot">
+              Loot: {{ props.victoryLoot }}
+            </div>
+            <div class="dialogue-options">
+              <button @click="emit('close')">▸ Continue Your Journey</button>
+            </div>
           </div>
         </div>
 
@@ -280,6 +321,22 @@
       </div>
     </div>
 
+    <Teleport to="body">
+      <transition name="dice-roll-fade">
+        <div
+          v-if="lastDiceRoll"
+          class="dice-roll-display"
+          :class="lastDiceRoll.isRolling ? 'dice-rolling' : (lastDiceRoll.didHit ? 'dice-hit' : 'dice-miss')"
+          :style="diceRollBadgeStyle"
+        >
+          <div class="dice-number">{{ lastDiceRoll.roll }}</div>
+          <div class="dice-label" v-if="!lastDiceRoll.isRolling">need {{ lastDiceRoll.threshold }}+</div>
+          <transition name="dice-bonus-pop">
+            <div class="dice-bonus" v-if="lastDiceRoll.isBonusing">+{{ lastDiceRoll.bonus }}</div>
+          </transition>
+        </div>
+      </transition>
+    </Teleport>
   </header>
 </template>
 
@@ -288,13 +345,8 @@ import { ref, computed, watch, nextTick, onMounted, onUnmounted } from "vue";
 import TipsModal from "./TipsModal.vue";
 import "./styles/headerStyles.css";
 import { shopItems } from "@/utils/shopItems";
+import { getWeapon } from "@/utils/weapons";
 
-const knightImg  = new URL("../assets/knight-placeholder.png",  import.meta.url).href;
-const paladinImg = new URL("../assets/paladin-placeholder.png", import.meta.url).href;
-const wizardImg  = new URL("../assets/wizard-placeholder.png",  import.meta.url).href;
-const rogueImg   = new URL("../assets/rogue-img.png",           import.meta.url).href;
-const mundaneImg = new URL("../assets/mundane-placeholder.png", import.meta.url).href;
-const classImageMap = { Fighter: knightImg, Paladin: paladinImg, Wizard: wizardImg, Rogue: rogueImg, Mundane: mundaneImg };
 
 import { useAuth } from "@/composables/useAuth";
 
@@ -397,10 +449,15 @@ const props = defineProps({
   hasEvenCoolerStick: { type: Boolean, default: false },
   scrapMetal: { type: Number, default: 0 },
   enrageCharges: { type: Number, default: 0 },
+  victoryLoot: { type: String, default: "" },
+  equippedWeaponId: { type: String, default: null },
+  enemyIntents: { type: Array, default: () => [] },
+  maxActionsPerTurn: { type: Number, default: 1 },
 });
 
 const emit = defineEmits([
   "action",
+  "confirm-turn",
   "defend",
   "flee",
   "special",
@@ -415,7 +472,6 @@ const emit = defineEmits([
 
 const { user: authUser, signIn, signUp, signOut } = useAuth();
 
-const playerClassImg = computed(() => classImageMap[props.playerClass?.name] ?? knightImg);
 
 const enemyThumbnailUrl = ref(null);
 watch(() => props.formattedTitle, async (title) => {
@@ -525,6 +581,10 @@ const activeStatuses = computed(() => {
     `🛡️ ${AUGMENT_LABELS[props.defenseAugment] ?? props.defenseAugment}`,
     augmentItemDesc[props.defenseAugment] ?? "Defense augment equipped."
   ));
+  if (props.equippedWeaponId) {
+    const wep = getWeapon(props.equippedWeaponId);
+    if (wep) list.push(s(`⚔️ ${wep.name}`, wep.description));
+  }
 
   // Player status
   if (props.isBlurred)       list.push(s("🍺 Drunk",    "Vision is blurred. Effects wear off over time."));
@@ -655,18 +715,24 @@ watch(() => props.lastDamageTaken, (newVal) => {
   }
 });
 
-const badgeBottomStyle = computed(() => ({
-  bottom: `${headerHeight.value + 8}px`,
-}));
-
-
 const diceRollBadgeStyle = computed(() => ({
   bottom: `${headerHeight.value + 8 + 62}px`,
 }));
 
+
 const combatLocked = computed(() =>
   !!props.lastDiceRoll || props.lastDamageDealt !== null || props.lastDamageTaken !== null || props.enemyNextAction === "victory" || props.enemyNextAction === "fled"
 );
+
+const fleeQueued = computed(() => lockedActions.value.some(a => a.action === 'flee'));
+const nonFleeQueued = computed(() => lockedActions.value.some(a => a.action !== 'flee'));
+const braceQueued = computed(() => lockedActions.value.some(a => a.action === 'defend'));
+const nonBraceQueued = computed(() => lockedActions.value.some(a => a.action !== 'defend'));
+const specialQueued = computed(() => lockedActions.value.some(a => a.action === 'special'));
+const exploitAlreadyQueued = computed(() => {
+  const currentTarget = props.encounter?.targetIndex ?? 0;
+  return lockedActions.value.some(a => a.action === 'exploit' && a.targetIndex === currentTarget);
+});
 
 const COUNTERABLE_LABELS = { steal: "Steal", enrage: "Enrage", confuse: "Confuse", summon: "Heal" };
 
@@ -674,6 +740,30 @@ const defendButtonLabel = computed(() => {
   const label = COUNTERABLE_LABELS[props.enemyNextAction];
   return label ? `Defend ${label}` : "Defend";
 });
+
+const enrageButtonLabel = computed(() => {
+  const weapon = props.equippedWeaponId ? getWeapon(props.equippedWeaponId) : null;
+  return weapon?.enrageLabel ?? weapon?.label ?? "Enrage";
+});
+
+const isWindUp = computed(() => {
+  const threshold = Math.max(10, Math.floor((props.effectiveMaxHP ?? 50) * 0.15));
+  // Sum damage from all attacking enemies (multi-enemy aware)
+  const intents = props.enemyIntents;
+  const totalIncoming = intents.length > 0
+    ? intents.reduce((sum, intent) => {
+        if (intent && (intent.action === "attack" || intent.action === "attack_power")) {
+          return sum + (intent.damage ?? 0);
+        }
+        return sum;
+      }, 0)
+    : ((props.enemyNextAction === "attack" || props.enemyNextAction === "attack_power") ? (props.nextEnemyAttack ?? 0) : 0);
+  return totalIncoming >= threshold;
+});
+
+const showExploit = computed(() =>
+  props.enemyNextAction === "defend" || props.enemyNextAction === "trip"
+);
 
 
 
@@ -683,6 +773,7 @@ const confusedActionLabel = computed(() => {
 });
 
 const activeAction = ref("");
+const lockedActions = ref([]);
 const typedLine = ref("");
 const typedGreeting = ref("");
 let typeInterval = null;
@@ -691,7 +782,6 @@ const expanded = ref(false);
 const visibleLogCount = ref(Math.min(props.gameLog?.length ?? 0, 3));
 const newLineIds = ref([]);
 const containerAnimClass = ref("");
-let containerAnimTimeout = null;
 
 const displayedLog = computed(() => {
   return expanded.value ? props.gameLog : props.gameLog.slice(-3);
@@ -758,129 +848,6 @@ const playerSpecialAbilityName = computed(() => {
   return tierData?.name ?? props.playerClass?.special ?? "Special";
 });
 
-const otherEnemiesNote = computed(() => {
-  const enc = props.encounter;
-  if (!enc?.enemies || enc.enemies.length <= 1) return "";
-  const alive = enc.enemies.filter((e, i) => i !== enc.targetIndex && e.currentHP > 0);
-  if (alive.length === 0) return "";
-  return ` (+${alive.length} other${alive.length > 1 ? 's' : ''} auto-attack)`;
-});
-
-const enemyIntentMessage = computed(() => {
-  if (!props.enemyNextAction) return "";
-
-  switch (props.enemyNextAction) {
-    case "attack":
-      return `Enemy attacking for ${props.nextEnemyAttack} dmg${otherEnemiesNote.value}`;
-    case "defend":
-      return "Enemy defending";
-    case "flee":
-      return "Enemy about to flee";
-    case "trip":
-      return "Enemy tripped";
-    case "stunned":
-      return "Enemy is stunned";
-    case "steal":
-      return "Enemy is trying to steal your gold";
-    case "enrage":
-      return "Enemy is getting Enraged";
-    case "confuse":
-      return "Enemy is trying to confuse you";
-    case "summon":
-      return "Enemy is about to heal";
-    case "victory":
-      return "Path Cleared.";
-    case "fled":
-      return "Escaped Successfully";
-    default:
-      return "";
-  }
-});
-
-const enemyIntentIcon = computed(() => {
-  switch (props.enemyNextAction) {
-    case "attack":
-      return "🗡️";
-    case "defend":
-      return "🛡️";
-    case "flee":
-      return "🏃";
-    case "trip":
-      return "🤾";
-    case "stunned":
-      return "💤";
-    case "steal":
-      return "💰";
-    case "enrage":
-      return "💢";
-    case "confuse":
-      return "🌀";
-    case "summon":
-      return "💚";
-    case "victory":
-      return "🏆";
-    case "fled":
-      return "🏃";
-    default:
-      return "⚔️";
-  }
-});
-
-const enemyIntentClass = computed(() => {
-  const base = `intent-${props.enemyNextAction || 'default'}`;
-  if (props.counterResult === 'success') return `${base} intent-countered`;
-  if (props.counterResult === 'fail') return `${base} intent-counter-failed`;
-  return base;
-});
-
-const displayedIntentHTML = ref("");
-let intentTypingInterval = null;
-let lastTypedKey = -1;
-
-function startIntentTypewriter() {
-  const newAction = props.enemyNextAction;
-  clearInterval(intentTypingInterval);
-  displayedIntentHTML.value = "";
-  const fullText = enemyIntentMessage.value;
-  if (!fullText) return;
-
-  const damageStart =
-    newAction === "attack" && props.nextEnemyAttack
-      ? fullText.indexOf(String(props.nextEnemyAttack))
-      : -1;
-
-  let i = 0;
-  intentTypingInterval = setInterval(() => {
-    i++;
-    if (damageStart >= 0 && i > damageStart) {
-      displayedIntentHTML.value =
-        fullText.slice(0, damageStart) +
-        `<span class="intent-damage">` +
-        fullText.slice(damageStart, i) +
-        `</span>`;
-    } else {
-      displayedIntentHTML.value = fullText.slice(0, i);
-    }
-    if (i >= fullText.length) clearInterval(intentTypingInterval);
-  }, 35);
-}
-
-watch(() => props.enemyTurnKey, () => {
-  lastTypedKey = props.enemyTurnKey;
-  startIntentTypewriter();
-});
-
-watch(() => props.enemyNextAction, () => {
-  if (!props.enemyNextAction) {
-    clearInterval(intentTypingInterval);
-    displayedIntentHTML.value = "";
-    return;
-  }
-  if (lastTypedKey !== props.enemyTurnKey) {
-    lastTypedKey = props.enemyTurnKey;
-    startIntentTypewriter();
-  }
-});
 
 const hpAnimClass = ref("");
 const weaponAnimClass = ref("");
@@ -983,21 +950,6 @@ watch(
       currentDialogueNodeId.value = newEncounter.lore.currentNodeId || "start";
       fullText = currentDialogue.value?.text || newEncounter.lore.text || "";
     } else if (newEncounter.type === "combat") {
-      displayedIntentHTML.value = "";
-      lastTypedKey = -1;
-      nextTick(() => {
-        const fullText = enemyIntentMessage.value;
-        if (!fullText || displayedIntentHTML.value) return;
-        if (props.enemyNextAction === "attack" && props.nextEnemyAttack) {
-          const dmgStart = fullText.indexOf(String(props.nextEnemyAttack));
-          displayedIntentHTML.value = dmgStart >= 0
-            ? fullText.slice(0, dmgStart) + `<span class="intent-damage">${fullText.slice(dmgStart)}</span>`
-            : fullText;
-        } else {
-          displayedIntentHTML.value = fullText;
-        }
-        lastTypedKey = props.enemyTurnKey; 
-      });
 
       console.log("--- Combat Encounter Debug ---");
       console.log("props.formattedTitle:", props.formattedTitle);
@@ -1205,6 +1157,10 @@ watch(
   }
 );
 
+watch(() => props.encounter, () => {
+  lockedActions.value = [];
+});
+
 function startTyping(fullText, type = "combat") {
   clearInterval(typeInterval);
   typedGreeting.value = "";
@@ -1252,40 +1208,35 @@ watch(
 
 function handleAction(action) {
   activeAction.value = action;
-  emit("action", action);
 
-  let animClass = "";
-  if (action === "attack_steady" || action === "attack_power" || action === "attack_enraged") {
-    animClass = "container-anim-attack";
-  } else if (action === "defend") {
-    animClass = "container-anim-defend";
-  } else if (action === "flee") {
-    animClass = "container-anim-flee";
-  } else if (action === "special") {
-    animClass = "container-anim-special";
+  // Always queue — confirm button fires the turn
+  if (lockedActions.value.length < props.maxActionsPerTurn) {
+    const targetIndex = props.encounter?.targetIndex ?? 0;
+    lockedActions.value = [...lockedActions.value, { action, targetIndex }];
   }
-
-  if (animClass) {
-    triggerContainerAnim(containerAnimClass, animClass);
-  }
-
-  setTimeout(() => {
-    activeAction.value = "";
-  }, 300);
+  setTimeout(() => { activeAction.value = ""; }, 300);
 }
 
-function triggerContainerAnim(refVar, className, duration = 700) {
-  if (containerAnimTimeout) {
-    clearTimeout(containerAnimTimeout);
-  }
-  refVar.value = "";
-  nextTick(() => {
-    refVar.value = className;
-    containerAnimTimeout = setTimeout(() => {
-      refVar.value = "";
-    }, duration);
-  });
+function confirmTurn() {
+  if (lockedActions.value.length === 0) return;
+  const toSubmit = [...lockedActions.value];
+  lockedActions.value = [];
+  emit("confirm-turn", toSubmit);
 }
+
+function actionSlotLabel(action) {
+  const labels = {
+    attack_steady: "⚔ Steady",
+    attack_power: "⚔ Power",
+    attack_enraged: "⚔ Enrage",
+    special: "✨ Special",
+    defend: "🛡 Defend",
+    exploit: "⚡ Exploit",
+    flee: "↩ Flee",
+  };
+  return labels[action] ?? action;
+}
+
 
 
 

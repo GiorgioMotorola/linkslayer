@@ -3,12 +3,19 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: 320px;
+  width: min(480px, 100vw);
   display: flex;
   flex-direction: column;
   z-index: 1100;
   box-shadow: -10px 0 50px rgba(0, 0, 0, 0.75);
   overflow-y: auto;
+}
+
+@media (max-width: 500px) {
+  .rune-overlay {
+    width: 100vw;
+    left: 0;
+  }
 }
 
 .rune-panel-enter-active {

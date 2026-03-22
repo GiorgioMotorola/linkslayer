@@ -1,4 +1,33 @@
-import { handleLootDrop } from "@/utils/lootHandler";
+
+/**
+ * Build and return a per-enemy intent array for a group encounter.
+ * 70% of rounds: one active enemy. 30%: two or more.
+ * Active enemies use decideAction() to pick their move (attack, confuse, enrage, etc.)
+ */
+export function buildGroupIntents(enemies, enrageBonus = 0, decideAction = null) {
+  const aliveIndices = enemies.map((_, i) => i).filter(i => enemies[i].currentHP > 0);
+  if (aliveIndices.length === 0) return enemies.map(() => ({ action: "dead", damage: null }));
+
+  let activeIndices;
+  if (Math.random() < 0.70 || aliveIndices.length === 1) {
+    const pick = aliveIndices[Math.floor(Math.random() * aliveIndices.length)];
+    activeIndices = new Set([pick]);
+  } else {
+    const shuffled = [...aliveIndices].sort(() => Math.random() - 0.5);
+    const count = Math.floor(Math.random() * (shuffled.length - 1)) + 2;
+    activeIndices = new Set(shuffled.slice(0, count));
+  }
+
+  return enemies.map((e, i) => {
+    if (e.currentHP <= 0) return { action: "dead", damage: null };
+    if (!activeIndices.has(i)) return { action: "idle", damage: null };
+    const action = decideAction ? decideAction() : "attack";
+    const damage = action === "attack"
+      ? Math.floor(Math.random() * (e.maxDamage - e.minDamage + 1)) + e.minDamage + enrageBonus
+      : null;
+    return { action, damage };
+  });
+}
 
 export function handleEnemyTurn({
   enemyState,
@@ -14,11 +43,12 @@ export function handleEnemyTurn({
     enemyIsStunned,
     enemyNextAction,
     nextEnemyAttack,
+    enemyIntents,
     enrageBonus,
   } = enemyState;
   const { playerName } = playerState;
   const { log } = utilityFunctions;
-  const { formattedTitle, decideEnemyAction, logEnemyAction } = combatFunctions;
+  const { formattedTitle, decideEnemyAction, logEnemyAction, onEnemyKilled } = combatFunctions;
 
   enemyStatusEffects.value = enemyStatusEffects.value.filter((effect) => {
     if (effect.type === "bleed") {
@@ -56,48 +86,71 @@ export function handleEnemyTurn({
 
   if (enemyHP.value <= 0) {
     log(`💀 ${playerName.value} defeated ${formattedTitle.value}`);
-    encounter.value = null;
-
-    handleLootDrop({ playerState, utilityFunctions });
+    onEnemyKilled?.(encounter.value?.enemy);
     return;
   }
+
+  // ── Assign per-enemy intents (Slay the Spire style) ──────────────────────
+  const enc = encounter.value;
+  const enemies = enc?.enemies;
+  const bonus = enrageBonus?.value ?? 0;
 
   if (enemyIsStunned.value) {
     log(`💤 ${formattedTitle.value} is stunned and skips their turn.`);
-    enemyNextAction.value = "stunned";
     enemyIsStunned.value = false;
+    // For multi-enemy: immediately assign next-round intents so the UI never shows "···"
+    if (enemies && enemies.length > 1) {
+      const intents = buildGroupIntents(enemies, bonus, decideEnemyAction);
+      if (enemyIntents) enemyIntents.value = intents;
+      const targetIdx = enc.targetIndex ?? 0;
+      const targetIntent = intents[targetIdx];
+      enemyNextAction.value = targetIntent?.action ?? "idle";
+      nextEnemyAttack.value = targetIntent?.damage ?? null;
+      logEnemyAction(enemyNextAction, nextEnemyAttack);
+    } else {
+      enemyNextAction.value = "stunned";
+      if (enemyIntents) enemyIntents.value = [];
+    }
     return;
   }
 
-  const tripChance = 0.1;
-  const rand = Math.random();
+  if (enemies && enemies.length > 1) {
+    const intents = buildGroupIntents(enemies, bonus, decideEnemyAction);
+    if (enemyIntents) enemyIntents.value = intents;
 
-  if (rand < tripChance) {
-    enemyNextAction.value = "trip";
-    nextEnemyAttack.value = null;
+    // Sync active target's intent into the existing single-enemy fields
+    const targetIdx = enc.targetIndex ?? 0;
+    const targetIntent = intents[targetIdx];
+    enemyNextAction.value = targetIntent?.action ?? "idle";
+    nextEnemyAttack.value = targetIntent?.damage ?? null;
+
   } else {
-    const action = decideEnemyAction();
-    enemyNextAction.value = action;
+    // Single-enemy path — original logic
+    if (enemyIntents) enemyIntents.value = [];
+    const tripChance = 0.1;
+    const rand = Math.random();
 
-    if (action === "attack") {
-      const currentEnemyData = encounter.value?.enemy;
-      const bonus = enrageBonus?.value ?? 0;
-
-      if (currentEnemyData) {
-        nextEnemyAttack.value =
-          Math.floor(
-            Math.random() *
-              (currentEnemyData.maxDamage - currentEnemyData.minDamage + 1)
-          ) + currentEnemyData.minDamage + bonus;
-      } else {
-        console.warn(
-          "Enemy data not found for attack. Defaulting to 1-3 damage."
-        );
-        nextEnemyAttack.value = Math.floor(Math.random() * 3) + 1 + bonus;
-      }
-    } else {
+    if (rand < tripChance) {
+      enemyNextAction.value = "trip";
       nextEnemyAttack.value = null;
+    } else {
+      const action = decideEnemyAction();
+      enemyNextAction.value = action;
+
+      if (action === "attack") {
+        const currentEnemyData = enc?.enemy;
+        if (currentEnemyData) {
+          nextEnemyAttack.value =
+            Math.floor(Math.random() * (currentEnemyData.maxDamage - currentEnemyData.minDamage + 1)) +
+            currentEnemyData.minDamage + bonus;
+        } else {
+          nextEnemyAttack.value = Math.floor(Math.random() * 3) + 1 + bonus;
+        }
+      } else {
+        nextEnemyAttack.value = null;
+      }
     }
   }
+
   logEnemyAction(enemyNextAction, nextEnemyAttack);
 }

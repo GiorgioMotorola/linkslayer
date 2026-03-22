@@ -125,6 +125,57 @@
           </div>
         </div>
 
+        <div class="tshop-section-label">⚔️ Combat</div>
+        <div class="tshop-list">
+          <!-- Quick Hands Charm: always shown, owned once extraActions >= 1 -->
+          <div
+            class="tshop-item"
+            :class="{ 'tshop-owned': extraActions >= 1 }"
+          >
+            <div class="tshop-item-header" @click="toggle('quick-hands')">
+              <span class="tshop-item-name">Quick Hands Charm</span>
+              <span v-if="extraActions >= 1" class="tshop-check">✓</span>
+              <span v-else class="tshop-chevron" :class="{ open: expandedId === 'quick-hands' }">›</span>
+            </div>
+            <div v-if="expandedId === 'quick-hands'" class="tshop-item-body">
+              <p class="tshop-item-desc">Grants 1 extra combat action per turn. Queue 2 attacks before the enemy responds.</p>
+              <span v-if="extraActions >= 1" class="tshop-owned-label">✓ Owned</span>
+              <button
+                v-else
+                class="tshop-buy-btn"
+                :disabled="playerGold < 150"
+                @click="$emit('buy-extra-action', 1); expandedId = null"
+              >
+                150g — Buy
+              </button>
+            </div>
+          </div>
+          <!-- Swift Strike Rune: only visible once Quick Hands is owned -->
+          <div
+            v-if="extraActions >= 1"
+            class="tshop-item"
+            :class="{ 'tshop-owned': extraActions >= 2 }"
+          >
+            <div class="tshop-item-header" @click="toggle('swift-strike')">
+              <span class="tshop-item-name">Swift Strike Rune</span>
+              <span v-if="extraActions >= 2" class="tshop-check">✓</span>
+              <span v-else class="tshop-chevron" :class="{ open: expandedId === 'swift-strike' }">›</span>
+            </div>
+            <div v-if="expandedId === 'swift-strike'" class="tshop-item-body">
+              <p class="tshop-item-desc">Upgrades Quick Hands. Grants 2 extra combat actions per turn for a total of 3.</p>
+              <span v-if="extraActions >= 2" class="tshop-owned-label">✓ Owned</span>
+              <button
+                v-else
+                class="tshop-buy-btn"
+                :disabled="playerGold < 300"
+                @click="$emit('buy-extra-action', 2); expandedId = null"
+              >
+                300g — Buy
+              </button>
+            </div>
+          </div>
+        </div>
+
       <div class="tshop-footer">
         <button class="tshop-close-btn" @click="$emit('close')">← Back to Tavern</button>
       </div>
@@ -148,9 +199,10 @@ const props = defineProps({
   pendingDefenseAugments: { type: Array,  default: () => [] },
   hasSettlementFlag:      { type: Boolean, default: false },
   hasSettlement:          { type: Boolean, default: false },
+  extraActions:           { type: Number, default: 0 },
 });
 
-defineEmits(["close", "buy", "buy-augment", "buy-flag"]);
+defineEmits(["close", "buy", "buy-augment", "buy-flag", "buy-extra-action"]);
 
 const expandedId = ref(null);
 

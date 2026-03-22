@@ -8,7 +8,7 @@
     <div v-if="inEncounter" class="combat-overlay" aria-hidden="true">
 
       <!-- Player portrait with HP badge -->
-      <div class="co-player-portrait">
+      <div class="co-player-portrait" :class="{ 'co-player-recoil': playerShakeActive }">
         <div class="co-player-wrap" :class="{ 'img-flash--taken': flashType === 'taken' }">
           <img :src="playerImage" class="co-player" alt="" />
         </div>
@@ -17,13 +17,32 @@
         </div>
       </div>
 
+      <!-- Turned allies — conscripted enemies fighting for the player -->
+      <div class="co-turned-group">
+        <div
+          v-for="(e, i) in enemyList"
+          :key="'turned-' + i"
+          v-show="e.turned && e.currentHP > 0"
+          class="co-enemy-portrait co-turned-ally"
+        >
+          <div class="co-enemy-wrap co-enemy-turned">
+            <img :src="thumbnailUrl ?? enemyPlaceholder" class="co-enemy" alt="" />
+          </div>
+          <div class="co-intent-badge co-turned-badge">⚔️ Ally</div>
+          <div class="co-hp-bar-wrap co-enemy-hp-bar">
+            <div class="co-hp-bar-fill co-hp-bar-turned" :style="{ width: enemyHpPct(i) + '%' }"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- Enemy group — layout driven by enemy count -->
-      <div class="co-enemy-group" :class="`co-enemy-group--${enemyList.length}`">
+      <div class="co-enemy-group" :class="`co-enemy-group--${visibleEnemyCount}`">
         <div v-for="(row, rowIdx) in enemyRows" :key="rowIdx" class="co-enemy-row">
+          <template v-for="idx in row" :key="idx">
           <div
-            v-for="idx in row"
-            :key="idx"
+            v-if="!enemyList[idx]?.fled && !enemyList[idx]?.turned"
             class="co-enemy-portrait"
+            :class="{ 'co-enemy-shake': shakeActive && idx === targetIndex }"
             @click="enemyList[idx]?.currentHP > 0 && $emit('switch-target', idx)"
           >
             <div
@@ -32,6 +51,7 @@
                 'co-enemy-active': idx === targetIndex,
                 'co-enemy-dead': enemyList[idx]?.currentHP <= 0,
                 'img-flash--dealt': idx === targetIndex && flashType === 'dealt',
+                'co-low-hp-aura': isLowHP(idx),
               }"
             >
               <img
@@ -40,16 +60,43 @@
                 alt=""
                 @error="thumbnailUrl = null"
               />
+              <!-- Intent tint — clipped to circle by parent overflow:hidden -->
+              <div
+                v-if="intentTintFor(idx)"
+                class="co-intent-tint"
+                :style="{ background: intentTintFor(idx) }"
+              ></div>
             </div>
+            <!-- Intent icon badge — outside overflow:hidden so it's not clipped -->
+            <div
+              v-if="intentIconFor(idx)"
+              :key="intentIconFor(idx)"
+              class="co-intent-badge"
+              :class="{
+                'co-intent-badge--loading': getIntentFor(idx)?.action === 'unknown',
+                'co-intent-badge--danger': isDangerIntent(idx),
+              }"
+            >{{ intentIconFor(idx) }}</div>
             <div class="co-hp-bar-wrap co-enemy-hp-bar">
               <div class="co-hp-bar-fill co-hp-bar-enemy" :style="{ width: enemyHpPct(idx) + '%' }"></div>
             </div>
+            <div v-if="statusIconsFor(idx).length" class="co-status-icons">
+              <span v-for="icon in statusIconsFor(idx)" :key="icon" class="co-status-icon">{{ icon }}</span>
+            </div>
+            <!-- Damage dealt float -->
+            <div v-if="dmgDealtVal && idx === targetIndex" :key="'dealt-' + dmgDealtKey" class="co-float-dmg co-float-dmg--dealt">-{{ dmgDealtVal }}</div>
+            <!-- DEFEATED stamp -->
+            <div v-if="defeatedStampIdx === idx" class="co-defeated-stamp">DEFEATED</div>
           </div>
+          </template>
         </div>
       </div>
 
+
+
     </div>
   </Transition>
+
 </template>
 
 <script setup>
@@ -63,15 +110,23 @@ const mundaneImg       = new URL("../assets/mundane-img.jpg",       import.meta.
 const enemyPlaceholder = new URL("../assets/enemy-placeholder.png", import.meta.url).href;
 
 const props = defineProps({
-  inEncounter:     Boolean,
-  playerClass:     Object,
-  playerHP:        { type: Number, default: 0 },
-  playerMaxHP:     { type: Number, default: 1 },
-  enemyHP:         { type: Number, default: 0 },
-  articleTitle:    String,
-  lastDamageDealt: { type: Number, default: null },
-  lastDamageTaken: { type: Number, default: null },
-  encounter:       { type: Object, default: null },
+  inEncounter:      Boolean,
+  playerClass:      Object,
+  playerHP:         { type: Number, default: 0 },
+  playerMaxHP:      { type: Number, default: 1 },
+  enemyHP:          { type: Number, default: 0 },
+  articleTitle:     String,
+  lastDamageDealt:  { type: Number, default: null },
+  lastDamageTaken:  { type: Number, default: null },
+  enemyHitKey:      { type: Number, default: 0 },
+  playerHitKey:     { type: Number, default: 0 },
+  encounter:        { type: Object, default: null },
+  enemyNextAction:  { type: String, default: null },
+  nextEnemyAttack:  { type: Number, default: null },
+  enemyIntents:        { type: Array, default: () => [] },
+  enemyStatusEffects:  { type: Array, default: () => [] },
+  lastGoldStolen:      { type: Number, default: null },
+  enemyTurnKey:        { type: Number, default: 0 },
 });
 
 defineEmits(["switch-target"]);
@@ -83,11 +138,80 @@ let flashTimer = null;
 function triggerFlash(type) {
   flashType.value = type;
   clearTimeout(flashTimer);
-  flashTimer = setTimeout(() => { flashType.value = null; }, 1400);
+  flashTimer = setTimeout(() => { flashType.value = null; }, 2400);
 }
 
 watch(() => props.lastDamageTaken, (val) => { if (val) triggerFlash("taken"); });
 watch(() => props.lastDamageDealt, (val) => { if (val) triggerFlash("dealt"); });
+
+
+// ── Floating damage numbers ───────────────────────────────────────────────────
+const dmgDealtKey = ref(0);
+const dmgDealtVal = ref(null);
+let dmgDealtTimer = null;
+watch(() => props.lastDamageDealt, (val) => {
+  if (val) {
+    dmgDealtVal.value = val;
+    dmgDealtKey.value++;
+    clearTimeout(dmgDealtTimer);
+    dmgDealtTimer = setTimeout(() => { dmgDealtVal.value = null; }, 2800);
+  }
+});
+
+const dmgTakenKey = ref(0);
+const dmgTakenVal = ref(null);
+watch(() => props.lastDamageTaken, (val) => { if (val) { dmgTakenVal.value = val; dmgTakenKey.value++; } });
+
+
+// ── Enemy portrait recoil ─────────────────────────────────────────────────────
+const shakeActive = ref(false);
+let shakeTimer = null;
+watch(() => props.enemyHitKey, () => {
+  shakeActive.value = false;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    shakeActive.value = true;
+    clearTimeout(shakeTimer);
+    shakeTimer = setTimeout(() => { shakeActive.value = false; }, 900);
+  }));
+});
+
+// ── Player portrait recoil ────────────────────────────────────────────────────
+const playerShakeActive = ref(false);
+let playerShakeTimer = null;
+watch(() => props.playerHitKey, () => {
+  playerShakeActive.value = false;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    playerShakeActive.value = true;
+    clearTimeout(playerShakeTimer);
+    playerShakeTimer = setTimeout(() => { playerShakeActive.value = false; }, 900);
+  }));
+});
+
+// ── DEFEATED stamp ────────────────────────────────────────────────────────────
+const defeatedStampIdx = ref(null);
+let defeatedTimer = null;
+watch(() => props.enemyHP, (val, old) => {
+  if ((old ?? 0) > 0 && (val ?? 0) <= 0) {
+    defeatedStampIdx.value = targetIndex.value;
+    clearTimeout(defeatedTimer);
+    defeatedTimer = setTimeout(() => { defeatedStampIdx.value = null; }, 2200);
+  }
+});
+
+// ── Low HP aura ───────────────────────────────────────────────────────────────
+function isLowHP(idx) {
+  const e = enemyList.value[idx];
+  if (!e) return false;
+  const maxHp = e.maxHP ?? e.hp ?? 1;
+  const cur = idx === targetIndex.value ? props.enemyHP : (e.currentHP ?? 0);
+  return cur > 0 && (cur / maxHp) <= 0.25;
+}
+
+// ── Intent danger escalation ──────────────────────────────────────────────────
+function isDangerIntent(idx) {
+  const intent = getIntentFor(idx);
+  return (intent?.action === "attack" || intent?.action === "attack_power") && (intent?.damage ?? 0) >= 15;
+}
 
 // ── Player image ─────────────────────────────────────────────────────────────
 const classImageMap = {
@@ -124,6 +248,10 @@ function enemyHpPct(idx) {
   return Math.max(0, Math.min(100, (cur / Math.max(1, maxHp)) * 100));
 }
 
+const visibleEnemyCount = computed(() =>
+  enemyList.value.filter(e => !e?.fled && !e?.turned).length
+);
+
 const enemyRows = computed(() => {
   const n = enemyList.value.length;
   if (n <= 0) return [];
@@ -134,6 +262,82 @@ const enemyRows = computed(() => {
   // 5 — diamond
   return [[0], [1, 2, 3], [4]];
 });
+
+// ── Enemy intent (Option E: full tint + icon badge) ──────────────────────────
+const INTENT_TINT = {
+  attack:       "rgba(200, 20, 20, 0.38)",
+  attack_power: "rgba(220, 60, 0,  0.45)",
+  defend:       "rgba(0, 100, 220, 0.35)",
+  counter:      "rgba(0, 150, 200, 0.38)",
+  steal:        "rgba(160, 100, 0, 0.38)",
+  confuse:      "rgba(160, 0, 200, 0.38)",
+  enrage:       "rgba(220, 80, 0, 0.42)",
+  flee:         "rgba(0, 180, 80, 0.32)",
+  summon:       "rgba(0, 180, 60, 0.38)",
+  trip:         "rgba(180, 140, 0, 0.35)",
+  special:      "rgba(140, 0, 200, 0.38)",
+  idle:         null,
+  unknown:      null,
+};
+const INTENT_ICON = {
+  attack:       "⚔️",
+  attack_power: "💥",
+  defend:       "🛡️",
+  counter:      "↩️",
+  steal:        "💰 Steal",
+  confuse:      "🌀 Confuse",
+  enrage:       "💢 Enrage",
+  flee:         "🏃 Flee",
+  summon:       "💚 Heal",
+  trip:         "🤾 Trip",
+  special:      "✨",
+  idle:         "💤",
+  unknown:      "···",
+};
+
+// Per-enemy intent helpers — use enemyIntents array when available (multi-enemy),
+// fall back to the single-enemy props for solo encounters.
+function getIntentFor(idx) {
+  const enemy = enemyList.value[idx];
+  if (!enemy || enemy.currentHP <= 0) return null;
+
+  const intents = props.enemyIntents;
+  if (intents?.length) return intents[idx] ?? { action: "unknown", damage: null };
+
+  // Multi-enemy but intents not assigned yet
+  if (enemyList.value.length > 1) return { action: "unknown", damage: null };
+
+  // Solo: synthesise from the single-enemy props
+  if (idx !== targetIndex.value) return null;
+  return { action: props.enemyNextAction, damage: props.nextEnemyAttack };
+}
+
+function intentTintFor(idx) {
+  const intent = getIntentFor(idx);
+  return INTENT_TINT[intent?.action] ?? null;
+}
+
+function intentIconFor(idx) {
+  const intent = getIntentFor(idx);
+  if (!intent?.action) return null;
+  const icon = INTENT_ICON[intent.action];
+  if (!icon) return null;
+  if ((intent.action === "attack" || intent.action === "attack_power") && intent.damage) {
+    return `${icon} ${intent.damage}`;
+  }
+  return icon;
+}
+
+// ── Status effect icons per portrait ─────────────────────────────────────────
+const STATUS_ICON = { fire: "🔥", bleed: "🩸", poison: "☠️", weaken: "💫", chill: "❄️" };
+
+function statusIconsFor(idx) {
+  const effects = idx === targetIndex.value
+    ? (props.enemyStatusEffects ?? [])
+    : (enemyList.value[idx]?.statusEffects ?? []);
+  return effects.map(e => STATUS_ICON[e.type]).filter(Boolean);
+}
+
 
 // ── Wikipedia thumbnail ───────────────────────────────────────────────────────
 const thumbnailUrl = ref(null);
@@ -180,7 +384,7 @@ watch(
 /* ── Flash animations ────────────────────────────────────────────────────── */
 .img-flash--taken,
 .img-flash--dealt {
-  animation: img-hit-pulse 1.4s ease-out forwards;
+  animation: img-hit-pulse 2.4s ease-out forwards;
 }
 
 @keyframes img-hit-pulse {
@@ -297,12 +501,218 @@ watch(
   display: block;
 }
 
+/* Turned ally portrait size */
+.co-turned-ally .co-enemy { height: clamp(70px, 12vh, 130px); width: clamp(70px, 12vh, 130px); }
+
 /* Portrait sizes by enemy count */
 .co-enemy-group--1 .co-enemy { height: clamp(100px, 18vh, 200px); width: clamp(100px, 18vh, 200px); }
 .co-enemy-group--2 .co-enemy { height: clamp(80px,  14vh, 150px); width: clamp(80px,  14vh, 150px); }
 .co-enemy-group--3 .co-enemy { height: clamp(65px,  11vh, 120px); width: clamp(65px,  11vh, 120px); }
 .co-enemy-group--4 .co-enemy { height: clamp(55px,  10vh, 100px); width: clamp(55px,  10vh, 100px); }
 .co-enemy-group--5 .co-enemy { height: clamp(50px,   9vh,  90px); width: clamp(50px,   9vh,  90px); }
+
+/* ── Intent tint + badge ─────────────────────────────────────────────────── */
+.co-intent-tint {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: intent-pulse 2s ease-in-out infinite;
+}
+
+@keyframes intent-pulse {
+  0%,  100% { opacity: 0.55; }
+  50%        { opacity: 0.85; }
+}
+
+.co-intent-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: clamp(14px, 2.2vh, 22px);
+  line-height: 1;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8));
+  animation: badge-pop 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+  pointer-events: none;
+  z-index: 2;
+  color: #ca1111;
+  background-color: black;
+  padding: .2rem;
+  border: white 1px solid;
+}
+
+@keyframes badge-pop {
+  from { transform: scale(0.4); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.co-intent-badge--loading {
+  animation: badge-loading 1s ease-in-out infinite;
+  letter-spacing: 2px;
+  color: #888;
+  border-color: #555;
+}
+
+@keyframes badge-loading {
+  0%,  100% { opacity: 0.4; }
+  50%        { opacity: 1; }
+}
+
+/* ── Turned ally group ───────────────────────────────────────────────────── */
+.co-turned-group {
+  position: absolute;
+  left: 36%;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.co-turned-ally {
+  pointer-events: none;
+}
+
+.co-enemy-turned {
+  border-color: rgb(0, 210, 120) !important;
+  box-shadow: 0 0 14px 4px rgba(0, 220, 130, 0.6);
+  animation: turned-pulse 1.5s ease-in-out infinite;
+}
+
+.co-enemy-turned .co-enemy {
+  filter: none !important;
+  opacity: 0.92;
+}
+
+@keyframes turned-pulse {
+  0%,  100% { box-shadow: 0 0 10px 3px rgba(0, 220, 130, 0.5); }
+  50%        { box-shadow: 0 0 22px 8px rgba(0, 220, 130, 0.85); }
+}
+
+.co-turned-badge {
+  color: rgb(0, 230, 140) !important;
+  border-color: rgb(0, 200, 110) !important;
+  background-color: rgba(0, 30, 15, 0.9) !important;
+  font-size: clamp(10px, 1.6vh, 14px) !important;
+}
+
+.co-hp-bar-turned {
+  background: linear-gradient(90deg, #00c878, #00ff9d);
+}
+
+
+
+/* ── Floating damage numbers ─────────────────────────────────────────────── */
+.co-float-dmg {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(18px, 3vw, 30px);
+  font-weight: 900;
+  pointer-events: none;
+  z-index: 10;
+  animation: float-dmg 2.8s ease-out forwards;
+  white-space: nowrap;
+}
+.co-float-dmg--dealt {
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255,100,0,0.9), -1px -1px 0 #000, 1px 1px 0 #000;
+}
+.co-float-dmg--taken {
+  color: #ff5555;
+  text-shadow: 0 0 8px rgba(255,0,0,0.9), -1px -1px 0 #000, 1px 1px 0 #000;
+}
+@keyframes float-dmg {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(0); }
+  15%  { opacity: 1; transform: translateX(-50%) translateY(-12px); }
+  70%  { opacity: 1; transform: translateX(-50%) translateY(-38px); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-58px); }
+}
+
+/* ── Enemy push-back (hit → slams right, returns) ───────────────────────── */
+/* ── Enemy push-back (slams right, holds, returns) ───────────────────────── */
+.co-enemy-shake {
+  animation: enemy-pushback 0.3s ease-out both;
+}
+@keyframes enemy-pushback {
+  0%   { transform: translateX(0); }
+  18%  { transform: translateX(8px); }
+  40%  { transform: translateX(6px); }
+  100% { transform: translateX(0); }
+}
+
+/* ── Player push-back (slams left, holds, returns) ───────────────────────── */
+.co-player-recoil {
+  animation: player-pushback 0.3s ease-out both;
+}
+@keyframes player-pushback {
+  0%   { transform: translateX(0); }
+  18%  { transform: translateX(-8px); }
+  40%  { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
+}
+
+
+/* ── DEFEATED stamp ──────────────────────────────────────────────────────── */
+.co-defeated-stamp {
+  position: absolute;
+  top: 28%;
+  left: 50%;
+  font-size: clamp(12px, 2vw, 20px);
+  font-weight: 900;
+  color: #ff2020;
+  letter-spacing: 0.07em;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  border: 2px solid #ff2020;
+  padding: 1px 5px;
+  pointer-events: none;
+  z-index: 10;
+  animation: defeated-slam 0.28s cubic-bezier(0.17, 0.89, 0.32, 1.28) forwards;
+}
+@keyframes defeated-slam {
+  0%   { transform: translateX(-50%) rotate(-14deg) scale(2.8); opacity: 0; }
+  60%  { transform: translateX(-50%) rotate(-14deg) scale(0.92); opacity: 1; }
+  100% { transform: translateX(-50%) rotate(-14deg) scale(1); opacity: 1; }
+}
+
+/* ── Low HP aura ─────────────────────────────────────────────────────────── */
+.co-low-hp-aura {
+  animation: low-hp-pulse 0.75s ease-in-out infinite !important;
+  border-color: rgb(255, 30, 30) !important;
+}
+@keyframes low-hp-pulse {
+  0%, 100% { box-shadow: 0 0 8px 3px rgba(220, 0, 0, 0.55); }
+  50%       { box-shadow: 0 0 28px 12px rgba(255, 20, 20, 0.9); }
+}
+
+/* ── Intent danger badge ─────────────────────────────────────────────────── */
+.co-intent-badge--danger {
+  color: #ff2020 !important;
+  border-color: #ff0000 !important;
+  animation: badge-danger-pulse 1.4s ease-in-out infinite;
+}
+@keyframes badge-danger-pulse {
+  0%, 100% { box-shadow: 0 0 4px 1px rgba(255, 0, 0, 0.5); }
+  50%       { box-shadow: 0 0 14px 5px rgba(255, 0, 0, 0.9); }
+}
+
+/* gold-float keyframe lives in the non-scoped block below */
+
+/* ── Status effect icons ─────────────────────────────────────────────────── */
+.co-status-icons {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  margin-top: 2px;
+  pointer-events: none;
+}
+
+.co-status-icon {
+  font-size: clamp(10px, 1.6vh, 16px);
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.9));
+}
 
 /* ── HP bars ─────────────────────────────────────────────────────────────── */
 .co-hp-bar-wrap {
@@ -340,7 +750,7 @@ watch(
 
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 @media screen and (max-width: 1000px) {
-  .combat-overlay { bottom: clamp(320px, 62vh, 600px); }
+  .combat-overlay { bottom: clamp(360px, 66vh, 640px); }
   .co-player-portrait { left: 5%; }
   .co-enemy-group     { right: 5%; }
   .co-player { height: clamp(70px, 14vh, 120px); }
@@ -366,5 +776,30 @@ watch(
   60%  { opacity: 1; transform: scaleY(1.06) scaleX(0.98); }
   80%  { transform: scaleY(0.97) scaleX(1.01); }
   100% { opacity: 1; transform: scaleY(1) scaleX(1); }
+}
+</style>
+
+<style>
+/* Non-scoped — ensures the keyframe and teleported element are always reachable */
+.co-gold-stolen-teleport {
+  position: fixed;
+  bottom: 44vh;
+  left: 22%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 2px 10px rgba(0,0,0,1), 0 0 22px rgba(255, 210, 0, 0.95);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 9999;
+  animation: co-gold-float 2.8s ease-out forwards;
+}
+
+@keyframes co-gold-float {
+  0%   { opacity: 0;   transform: translateX(-50%) translateY(0px);   }
+  12%  { opacity: 1;   transform: translateX(-50%) translateY(-10px); }
+  65%  { opacity: 1;   transform: translateX(-50%) translateY(-40px); }
+  100% { opacity: 0;   transform: translateX(-50%) translateY(-60px); }
 }
 </style>
