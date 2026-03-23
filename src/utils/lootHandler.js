@@ -26,7 +26,7 @@ export function handleLootDrop({ playerState, utilityFunctions, bountyScrollActi
     // Weapon already owned — fall through to scrap as consolation
   }
 
-  const scrapAmount = enemyCount * 2 * bountyMultiplier;
+  const scrapAmount = enemyCount * bountyMultiplier;
   const goldAmount = (10 + (enemyCount - 1) * 5) * bountyMultiplier;
 
   if (roll < 0.66) {
