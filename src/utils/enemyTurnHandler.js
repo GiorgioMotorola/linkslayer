@@ -20,13 +20,14 @@ export function buildGroupIntents(enemies, enrageBonus = 0, decideAction = null)
 
   return enemies.map((e, i) => {
     if (e.currentHP <= 0) return { action: "dead", damage: null };
-    if (!activeIndices.has(i)) return { action: "idle", damage: null };
-    // Consume any forced action (e.g. trip from Shouting Halberd)
+    // Consume any forced action before the random active/idle assignment
+    // so it's guaranteed to apply regardless of this round's active selection
     if (e.forcedNextAction) {
       const forced = e.forcedNextAction;
       e.forcedNextAction = null;
       return { action: forced, damage: null };
     }
+    if (!activeIndices.has(i)) return { action: "idle", damage: null };
     const action = decideAction ? decideAction() : "attack";
     const damage = action === "attack"
       ? Math.floor(Math.random() * (e.maxDamage - e.minDamage + 1)) + e.minDamage + enrageBonus
