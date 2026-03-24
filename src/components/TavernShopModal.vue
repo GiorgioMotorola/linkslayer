@@ -40,63 +40,6 @@
           </div>
         </div>
 
-        <div class="tshop-section-label">⚗️ Augments <span class="tshop-aug-hint">— Install at the Forge</span></div>
-
-        <div class="tshop-group-label">⚔️ Weapon</div>
-        <div class="tshop-list">
-          <div
-            v-for="aug in weaponAugments"
-            :key="aug.id"
-            class="tshop-item"
-            :class="{ 'tshop-owned': isAugOwned('weapon', aug.details) }"
-          >
-            <div class="tshop-item-header" @click="toggle(aug.id)">
-              <span class="tshop-item-name">{{ aug.name }}</span>
-              <span v-if="isAugOwned('weapon', aug.details)" class="tshop-check">✓</span>
-              <span v-else class="tshop-chevron" :class="{ open: expandedId === aug.id }">›</span>
-            </div>
-            <div v-if="expandedId === aug.id" class="tshop-item-body">
-              <p class="tshop-item-desc">{{ aug.description }}</p>
-              <span v-if="isAugOwned('weapon', aug.details)" class="tshop-owned-label">✓ Owned</span>
-              <button
-                v-else
-                class="tshop-buy-btn"
-                :disabled="playerGold < aug.cost"
-                @click="$emit('buy-augment', aug); expandedId = null"
-              >
-                {{ aug.cost }}g — Buy
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="tshop-group-label">🛡️ Defense</div>
-        <div class="tshop-list">
-          <div
-            v-for="aug in defenseAugments"
-            :key="aug.id"
-            class="tshop-item"
-            :class="{ 'tshop-owned': isAugOwned('defense', aug.details) }"
-          >
-            <div class="tshop-item-header" @click="toggle(aug.id)">
-              <span class="tshop-item-name">{{ aug.name }}</span>
-              <span v-if="isAugOwned('defense', aug.details)" class="tshop-check">✓</span>
-              <span v-else class="tshop-chevron" :class="{ open: expandedId === aug.id }">›</span>
-            </div>
-            <div v-if="expandedId === aug.id" class="tshop-item-body">
-              <p class="tshop-item-desc">{{ aug.description }}</p>
-              <span v-if="isAugOwned('defense', aug.details)" class="tshop-owned-label">✓ Owned</span>
-              <button
-                v-else
-                class="tshop-buy-btn"
-                :disabled="playerGold < aug.cost"
-                @click="$emit('buy-augment', aug); expandedId = null"
-              >
-                {{ aug.cost }}g — Buy
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
 
         <div class="tshop-section-label">🏴 Land</div>
@@ -193,16 +136,12 @@ const fenceImg = new URL("../assets/fence-img.png", import.meta.url).href;
 const props = defineProps({
   campTier:               { type: Number, default: 0 },
   playerGold:             { type: Number, default: 0 },
-  weaponAugment:          { type: String, default: "" },
-  defenseAugment:         { type: String, default: "" },
-  pendingWeaponAugments:  { type: Array,  default: () => [] },
-  pendingDefenseAugments: { type: Array,  default: () => [] },
   hasSettlementFlag:      { type: Boolean, default: false },
   hasSettlement:          { type: Boolean, default: false },
   extraActions:           { type: Number, default: 0 },
 });
 
-defineEmits(["close", "buy", "buy-augment", "buy-flag", "buy-extra-action"]);
+defineEmits(["close", "buy", "buy-flag", "buy-extra-action"]);
 
 const expandedId = ref(null);
 
@@ -212,16 +151,8 @@ const campItems = [
   { tier: 3, name: "Tent",          cost: 100, desc: "Long rests restore 50 HP and 2 class abilities. Requires pillow." },
 ];
 
-const weaponAugments  = shopItems.filter(i => i.effect === "weaponAugment");
-const defenseAugments = shopItems.filter(i => i.effect === "defenseAugment");
-
 function toggle(id) {
   expandedId.value = expandedId.value === id ? null : id;
-}
-
-function isAugOwned(type, key) {
-  if (type === "weapon") return props.weaponAugment === key || props.pendingWeaponAugments.includes(key);
-  return props.defenseAugment === key || props.pendingDefenseAugments.includes(key);
 }
 </script>
 

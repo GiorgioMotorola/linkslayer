@@ -12,102 +12,46 @@
             🌀 <strong>{{ confusedActionLabel }}</strong> locked ({{ confusedTurnsLeft }} turn{{ confusedTurnsLeft === 1 ? '' : 's' }} remaining)
           </div>
 
-          <!-- Action icon-box grid -->
-          <div v-if="props.enemyNextAction !== 'victory'" class="combat-actions-grid">
-            <button
-              class="action-box btn-action-steady"
-              :class="{ 'action-box-active': activeAction === 'attack_steady' }"
-              :disabled="combatLocked || confusedAction.includes('attack_steady') || fleeQueued || braceQueued"
-              @click="handleAction('attack_steady')"
-              title="100% Success | Normal dmg"
-            >
-              <span class="action-box-icon">⚔</span>
-              <span class="action-box-label">Steady</span>
-            </button>
-
-            <button
-              class="action-box btn-action-power"
-              :class="{ 'action-box-active': activeAction === 'attack_power' }"
-              :disabled="combatLocked || confusedAction.includes('attack_power') || fleeQueued || braceQueued"
-              @click="handleAction('attack_power')"
-              title="50% Success | 1.5x dmg | miss -3hp"
-            >
-              <span class="action-box-icon">💥</span>
-              <span class="action-box-label">Power</span>
-            </button>
-
-            <button
-              class="action-box btn-action-enrage"
-              :class="{ 'action-box-active': activeAction === 'attack_enraged', 'btn-enraged-ready': enrageCharges >= 3 }"
-              :disabled="combatLocked || confusedAction.includes('attack_enraged') || enrageCharges < 3 || lockedActions.some(a => a.action === 'attack_enraged') || fleeQueued || braceQueued"
-              @click="handleAction('attack_enraged')"
-              :title="enrageCharges < 3 ? `${enrageButtonLabel}: ${enrageCharges}/3 hits needed` : `${enrageButtonLabel} — guaranteed 2x damage!`"
-            >
-              <span class="action-box-icon">🔥</span>
-              <span class="action-box-label">{{ enrageButtonLabel }}</span>
-            </button>
-
-            <button
-              class="action-box btn-action-special"
-              :class="{ 'action-box-active': activeAction === 'special' }"
-              :disabled="combatLocked || confusedAction.includes('special') || fleeQueued || braceQueued || specialQueued"
-              @click="handleAction('special')"
-            >
-              <span class="action-box-icon">✦</span>
-              <span class="action-box-label">{{ playerSpecialAbilityName }}</span>
-            </button>
-
-            <!-- Exploit button — appears when enemy is defending or tripped -->
-            <button
-              v-if="showExploit"
-              class="action-box btn-exploit"
-              :class="{ 'action-box-active': activeAction === 'exploit' }"
-              :disabled="combatLocked || fleeQueued || braceQueued || exploitAlreadyQueued"
-              @click="handleAction('exploit')"
-              title="1.5x dmg | ignores guard"
-            >
-              <span class="action-box-icon">⚡</span>
-              <span class="action-box-label">Exploit</span>
-            </button>
-
-            <button
-              class="action-box"
-              :class="{
-                'action-box-active': activeAction === 'defend',
-                'btn-defend-counter': defendButtonLabel !== 'Defend',
-                'btn-wind-up': isWindUp,
-              }"
-              :disabled="combatLocked || confusedAction.includes('defend') || nonBraceQueued"
-              @click="handleAction('defend')"
-            >
-              <span class="action-box-icon">🛡</span>
-              <span class="action-box-label btn-brace-label" v-if="isWindUp">BRACE!</span>
-              <span class="action-box-label" v-else>{{ defendButtonLabel }}</span>
-            </button>
-
-            <button
-              class="action-box btn-action-flee"
-              :class="{ 'action-box-active': activeAction === 'flee' }"
-              :disabled="combatLocked || confusedAction.includes('flee') || nonFleeQueued"
-              @click="handleAction('flee')"
-            >
-              <span class="action-box-icon">↩</span>
-              <span class="action-box-label">Flee</span>
-            </button>
-          </div>
-
-          <!-- Action queue row — always shown during combat -->
+          <!-- Action queue row — click a slot to pick an action -->
           <div v-if="props.enemyNextAction !== 'victory'" class="action-queue-row">
-            <div class="action-slots">
+            <Teleport to="body">
+              <Transition name="slot-menu-fade">
+                <div v-if="openSlotIdx !== null" class="slot-action-menu" :style="popupStyle" @click.stop>
+                  <button
+                    v-for="act in menuActions"
+                    :key="act.action"
+                    class="slot-action-item"
+                    :class="{
+                      'slot-action-confused': act.confused,
+                      'slot-action-wind-up': act.action === 'defend' && isWindUp,
+                    }"
+                    :disabled="act.disabled"
+                    @click="selectAction(act.action)"
+                  >
+                    <span class="slot-action-icon">{{ act.icon }}</span>
+                    <span class="slot-action-text">
+                      <span class="slot-action-label">{{ act.label }}</span>
+                      <span class="slot-action-hint">{{ act.hint }}</span>
+                    </span>
+                  </button>
+                </div>
+              </Transition>
+            </Teleport>
+
+            <div class="action-slots" ref="actionSlotsEl">
               <div
                 v-for="i in props.maxActionsPerTurn"
                 :key="i"
                 class="action-slot"
-                :class="{ 'action-slot-filled': lockedActions[i-1], 'action-slot-empty': !lockedActions[i-1] }"
-                @click="lockedActions[i-1] && lockedActions.splice(i-1, 1)"
+                :class="{
+                  'action-slot-filled': lockedActions[i-1],
+                  'action-slot-empty': !lockedActions[i-1],
+                  'action-slot-open': openSlotIdx === i-1,
+                }"
+                @click="onSlotClick(i-1)"
               >
                 <span v-if="lockedActions[i-1]">{{ actionSlotLabel(lockedActions[i-1].action) }} ✕</span>
-                <span v-else class="slot-empty-indicator">—</span>
+                <span v-else class="slot-empty-indicator">+ Action</span>
               </div>
             </div>
             <button
@@ -115,7 +59,7 @@
               :disabled="combatLocked || lockedActions.length === 0"
               @click="confirmTurn"
             >
-              ⚡ Confirm
+              ⚡ Go
             </button>
           </div>
 
@@ -453,6 +397,8 @@ const props = defineProps({
   equippedWeaponId: { type: String, default: null },
   enemyIntents: { type: Array, default: () => [] },
   maxActionsPerTurn: { type: Number, default: 1 },
+  combatInventory: { type: Object, default: () => ({}) },
+  serratedDaggerActive: { type: Boolean, default: false },
 });
 
 const emit = defineEmits([
@@ -645,11 +591,13 @@ onMounted(() => {
     headerResizeObserver.observe(headerEl.value);
   }
   document.addEventListener('click', closeStatusPopupOnOutsideClick);
+  document.addEventListener('click', closeSlotMenuOnOutsideClick);
 });
 
 onUnmounted(() => {
   headerResizeObserver?.disconnect();
   document.removeEventListener('click', closeStatusPopupOnOutsideClick);
+  document.removeEventListener('click', closeSlotMenuOnOutsideClick);
   if (playerHpAnimInterval) clearInterval(playerHpAnimInterval);
   if (enemyHpAnimInterval) clearInterval(enemyHpAnimInterval);
 });
@@ -728,6 +676,8 @@ const fleeQueued = computed(() => lockedActions.value.some(a => a.action === 'fl
 const nonFleeQueued = computed(() => lockedActions.value.some(a => a.action !== 'flee'));
 const braceQueued = computed(() => lockedActions.value.some(a => a.action === 'defend'));
 const nonBraceQueued = computed(() => lockedActions.value.some(a => a.action !== 'defend'));
+const smokeBombQueued = computed(() => lockedActions.value.some(a => a.action === 'use_item:smokeBomb'));
+const nonSmokeBombQueued = computed(() => lockedActions.value.some(a => a.action !== 'use_item:smokeBomb'));
 const specialQueued = computed(() => lockedActions.value.some(a => a.action === 'special'));
 const exploitAlreadyQueued = computed(() => {
   const currentTarget = props.encounter?.targetIndex ?? 0;
@@ -1227,14 +1177,167 @@ function confirmTurn() {
 function actionSlotLabel(action) {
   const labels = {
     attack_steady: "⚔ Steady",
-    attack_power: "⚔ Power",
-    attack_enraged: "⚔ Enrage",
-    special: "✨ Special",
+    attack_power: "💥 Power",
+    attack_enraged: "🔥 Enrage",
+    special: "✦ Special",
     defend: "🛡 Defend",
     exploit: "⚡ Exploit",
     flee: "↩ Flee",
+    'use_item:sharedSufferingAmulet': "💔 Amulet",
+    'use_item:flashPowder': "✨ Flash",
+    'use_item:venomVial': "🐍 Venom",
+    'use_item:serratedDagger': "🗡 Dagger",
+    'use_item:wardingShield': "🛡 Ward Shield",
+    'use_item:smokeBomb': "💨 Smoke",
   };
   return labels[action] ?? action;
+}
+
+// ── Action slot popup ─────────────────────────────────────────────────────
+const openSlotIdx = ref(null);
+const actionSlotsEl = ref(null);
+const isBossEncounter = computed(() => props.encounter?.enemy?.isBoss === true);
+
+const popupStyle = computed(() => {
+  if (!actionSlotsEl.value || openSlotIdx.value === null) return {};
+  const rect = actionSlotsEl.value.getBoundingClientRect();
+  return {
+    bottom: (window.innerHeight - rect.top + 8) + 'px',
+    left: rect.left + 'px',
+  };
+});
+
+const menuActions = computed(() => {
+  const ca = props.confusedAction ?? [];
+  return [
+    {
+      action: 'attack_steady',
+      icon: '⚔',
+      label: 'Steady',
+      hint: '1× dmg',
+      confused: ca.includes('attack_steady'),
+      disabled: combatLocked.value || ca.includes('attack_steady') || fleeQueued.value || braceQueued.value || smokeBombQueued.value,
+    },
+    {
+      action: 'attack_power',
+      icon: '💥',
+      label: 'Power',
+      hint: '50% · 1.5×',
+      confused: ca.includes('attack_power'),
+      disabled: combatLocked.value || ca.includes('attack_power') || fleeQueued.value || braceQueued.value || smokeBombQueued.value,
+    },
+    {
+      action: 'attack_enraged',
+      icon: '🔥',
+      label: enrageButtonLabel.value,
+      hint: props.enrageCharges < 3 ? `${props.enrageCharges}/3` : '2× dmg',
+      confused: ca.includes('attack_enraged'),
+      disabled: combatLocked.value || ca.includes('attack_enraged') || props.enrageCharges < 3 || lockedActions.value.some(a => a.action === 'attack_enraged') || fleeQueued.value || braceQueued.value || smokeBombQueued.value,
+    },
+    {
+      action: 'special',
+      icon: '✦',
+      label: playerSpecialAbilityName.value,
+      hint: `${props.specialUsesLeft} left`,
+      confused: ca.includes('special'),
+      disabled: combatLocked.value || ca.includes('special') || fleeQueued.value || braceQueued.value || specialQueued.value || smokeBombQueued.value,
+    },
+    ...(showExploit.value ? [{
+      action: 'exploit',
+      icon: '⚡',
+      label: 'Exploit',
+      hint: '1.5× · no guard',
+      confused: false,
+      disabled: combatLocked.value || fleeQueued.value || braceQueued.value || exploitAlreadyQueued.value || smokeBombQueued.value,
+    }] : []),
+    {
+      action: 'defend',
+      icon: '🛡',
+      label: isWindUp.value ? 'BRACE!' : defendButtonLabel.value,
+      hint: isWindUp.value ? 'Block it' : 'Half dmg',
+      confused: ca.includes('defend'),
+      disabled: combatLocked.value || ca.includes('defend') || nonBraceQueued.value || braceQueued.value || smokeBombQueued.value,
+    },
+    {
+      action: 'flee',
+      icon: '↩',
+      label: 'Flee',
+      hint: 'Roll to escape',
+      confused: ca.includes('flee'),
+      disabled: combatLocked.value || ca.includes('flee') || nonFleeQueued.value || smokeBombQueued.value,
+    },
+    // ── Combat items from inventory ──────────────────────────────────────
+    ...(props.combatInventory.sharedSufferingAmulets > 0 ? [{
+      action: 'use_item:sharedSufferingAmulet',
+      icon: '💔',
+      label: 'Shared Suffering',
+      hint: `50 dmg · -25 HP  ×${props.combatInventory.sharedSufferingAmulets}`,
+      confused: false,
+      disabled: combatLocked.value || smokeBombQueued.value,
+    }] : []),
+    ...(props.combatInventory.flashPowders > 0 ? [{
+      action: 'use_item:flashPowder',
+      icon: '✨',
+      label: 'Flash Powder',
+      hint: `Stun enemy  ×${props.combatInventory.flashPowders}`,
+      confused: false,
+      disabled: combatLocked.value || isBossEncounter.value || smokeBombQueued.value,
+    }] : []),
+    ...(props.combatInventory.venomVials > 0 ? [{
+      action: 'use_item:venomVial',
+      icon: '🐍',
+      label: 'Venom Vial',
+      hint: `Poison enemy  ×${props.combatInventory.venomVials}`,
+      confused: false,
+      disabled: combatLocked.value || smokeBombQueued.value,
+    }] : []),
+    ...(props.combatInventory.serratedDaggers > 0 ? [{
+      action: 'use_item:serratedDagger',
+      icon: '🗡',
+      label: 'Serrated Dagger',
+      hint: `Bleed effect  ×${props.combatInventory.serratedDaggers}`,
+      confused: false,
+      disabled: combatLocked.value || props.serratedDaggerActive || smokeBombQueued.value,
+    }] : []),
+    ...(props.combatInventory.wardingShields > 0 ? [{
+      action: 'use_item:wardingShield',
+      icon: '🛡',
+      label: 'Warding Shield',
+      hint: props.wardingShieldHitsRemaining > 0
+        ? `Active · ${props.wardingShieldHitsRemaining} hits left`
+        : `Half dmg · 3 hits  ×${props.combatInventory.wardingShields}`,
+      confused: false,
+      disabled: combatLocked.value || props.wardingShieldHitsRemaining > 0 || smokeBombQueued.value,
+    }] : []),
+    ...(props.combatInventory.smokeBombs > 0 ? [{
+      action: 'use_item:smokeBomb',
+      icon: '💨',
+      label: 'Smoke Bomb',
+      hint: `Escape combat  ×${props.combatInventory.smokeBombs}`,
+      confused: false,
+      disabled: combatLocked.value || isBossEncounter.value || nonSmokeBombQueued.value,
+    }] : []),
+  ];
+});
+
+function onSlotClick(idx) {
+  if (lockedActions.value[idx]) {
+    lockedActions.value.splice(idx, 1);
+    if (openSlotIdx.value === idx) openSlotIdx.value = null;
+  } else {
+    openSlotIdx.value = openSlotIdx.value === idx ? null : idx;
+  }
+}
+
+function selectAction(action) {
+  handleAction(action);
+  openSlotIdx.value = null;
+}
+
+function closeSlotMenuOnOutsideClick(e) {
+  if (!e.target.closest('.action-slots') && !e.target.closest('.slot-action-menu')) {
+    openSlotIdx.value = null;
+  }
 }
 
 

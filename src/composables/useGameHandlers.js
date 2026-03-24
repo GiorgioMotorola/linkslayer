@@ -10,8 +10,19 @@ import { handleEnemyTurn as externalHandleEnemyTurn, buildGroupIntents } from "@
 import { handleMiniBossLootDrop } from "@/utils/miniBossLootHandler";
 import { handleShopPurchase as externalHandleShopPurchase } from "@/utils/itemHandlers";
 import { getRandomChain } from "@/utils/randomPair";
+import { getBook } from "@/utils/libraryBooks";
 export function useGameHandlers(deps) {
   const daysCount = ref(1);
+
+  // ── Infinite Library state ─────────────────────────────────────────────────
+  // libraryBook: { id, type, levelIndex } | null  — book currently being read
+  // libraryProgress: number of clicks completed toward readClicks target
+  // libraryReady: { id, type, levelIndex } | null  — finished reading, ready to forge
+  // craftedLevels: { [bookId]: number }  — highest level crafted this run (0 = none)
+  const libraryBook = ref(null);
+  const libraryProgress = ref(0);
+  const libraryReady = ref(null);
+  const craftedLevels = ref({});
 
   const {
     gameFlow,
@@ -131,14 +142,16 @@ export function useGameHandlers(deps) {
     }
   });
 
-  // Keep encounter.enemies[targetIndex].currentHP in sync with enemyHP ref
+  // Keep encounter.enemies[targetIndex].currentHP in sync with enemyHP ref.
+  // flush:'sync' ensures the sync is immediate (before any render), preventing
+  // the HP bar from briefly reading a stale value when targetIndex changes.
   watch(enemyHP, (newHP) => {
     const enc = encounter.value;
     if (enc?.enemies) {
       const idx = enc.targetIndex ?? 0;
       if (enc.enemies[idx]) enc.enemies[idx].currentHP = newHP;
     }
-  });
+  }, { flush: 'sync' });
 
   const counterResult = ref(null);
   const victoryLoot = ref("");
@@ -394,6 +407,8 @@ export function useGameHandlers(deps) {
         effectiveMaxHP: effectiveMaxHP.value,
         inventory,
         equippedWeapon,
+        weaponAugment,
+        defenseAugment,
       },
       utilityFunctions: {
         log,
@@ -543,6 +558,169 @@ export function useGameHandlers(deps) {
       if (isQueue && typeof actionTargetIndex === "number" && encounter.value?.targetIndex !== actionTargetIndex) {
         encounter.value = { ...encounter.value, targetIndex: actionTargetIndex };
       }
+
+      // ── Combat item actions (use_item:*) ─────────────────────────────────────
+      if (singleAction.startsWith('use_item:')) {
+        const itemType = singleAction.replace('use_item:', '');
+        let itemEndedCombat = false;
+
+        if (itemType === 'sharedSufferingAmulet') {
+          const ENEMY_DMG = 50, PLAYER_DMG = 25;
+          inventory.value.sharedSufferingAmulets = Math.max(0, (inventory.value.sharedSufferingAmulets || 0) - 1);
+          const newEnemyHP = Math.max(0, enemyHP.value - ENEMY_DMG);
+          enemyHP.value = newEnemyHP;
+          log(`💔 You activate the Amulet of Shared Suffering. The enemy takes ${ENEMY_DMG} damage.`);
+          onCombatResult({ type: 'dealt', amount: ENEMY_DMG });
+          const newPlayerHP = Math.max(0, playerHP.value - PLAYER_DMG);
+          playerHP.value = newPlayerHP;
+          log(`💔 You also feel the pain, taking ${PLAYER_DMG} damage.`);
+          onCombatResult({ type: 'taken', amount: PLAYER_DMG });
+          await new Promise(r => setTimeout(r, 800));
+          if (newEnemyHP <= 0) {
+            onEnemyKilled(encounter.value?.enemy);
+            itemEndedCombat = true;
+          } else if (newPlayerHP <= 0) {
+            log(`💀 <span class="player-name">${playerName.value}</span> was defeated.`);
+            encounter.value = null;
+            clearInterval(timerInterval);
+            showRecap.value = true;
+            recapType.value = 'defeat';
+            itemEndedCombat = true;
+          }
+        } else if (itemType === 'flashPowder') {
+          if ((inventory.value.flashPowders || 0) > 0) {
+            if (isBoss(encounter.value?.enemy)) {
+              log(`🚫 You cannot use Flash Powder during a boss battle.`);
+            } else {
+              inventory.value.flashPowders--;
+              enemyIsStunned.value = true;
+              log(`💥 You throw Flash Powder! The enemy is blinded and will skip their next turn.`);
+            }
+          }
+        } else if (itemType === 'venomVial') {
+          if ((inventory.value.venomVials || 0) > 0) {
+            inventory.value.venomVials--;
+            enemyStatusEffects.value.push({ type: 'poison', damage: 3, duration: 4 });
+            log(`☠️ You splash the Venom Vial! The enemy is poisoned and will take 3 damage per turn for 4 turns.`);
+          }
+        } else if (itemType === 'serratedDagger') {
+          if ((inventory.value.serratedDaggers || 0) > 0 && !serratedDaggerActive.value) {
+            inventory.value.serratedDaggers--;
+            serratedDaggerActive.value = true;
+            log(`🗡️ You coat your blade with the Serrated Dagger. Your next attack will cause the enemy to Bleed.`);
+          }
+        } else if (itemType === 'luckyCoin') {
+          if ((inventory.value.luckyCoins || 0) > 0 && !luckyFleeActive.value) {
+            inventory.value.luckyCoins--;
+            luckyFleeActive.value = true;
+            log(`🪙 You flip the Lucky Coin. Your next Flee attempt is guaranteed to succeed.`);
+          }
+        } else if (itemType === 'wardingShield') {
+          if ((inventory.value.wardingShields || 0) > 0 && wardingShieldHitsRemaining.value <= 0) {
+            inventory.value.wardingShields--;
+            wardingShieldHitsRemaining.value = 3;
+            log(`🛡️ You raise the Warding Shield! Incoming damage is halved for the next 3 hits.`);
+          }
+        } else if (itemType === 'smokeBomb') {
+          if ((inventory.value.smokeBombs || 0) > 0) {
+            if (isBoss(encounter.value?.enemy)) {
+              log(`🚫 You cannot use a Smoke Bomb during a boss battle.`);
+            } else {
+              inventory.value.smokeBombs--;
+              log(`💨 You throw a Smoke Bomb. You swiftly escape the combat.`);
+              encounter.value = null;
+              bossOverlay.value = false;
+              itemEndedCombat = true;
+            }
+          }
+        }
+
+        if (itemEndedCombat) break;
+
+        // Route through handleCombatAction with a no-op player action so the
+        // enemy's queued attack (damage, warding shield, augments, defeat check)
+        // runs through the full pipeline — same as any regular combat action.
+        const itemIntentsSnapshot = [...(enemyIntents.value)];
+        await handleCombatAction({
+          player: {
+            playerHP,
+            playerClass,
+            specialUsesLeft,
+            weaponBonus,
+            shieldBonus,
+            playerName,
+            dogName,
+            action: 'use_item',
+            effectiveMaxHP,
+            totalSpecialsUsed,
+            specialTier,
+            playerGold,
+            weaponAugment,
+            defenseAugment,
+            equippedWeapon,
+            ironWillUsed,
+            bloodpactActive,
+            playerEnrageCharges,
+          },
+          enemy: {
+            enemyHP,
+            encounter,
+            nextEnemyAttack,
+            enemyNextAction,
+            enemyStatusEffects,
+            enemyIsStunned,
+            enrageBonus,
+            confusedAction,
+            confusedTurnsLeft,
+          },
+          state: {
+            log,
+            formattedTitle: formattedTitle.value,
+            DEFAULT_ENEMY_HP,
+            isBoss,
+            combatWinsSinceLastCapIncrease,
+            hpCapBonus,
+            enemiesKilled,
+          },
+          utils: {
+            clearTimer: () => clearInterval(timerInterval),
+            setDefeated: () => {
+              showRecap.value = true;
+              recapType.value = 'defeat';
+              clearInterval(timerInterval);
+            },
+            handleLootDrop: handleLoot,
+            markBossDefeated,
+            gotoEnemyTurn,
+            bossOverlay: bossOverlay,
+            onDiceRoll,
+            waitForDice,
+            onCombatResult,
+            onCounterResult,
+            onVictory,
+            onEnemyKilled,
+            onFleeSuccess,
+            onGoldStolen,
+            onHpCapIncrease: () => {
+              const bonus = "💪 Max HP +10";
+              victoryLoot.value = victoryLoot.value ? `${victoryLoot.value} · ${bonus}` : bonus;
+            },
+            enemyIntents,
+            enemyIntentsSnapshot: itemIntentsSnapshot,
+            skipEnemyTurn: !isLast,
+          },
+          itemEffects: {
+            serratedDaggerActive,
+            luckyFleeActive,
+            wardingShieldHitsRemaining,
+            coolerStickBonus: (inventory.value.coolerStickItem > 0 ? 2 : 0) + (inventory.value.evenCoolerStickItem > 0 ? 3 : 0),
+          },
+        });
+
+        if (!isLast) await waitForInterAction();
+        continue;
+      }
+      // ── End combat item actions ───────────────────────────────────────────────
 
       // Snapshot intents (still needed by runSidekickAttacks); do NOT clear — intents stay frozen until enemy turn fires
       const combatIntentsSnapshot = [...(enemyIntents.value)];
@@ -823,6 +1001,40 @@ export function useGameHandlers(deps) {
     }
   }
 
+  // ── Library: advance reading progress on every link click ─────────────────
+  watch(clickCount, () => {
+    if (!libraryBook.value) return;
+    libraryProgress.value++;
+    const book = getBook(libraryBook.value.id);
+    const target = book?.levels[libraryBook.value.levelIndex]?.readClicks ?? 23;
+    if (libraryProgress.value >= target) {
+      libraryReady.value = { ...libraryBook.value };
+      libraryBook.value = null;
+      libraryProgress.value = 0;
+      log(`📖 You've finished reading <strong>${book.name}</strong>. Visit the Forge to craft it!`);
+    }
+  });
+
+  function startReadingBook({ id, type, levelIndex }) {
+    libraryBook.value = { id, type, levelIndex };
+    libraryProgress.value = 0;
+    const book = getBook(id);
+    log(`📖 <span class="player-name">${playerName.value}</span> checks out <strong>${book?.name ?? id}</strong> from the Infinite Library.`);
+  }
+
+  function craftLibraryBook() {
+    if (!libraryReady.value) return;
+    const { id, levelIndex } = libraryReady.value;
+    const book = getBook(id);
+    const level = book?.levels[levelIndex];
+    const cost = level?.forgeCost ?? 4;
+    if ((inventory.value.scrapMetal ?? 0) < cost) return;
+    inventory.value.scrapMetal -= cost;
+    craftedLevels.value[id] = levelIndex + 1;
+    libraryReady.value = null;
+    log(`⚒️ <span class="player-name">${playerName.value}</span> forges <strong>${book?.name ?? id}</strong> (Level ${levelIndex + 1})!`);
+  }
+
   return {
     callHandleClick,
     callHandleRest,
@@ -846,5 +1058,11 @@ export function useGameHandlers(deps) {
     handleSwitchTarget,
     victoryLoot,
     enemyIntents,
+    libraryBook,
+    libraryProgress,
+    libraryReady,
+    craftedLevels,
+    startReadingBook,
+    craftLibraryBook,
   };
 }

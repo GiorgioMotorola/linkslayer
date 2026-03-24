@@ -18,7 +18,7 @@
     :enemyTurnKey="enemyTurnKey"
     :message="encounterMessage"
     @action="handleCombatActionWrapper"
-    @confirm-turn="handleCombatActionWrapper"
+    @confirm-turn="handleConfirmTurn"
     @option-chosen="handleOptionChosen"
     @close="handleCloseEncounterWrapper"
     :playerName="playerName"
@@ -73,6 +73,15 @@
     :equippedWeaponId="equippedWeapon"
     :enemyIntents="enemyIntents"
     :maxActionsPerTurn="maxActionsPerTurn"
+    :combatInventory="{
+      sharedSufferingAmulets: inventory.sharedSufferingAmulets ?? 0,
+      flashPowders: inventory.flashPowders ?? 0,
+      venomVials: inventory.venomVials ?? 0,
+      serratedDaggers: inventory.serratedDaggers ?? 0,
+      smokeBombs: inventory.smokeBombs ?? 0,
+      wardingShields: inventory.wardingShields ?? 0,
+    }"
+    :serratedDaggerActive="serratedDaggerActive"
   />
 
   <Transition name="sleep-fade">
@@ -232,6 +241,8 @@
         :boardQuestHint="boardQuest?.tavernHint ?? ''"
         :boardQuestRewardLabel="boardQuest?.rewardLabel ?? ''"
         :campTier="campTier"
+        :libraryBook="libraryBook"
+        :libraryReady="libraryReady"
         @rest="handleRest"
         @offer="callHandleOffer"
         @sleep="handleSleepTransition"
@@ -245,6 +256,7 @@
         @open-shop="showShopModal = true"
         @open-tavern-shop="showTavernShop = true"
         @open-forge="showForge = true"
+        @open-library="showLibrary = true"
       />
       </Transition>
 
@@ -565,16 +577,11 @@
     v-if="showTavernShop"
     :campTier="campTier"
     :playerGold="playerGold"
-    :weaponAugment="weaponAugment"
-    :defenseAugment="defenseAugment"
-    :pendingWeaponAugments="inventory.pendingWeaponAugments ?? []"
-    :pendingDefenseAugments="inventory.pendingDefenseAugments ?? []"
     :hasSettlementFlag="inventory.settlementFlag > 0"
     :hasSettlement="!!settlementId"
     :extraActions="inventory.extraActions ?? 0"
     @close="showTavernShop = false"
     @buy="handleTavernShopBuy"
-    @buy-augment="handleAugmentBuy"
     @buy-flag="handleBuySettlementFlag"
     @buy-extra-action="handleExtraActionBuy"
   />
@@ -599,6 +606,21 @@
     @forge="handleForge"
     @install-augment="handleInstallAugment"
     @equip-weapon="handleEquipWeapon"
+    @craft-book="handleCraftBook"
+    :libraryReady="libraryReady"
+  />
+  </Transition>
+
+  <Transition name="forge-panel">
+  <LibraryModal
+    v-if="showLibrary"
+    :libraryBook="libraryBook"
+    :libraryProgress="libraryProgress"
+    :libraryReady="libraryReady"
+    :craftedLevels="craftedLevels"
+    :scrapMetal="inventory.scrapMetal"
+    @close="showLibrary = false"
+    @start-reading="startReadingBook"
   />
   </Transition>
 
@@ -640,6 +662,7 @@ import DogNameModal from "@/components/DogNameModal.vue";
 import JourneyRecapModal from "@/components/JourneyRecapModal.vue";
 import TavernShopModal from "@/components/TavernShopModal.vue";
 import ForgeModal from "@/components/ForgeModal.vue";
+import LibraryModal from "@/components/LibraryModal.vue";
 import BreweryModal from "@/components/BreweryModal.vue";
 import TavernBeerModal from "@/components/TavernBeerModal.vue";
 import SettlementModal from "@/components/SettlementModal.vue";
@@ -734,6 +757,7 @@ const pageSettlementClaimedBy = computed(() => {
   return stored.split("@")[0];
 });
 const showForge   = ref(false);
+const showLibrary = ref(false);
 const showBrewery = ref(false);
 
 const showDieSlayer = ref(false);
@@ -998,6 +1022,12 @@ const {
   handleSwitchTarget,
   victoryLoot,
   enemyIntents,
+  libraryBook,
+  libraryProgress,
+  libraryReady,
+  craftedLevels,
+  startReadingBook,
+  craftLibraryBook,
 
 } = useGameHandlers({
   gameFlow,
@@ -1320,6 +1350,34 @@ function handleEquipWeapon(weaponId) {
   equippedWeapon.value = weaponId;
   const weaponName = getWeapon(weaponId)?.name ?? weaponId;
   log(`⚒️ <span class="player-name">${playerName.value}</span> equips the <strong>${weaponName}</strong>!`);
+  saveGame();
+}
+
+function handleCraftBook() {
+  if (!libraryReady.value) return;
+  const { id, type } = libraryReady.value;
+  // craftLibraryBook handles scrap deduction, level tracking, log, and clears libraryReady
+  craftLibraryBook();
+  // Equip based on type
+  if (type === "weapon") {
+    if (equippedWeapon.value && equippedWeapon.value !== id) {
+      if (!inventory.value.pendingWeapons) inventory.value.pendingWeapons = [];
+      inventory.value.pendingWeapons.push(equippedWeapon.value);
+    }
+    equippedWeapon.value = id;
+  } else if (type === "weapon_relic") {
+    if (weaponAugment.value && weaponAugment.value !== id) {
+      if (!inventory.value.pendingWeaponAugments) inventory.value.pendingWeaponAugments = [];
+      inventory.value.pendingWeaponAugments.push(weaponAugment.value);
+    }
+    weaponAugment.value = id;
+  } else if (type === "defense_relic") {
+    if (defenseAugment.value && defenseAugment.value !== id) {
+      if (!inventory.value.pendingDefenseAugments) inventory.value.pendingDefenseAugments = [];
+      inventory.value.pendingDefenseAugments.push(defenseAugment.value);
+    }
+    defenseAugment.value = id;
+  }
   saveGame();
 }
 
@@ -1764,6 +1822,10 @@ function handleUseInventoryItem(itemType, mapId) {
   }
 }
 
+async function handleConfirmTurn(actions) {
+  await handleCombatActionWrapper(actions);
+}
+
 const autoSaveFeedback = ref(false);
 let autoSaveFeedbackTimer = null;
 let inventoryAutoSaveTimer = null;
@@ -1906,6 +1968,10 @@ async function saveGame() {
       settlementId: settlementId.value,
       lastSettlementVisitClickCount: lastSettlementVisitClickCount.value,
       settlementShortRestDay: settlementShortRestDay.value,
+      libraryBook: libraryBook.value,
+      libraryProgress: libraryProgress.value,
+      libraryReady: libraryReady.value,
+      craftedLevels: { ...craftedLevels.value },
     },
   }, { onConflict: 'user_id' });
 }
@@ -1979,6 +2045,10 @@ function restoreGameState(s) {
   settlementId.value           = s.settlementId ?? null;
   lastSettlementVisitClickCount.value = s.lastSettlementVisitClickCount ?? 0;
   settlementShortRestDay.value = s.settlementShortRestDay ?? 0;
+  if (s.libraryBook != null) libraryBook.value = s.libraryBook;
+  libraryProgress.value = s.libraryProgress ?? 0;
+  if (s.libraryReady != null) libraryReady.value = s.libraryReady;
+  if (s.craftedLevels) Object.assign(craftedLevels.value, s.craftedLevels);
 }
 
 async function handleRestart() {

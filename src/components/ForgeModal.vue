@@ -9,6 +9,28 @@
         <span class="forge-scrap-count">{{ scrapMetal }}</span>
       </div>
 
+      <!-- Library: Ready to Craft -->
+      <div v-if="libraryReady" class="forge-augments forge-craft-section">
+        <div class="forge-augment-title">📖 Ready to Craft</div>
+        <div class="forge-craft-row">
+          <div class="forge-craft-info">
+            <div class="forge-craft-name">{{ craftReadyBook?.name }}</div>
+            <div class="forge-craft-desc">{{ craftReadyLevel?.label }}</div>
+            <div class="forge-craft-meta">Level {{ libraryReady.levelIndex + 1 }} · {{ craftReadyLevel?.forgeCost }} scrap required</div>
+          </div>
+          <button
+            class="forge-make-btn"
+            :disabled="scrapMetal < (craftReadyLevel?.forgeCost ?? 0)"
+            @click="$emit('craft-book')"
+          >
+            Craft
+          </button>
+        </div>
+        <div v-if="scrapMetal < (craftReadyLevel?.forgeCost ?? 0)" class="forge-craft-warn">
+          Need {{ (craftReadyLevel?.forgeCost ?? 0) - scrapMetal }} more scrap.
+        </div>
+      </div>
+
       <!-- Weapon Equip Section -->
       <div v-if="showWeaponSection" class="forge-augments forge-weapons-section">
         <div class="forge-augment-title">⚔️ Special Weapons</div>
@@ -105,7 +127,7 @@
                 Install: {{ augmentLabel(key) }}
               </button>
             </div>
-            <div v-else-if="!weaponAugment" class="forge-augment-hint">Buy augments at the Tavern Fence</div>
+            <div v-else-if="!weaponAugment" class="forge-augment-hint">Find augments from combat or buy them at the Tavern Fence</div>
           </div>
 
           <div class="forge-augment-divider"></div>
@@ -126,7 +148,7 @@
                 Install: {{ augmentLabel(key) }}
               </button>
             </div>
-            <div v-else-if="!defenseAugment" class="forge-augment-hint">Buy augments at the Tavern Fence</div>
+            <div v-else-if="!defenseAugment" class="forge-augment-hint">Find augments from combat or buy them at the Tavern Fence</div>
           </div>
         </div>
       </div>
@@ -139,6 +161,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { WEAPONS, getWeapon } from "@/utils/weapons";
+import { getBook } from "@/utils/libraryBooks";
 
 const forgeImg = new URL("../assets/forge-img.png", import.meta.url).href;
 
@@ -167,9 +190,13 @@ const props = defineProps({
   pendingDefenseAugments: { type: Array,  default: () => [] },
   pendingWeapons:         { type: Array,  default: () => [] },
   equippedWeapon:         { type: String, default: null },
+  libraryReady:           { type: Object, default: null },
 });
 
-const emit = defineEmits(["close", "forge", "install-augment", "equip-weapon"]);
+const emit = defineEmits(["close", "forge", "install-augment", "equip-weapon", "craft-book"]);
+
+const craftReadyBook = computed(() => props.libraryReady ? getBook(props.libraryReady.id) : null);
+const craftReadyLevel = computed(() => craftReadyBook.value?.levels[props.libraryReady?.levelIndex] ?? null);
 
 const weaponAlloc = ref(0);
 const defenseAlloc = ref(0);

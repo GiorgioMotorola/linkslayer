@@ -21,6 +21,12 @@ export function buildGroupIntents(enemies, enrageBonus = 0, decideAction = null)
   return enemies.map((e, i) => {
     if (e.currentHP <= 0) return { action: "dead", damage: null };
     if (!activeIndices.has(i)) return { action: "idle", damage: null };
+    // Consume any forced action (e.g. trip from Shouting Halberd)
+    if (e.forcedNextAction) {
+      const forced = e.forcedNextAction;
+      e.forcedNextAction = null;
+      return { action: forced, damage: null };
+    }
     const action = decideAction ? decideAction() : "attack";
     const damage = action === "attack"
       ? Math.floor(Math.random() * (e.maxDamage - e.minDamage + 1)) + e.minDamage + enrageBonus

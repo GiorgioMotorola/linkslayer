@@ -46,3 +46,21 @@ export const WEAPONS = [
 export function getWeapon(id) {
   return WEAPONS.find((w) => w.id === id) ?? null;
 }
+
+export const WEAPON_AUGMENTS = [
+  { id: "bleedEdge",    name: "Serrated Edge" },
+  { id: "venomCoat",    name: "Venom Coat" },
+  { id: "thunderstrike",name: "Thunderstrike Rune" },
+  { id: "emberTemper",  name: "Ember Temper" },
+  { id: "cursedRune",   name: "Cursed Rune" },
+  { id: "soulShard",    name: "Soul Shard" },
+];
+
+export const DEFENSE_AUGMENTS = [
+  { id: "thornplate",   name: "Thornplate" },
+  { id: "stoneskin",    name: "Stoneskin" },
+  { id: "bloodpactRune",name: "Bloodpact Rune" },
+  { id: "ironWill",     name: "Iron Will" },
+  { id: "wardensWard",  name: "Warden's Ward" },
+  { id: "frostbound",   name: "Frostbound" },
+];

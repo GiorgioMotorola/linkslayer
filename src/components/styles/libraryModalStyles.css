@@ -1,0 +1,272 @@
+.library-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(480px, 100vw);
+  display: flex;
+  flex-direction: column;
+  z-index: 1100;
+  box-shadow: -10px 0 50px rgba(0, 0, 0, 0.75);
+  overflow-y: auto;
+}
+
+.library-modal {
+  background: rgba(10, 6, 18, 0.98);
+  border-left: 1px solid rgba(80, 50, 140, 0.35);
+  flex: 1;
+  padding: 1.4rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  font-family: "IBM Plex Sans", sans-serif;
+}
+
+.library-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #a888e8;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(100, 60, 180, 0.35);
+  padding-bottom: 0.6rem;
+  text-align: center;
+}
+
+.library-subtitle {
+  font-size: 11px;
+  color: #5a4878;
+  text-align: center;
+  font-style: italic;
+  margin-top: -0.5rem;
+}
+
+/* ── Reading status ──────────────────────────────────────────────────────── */
+.library-reading-status {
+  background: rgba(60, 30, 100, 0.25);
+  border: 1px solid rgba(120, 70, 200, 0.35);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.reading-status-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #7a58a8;
+}
+
+.reading-status-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #c8a0f0;
+}
+
+.reading-progress-bar {
+  height: 4px;
+  background: rgba(80, 50, 120, 0.4);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.reading-progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, #7040c0, #b080f0);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.reading-progress-text {
+  font-size: 11px;
+  color: #7058a0;
+  text-align: right;
+}
+
+.library-ready-status {
+  background: rgba(20, 60, 20, 0.35);
+  border: 1px solid rgba(60, 160, 60, 0.4);
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  font-size: 13px;
+  color: #80d080;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ready-hint {
+  font-size: 11px;
+  color: #508050;
+  font-style: italic;
+}
+
+/* ── Sections ────────────────────────────────────────────────────────────── */
+.library-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.library-section-header {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #7a58a8;
+  border-bottom: 1px solid rgba(80, 50, 120, 0.3);
+  padding-bottom: 0.35rem;
+}
+
+.library-book-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* ── Book row ────────────────────────────────────────────────────────────── */
+.library-book-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  background: rgba(20, 10, 36, 0.5);
+  border: 1px solid rgba(70, 40, 110, 0.3);
+  border-radius: 6px;
+  transition: border-color 0.15s;
+}
+
+.library-book-row.is-reading {
+  border-color: rgba(120, 70, 200, 0.6);
+  background: rgba(60, 30, 100, 0.2);
+}
+
+.library-book-row.is-ready {
+  border-color: rgba(60, 160, 60, 0.5);
+  background: rgba(20, 60, 20, 0.2);
+}
+
+.book-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+}
+
+.book-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.book-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #c8a0f0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.book-level-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #a888e8;
+  background: rgba(100, 60, 160, 0.3);
+  border: 1px solid rgba(120, 80, 180, 0.5);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+.book-desc {
+  font-size: 11px;
+  color: #6a5088;
+  line-height: 1.4;
+}
+
+.book-meta {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 10px;
+  color: #5a4070;
+}
+
+/* ── Book action ─────────────────────────────────────────────────────────── */
+.book-action {
+  flex-shrink: 0;
+}
+
+.book-read-btn {
+  background: rgba(80, 40, 140, 0.3);
+  border: 1px solid rgba(120, 70, 200, 0.5);
+  border-radius: 4px;
+  color: #c0a0e8;
+  font-size: 11px;
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 600;
+  padding: 5px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.book-read-btn:hover:not(:disabled) {
+  background: rgba(100, 50, 170, 0.45);
+  border-color: rgba(160, 100, 240, 0.75);
+  color: #d8b8ff;
+}
+
+.book-read-btn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.book-reading-indicator {
+  font-size: 11px;
+  color: #9060d0;
+  font-style: italic;
+}
+
+.book-ready-indicator {
+  font-size: 11px;
+  color: #60c060;
+  font-weight: 700;
+}
+
+.book-maxed {
+  font-size: 11px;
+  color: #a888e8;
+  font-style: italic;
+}
+
+/* ── Close button ────────────────────────────────────────────────────────── */
+.library-close-btn {
+  background: transparent;
+  border: 1px solid rgba(100, 60, 170, 0.45);
+  border-radius: 4px;
+  color: #9070c0;
+  font-size: 12px;
+  font-family: "IBM Plex Sans", sans-serif;
+  padding: 7px 14px;
+  cursor: pointer;
+  align-self: center;
+  margin-top: auto;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.library-close-btn:hover {
+  background: rgba(80, 40, 130, 0.2);
+  border-color: rgba(140, 90, 220, 0.7);
+  color: #b898e0;
+}
+
+@media (max-width: 500px) {
+  .library-overlay {
+    width: 100vw;
+    left: 0;
+  }
+}

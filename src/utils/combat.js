@@ -539,8 +539,8 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
     }
   }
 
-  // Flail "Sweep": enraged attack also hits all non-target enemies for half damage
-  if (wepId === "flail" && playerAction === "attack_enraged" && damageToEnemy > 0) {
+  // Flail "Sweep": power attack also hits all non-target enemies for half damage
+  if (wepId === "flail" && playerAction === "attack_power" && damageToEnemy > 0) {
     const enc = encounter.value;
     if (enc?.enemies?.length > 1) {
       const tidx = enc.targetIndex ?? 0;
@@ -576,6 +576,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
             e.fled = true;
             log(`🏃 ${e.name} flees in terror!`);
           } else {
+            e.forcedNextAction = 'trip';
             log(`🤾 ${e.name} trips and falls — loses their next action!`);
           }
         }

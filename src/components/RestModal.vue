@@ -37,6 +37,19 @@
 
         <button
           v-if="shouldShowShortRest"
+          @click="$emit('open-library')"
+          class="sr-btn"
+        >
+          Infinite Library
+          <span class="sr-sub">
+            <template v-if="props.libraryReady">📖 Book ready to forge!</template>
+            <template v-else-if="props.libraryBook">📖 Reading in progress…</template>
+            <template v-else>check out a book</template>
+          </span>
+        </button>
+
+        <button
+          v-if="shouldShowShortRest"
           @click="$emit('open-forge')"
           class="sr-btn"
         >
@@ -197,7 +210,9 @@ const props = defineProps({
   boardQuestName: { type: String, default: "" },
   boardQuestHint: { type: String, default: "" },
   boardQuestRewardLabel: { type: String, default: "" },
-  campTier: { type: Number, default: 0 },
+  campTier:     { type: Number, default: 0 },
+  libraryBook:  { type: Object,  default: null },
+  libraryReady: { type: Object,  default: null },
 });
 
 const emit = defineEmits([
@@ -214,6 +229,7 @@ const emit = defineEmits([
   "open-shop",
   "open-tavern-shop",
   "open-forge",
+  "open-library",
 ]);
 
 const currentSipScene = ref("");

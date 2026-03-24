@@ -209,13 +209,7 @@
             <div class="item-description">{{ itemDesc.smokeBomb }}</div>
           </div>
           <div class="item-button-box">
-            <button
-              class="buy-button-details"
-              @click.stop="useItem('smokeBomb')"
-              :disabled="!isInCombat || isBossEncounter"
-            >
-              Use
-            </button>
+            <span class="combat-action-badge">⚔ Combat Action</span>
           </div>
         </div>
 
@@ -259,13 +253,7 @@
             <div class="item-description">{{ itemDesc.sharedSufferingAmulet }}</div>
           </div>
           <div class="item-button-box">
-            <button
-              class="buy-button-details"
-              @click.stop="useItem('sharedSufferingAmulet')"
-              :disabled="!isInCombat"
-            >
-              Use
-            </button>
+            <span class="combat-action-badge">⚔ Combat Action</span>
           </div>
         </div>
 
@@ -338,7 +326,7 @@
             <div class="item-description">{{ itemDesc.flashPowder }}</div>
           </div>
           <div class="item-button-box">
-            <button class="buy-button-details" @click.stop="useItem('flashPowder')" :disabled="!isInCombat || isBossEncounter">Use</button>
+            <span class="combat-action-badge">⚔ Combat Action</span>
           </div>
         </div>
 
@@ -351,7 +339,7 @@
             <div class="item-description">{{ itemDesc.venomVial }}</div>
           </div>
           <div class="item-button-box">
-            <button class="buy-button-details" @click.stop="useItem('venomVial')" :disabled="!isInCombat">Use</button>
+            <span class="combat-action-badge">⚔ Combat Action</span>
           </div>
         </div>
 
@@ -367,7 +355,7 @@
             </div>
           </div>
           <div class="item-button-box">
-            <button class="buy-button-details" @click.stop="useItem('serratedDagger')" :disabled="!isInCombat || isSerratedDaggerActive">Use</button>
+            <span class="combat-action-badge">⚔ Combat Action</span>
           </div>
         </div>
 
@@ -399,7 +387,7 @@
             </div>
           </div>
           <div class="item-button-box">
-            <button class="buy-button-details" @click.stop="useItem('wardingShield')" :disabled="wardingShieldHitsRemaining > 0">Use</button>
+            <span class="combat-action-badge">⚔ Combat Action</span>
           </div>
         </div>
 

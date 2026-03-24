@@ -67,16 +67,39 @@
                 :style="{ background: intentTintFor(idx) }"
               ></div>
             </div>
-            <!-- Intent icon badge — outside overflow:hidden so it's not clipped -->
+            <!-- Intent badge — collapses to icon, expands to full status when selected -->
             <div
               v-if="intentIconFor(idx)"
-              :key="intentIconFor(idx)"
+              :key="'badge-' + idx"
               class="co-intent-badge"
               :class="{
                 'co-intent-badge--loading': getIntentFor(idx)?.action === 'unknown',
                 'co-intent-badge--danger': isDangerIntent(idx),
+                'co-intent-badge--expanded': idx === targetIndex,
               }"
-            >{{ intentIconFor(idx) }}</div>
+            >
+              <!-- Collapsed: just the icon -->
+              <template v-if="idx !== targetIndex">{{ intentIconFor(idx) }}</template>
+
+              <!-- Expanded: full status card -->
+              <template v-else>
+                <div class="co-badge-exp-name">{{ selectedEnemy?.name }}</div>
+                <div class="co-badge-exp-hp">
+                  <span class="co-badge-exp-hp-bar-wrap">
+                    <span class="co-badge-exp-hp-bar-fill" :style="{ width: selectedEnemyHpPct + '%' }"></span>
+                  </span>
+                  <span class="co-badge-exp-hp-val">{{ selectedEnemyCurrentHP }} HP</span>
+                </div>
+                <div class="co-badge-exp-intent" :class="{ 'co-badge-exp-intent--danger': selectedIntentIsDanger }">
+                  {{ selectedIntentText }}
+                </div>
+                <div v-if="selectedStatusEffects.length" class="co-badge-exp-effects">
+                  <span v-for="effect in selectedStatusEffects" :key="effect.type" class="co-badge-exp-effect">
+                    {{ STATUS_ICON[effect.type] ?? '?' }} {{ effectLabel(effect) }}
+                  </span>
+                </div>
+              </template>
+            </div>
             <div class="co-hp-bar-wrap co-enemy-hp-bar">
               <div class="co-hp-bar-fill co-hp-bar-enemy" :style="{ width: enemyHpPct(idx) + '%' }"></div>
             </div>
@@ -92,10 +115,9 @@
         </div>
       </div>
 
-
-
     </div>
   </Transition>
+
 
 </template>
 
@@ -203,7 +225,7 @@ function isLowHP(idx) {
   const e = enemyList.value[idx];
   if (!e) return false;
   const maxHp = e.maxHP ?? e.hp ?? 1;
-  const cur = idx === targetIndex.value ? props.enemyHP : (e.currentHP ?? 0);
+  const cur = e.currentHP ?? 0;
   return cur > 0 && (cur / maxHp) <= 0.25;
 }
 
@@ -244,7 +266,7 @@ function enemyHpPct(idx) {
   const e = enemyList.value[idx];
   if (!e) return 0;
   const maxHp = e.maxHP ?? e.hp ?? 1;
-  const cur = idx === targetIndex.value ? props.enemyHP : (e.currentHP ?? 0);
+  const cur = e.currentHP ?? 0;
   return Math.max(0, Math.min(100, (cur / Math.max(1, maxHp)) * 100));
 }
 
@@ -339,6 +361,52 @@ function statusIconsFor(idx) {
 }
 
 
+// ── Selected enemy status panel ───────────────────────────────────────────────
+const selectedEnemy = computed(() => {
+  const e = enemyList.value[targetIndex.value];
+  return e ?? null;
+});
+
+// Use currentHP directly from the enemy object (kept in sync with enemyHP ref via the flush:'sync' watcher)
+const selectedEnemyCurrentHP = computed(() => selectedEnemy.value?.currentHP ?? 0);
+
+const selectedEnemyHpPct = computed(() => {
+  const e = selectedEnemy.value;
+  if (!e) return 0;
+  const max = e.maxHP ?? e.hp ?? 1;
+  return Math.max(0, Math.min(100, (selectedEnemyCurrentHP.value / max) * 100));
+});
+
+const selectedStatusEffects = computed(() => {
+  return props.enemyStatusEffects ?? [];
+});
+
+const selectedIntentText = computed(() => {
+  const intent = getIntentFor(targetIndex.value);
+  if (!intent) return "—";
+  const label = {
+    attack:       "Attack",
+    attack_power: "Power Attack",
+    defend:       "Defend",
+    steal:        "Steal Gold",
+    confuse:      "Confuse",
+    enrage:       "Enrage",
+    flee:         "Flee",
+    summon:       "Heal",
+    trip:         "Trip",
+    idle:         "Idle",
+    unknown:      "···",
+  }[intent.action] ?? intent.action;
+  return intent.damage ? `${label} (${intent.damage} dmg)` : label;
+});
+
+const selectedIntentIsDanger = computed(() => isDangerIntent(targetIndex.value));
+
+function effectLabel(effect) {
+  const turns = effect.duration ?? effect.turnsLeft ?? 0;
+  return `${turns}t`;
+}
+
 // ── Wikipedia thumbnail ───────────────────────────────────────────────────────
 const thumbnailUrl = ref(null);
 
@@ -409,7 +477,7 @@ watch(
 
 .combat-overlay {
   position: fixed;
-  bottom: clamp(260px, 60vh, 500px);
+  bottom: clamp(160px, 46vh, 380px);
   left: 0;
   right: 0;
   height: clamp(160px, 28vh, 320px);
@@ -697,6 +765,100 @@ watch(
   50%       { box-shadow: 0 0 14px 5px rgba(255, 0, 0, 0.9); }
 }
 
+/* ── Intent badge expanded state ─────────────────────────────────────────── */
+.co-intent-badge--expanded {
+  /* Override the collapsed badge styles */
+  top: auto;
+  bottom: calc(100% + 6px);  /* fold up from above the portrait */
+  right: 50%;
+  transform: translateX(50%);
+  width: max(120px, 90%);
+  background: rgba(8, 3, 16, 0.96) !important;
+  border-color: rgba(200, 30, 30, 0.6) !important;
+  border-radius: 6px !important;
+  padding: 0.45rem 0.55rem !important;
+  font-size: unset !important;
+  color: unset !important;
+  display: flex !important;
+  flex-direction: column;
+  gap: 0.3rem;
+  animation: badge-expand 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  pointer-events: none;
+  z-index: 10;
+  white-space: normal;
+}
+
+@keyframes badge-expand {
+  from { opacity: 0; transform: translateX(50%) scaleY(0.6); transform-origin: bottom center; }
+  to   { opacity: 1; transform: translateX(50%) scaleY(1);   transform-origin: bottom center; }
+}
+
+.co-badge-exp-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: #e84040;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+
+.co-badge-exp-hp {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.co-badge-exp-hp-bar-wrap {
+  flex: 1;
+  height: 4px;
+  background: rgba(80, 20, 20, 0.5);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.co-badge-exp-hp-bar-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #ca1111, #e84040);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.co-badge-exp-hp-val {
+  font-size: 10px;
+  font-weight: 600;
+  color: #c04040;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.co-badge-exp-intent {
+  font-size: 11px;
+  font-weight: 600;
+  color: #c0a0a0;
+  border-top: 1px solid rgba(120, 40, 40, 0.35);
+  padding-top: 0.25rem;
+}
+
+.co-badge-exp-intent--danger {
+  color: #ff4040;
+}
+
+.co-badge-exp-effects {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.co-badge-exp-effect {
+  font-size: 10px;
+  background: rgba(40, 20, 10, 0.7);
+  border: 1px solid rgba(140, 80, 20, 0.4);
+  border-radius: 3px;
+  padding: 1px 4px;
+  color: #c08040;
+}
+
 /* gold-float keyframe lives in the non-scoped block below */
 
 /* ── Status effect icons ─────────────────────────────────────────────────── */
@@ -750,7 +912,7 @@ watch(
 
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 @media screen and (max-width: 1000px) {
-  .combat-overlay { bottom: clamp(360px, 66vh, 640px); }
+  .combat-overlay { bottom: clamp(160px, 46vh, 380px); }
   .co-player-portrait { left: 5%; }
   .co-enemy-group     { right: 5%; }
   .co-player { height: clamp(70px, 14vh, 120px); }
