@@ -48,14 +48,14 @@ export function useStatusEffects() {
           poisonDamagePerClick.value = 0;
         } else {
           netHealthChange -= effectivePoisonDamage;
-          log(`🤢 You are poisoned. You lose ${effectivePoisonDamage} HP.`);
+          log(`<i class="ra ra-venomous-snake"></i> You are poisoned. You lose ${effectivePoisonDamage} HP.`);
         }
         poisonedClicksLeft.value--;
         if (poisonedClicksLeft.value <= 0) {
-          log(`✅ The poison wears off.`);
+          log(`<i class="ra ra-health"></i> The poison wears off.`);
         } else {
           log(
-            `🤢 ${poisonedClicksLeft.value} clicks left until the poison wears off.`
+            `<i class="ra ra-venomous-snake"></i> ${poisonedClicksLeft.value} clicks left until the poison wears off.`
           );
         }
       }
@@ -81,7 +81,7 @@ export function useStatusEffects() {
             netHealthChange += actualHeal;
             healthRegenHealedCount.value += actualHeal;
             log(
-              `🌱 You feel a surge of vitality. Healed ${actualHeal} HP from Herbal Poultice.`
+              `<i class="ra ra-sprout"></i> You feel a surge of vitality. Healed ${actualHeal} HP from Herbal Poultice.`
             );
           }
 
@@ -96,7 +96,7 @@ export function useStatusEffects() {
             healthRegenClicksRemaining.value = 0;
             healthRegenMaxHeal.value = 0;
             healthRegenHealedCount.value = 0;
-            log(`✅ The Herbal Poultice's effect wears off.`);
+            log(`<i class="ra ra-leaf"></i> The Herbal Poultice's effect wears off.`);
           }
         } else {
           healthRegenActive.value = false;
@@ -104,7 +104,7 @@ export function useStatusEffects() {
           healthRegenClicksRemaining.value = 0;
           healthRegenMaxHeal.value = 0;
           healthRegenHealedCount.value = 0;
-          log(`✅ The Herbal Poultice's effect wears off.`);
+          log(`<i class="ra ra-leaf"></i> The Herbal Poultice's effect wears off.`);
         }
       }
 
@@ -116,19 +116,19 @@ export function useStatusEffects() {
       if (isCloakActive.value) {
         cloakClicksRemaining.value--;
         log(
-          `✨ Cloak of Invisibility active: ${cloakClicksRemaining.value} clicks remaining.`
+          `<i class="ra ra-aura"></i> Cloak of Invisibility active: ${cloakClicksRemaining.value} clicks remaining.`
         );
         if (cloakClicksRemaining.value <= 0) {
           isCloakActive.value = false;
           cloakClicksRemaining.value = 0;
-          log(`👻 The Cloak of Invisibility fades away.`);
+          log(`<i class="ra ra-angel-wings"></i> The Cloak of Invisibility fades away.`);
         }
       }
 
       if (blurClicksLeft.value > 0) {
         blurClicksLeft.value--;
         log(
-          `🍺 You are still drunk. ${blurClicksLeft.value} clicks left til you sober up.`
+          `<i class="ra ra-beer"></i> You are still drunk. ${blurClicksLeft.value} clicks left til you sober up.`
         );
       }
 
@@ -136,24 +136,24 @@ export function useStatusEffects() {
         const { enlightenmentFishAccumulatedHP } = deps;
         enlightenmentFishAccumulatedHP.value++;
         log(
-          `🐟 The Fish of Eternal Enlightenment shimmers, gaining 1 HP. (Total: ${enlightenmentFishAccumulatedHP.value} HP)`
+          `<i class="ra ra-fish"></i> The Fish of Eternal Enlightenment shimmers, gaining 1 HP. (Total: ${enlightenmentFishAccumulatedHP.value} HP)`
         );
       }
 
       if (wardStoneActive.value) {
         wardStoneClicksRemaining.value--;
-        log(`🪨 Ward Stone active: ${wardStoneClicksRemaining.value} clicks remaining.`);
+        log(`<i class="ra ra-mountains"></i> Ward Stone active: ${wardStoneClicksRemaining.value} clicks remaining.`);
         if (wardStoneClicksRemaining.value <= 0) {
           wardStoneActive.value = false;
           wardStoneClicksRemaining.value = 0;
-          log(`🪨 The Ward Stone crumbles to dust.`);
+          log(`<i class="ra ra-mountains"></i> The Ward Stone crumbles to dust.`);
         }
       }
 
       if (inventory.value.goldPouches > 0) {
         const { goldPouchAccumulatedGold } = deps;
         goldPouchAccumulatedGold.value++;
-        log(`👜 Gold Pouch: +1 gold stored. (Total: ${goldPouchAccumulatedGold.value} gold)`);
+        log(`<i class="ra ra-ammo-bag"></i> Gold Pouch: +1 gold stored. (Total: ${goldPouchAccumulatedGold.value} gold)`);
       }
     });
   }

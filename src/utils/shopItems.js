@@ -310,7 +310,7 @@ export const shopItems = [
   },
   {
     id: "dog_companion",
-    name: "🐶 Dog Companion",
+    name: "Dog Companion",
     cost: 100,
     effect: "inventoryItem",
     details: "dog",

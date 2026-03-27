@@ -173,8 +173,8 @@
       text: "You meticulously examine the intricate root system at the base of the twin-trunked oak. After a few moments, your hand brushes against a section that feels hollow. With a gentle push, a camouflaged panel slides inward, revealing a dark, narrow passage leading down into the earth. The air immediately grows damp and cool."
       options:
         - text: Descend into the dark passage.
-          flow: dialogue_branch
-          next_node_id: step_3_follow_water_flow
+          result: open_explorer
+          mapId: twintrunkedoak
         - text: Try to force the panel open further.
           result: damage-minor
           next_node_id: step_2_examine_roots
@@ -189,60 +189,3 @@
         - text: Turn around and leave this area.
           flow: close_encounter
           responseText: "The darkness of the passage seems too daunting. You decide to leave this area."
-    step_3_follow_water_flow:
-      text: "You are now within the initial cavern of the Sunken Grotto. The passage is dimly lit by a faint, ambient glow from the mosses. You can hear the constant sound of flowing water. The water leads to a large, unusually smooth boulder, distinct from the rough cavern walls. Four vertical lines are etched into its surface, numbered from left to right: 1st Line, 2nd Line, 3rd Line, 4th Line."
-      options:
-        - text: "Press the 1st, 2nd, 3rd, 4th lines."
-          result: mini_boss_combat
-          miniBossType: Grotto Banshee
-          responseText: "You press the lines, but nothing happens. The boulder remains stubbornly in place. Suddenly, from the cracks of the boulder comes a mist that quickly forms into a Banshee. The Banshee screams..."
-        - text: "Press the 4th, 3rd, 2nd, 1st lines."
-          result: mini_boss_combat
-          miniBossType: Grotto Banshee
-          responseText: "You press the lines in reverse order, but the boulder doesn't budge. Suddenly, from the cracks of the boulder comes a mist that quickly forms into a Banshee. The Banshee screams..."
-        - text: "Press the 3rd, 1st, 4th, 2nd lines."
-          flow: dialogue_branch
-          next_node_id: step_4_door_open
-          responseText: "With a deep rumble, the massive boulder slowly grinds inward, revealing a new, dark passage beyond. The air stirs, carrying a scent of old earth and something metallic."
-        - text: Attempt to force the boulder.
-          result: mini_boss_combat
-          miniBossType: Grotto Banshee
-          responseText: "You strain to open the boulder but it does not budge. Suddenly, from the cracks of the boulder comes a mist that quickly forms into a Banshee. The Banshee screams..."
-        - text: Turn around and leave the grotto.
-          flow: close_encounter
-          responseText: The grotto feels too confusing. You decide to turn back.
-    step_4_door_open:
-      text: "The boulder has opened a new path. You find yourself in a dimly lit section of the grotto with two distinct tunnels leading deeper. One veers left, and the other goes right."
-      options:
-        - text: Take the left tunnel.
-          flow: dialogue_branch
-          next_node_id: step_5_left_tunnel_chest_puzzle
-        - text: Take the right tunnel.
-          flow: close_encounter
-          responseText: "You follow the right tunnel. It opens into a larger, underground river, which quickly carries you out into the daylight, far from the grotto's mysteries."
-        - text: Turn around and leave the grotto.
-          flow: close_encounter
-          responseText: "The grotto feels too daunting. You decide to turn back."
-    step_5_left_tunnel_chest_puzzle:
-      text: "The left tunnel narrows then opens into a small, secluded chamber. In the center, a sturdy wooden treasure chest sits, bound with iron bands. A curious numerical lock adorns its front, requiring a single number as input."
-      options:
-        - text: "Enter '5'."
-          result: mini_boss_combat
-          miniBossType: Grotto Banshee
-          responseText: "You enter the number, but the lock stays firmly closed. From the locks seams comes a mist that quickly forms into a Banshee. The Banshee screams..."
-        - text: "Enter '7'."
-          result: mini_boss_combat
-          miniBossType: Grotto Banshee
-          responseText: "You enter the number, but the lock stays firmly closed. From the locks seams comes a mist that quickly forms into a Banshee. The Banshee screams..."
-        - text: "Enter '10'."
-          effect: item
-          details: gold
-          amount: 100
-          responseText: "With a satisfying click, the lock springs open. Inside, glimmers a cache of coins."
-        - text: "Enter '12'."
-          result: mini_boss_combat
-          miniBossType: Grotto Banshee
-          responseText: "You enter the number, but the lock stays firmly closed. From the locks seams comes a mist that quickly forms into a Banshee. The Banshee screams..."
-        - text: Turn around and leave the grotto.
-          flow: close_encounter
-          responseText: "The chest's puzzle is too perplexing. You decide to leave."

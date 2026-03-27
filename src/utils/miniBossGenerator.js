@@ -160,6 +160,14 @@ export const MINI_BOSS_TYPES = [
     scrapReward: 4,
   },
   {
+    type: "Sentient Pile of Human Remains",
+    hp: 150,
+    minDamage: 8,
+    maxDamage: 14,
+    goldReward: 200,
+    scrapReward: 10,
+  },
+  {
     type: "Talking Horse",
     hp: 90,
     minDamage: 5,

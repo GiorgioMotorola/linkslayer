@@ -40,7 +40,7 @@
         <div v-else-if="activeTab === 'newgame'" class="hub-tab-pane hub-newgame-pane">
           <div class="hub-newgame-center">
             <p class="hub-newgame-warning">Starting a new game will delete your current save.</p>
-            <button class="hub-newgame-btn" @click="$emit('restart')">⚔ Start New Game</button>
+            <button class="hub-newgame-btn" @click="$emit('restart')"><i class="ra ra-sword"></i> Start New Game</button>
           </div>
           <div class="hub-close-bar">
             <button class="hub-close-btn" @click="$emit('close')">⎯ &nbsp; Close Inventory &nbsp; ⎯</button>

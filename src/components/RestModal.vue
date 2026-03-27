@@ -42,8 +42,8 @@
         >
           Infinite Library
           <span class="sr-sub">
-            <template v-if="props.libraryReady">📖 Book ready to forge!</template>
-            <template v-else-if="props.libraryBook">📖 Reading in progress…</template>
+            <template v-if="props.libraryReady"><i class="ra ra-book"></i> Book ready to forge!</template>
+            <template v-else-if="props.libraryBook"><i class="ra ra-book"></i> Reading in progress…</template>
             <template v-else>check out a book</template>
           </span>
         </button>

@@ -94,9 +94,11 @@
         <div class="spinner"></div>
       </div>
     </div>
+    <SplashScreen v-if="showSplash" @done="onSplashDone" />
+
     <ClassSelect
-      v-if="!playerClass"
-      @select="handleClassSelection"
+      v-if="!playerClass && !showSplash"
+      @select="handleClassSelectionWithSplash"
       :articleTitle="current"
       :start="chain[0]"
       :targets="chain[currentTargetIndex + 1]"
@@ -217,7 +219,7 @@
 
       <!-- Gold stolen popup -->
       <div v-if="lastGoldStolen" :key="goldPopupKey" class="gold-stolen-popup">
-        +{{ lastGoldStolen }} 💰
+        +{{ lastGoldStolen }} <i class="ra ra-gold-bar"></i>
       </div>
 
       <Transition name="rest-backdrop">
@@ -497,7 +499,7 @@
   <!-- Town Naming Modal -->
   <div v-if="showTownNamingModal" class="town-naming-overlay">
     <div class="town-naming-modal">
-      <div class="town-naming-title">🏴 Name Your Settlement</div>
+      <div class="town-naming-title"><i class="ra ra-castle-flag"></i> Name Your Settlement</div>
       <div class="town-naming-region">
         Region: <em>{{ (current ?? "Unknown Lands").replaceAll("_", " ") }}</em>
       </div>
@@ -543,7 +545,17 @@
     @short-rest="handleSettlementShortRest"
   />
 
+  <!-- Explorer backdrop — keeps background dark during room encounters -->
+  <div v-if="showExplorer && !isInCombat" class="explorer-backdrop"></div>
+
   <!-- Settlement View (visitor — read-only) -->
+  <ExplorerModal
+    v-if="showExplorer && explorerState && !inEncounter"
+    :explorerState="explorerState"
+    @move="handleExplorerMove"
+    @exit="handleExplorerExit"
+  />
+
   <SettlementModal
     v-if="showVisitorSettlement && visitingSettlementData"
     :settlement="visitingSettlementData"
@@ -648,6 +660,7 @@ import ArticleViewer from "@/components/ArticleViewer.vue";
 import Header from "@/components/Header.vue";
 import VictoryModal from "@/components/VictoryModal.vue";
 import ClassSelect from "@/components/ClassSelect.vue";
+import SplashScreen from "@/components/SplashScreen.vue";
 import DefeatModal from "@/components/DefeatModal.vue";
 import RestModal from "@/components/RestModal.vue";
 import ShopModal from "@/components/ShopModal.vue";
@@ -666,6 +679,9 @@ import LibraryModal from "@/components/LibraryModal.vue";
 import BreweryModal from "@/components/BreweryModal.vue";
 import TavernBeerModal from "@/components/TavernBeerModal.vue";
 import SettlementModal from "@/components/SettlementModal.vue";
+import ExplorerModal from "@/components/ExplorerModal.vue";
+import { EXPLORER_MAPS, buildExplorerState } from "@/utils/explorerMaps.js";
+import { generateEnemyGroup } from "@/utils/encounterGenerator";
 
 import { shopItems as allShopItems } from "@/utils/shopItems";
 import { isBoss } from "@/utils/bossGenerator";
@@ -806,7 +822,7 @@ function handleCampfireReward(reward) {
   if (reward.type === "gold") playerGold.value += reward.amount;
   else if (reward.type === "scrap") inventory.value.scrapMetal = (inventory.value.scrapMetal || 0) + reward.amount;
   else if (reward.type === "special") specialUsesLeft.value += reward.amount;
-  log(`🔥 You rested at the ${reward.name}. You gained +15 HP and ${bonusLabels[reward.type]}.`);
+  log(`<i class="ra ra-fire"></i> You rested at the ${reward.name}. You gained +15 HP and ${bonusLabels[reward.type]}.`);
   showCampfireOverlay.value = false;
   campfireReward.value = null;
 }
@@ -856,7 +872,7 @@ const {
 function onDogNamed(name) {
   dogName.value = name;
   showDogNameModal.value = false;
-  log(`🐶 You named your companion <strong>${name}</strong>! They wag their tail happily.`);
+  log(`<i class="ra ra-pawprint"></i> You named your companion <strong>${name}</strong>! They wag their tail happily.`);
 }
 
 const OFFERING_COSTS = [[10, 15, 20], [25, 30, 50]];
@@ -961,7 +977,7 @@ watch(encounter, (newVal) => {
 watch(playerHP, (newVal) => {
   if (playerClass.value && newVal <= 0 && !defeated.value && !showRecap.value) {
     log(
-      `💀 <span class="player-name">${playerName.value}</span> was defeated.`
+      `<i class="ra ra-skull"></i> <span class="player-name">${playerName.value}</span> was defeated.`
     );
     encounter.value = null;
     showRecap.value = true;
@@ -1041,6 +1057,23 @@ const {
   statusEffects,
 });
 
+// ── Splash screen ─────────────────────────────────────────────────────────────
+const showSplash = ref(false);
+const pendingClassSelection = ref(null);
+
+function handleClassSelectionWithSplash(payload) {
+  pendingClassSelection.value = payload;
+  showSplash.value = true;
+}
+
+function onSplashDone() {
+  showSplash.value = false;
+  if (pendingClassSelection.value) {
+    handleClassSelection(pendingClassSelection.value);
+    pendingClassSelection.value = null;
+  }
+}
+
 const itemHandlers = createItemHandlers({
   playerState: {
     playerHP,
@@ -1118,6 +1151,12 @@ const questComplete = ref(false);
 const markedPOIs = ref([]);
 const engagedPOIs = ref([]);
 
+// ── Explorer ────────────────────────────────────────────────────────────────
+const showExplorer       = ref(false);
+const explorerState      = ref(null);   // { mapId, playerNode, rooms }
+const explorerCombatRoom = ref(null);   // nodeId of room that triggered combat
+const explorerActiveRoom = ref(null);   // nodeId of room currently showing dialogue
+
 // ── Settlement ─────────────────────────────────────────────────────────────
 const settlementFlagOffered   = ref(false); // NPC encounter has fired
 const settlementFlagAccepted  = ref(false); // player said yes
@@ -1192,7 +1231,7 @@ function handleTavernShopBuy(tier) {
   if (playerGold.value < cost) return;
   playerGold.value -= cost;
   campTier.value = tier;
-  log(`🏕️ You purchase a ${CAMP_NAMES[tier]}. Your long rest has improved.`);
+  log(`<i class="ra ra-campfire"></i> You purchase a ${CAMP_NAMES[tier]}. Your long rest has improved.`);
   saveGame();
 }
 
@@ -1203,7 +1242,7 @@ function handleExtraActionBuy(tier) {
   playerGold.value -= cost;
   inventory.value.extraActions = tier;
   const names = { 1: "Quick Hands Charm", 2: "Swift Strike Rune" };
-  log(`⚡ You purchase the ${names[tier]}. You now have ${1 + tier} combat actions per turn.`);
+  log(`<i class="ra ra-lightning-bolt"></i> You purchase the ${names[tier]}. You now have ${1 + tier} combat actions per turn.`);
   saveGame();
 }
 
@@ -1212,10 +1251,10 @@ function handleForge({ type, scrapUsed }) {
   inventory.value.scrapMetal = (inventory.value.scrapMetal || 0) - scrapUsed;
   if (type === "weapon") {
     weaponBonus.value += upgrades;
-    log(`⚒️ <span class="player-name">${playerName.value}</span> forged ${scrapUsed} scrap into +${upgrades} Weapon Bonus.`);
+    log(`<i class="ra ra-hammer"></i> <span class="player-name">${playerName.value}</span> forged ${scrapUsed} scrap into +${upgrades} Weapon Bonus.`);
   } else {
     shieldBonus.value += upgrades;
-    log(`⚒️ <span class="player-name">${playerName.value}</span> forged ${scrapUsed} scrap into +${upgrades} Defense Bonus.`);
+    log(`<i class="ra ra-hammer"></i> <span class="player-name">${playerName.value}</span> forged ${scrapUsed} scrap into +${upgrades} Defense Bonus.`);
   }
 }
 
@@ -1232,7 +1271,7 @@ function handleBreweryIngredientToBackpack({ key, qty }) {
   const road = inventory.value.roadIngredients ?? {};
   road[key] = (road[key] ?? 0) + qty;
   inventory.value.roadIngredients = { ...road };
-  log(`🌿 Added ${qty}× ${key.replace(/_/g, " ")} to your backpack.`);
+  log(`<i class="ra ra-leaf"></i> Added ${qty}× ${key.replace(/_/g, " ")} to your backpack.`);
 }
 
 function handleBreweryBeerToBackpack(beer) {
@@ -1244,11 +1283,11 @@ function handleBreweryBeerToBackpack(beer) {
     beers.push({ ...beer });
   }
   inventory.value.beers = [...beers];
-  log(`🍾 Added ${beer.qty}× "${beer.name}" to your backpack.`);
+  log(`<i class="ra ra-brandy-bottle"></i> Added ${beer.qty}× "${beer.name}" to your backpack.`);
 }
 
 function handleBreweryListInTavern(beer) {
-  log(`🏰 "${beer.name}" listed in the tavern for ${beer.sellPrice}g each.`);
+  log(`<i class="ra ra-castle-emblem"></i> "${beer.name}" listed in the tavern for ${beer.sellPrice}g each.`);
 }
 
 function handleUseBeer(idx) {
@@ -1256,11 +1295,11 @@ function handleUseBeer(idx) {
   const beer = beers[idx];
   if (!beer) return;
   playerHP.value = Math.min(effectiveMaxHP.value, playerHP.value + beer.hp);
-  log(`🍺 You drink "${beer.name}" and restore ${beer.hp} HP.`);
+  log(`<i class="ra ra-beer"></i> You drink "${beer.name}" and restore ${beer.hp} HP.`);
   if (beer.poisonClicks > 0) {
     poisonedClicksLeft.value = (poisonedClicksLeft.value ?? 0) + beer.poisonClicks;
     poisonDamagePerClick.value = 1;
-    log(`☠ The swill courses through you — poisoned for ${beer.poisonClicks} clicks.`);
+    log(`<i class="ra ra-skull"></i> The swill courses through you — poisoned for ${beer.poisonClicks} clicks.`);
   }
   if (beer.qty > 1) beers[idx] = { ...beer, qty: beer.qty - 1 };
   else beers.splice(idx, 1);
@@ -1278,7 +1317,7 @@ async function handleVisitorTavernBuy({ beer, idx }) {
   if (playerGold.value < beer.sellPrice) return;
   playerGold.value -= beer.sellPrice;
   handleBreweryBeerToBackpack({ ...beer, qty: 1 });
-  log(`🍺 Bought "${beer.name}" from the tavern for ${beer.sellPrice}g.`);
+  log(`<i class="ra ra-beer"></i> Bought "${beer.name}" from the tavern for ${beer.sellPrice}g.`);
 
   // Update visiting settlement: decrement tavernStock, add gold to pending
   const data = visitingSettlementData.value;
@@ -1327,13 +1366,13 @@ function handleInstallAugment({ type, key }) {
       inventory.value.pendingWeaponAugments.push(weaponAugment.value);
     }
     weaponAugment.value = key;
-    log(`⚒️ <span class="player-name">${playerName.value}</span> installs <strong>${AUGMENT_LABELS[key] ?? key}</strong> on their weapon!`);
+    log(`<i class="ra ra-hammer"></i> <span class="player-name">${playerName.value}</span> installs <strong>${AUGMENT_LABELS[key] ?? key}</strong> on their weapon!`);
   } else {
     if (defenseAugment.value && defenseAugment.value !== key) {
       inventory.value.pendingDefenseAugments.push(defenseAugment.value);
     }
     defenseAugment.value = key;
-    log(`⚒️ <span class="player-name">${playerName.value}</span> installs <strong>${AUGMENT_LABELS[key] ?? key}</strong> on their armor!`);
+    log(`<i class="ra ra-hammer"></i> <span class="player-name">${playerName.value}</span> installs <strong>${AUGMENT_LABELS[key] ?? key}</strong> on their armor!`);
   }
 }
 
@@ -1349,7 +1388,7 @@ function handleEquipWeapon(weaponId) {
   }
   equippedWeapon.value = weaponId;
   const weaponName = getWeapon(weaponId)?.name ?? weaponId;
-  log(`⚒️ <span class="player-name">${playerName.value}</span> equips the <strong>${weaponName}</strong>!`);
+  log(`<i class="ra ra-hammer"></i> <span class="player-name">${playerName.value}</span> equips the <strong>${weaponName}</strong>!`);
   saveGame();
 }
 
@@ -1386,7 +1425,7 @@ function handleTakeQuest() {
   if (!quest) return;
   inventory.value.questScrolls++;
   activeQuestId.value = quest.id;
-  log("📜 You take the quest scroll from the notice board.");
+  log('<i class="ra ra-scroll-unfurled"></i> You take the quest scroll from the notice board.');
 }
 
 function handleTurnInQuest() {
@@ -1399,7 +1438,7 @@ function handleTurnInQuest() {
   completedQuestIds.value.push(quest.id);
   activeQuestId.value = null;
   questComplete.value = false;
-  log(`📜 ${quest.turnInLog}`);
+  log(`<i class="ra ra-scroll-unfurled"></i> ${quest.turnInLog}`);
   saveGame();
 }
 
@@ -1445,14 +1484,94 @@ function handleOptionChosen(option) {
     } else if (option.questStep === "complete") {
       encounter.value = null;
       questComplete.value = true;
-      log(`📜 ${quest?.victoryLog ?? "Quest complete. Return to the tavern to claim your reward."}`);
+      log(`<i class="ra ra-scroll-unfurled"></i> ${quest?.victoryLog ?? "Quest complete. Return to the tavern to claim your reward."}`);
     } else if (option.questStep === "leave") {
       encounter.value = null;
       activeQuestId.value = null;
-      log(`📜 ${quest?.leaveLog ?? "You turn back. The quest scroll remains on the board."}`);
+      log(`<i class="ra ra-scroll-unfurled"></i> ${quest?.leaveLog ?? "You turn back. The quest scroll remains on the board."}`);
     } else {
       advanceQuestStep(option.questStep);
     }
+    return;
+  }
+
+  if (option.result === "explorer_room_complete") {
+    const nodeId = explorerActiveRoom.value;
+    const state = explorerState.value;
+    if (nodeId && state?.rooms[nodeId]) {
+      const map = EXPLORER_MAPS[state.mapId];
+      const room = state.rooms[nodeId];
+      room.cleared = true;
+      if (option.goldBonus) {
+        playerGold.value += option.goldBonus;
+        log(`<i class="ra ra-gold-bar"></i> You pocket ${option.goldBonus} gold.`);
+      }
+      if (room.outcome === "chest") {
+        const [min, max] = map.chestGold;
+        const gold = Math.floor(Math.random() * (max - min + 1)) + min;
+        playerGold.value += gold;
+        log(`<i class="ra ra-gold-bar"></i> You pry the chest open. Inside: ${gold} gold.`);
+      } else if (room.outcome === "item") {
+        inventory.value.healthPotions = (inventory.value.healthPotions || 0) + 1;
+        log(`<i class="ra ra-flask"></i> You pocket the health potion.`);
+      } else if (room.outcome === "lore") {
+        log(`<i class="ra ra-scroll-unfurled"></i> ${map.loreText}`);
+      }
+    }
+    explorerActiveRoom.value = null;
+    encounter.value = null;
+    return;
+  }
+
+  if (option.result === "explorer_room_combat") {
+    const nodeId = explorerActiveRoom.value;
+    if (nodeId) {
+      explorerCombatRoom.value = nodeId;
+      let enemy, enemies;
+      if (option.miniBossType) {
+        const boss = generateMiniBoss(option.miniBossType, enemyDifficultyLevel.value);
+        enemy = boss; enemies = [boss];
+      } else {
+        enemies = generateEnemyGroup(enemyDifficultyLevel.value);
+        enemy = enemies[0];
+      }
+      encounter.value = { type: "combat", enemies, targetIndex: 0, enemy };
+      enemyHP.value = enemy.currentHP;
+    }
+    explorerActiveRoom.value = null;
+    return;
+  }
+
+  if (option.result === "explorer_room_damage") {
+    const nodeId = explorerActiveRoom.value;
+    const dmg = option.amount ?? 5;
+    playerHP.value = Math.max(0, playerHP.value - dmg);
+    log(`<i class="ra ra-dripping-blade"></i> ${option.responseText ?? `You take ${dmg} damage.`}`);
+    if (nodeId && explorerState.value?.rooms[nodeId]) {
+      explorerState.value.rooms[nodeId].cleared = true;
+    }
+    explorerActiveRoom.value = null;
+    encounter.value = null;
+    return;
+  }
+
+  if (option.result === "explorer_room_loot") {
+    const gold = option.amount ?? 0;
+    playerGold.value += gold;
+    log(`<i class="ra ra-gold-bar"></i> You find ${gold} gold hidden beneath a loose floorboard.`);
+    explorerActiveRoom.value = null;
+    encounter.value = null;
+    return;
+  }
+
+  if (option.result === "open_explorer") {
+    if (option.goldBonus) {
+      playerGold.value += option.goldBonus;
+      log(`<i class="ra ra-gold-bar"></i> You find ${option.goldBonus} gold in the corridor before heading inside.`);
+    }
+    encounter.value = null;
+    explorerState.value = buildExplorerState(option.mapId);
+    showExplorer.value = true;
     return;
   }
 
@@ -1460,7 +1579,7 @@ function handleOptionChosen(option) {
     encounter.value = null;
     settlementFlagOffered.value = true;
     inventory.value.settlementFlag = (inventory.value.settlementFlag || 0) + 1;
-    log("🏴 The herald presses a rolled parchment and an iron-tipped flag into your hands. Open your backpack and use the flag on the article where you wish to plant it.");
+    log('<i class="ra ra-castle-flag"></i> The herald presses a rolled parchment and an iron-tipped flag into your hands. Open your backpack and use the flag on the article where you wish to plant it.');
     return;
   }
 
@@ -1472,7 +1591,7 @@ function handleOptionChosen(option) {
       markedPOIs.value.push({ id: encId, name: encName });
     }
     const responseText = option.responseText || 'This point of interest has been marked on your map.';
-    log(`🗺️ ${responseText}`);
+    log(`<i class="ra ra-compass"></i> ${responseText}`);
     const continueOption = [{ text: "Continue on your journey.", flow: "close_encounter" }];
     if (enc?.type === 'lore') {
       encounter.value = { type: 'lore', lore: { id: enc.lore.id, name: enc.lore.name, text: responseText, options: continueOption } };
@@ -1493,6 +1612,15 @@ function handleOptionChosen(option) {
     }
   }
 
+  // If days_increase fires from within an explorer room, mark it cleared before handing off
+  if (option.result === "days_increase" && explorerActiveRoom.value) {
+    const nodeId = explorerActiveRoom.value;
+    if (explorerState.value?.rooms[nodeId]) {
+      explorerState.value.rooms[nodeId].cleared = true;
+    }
+    explorerActiveRoom.value = null;
+  }
+
   callHandleEncounterOption(option);
 }
 
@@ -1511,6 +1639,122 @@ function handleRevisitPOI(poi) {
   }
 }
 
+const EXPLORER_ROOM_ENCOUNTERS = {
+  chest: (nodeName) => ({
+    type: "lore",
+    lore: {
+      id: "explorer_chest",
+      name: nodeName,
+      text: "A barnacle-encrusted chest sits in the corner, sealed with a rusted latch.",
+      options: [
+        { text: "Force it open.", result: "explorer_room_complete" },
+        { text: "Leave it alone.", flow: "close_encounter" },
+      ],
+    },
+  }),
+  combat: (nodeName) => ({
+    type: "lore",
+    lore: {
+      id: "explorer_combat",
+      name: nodeName,
+      text: "The shadows shift. Something moves in the dark. You are not alone in here.",
+      options: [
+        { text: "Ready yourself.", result: "explorer_room_combat" },
+        { text: "Back away slowly.", flow: "close_encounter" },
+      ],
+    },
+  }),
+  item: (nodeName) => ({
+    type: "lore",
+    lore: {
+      id: "explorer_item",
+      name: nodeName,
+      text: "Behind a rotting crate, something catches your eye — a vial, still sealed in wax.",
+      options: [
+        { text: "Take it.", result: "explorer_room_complete" },
+        { text: "Leave it.", flow: "close_encounter" },
+      ],
+    },
+  }),
+  lore: (nodeName) => ({
+    type: "lore",
+    lore: {
+      id: "explorer_lore",
+      name: nodeName,
+      text: "You find the ship's log, waterlogged but legible. Most entries are routine — until they aren't.",
+      options: [
+        { text: "Read the final entry.", result: "explorer_room_complete" },
+        { text: "Leave it.", flow: "close_encounter" },
+      ],
+    },
+  }),
+  empty: (nodeName) => ({
+    type: "lore",
+    lore: {
+      id: "explorer_empty",
+      name: nodeName,
+      text: "You search the room thoroughly. Nothing here but dust, old rope, and the smell of salt.",
+      options: [
+        { text: "Continue exploring.", flow: "close_encounter" },
+      ],
+    },
+  }),
+};
+
+function handleExplorerMove(nodeId) {
+  if (!explorerState.value) return;
+  const map = EXPLORER_MAPS[explorerState.value.mapId];
+  explorerState.value.playerNode = nodeId;
+
+  const room = explorerState.value.rooms[nodeId];
+  if (!room) return; // entrance node has no outcome
+
+  room.visited = true;
+  explorerActiveRoom.value = nodeId;
+
+  const nodeName = map.nodes[nodeId]?.label ?? "Unknown Room";
+
+  if (room.cleared) {
+    const clearedText = { chest: "An empty chest, lid still open.", combat: "No enemies remain.", item: "Nothing left here.", lore: "The log lies where you left it.", empty: "Still nothing.", damage: "The trap has already been sprung." };
+    encounter.value = {
+      type: "lore",
+      lore: {
+        id: "explorer_cleared",
+        name: nodeName,
+        text: clearedText[room.outcome] ?? "You've already been through here.",
+        options: [{ text: "Continue exploring.", flow: "close_encounter" }],
+      },
+    };
+    return;
+  }
+
+  const node = map.nodes[nodeId];
+  if (node?.buildEncounter) {
+    encounter.value = node.buildEncounter(nodeName, explorerState.value);
+    return;
+  }
+
+  const builder = EXPLORER_ROOM_ENCOUNTERS[room.outcome];
+  if (builder) encounter.value = builder(nodeName);
+}
+
+function handleExplorerExit() {
+  showExplorer.value = false;
+  explorerState.value = null;
+  explorerCombatRoom.value = null;
+}
+
+// When explorer combat ends, mark the room cleared and restore explorer
+watch(isInCombat, (newVal, oldVal) => {
+  if (oldVal && !newVal && explorerCombatRoom.value) {
+    const roomId = explorerCombatRoom.value;
+    explorerCombatRoom.value = null;
+    if (explorerState.value?.rooms[roomId]) {
+      explorerState.value.rooms[roomId].cleared = true;
+    }
+  }
+});
+
 function handleChallengeSettlementBoss() {
   const data = visitingSettlementData.value;
   if (!data || !data.abandoned) return;
@@ -1523,7 +1767,7 @@ function handleChallengeSettlementBoss() {
   enemyNextAction.value = "attack";
   combatEncountersFought.value++;
   settlementBossActive.value = true;
-  log(`⚔ A <strong>${boss.name}</strong> rises to defend the ruins of <em>${data.town_name}</em>!`);
+  log(`<i class="ra ra-sword"></i> A <strong>${boss.name}</strong> rises to defend the ruins of <em>${data.town_name}</em>!`);
   logEnemyAction(enemyNextAction, nextEnemyAttack);
 }
 
@@ -1536,7 +1780,7 @@ function startQuestCombat(bossType) {
   enemyNextAction.value = "attack";
   combatEncountersFought.value++;
   questCombatActive.value = true;
-  const emoji = activeQuest.value?.combatEmoji ?? "⚔️";
+  const emoji = activeQuest.value?.combatEmoji ?? '<i class="ra ra-sword"></i>';
   log(`${emoji} A <strong>${boss.name}</strong> blocks your path! What do you do?`);
   logEnemyAction(enemyNextAction, nextEnemyAttack);
 }
@@ -1549,7 +1793,7 @@ async function submitTownName() {
 
   const { data: { user: currentUser } } = await supabase.auth.getUser();
   if (!currentUser) {
-    log("⚠️ You must be logged in to found a settlement.");
+    log('<i class="ra ra-aware"></i> You must be logged in to found a settlement.');
     return;
   }
 
@@ -1559,7 +1803,7 @@ async function submitTownName() {
   const existing = await getSettlementByWikiTitle(wikiTitle);
   if (existing) {
     const claimedBy = existing.lord_history?.[0]?.playerName ?? "another player";
-    log(`⚠️ This region was claimed by <strong>${claimedBy}</strong> before you could plant your flag.`);
+    log(`<i class="ra ra-aware"></i> This region was claimed by <strong>${claimedBy}</strong> before you could plant your flag.`);
     showTownNamingModal.value = false;
     pendingTownName.value = "";
     pageSettlement.value = existing;
@@ -1581,11 +1825,11 @@ async function submitTownName() {
     pendingTownName.value = "";
     lastSettlementVisitClickCount.value = clickCount.value;
     pageSettlement.value = settlement.value; // show banner immediately on this article
-    log(`🏴 <strong>${name}</strong> has been founded in the region of <em>${wikiTitle.replaceAll("_", " ")}</em>. Your lands await.`);
+    log(`<i class="ra ra-castle-flag"></i> <strong>${name}</strong> has been founded in the region of <em>${wikiTitle.replaceAll("_", " ")}</em>. Your lands await.`);
     await triggerAutoSave();
   } catch (err) {
     console.error("Failed to create settlement:", err);
-    log(`⚠️ Could not found the settlement: ${err?.message ?? "unknown error"}`);
+    log(`<i class="ra ra-aware"></i> Could not found the settlement: ${err?.message ?? "unknown error"}`);
   }
 }
 
@@ -1661,9 +1905,9 @@ async function handleSettlementCollect() {
   if (scrap > 0)         parts.push(`${scrap} Scrap Metal`);
   if (healthPotions > 0) parts.push(`${healthPotions} Health Potion${healthPotions > 1 ? "s" : ""}`);
   if (parts.length > 0) {
-    log(`💰 Collected from ${settlement.value?.town_name ?? "your settlement"}: ${parts.join(", ")}.`);
+    log(`<i class="ra ra-gold-bar"></i> Collected from ${settlement.value?.town_name ?? "your settlement"}: ${parts.join(", ")}.`);
   } else {
-    log(`💰 Nothing to collect yet from ${settlement.value?.town_name ?? "your settlement"}. Build more and come back after more clicks.`);
+    log(`<i class="ra ra-gold-bar"></i> Nothing to collect yet from ${settlement.value?.town_name ?? "your settlement"}. Build more and come back after more clicks.`);
   }
   await triggerAutoSave();
 }
@@ -1718,11 +1962,11 @@ watch(encounter, async (newVal, oldVal) => {
         settlementId.value = data.id;
         pageSettlement.value = null; // banner will reload on next tick
         loadPageSettlement(current.value);
-        log(`🏰 <strong>${data.town_name}</strong> has been liberated! You are now its lord.`);
+        log(`<i class="ra ra-castle-emblem"></i> <strong>${data.town_name}</strong> has been liberated! You are now its lord.`);
         await triggerAutoSave();
       }
     } else if (!defeated.value) {
-      log(`⚔ You retreat from the ruins. The guardian still holds the settlement.`);
+      log(`<i class="ra ra-sword"></i> You retreat from the ruins. The guardian still holds the settlement.`);
     }
     visitingSettlementData.value = null;
     return;
@@ -1739,11 +1983,11 @@ watch(encounter, (newVal, oldVal) => {
         advanceQuestStep(quest.postCombatStep);
       } else {
         questComplete.value = true;
-        log(`📜 ${quest?.victoryLog ?? "Quest enemy defeated. Return to the tavern to claim your reward."}`);
+        log(`<i class="ra ra-scroll-unfurled"></i> ${quest?.victoryLog ?? "Quest enemy defeated. Return to the tavern to claim your reward."}`);
       }
     } else if (!defeated.value) {
       activeQuestId.value = null;
-      log(`📜 ${quest?.leaveLog ?? "You retreat. The quest remains available."}`);
+      log(`<i class="ra ra-scroll-unfurled"></i> ${quest?.leaveLog ?? "You retreat. The quest remains available."}`);
     }
   }
 });
@@ -1767,26 +2011,12 @@ function handleUseInventoryItem(itemType, mapId) {
     itemHandlers.useFrenchOnionSoup();
   } else if (itemType === "antidote") {
     itemHandlers.useAntidote();
-  } else if (itemType === "smokeBomb") {
-    itemHandlers.useSmokeBomb();
   } else if (itemType === "adventurersRations") {
     itemHandlers.useAdventurersRations();
   } else if (itemType === "enlightenmentFish") {
     itemHandlers.useEnlightenmentFish();
-  } else if (itemType === "sharedSufferingAmulet") {
-    itemHandlers.useAmuletOfSharedSuffering();
   } else if (itemType === "minorHealthPotion") {
     itemHandlers.useMinorHealthPotion();
-  } else if (itemType === "flashPowder") {
-    itemHandlers.useFlashPowder();
-  } else if (itemType === "venomVial") {
-    itemHandlers.useVenomVial();
-  } else if (itemType === "serratedDagger") {
-    itemHandlers.useSerratedDagger();
-  } else if (itemType === "luckyCoin") {
-    itemHandlers.useLuckyCoin();
-  } else if (itemType === "wardingShield") {
-    itemHandlers.useWardingShield();
   } else if (itemType === "wardStone") {
     itemHandlers.useWardStone();
   } else if (itemType === "encounterBeacon") {
@@ -1798,7 +2028,7 @@ function handleUseInventoryItem(itemType, mapId) {
   } else if (itemType === "settlementFlag") {
     if (pageSettlement.value) {
       const claimedBy = pageSettlement.value.lord_history?.[0]?.playerName ?? "another player";
-      log(`⚠️ This region has already been claimed by <strong>${claimedBy}</strong>. You cannot plant your flag here.`);
+      log(`<i class="ra ra-aware"></i> This region has already been claimed by <strong>${claimedBy}</strong>. You cannot plant your flag here.`);
       return;
     }
     showTownNamingModal.value = true;
@@ -1817,7 +2047,7 @@ function handleUseInventoryItem(itemType, mapId) {
     if (!map || map.opened) return;
     map.opened = true;
     inventory.value.treasureMaps = [...maps];
-    log(`🗺️ You break the wax seal and unroll the map. Your destination: <strong>${map.article.replace(/_/g, " ")}</strong>. Navigate there to claim your treasure.`);
+    log(`<i class="ra ra-compass"></i> You break the wax seal and unroll the map. Your destination: <strong>${map.article.replace(/_/g, " ")}</strong>. Navigate there to claim your treasure.`);
     closeInventoryModal();
   }
 }
@@ -1865,7 +2095,7 @@ function handleBuySettlementFlag() {
   playerGold.value -= 150;
   inventory.value.settlementFlag = (inventory.value.settlementFlag || 0) + 1;
   settlementFlagOffered.value = true;
-  log("🏴 You purchase a Settlement Flag. Open your backpack and use it on the Wikipedia article where you wish to plant it.");
+  log('<i class="ra ra-castle-flag"></i> You purchase a Settlement Flag. Open your backpack and use it on the Wikipedia article where you wish to plant it.');
 }
 
 async function handleRest(...args) {

@@ -5,19 +5,19 @@
       <!-- Header -->
       <div class="settlement-header">
         <div class="settlement-title-block">
-          <div class="settlement-town-name">🏰 {{ settlement.town_name }}</div>
-          <div class="settlement-region">📍 {{ settlement.wiki_title.replaceAll("_", " ") }}</div>
+          <div class="settlement-town-name"><i class="ra ra-castle-emblem"></i> {{ settlement.town_name }}</div>
+          <div class="settlement-region"><i class="ra ra-archery-target"></i> {{ settlement.wiki_title.replaceAll("_", " ") }}</div>
         </div>
       </div>
 
       <!-- Lord info -->
       <div class="settlement-lord-bar" v-if="currentLord">
         <template v-if="props.readOnly">
-          <span class="lord-label">🏴 Claimed by</span>
+          <span class="lord-label"><i class="ra ra-castle-flag"></i> Claimed by</span>
           <span class="lord-name">{{ (currentLord.signInEmail ?? currentLord.playerName ?? "").split("@")[0] }}</span>
         </template>
         <template v-else>
-          <span class="lord-label">👑 Lord</span>
+          <span class="lord-label"><i class="ra ra-crown"></i> Lord</span>
           <span class="lord-name">{{ currentLord.playerName }}</span>
         </template>
       </div>
@@ -26,7 +26,7 @@
         <div class="placement-error" v-if="placementError">{{ placementError }}</div>
 
       <!-- Read-only visitor badge -->
-      <div v-if="props.readOnly" class="settlement-visitor-badge">👁 Visiting — Read Only</div>
+      <div v-if="props.readOnly" class="settlement-visitor-badge"><i class="ra ra-eyeball"></i> Visiting — Read Only</div>
 
       <!-- Grid (canvas) -->
       <div class="settlement-grid-wrapper">
@@ -49,7 +49,7 @@
           <img :src="paletteUrls[selectedBuilding.building.type]" class="building-info-img" />
           <div>
             <div class="building-info-name">{{ selectedBuilding.building.name || selectedBuilding.def.name }}</div>
-            <div class="building-info-worker">👤 {{ workerName(selectedBuilding.building.cellIndex) }}</div>
+            <div class="building-info-worker"><i class="ra ra-player"></i> {{ workerName(selectedBuilding.building.cellIndex) }}</div>
           </div>
         </div>
         <div class="building-info-desc">{{ selectedBuilding.def.description }}</div>
@@ -57,12 +57,12 @@
           v-if="!props.readOnly && selectedBuilding.def.category === 'structure'"
           class="building-info-deconstruct"
           @click="pendingDeconstruct = { building: selectedBuilding.building, def: selectedBuilding.def }"
-        >⛏ Deconstruct (refund {{ selectedBuilding.def.cost }}g)</button>
+        ><i class="ra ra-shovel"></i> Deconstruct (refund {{ selectedBuilding.def.cost }}g)</button>
         <div class="building-info-earnings">
           <div class="building-info-earnings-title">All-time earnings</div>
-          <div v-if="selectedBuilding.building.totalEarned?.gold > 0">💰 {{ selectedBuilding.building.totalEarned.gold }}g</div>
-          <div v-if="selectedBuilding.building.totalEarned?.scrap > 0">🔩 {{ selectedBuilding.building.totalEarned.scrap }} scrap</div>
-          <div v-if="selectedBuilding.building.totalEarned?.healthPotions > 0">⚗️ {{ selectedBuilding.building.totalEarned.healthPotions }} potions</div>
+          <div v-if="selectedBuilding.building.totalEarned?.gold > 0"><i class="ra ra-gold-bar"></i> {{ selectedBuilding.building.totalEarned.gold }}g</div>
+          <div v-if="selectedBuilding.building.totalEarned?.scrap > 0"><i class="ra ra-cog"></i> {{ selectedBuilding.building.totalEarned.scrap }} scrap</div>
+          <div v-if="selectedBuilding.building.totalEarned?.healthPotions > 0"><i class="ra ra-flask"></i> {{ selectedBuilding.building.totalEarned.healthPotions }} potions</div>
           <div v-if="!selectedBuilding.building.totalEarned?.gold && !selectedBuilding.building.totalEarned?.scrap && !selectedBuilding.building.totalEarned?.healthPotions" class="building-info-none">Nothing collected yet.</div>
         </div>
       </div>
@@ -71,13 +71,13 @@
       <div class="building-palette" v-if="!props.readOnly">
         <div class="settlement-resources">
           <div class="resource-item" :class="{ 'resource-has-value': pendingGold > 0 }">
-            💰 <span>{{ pendingGold }}g pending</span>
+            <i class="ra ra-gold-bar"></i> <span>{{ pendingGold }}g pending</span>
           </div>
           <div class="resource-item" :class="{ 'resource-has-value': pendingScrap > 0 }">
-            🔩 <span>{{ pendingScrap }} scrap pending</span>
+            <i class="ra ra-cog"></i> <span>{{ pendingScrap }} scrap pending</span>
           </div>
           <div class="resource-item" :class="{ 'resource-has-value': pendingPotions > 0 }">
-            ⚗️ <span>{{ pendingPotions }} potions pending</span>
+            <i class="ra ra-flask"></i> <span>{{ pendingPotions }} potions pending</span>
           </div>
           <button
             class="collect-btn"
@@ -141,7 +141,7 @@
       <!-- History book toggle -->
       <div class="settlement-history">
         <div v-if="props.readOnly && props.tavernBeers?.length" class="tavern-visit-bar">
-          <button class="tavern-visit-btn" @click="$emit('open-tavern')">🍺 Visit Tavern</button>
+          <button class="tavern-visit-btn" @click="$emit('open-tavern')"><i class="ra ra-beer"></i> Visit Tavern</button>
           <span class="tavern-visit-hint">{{ props.tavernBeers.length }} beer{{ props.tavernBeers.length !== 1 ? 's' : '' }} on tap</span>
         </div>
 
@@ -153,17 +153,17 @@
             :disabled="!props.canChallenge"
             :title="props.playerHasSettlement ? 'You already are a lord of a settlement.' : (!props.canChallenge ? 'You cannot challenge right now.' : '')"
             @click="$emit('challenge-boss')"
-          >⚔ Challenge</button>
+          ><i class="ra ra-sword"></i> Challenge</button>
           <span v-if="props.playerHasSettlement" class="challenge-owned-msg">You already are a lord of a settlement.</span>
         </div>
         <div class="settlement-history-bar">
           <button class="history-toggle-btn" @click="showHistory = !showHistory">
-            📖 {{ showHistory ? 'Hide' : 'Show' }} History Book
+            <i class="ra ra-book"></i> {{ showHistory ? 'Hide' : 'Show' }} History Book
           </button>
           <button class="settlement-close-btn" @click="$emit('close')">⎯ Leave Settlement ⎯</button>
         </div>
         <div v-if="showHistory" class="history-list">
-          <div class="history-title">📖 Lords of {{ settlement.town_name }}</div>
+          <div class="history-title"><i class="ra ra-book"></i> Lords of {{ settlement.town_name }}</div>
           <template v-for="(entry, i) in settlement.lord_history" :key="i">
             <!-- Lord tenure entry -->
             <div v-if="!entry.type" class="history-entry">
@@ -173,15 +173,15 @@
             </div>
             <!-- Event: abandoned -->
             <div v-else-if="entry.type === 'abandoned'" class="history-event history-event-abandoned">
-              🏚 Settlement abandoned
+              <i class="ra ra-wooden-sign"></i> Settlement abandoned
             </div>
             <!-- Event: terrorized -->
             <div v-else-if="entry.type === 'terrorized'" class="history-event history-event-terrorized">
-              ☠ Terrorized by a {{ SETTLEMENT_BOSS_DEFS[entry.bossKey]?.name ?? entry.bossKey }}
+              <i class="ra ra-skull"></i> Terrorized by a {{ SETTLEMENT_BOSS_DEFS[entry.bossKey]?.name ?? entry.bossKey }}
             </div>
             <!-- Event: claimed -->
             <div v-else-if="entry.type === 'claimed'" class="history-event history-event-claimed">
-              ⚔ {{ entry.playerName }} defeated the guardian
+              <i class="ra ra-sword"></i> {{ entry.playerName }} defeated the guardian
             </div>
           </template>
           <div v-if="!settlement.lord_history?.length" class="history-empty">No history yet.</div>
@@ -230,7 +230,7 @@
           </div>
         </div>
         <div class="placement-confirm-actions">
-          <button class="placement-confirm-yes" @click="confirmDeconstruct">⛏ Deconstruct</button>
+          <button class="placement-confirm-yes" @click="confirmDeconstruct"><i class="ra ra-shovel"></i> Deconstruct</button>
           <button class="placement-confirm-no" @click="cancelDeconstruct">✕ Cancel</button>
         </div>
       </div>

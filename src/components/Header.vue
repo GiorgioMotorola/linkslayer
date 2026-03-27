@@ -9,7 +9,7 @@
           <div class="attack-line" v-html="typedLine"></div>
 
           <div v-if="confusedAction.length > 0 && confusedTurnsLeft > 0" class="confused-notice">
-            🌀 <strong>{{ confusedActionLabel }}</strong> locked ({{ confusedTurnsLeft }} turn{{ confusedTurnsLeft === 1 ? '' : 's' }} remaining)
+            <i class="ra ra-cycle"></i> <strong>{{ confusedActionLabel }}</strong> locked ({{ confusedTurnsLeft }} turn{{ confusedTurnsLeft === 1 ? '' : 's' }} remaining)
           </div>
 
           <!-- Action queue row — click a slot to pick an action -->
@@ -28,7 +28,7 @@
                     :disabled="act.disabled"
                     @click="selectAction(act.action)"
                   >
-                    <span class="slot-action-icon">{{ act.icon }}</span>
+                    <span class="slot-action-icon" v-html="act.icon"></span>
                     <span class="slot-action-text">
                       <span class="slot-action-label">{{ act.label }}</span>
                       <span class="slot-action-hint">{{ act.hint }}</span>
@@ -50,7 +50,7 @@
                 }"
                 @click="onSlotClick(i-1)"
               >
-                <span v-if="lockedActions[i-1]">{{ actionSlotLabel(lockedActions[i-1].action) }} ✕</span>
+                <span v-if="lockedActions[i-1]" v-html="actionSlotLabel(lockedActions[i-1].action) + ' ✕'"></span>
                 <span v-else class="slot-empty-indicator">+ Action</span>
               </div>
             </div>
@@ -59,13 +59,13 @@
               :disabled="combatLocked || lockedActions.length === 0"
               @click="confirmTurn"
             >
-              ⚡ Go
+              <i class="ra ra-lightning-bolt"></i> Go
             </button>
           </div>
 
           <div v-if="props.enemyNextAction === 'victory'" class="victory-panel">
             <div v-if="props.victoryLoot" class="victory-loot">
-              Loot: {{ props.victoryLoot }}
+              Loot: <span v-html="props.victoryLoot"></span>
             </div>
             <div class="dialogue-options">
               <button @click="emit('close')">▸ Continue Your Journey</button>
@@ -124,7 +124,7 @@
         </div>
 
         <div v-else>
-          <p>⚠️ Unknown encounter type.</p>
+          <p><i class="ra ra-aware"></i> Unknown encounter type.</p>
           <button @click="emit('close')">Continue</button>
         </div>
       </div>
@@ -136,9 +136,9 @@
       <div class="header-main-row">
         <div class="header-stats-section">
           <div v-if="props.dogName" class="header-dog-btn dog-desktop" @click="petDog" :title="'Pet ' + props.dogName">
-            <span>🐶</span>
+            <span><i class="ra ra-pawprint"></i></span>
             <div v-if="headerHeartCount > 0" class="dog-hearts">
-              <span v-for="i in headerHeartCount" :key="i" class="dog-heart">💕</span>
+              <span v-for="i in headerHeartCount" :key="i" class="dog-heart"><i class="ra ra-two-hearts"></i></span>
             </div>
             <div v-if="dogPlusOneVisible" class="dog-plus-one">+2</div>
           </div>
@@ -149,7 +149,7 @@
             </div>
 
             <div class="stat-tile">
-              <span class="st-icon">⚔</span>
+              <span class="st-icon"><i class="ra ra-sword"></i></span>
               <span class="st-val" :class="weaponAnimClass">+{{ weaponBonus }}</span>
             </div>
 
@@ -182,16 +182,16 @@
             <div v-if="showStatusPopup" class="status-popup">
               <div class="status-popup-title">Active Effects</div>
               <div v-for="entry in activeStatuses" :key="entry.label" class="status-popup-item">
-                <div class="status-popup-item-label">{{ entry.label }}</div>
+                <div class="status-popup-item-label" v-html="entry.label"></div>
                 <div class="status-popup-item-desc">{{ entry.desc }}</div>
               </div>
               <div v-if="activeStatuses.length === 0" class="status-popup-item status-popup-empty">No active effects</div>
             </div>
           </div>
           <div v-if="props.dogName" class="header-dog-btn dog-mobile" @click="petDog" :title="'Pet ' + props.dogName">
-            <span>🐶</span>
+            <span><i class="ra ra-pawprint"></i></span>
             <div v-if="headerHeartCount > 0" class="dog-hearts">
-              <span v-for="i in headerHeartCount" :key="i" class="dog-heart">💕</span>
+              <span v-for="i in headerHeartCount" :key="i" class="dog-heart"><i class="ra ra-two-hearts"></i></span>
             </div>
             <div v-if="dogPlusOneVisible" class="dog-plus-one">+2</div>
           </div>
@@ -520,37 +520,37 @@ const activeStatuses = computed(() => {
 
   // Augments
   if (props.weaponAugment) list.push(s(
-    `⚔️ ${AUGMENT_LABELS[props.weaponAugment] ?? props.weaponAugment}`,
+    `<i class="ra ra-sword"></i> ${AUGMENT_LABELS[props.weaponAugment] ?? props.weaponAugment}`,
     augmentItemDesc[props.weaponAugment] ?? "Weapon augment equipped."
   ));
   if (props.defenseAugment) list.push(s(
-    `🛡️ ${AUGMENT_LABELS[props.defenseAugment] ?? props.defenseAugment}`,
+    `<i class="ra ra-shield"></i> ${AUGMENT_LABELS[props.defenseAugment] ?? props.defenseAugment}`,
     augmentItemDesc[props.defenseAugment] ?? "Defense augment equipped."
   ));
   if (props.equippedWeaponId) {
     const wep = getWeapon(props.equippedWeaponId);
-    if (wep) list.push(s(`⚔️ ${wep.name}`, wep.description));
+    if (wep) list.push(s(`<i class="ra ra-sword"></i> ${wep.name}`, wep.description));
   }
 
   // Player status
-  if (props.isBlurred)       list.push(s("🍺 Drunk",    "Vision is blurred. Effects wear off over time."));
-  if (props.isPlayerPoisoned) list.push(s("🤢 Poisoned", "Taking 3 poison damage per turn until cured."));
-  if (props.isCloakActive)   list.push(s("👻 Cloaked",  "Invisible — enemies less likely to engage."));
-  if (props.healthRegenActive) list.push(s("🌿 Regenerating", "Herbal Poultice active — restoring 1 HP per click."));
+  if (props.isBlurred)       list.push(s('<i class="ra ra-beer"></i> Drunk',    "Vision is blurred. Effects wear off over time."));
+  if (props.isPlayerPoisoned) list.push(s('<i class="ra ra-venomous-snake"></i> Poisoned', "Taking 3 poison damage per turn until cured."));
+  if (props.isCloakActive)   list.push(s('<i class="ra ra-angel-wings"></i> Cloaked',  "Invisible — enemies less likely to engage."));
+  if (props.healthRegenActive) list.push(s('<i class="ra ra-leaf"></i> Regenerating', "Herbal Poultice active — restoring 1 HP per click."));
   if (props.wardingShieldHitsRemaining > 0) list.push(s(
-    `🛡️ Warding Shield`,
+    `<i class="ra ra-shield"></i> Warding Shield`,
     `Absorbs the next ${props.wardingShieldHitsRemaining} hit${props.wardingShieldHitsRemaining === 1 ? "" : "s"}.`
   ));
-  if (props.bountyScrollActive) list.push(s("📜 Bounty Scroll", "Next combat victory drops double loot."));
-  if (props.luckyFleeActive)    list.push(s("🍀 Lucky Coin",    "Guaranteed successful flee ready."));
-  if (props.encounterBeaconActive) list.push(s("🔦 Encounter Beacon", "Next encounter will be a friendly NPC."));
+  if (props.bountyScrollActive) list.push(s('<i class="ra ra-scroll-unfurled"></i> Bounty Scroll', "Next combat victory drops double loot."));
+  if (props.luckyFleeActive)    list.push(s('<i class="ra ra-clover"></i> Lucky Coin',    "Guaranteed successful flee ready."));
+  if (props.encounterBeaconActive) list.push(s('<i class="ra ra-lantern-flame"></i> Encounter Beacon', "Next encounter will be a friendly NPC."));
 
   // Enemy conditions
-  if (props.isEnemyVenomed)  list.push(s("☠️ Venom Vial",     "Enemy is poisoned — taking damage each turn."));
-  if (props.isEnemyBleeding) list.push(s("🩸 Enemy Bleeding", "Enemy taking 2 bleed damage per turn."));
-  if (effects.some(e => e.type === "fire"))   list.push(s("🔥 Enemy on Fire",    "Enemy burning — 5 damage per turn."));
-  if (effects.some(e => e.type === "weaken")) list.push(s("💫 Enemy Weakened",   "Enemy is weakened — dealing reduced damage."));
-  if (effects.some(e => e.type === "chill"))  list.push(s("❄️ Enemy Chilled",    "Enemy is chilled — reduced damage next hit."));
+  if (props.isEnemyVenomed)  list.push(s('<i class="ra ra-skull"></i> Venom Vial',     "Enemy is poisoned — taking damage each turn."));
+  if (props.isEnemyBleeding) list.push(s('<i class="ra ra-dripping-blade"></i> Enemy Bleeding', "Enemy taking 2 bleed damage per turn."));
+  if (effects.some(e => e.type === "fire"))   list.push(s('<i class="ra ra-fire"></i> Enemy on Fire',    "Enemy burning — 5 damage per turn."));
+  if (effects.some(e => e.type === "weaken")) list.push(s('<i class="ra ra-aura"></i> Enemy Weakened',   "Enemy is weakened — dealing reduced damage."));
+  if (effects.some(e => e.type === "chill"))  list.push(s('<i class="ra ra-snowflake"></i> Enemy Chilled',    "Enemy is chilled — reduced damage next hit."));
 
   return list;
 });
@@ -913,13 +913,13 @@ watch(
       console.log("----------------------------");
 
       if (newEncounter.enemy?.isBoss) {
-        fullText = `💀 <strong>BOSS ENCOUNTER:</strong> ${
+        fullText = `<i class="ra ra-skull"></i> <strong>BOSS ENCOUNTER:</strong> ${
           newEncounter.enemy.name ?? "Unknown Boss"
         }.<br><br>${
           newEncounter.enemy.message || "Prepare for the fight of your life."
         }`;
       } else if (newEncounter.enemy?.isMiniBoss) {
-        fullText = `💥 You've been attacked by the mini-boss <strong>${
+        fullText = `<i class="ra ra-explosion"></i> You've been attacked by the mini-boss <strong>${
           newEncounter.enemy.name ?? "Unknown Mini-Boss"
         }</strong> from <strong>${
           props.formattedTitle ?? "an unknown location"
@@ -928,7 +928,7 @@ watch(
         const _groupSize = newEncounter.enemies?.length ?? 1;
         const _enemyName = newEncounter.enemy.name ?? "Unknown Enemy";
         const _enemyLabel = _groupSize > 1 ? `${_enemyName}s` : _enemyName;
-        let baseCombatMessage = `🗡️ You've been attacked by <strong>${
+        let baseCombatMessage = `<i class="ra ra-plain-dagger"></i> You've been attacked by <strong>${
           props.formattedTitle ?? "an unknown location"
         }</strong> ${_enemyLabel}. (HP: ${newEncounter.enemy.currentHP}) What do you do?`;
 
@@ -939,7 +939,7 @@ watch(
         }
       }
     } else {
-      fullText = "⚠️ Unknown encounter type.";
+      fullText = '<i class="ra ra-aware"></i> Unknown encounter type.';
     }
 
     startTyping(fullText, newEncounter.type);
@@ -1067,7 +1067,7 @@ watch(
       fullText = currentDialogue.value?.text || "";
     } else if (newEncounter.type === "combat") {
       if (newEncounter.enemy?.isBoss) {
-        fullText = `💀 <strong>BOSS ENCOUNTER:</strong> ${
+        fullText = `<i class="ra ra-skull"></i> <strong>BOSS ENCOUNTER:</strong> ${
           newEncounter.enemy.name
         }.<br><br>${newEncounter.enemy.message || "Roll for damage."}`;
       } else if (newEncounter.enemy?.message) {
@@ -1076,10 +1076,10 @@ watch(
         const _gs = newEncounter.enemies?.length ?? 1;
         const _en = newEncounter.enemy.name ?? "";
         const _el = _gs > 1 ? `${_en}s` : _en;
-        fullText = `🗡️ You've been attacked by <strong>${props.formattedTitle}</strong> ${_el}. (HP: ${newEncounter.enemy.currentHP}) What do you do?`;
+        fullText = `<i class="ra ra-plain-dagger"></i> You've been attacked by <strong>${props.formattedTitle}</strong> ${_el}. (HP: ${newEncounter.enemy.currentHP}) What do you do?`;
       }
     } else {
-      fullText = "⚠️ Unknown encounter type.";
+      fullText = '<i class="ra ra-aware"></i> Unknown encounter type.';
     }
 
     startTyping(fullText, newEncounter.type);
@@ -1176,19 +1176,19 @@ function confirmTurn() {
 
 function actionSlotLabel(action) {
   const labels = {
-    attack_steady: "⚔ Steady",
-    attack_power: "💥 Power",
-    attack_enraged: "🔥 Enrage",
+    attack_steady: '<i class="ra ra-sword"></i> Steady',
+    attack_power: '<i class="ra ra-explosion"></i> Power',
+    attack_enraged: '<i class="ra ra-fire"></i> Enrage',
     special: "✦ Special",
-    defend: "🛡 Defend",
-    exploit: "⚡ Exploit",
+    defend: '<i class="ra ra-shield"></i> Defend',
+    exploit: '<i class="ra ra-lightning-bolt"></i> Exploit',
     flee: "↩ Flee",
-    'use_item:sharedSufferingAmulet': "💔 Amulet",
-    'use_item:flashPowder': "✨ Flash",
-    'use_item:venomVial': "🐍 Venom",
-    'use_item:serratedDagger': "🗡 Dagger",
-    'use_item:wardingShield': "🛡 Ward Shield",
-    'use_item:smokeBomb': "💨 Smoke",
+    'use_item:sharedSufferingAmulet': '<i class="ra ra-broken-heart"></i> Amulet',
+    'use_item:flashPowder': '<i class="ra ra-aura"></i> Flash',
+    'use_item:venomVial': '<i class="ra ra-venomous-snake"></i> Venom',
+    'use_item:serratedDagger': '<i class="ra ra-plain-dagger"></i> Dagger',
+    'use_item:wardingShield': '<i class="ra ra-shield"></i> Ward Shield',
+    'use_item:smokeBomb': '<i class="ra ra-poison-cloud"></i> Smoke',
   };
   return labels[action] ?? action;
 }
@@ -1212,7 +1212,7 @@ const menuActions = computed(() => {
   return [
     {
       action: 'attack_steady',
-      icon: '⚔',
+      icon: '<i class="ra ra-sword"></i>',
       label: 'Steady',
       hint: '1× dmg',
       confused: ca.includes('attack_steady'),
@@ -1220,7 +1220,7 @@ const menuActions = computed(() => {
     },
     {
       action: 'attack_power',
-      icon: '💥',
+      icon: '<i class="ra ra-explosion"></i>',
       label: 'Power',
       hint: '50% · 1.5×',
       confused: ca.includes('attack_power'),
@@ -1228,7 +1228,7 @@ const menuActions = computed(() => {
     },
     {
       action: 'attack_enraged',
-      icon: '🔥',
+      icon: '<i class="ra ra-fire"></i>',
       label: enrageButtonLabel.value,
       hint: props.enrageCharges < 3 ? `${props.enrageCharges}/3` : '2× dmg',
       confused: ca.includes('attack_enraged'),
@@ -1244,7 +1244,7 @@ const menuActions = computed(() => {
     },
     ...(showExploit.value ? [{
       action: 'exploit',
-      icon: '⚡',
+      icon: '<i class="ra ra-lightning-bolt"></i>',
       label: 'Exploit',
       hint: '1.5× · no guard',
       confused: false,
@@ -1252,7 +1252,7 @@ const menuActions = computed(() => {
     }] : []),
     {
       action: 'defend',
-      icon: '🛡',
+      icon: '<i class="ra ra-shield"></i>',
       label: isWindUp.value ? 'BRACE!' : defendButtonLabel.value,
       hint: isWindUp.value ? 'Block it' : 'Half dmg',
       confused: ca.includes('defend'),
@@ -1269,7 +1269,7 @@ const menuActions = computed(() => {
     // ── Combat items from inventory ──────────────────────────────────────
     ...(props.combatInventory.sharedSufferingAmulets > 0 ? [{
       action: 'use_item:sharedSufferingAmulet',
-      icon: '💔',
+      icon: '<i class="ra ra-broken-heart"></i>',
       label: 'Shared Suffering',
       hint: `50 dmg · -25 HP  ×${props.combatInventory.sharedSufferingAmulets}`,
       confused: false,
@@ -1277,7 +1277,7 @@ const menuActions = computed(() => {
     }] : []),
     ...(props.combatInventory.flashPowders > 0 ? [{
       action: 'use_item:flashPowder',
-      icon: '✨',
+      icon: '<i class="ra ra-aura"></i>',
       label: 'Flash Powder',
       hint: `Stun enemy  ×${props.combatInventory.flashPowders}`,
       confused: false,
@@ -1285,7 +1285,7 @@ const menuActions = computed(() => {
     }] : []),
     ...(props.combatInventory.venomVials > 0 ? [{
       action: 'use_item:venomVial',
-      icon: '🐍',
+      icon: '<i class="ra ra-venomous-snake"></i>',
       label: 'Venom Vial',
       hint: `Poison enemy  ×${props.combatInventory.venomVials}`,
       confused: false,
@@ -1293,7 +1293,7 @@ const menuActions = computed(() => {
     }] : []),
     ...(props.combatInventory.serratedDaggers > 0 ? [{
       action: 'use_item:serratedDagger',
-      icon: '🗡',
+      icon: '<i class="ra ra-plain-dagger"></i>',
       label: 'Serrated Dagger',
       hint: `Bleed effect  ×${props.combatInventory.serratedDaggers}`,
       confused: false,
@@ -1301,7 +1301,7 @@ const menuActions = computed(() => {
     }] : []),
     ...(props.combatInventory.wardingShields > 0 ? [{
       action: 'use_item:wardingShield',
-      icon: '🛡',
+      icon: '<i class="ra ra-shield"></i>',
       label: 'Warding Shield',
       hint: props.wardingShieldHitsRemaining > 0
         ? `Active · ${props.wardingShieldHitsRemaining} hits left`
@@ -1311,7 +1311,7 @@ const menuActions = computed(() => {
     }] : []),
     ...(props.combatInventory.smokeBombs > 0 ? [{
       action: 'use_item:smokeBomb',
-      icon: '💨',
+      icon: '<i class="ra ra-poison-cloud"></i>',
       label: 'Smoke Bomb',
       hint: `Escape combat  ×${props.combatInventory.smokeBombs}`,
       confused: false,

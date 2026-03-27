@@ -4,15 +4,15 @@
 
       <!-- Header -->
       <div class="brewery-header">
-        <span>🍺 Farm &amp; Brewery</span>
+        <span><i class="ra ra-beer"></i> Farm &amp; Brewery</span>
         <button class="brewery-close-btn" @click="$emit('close')">✕</button>
       </div>
 
       <!-- Tabs -->
       <div class="brewery-tabs">
-        <button :class="['brewery-tab', { active: activeTab === 'farm' }]" @click="activeTab = 'farm'">🌾 Farm</button>
-        <button :class="['brewery-tab', { active: activeTab === 'brew' }]" @click="activeTab = 'brew'">🍶 Brew</button>
-        <button :class="['brewery-tab', { active: activeTab === 'stock' }]" @click="activeTab = 'stock'">📦 Stock</button>
+        <button :class="['brewery-tab', { active: activeTab === 'farm' }]" @click="activeTab = 'farm'"><i class="ra ra-grass"></i> Farm</button>
+        <button :class="['brewery-tab', { active: activeTab === 'brew' }]" @click="activeTab = 'brew'"><i class="ra ra-brandy-bottle"></i> Brew</button>
+        <button :class="['brewery-tab', { active: activeTab === 'stock' }]" @click="activeTab = 'stock'"><i class="ra ra-ammo-bag"></i> Stock</button>
       </div>
 
       <!-- ─────────────── FARM TAB ─────────────── -->
@@ -31,7 +31,7 @@
               <span class="farm-slot-label">Plant</span>
             </template>
             <template v-else-if="slotState(slot) === 'growing'">
-              <span class="farm-slot-icon">🌱</span>
+              <span class="farm-slot-icon"><i class="ra ra-sprout"></i></span>
               <span class="farm-slot-name">{{ INGREDIENTS[slot.ingredient]?.name }}</span>
               <div class="farm-slot-progress-bar">
                 <div class="farm-slot-progress-fill" :style="{ width: growthPercent(slot) + '%' }"></div>
@@ -40,7 +40,7 @@
             </template>
             <template v-else>
               <!-- ready -->
-              <span class="farm-slot-icon">✅</span>
+              <span class="farm-slot-icon">✅</span><!-- checkmark kept -->
               <span class="farm-slot-name">{{ INGREDIENTS[slot.ingredient]?.name }}</span>
               <span class="farm-slot-harvest-hint">Harvest</span>
             </template>
@@ -138,7 +138,7 @@
             </div>
 
             <div v-if="setupSynergy" class="brew-synergy-preview">
-              ✨ Synergy: <strong>{{ setupSynergy.name }}</strong>
+              <i class="ra ra-aura"></i> Synergy: <strong>{{ setupSynergy.name }}</strong>
               (+{{ setupSynergy.hpMod }}hp, +{{ setupSynergy.sellMod }}g sell, +{{ setupSynergy.bottleMod }} bottles)
             </div>
 
@@ -161,12 +161,12 @@
         <!-- Active brew -->
         <template v-else>
           <div class="active-brew">
-            <div class="active-brew-title">🍶 Brewing in progress</div>
+            <div class="active-brew-title"><i class="ra ra-brandy-bottle"></i> Brewing in progress</div>
             <div class="active-brew-details">
               <span class="brew-detail-item"><strong>Base:</strong> {{ BASES[state.activeBrew.base]?.name }}</span>
               <span v-if="state.activeBrew.adjunct1" class="brew-detail-item"><strong>Adj 1:</strong> {{ INGREDIENTS[state.activeBrew.adjunct1]?.name }}</span>
               <span v-if="state.activeBrew.adjunct2" class="brew-detail-item"><strong>Adj 2:</strong> {{ INGREDIENTS[state.activeBrew.adjunct2]?.name }}</span>
-              <span v-if="activeSynergy" class="brew-detail-item brew-synergy-tag">✨ {{ activeSynergy.name }}</span>
+              <span v-if="activeSynergy" class="brew-detail-item brew-synergy-tag"><i class="ra ra-aura"></i> {{ activeSynergy.name }}</span>
             </div>
             <div v-if="state.activeBrew.customName" class="active-brew-custom-name">
               Named: "{{ state.activeBrew.customName }}"
@@ -201,10 +201,10 @@
             <div class="brew-preview" v-if="brewPreview">
               <div class="brew-preview-title">Predicted Result</div>
               <div class="brew-preview-stats">
-                <span>🍾 {{ brewPreview.bottles }} bottles</span>
-                <span>❤️ {{ brewPreview.hp }} HP each</span>
-                <span>💰 {{ brewPreview.sell }}g sell each</span>
-                <span v-if="brewPreview.poisonClicks > 0" class="brew-swill-warning">☠ Swill — poisons for {{ brewPreview.poisonClicks }} clicks</span>
+                <span><i class="ra ra-brandy-bottle"></i> {{ brewPreview.bottles }} bottles</span>
+                <span><i class="ra ra-health"></i> {{ brewPreview.hp }} HP each</span>
+                <span><i class="ra ra-gold-bar"></i> {{ brewPreview.sell }}g sell each</span>
+                <span v-if="brewPreview.poisonClicks > 0" class="brew-swill-warning"><i class="ra ra-skull"></i> Swill — poisons for {{ brewPreview.poisonClicks }} clicks</span>
               </div>
             </div>
 
@@ -215,7 +215,7 @@
                 :title="!currentZone.canBottle ? 'The brew needs more time' : ''"
                 @click="bottleBrew"
               >
-                🍾 Bottle
+                <i class="ra ra-brandy-bottle"></i> Bottle
               </button>
               <span v-if="!currentZone.canBottle" class="brew-too-early">
                 Needs {{ GROW_CLICKS - clickDelta }} more clicks
@@ -230,7 +230,7 @@
 
         <!-- Harvested ingredients -->
         <div class="stock-section">
-          <div class="stock-section-title">🌿 Harvested Ingredients</div>
+          <div class="stock-section-title"><i class="ra ra-leaf"></i> Harvested Ingredients</div>
           <div v-if="!hasHarvestedStock" class="stock-empty">No ingredients harvested yet.</div>
           <div v-else class="stock-ingredient-list">
             <div
@@ -255,7 +255,7 @@
 
         <!-- Bottled beers -->
         <div class="stock-section">
-          <div class="stock-section-title">🍾 Bottled Beer</div>
+          <div class="stock-section-title"><i class="ra ra-brandy-bottle"></i> Bottled Beer</div>
           <div v-if="!state.bottledStock?.length" class="stock-empty">No bottles yet.</div>
           <div v-else class="stock-beer-list">
             <div
@@ -267,8 +267,8 @@
                 {{ beer.name }} ×{{ beer.qty }}
                 <span class="stock-row-sub"
                   :style="{ color: zoneColor(beer.quality) }">{{ beer.quality }}</span>
-                <span class="stock-row-sub">❤️{{ beer.hp }}hp</span>
-                <span v-if="beer.poisonClicks > 0" class="stock-row-poison">☠{{ beer.poisonClicks }}cl</span>
+                <span class="stock-row-sub"><i class="ra ra-health"></i>{{ beer.hp }}hp</span>
+                <span v-if="beer.poisonClicks > 0" class="stock-row-poison"><i class="ra ra-skull"></i>{{ beer.poisonClicks }}cl</span>
               </span>
               <div class="stock-stepper">
                 <button class="stepper-btn" @click="beerTransferQty[idx] = Math.max(1, beerQty(idx, beer.qty) - 1)">▼</button>
@@ -283,13 +283,13 @@
 
         <!-- Tavern stock -->
         <div class="stock-section" v-if="state.tavernStock?.length">
-          <div class="stock-section-title">🏰 Currently Listed in Tavern</div>
+          <div class="stock-section-title"><i class="ra ra-castle-emblem"></i> Currently Listed in Tavern</div>
           <div class="stock-beer-list">
             <div v-for="(beer, idx) in state.tavernStock" :key="idx" class="stock-row stock-beer-tavern">
               <span class="stock-row-label">
                 {{ beer.name }} ×{{ beer.qty }}
                 <span class="stock-row-sub" :style="{ color: zoneColor(beer.quality) }">{{ beer.quality }}</span>
-                <span class="stock-row-sub">❤️{{ beer.hp }}hp</span>
+                <span class="stock-row-sub"><i class="ra ra-health"></i>{{ beer.hp }}hp</span>
                 <span class="stock-row-sub" style="color:#d4a94a">{{ beer.sellPrice }}g ea</span>
               </span>
               <button

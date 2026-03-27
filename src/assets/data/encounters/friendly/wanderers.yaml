@@ -116,30 +116,9 @@
     approach_hut:
       text: "You approach a hut after walking for some time. The hut looks old and gnarled. There appears to be large footsteps all around the hut."
       options:
-        - text: "Knock on the hut's door."
-          result: mini_boss_combat
-          miniBossType: "Bobby Lasagna's Hut"
-          responseText: The hut groans, grows legs right before your eyes and begins to attack. You are now in combat with a living, breathing hut.
-        - text: Search the area for Bobby.
-          flow: dialogue_branch
-          effect: damage-minor
-          amount: 10
-          responseText: You meticulously search the overgrown surroundings, finding no immediate sign of Bobby. However, a hidden thorn bush snags your leg, dealing 10 damage.
-          next_node_id: rustling_bushes
-        - text: "Yell 'Hey Bobby. I'm ready to avenge Bulgresh.'"
-          result: mini_boss_combat
-          miniBossType: Bobby Lasagna
-          responseText: "Your voice echoes through the silent woods. From the hut, a figure emerges. 'Bulgresh, you say? He had it coming. Prepare to join him.'"
-    rustling_bushes:
-      text: You hear rustling in the bushes nearby...
-      options:
-        - text: Ready yourself for combat.
-          result: mini_boss_combat
-          miniBossType: Bobby Lasagna
-          responseText: "You brace yourself. Bobby Lasagna bursts from the foliage, her eyes alight with fury. 'So, you've come to meddle, have you?' Combat begins."
-        - text: Run.
-          flow: close_encounter
-          responseText: You decide discretion is the better part of valor and bolt, leaving the mysterious rustling and Bobby Lasagna's domain behind.
+        - text: Survey the area carefully.
+          result: open_explorer
+          mapId: bobbyshut
 
 - id: npc_020_fishing_lesson
   name: Old Man Francis
@@ -441,33 +420,5 @@
       text: "After a struggle, you manage to cut yourself free. You stand up, your legs still a little unsteady, and look around the bunker. The metal door is your only way out."
       options:
         - text: Open the door.
-          flow: dialogue_branch
-          next_node_id: open_door
-    open_door:
-      text: "You open the metal door, revealing a small hallway. You can go left or right."
-      options:
-        - text: Go left.
-          flow: dialogue_branch
-          next_node_id: go_left
-        - text: Go right.
-          flow: dialogue_branch
-          next_node_id: go_right
-    go_left:
-      text: You hear a loud clanking of ale glasses and loud, drunken voices through a closed door on the left.
-      options:
-        - text: Kick the door down and get your revenge for ruining a nice day.
-          result: mini_boss_combat
-          miniBossType: Drunken Kidnappers
-          responseText: "You smash the door off its hinges, revealing a room full of rowdy, startled kidnappers. They all turn to face you."
-        - text: Turn around and go right instead.
-          flow: dialogue_branch
-          next_node_id: go_right
-    go_right:
-      text: You see a set of stairs leading up to a cellar door.
-      options:
-        - text: Turn around and go the other way.
-          flow: dialogue_branch
-          next_node_id: go_left
-        - text: Go through the cellar door.
-          flow: close_encounter
-          responseText: "You carefully open the cellar door and slip outside, into the cool night air. You are free."
+          result: open_explorer
+          mapId: bunkerscape

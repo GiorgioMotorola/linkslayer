@@ -329,7 +329,7 @@ export function useGameHandlers(deps) {
       encounter.value.targetIndex = nextIdx;
       encounter.value.enemy = nextEnemy;
       enemyHP.value = nextEnemy.currentHP;
-      log(`⚔️ <span class="player-name">${playerName.value}</span> now faces ${nextEnemy.name}!`);
+      log(`<i class="ra ra-sword"></i> <span class="player-name">${playerName.value}</span> now faces ${nextEnemy.name}!`);
       gotoEnemyTurn();
     }, victoryDelay);
   }
@@ -418,7 +418,7 @@ export function useGameHandlers(deps) {
 
     if (isBoss(defeatedEnemyData)) {
       log(
-        `✨ The ${defeatedEnemyData.name} dissipates, leaving no worldly possessions behind.`
+        `<i class="ra ra-aura"></i> The ${defeatedEnemyData.name} dissipates, leaving no worldly possessions behind.`
       );
       victoryLoot.value = "";
       markBossDefeated();
@@ -537,7 +537,7 @@ export function useGameHandlers(deps) {
     enemyDifficultyLevel.value = enemyDifficultyLevel.value + 1;
     daysCount.value = daysCount.value + 1;
     longRestDismissCount.value++;
-    log(`⚔️ The world gets ${enemyDifficultyLevel.value} times more dangerous.`);
+    log(`<i class="ra ra-sword"></i> The world gets ${enemyDifficultyLevel.value} times more dangerous.`);
     showRestModal.value = false;
   }
 
@@ -569,18 +569,18 @@ export function useGameHandlers(deps) {
           inventory.value.sharedSufferingAmulets = Math.max(0, (inventory.value.sharedSufferingAmulets || 0) - 1);
           const newEnemyHP = Math.max(0, enemyHP.value - ENEMY_DMG);
           enemyHP.value = newEnemyHP;
-          log(`💔 You activate the Amulet of Shared Suffering. The enemy takes ${ENEMY_DMG} damage.`);
+          log(`<i class="ra ra-broken-heart"></i> You activate the Amulet of Shared Suffering. The enemy takes ${ENEMY_DMG} damage.`);
           onCombatResult({ type: 'dealt', amount: ENEMY_DMG });
           const newPlayerHP = Math.max(0, playerHP.value - PLAYER_DMG);
           playerHP.value = newPlayerHP;
-          log(`💔 You also feel the pain, taking ${PLAYER_DMG} damage.`);
+          log(`<i class="ra ra-broken-heart"></i> You also feel the pain, taking ${PLAYER_DMG} damage.`);
           onCombatResult({ type: 'taken', amount: PLAYER_DMG });
           await new Promise(r => setTimeout(r, 800));
           if (newEnemyHP <= 0) {
             onEnemyKilled(encounter.value?.enemy);
             itemEndedCombat = true;
           } else if (newPlayerHP <= 0) {
-            log(`💀 <span class="player-name">${playerName.value}</span> was defeated.`);
+            log(`<i class="ra ra-skull"></i> <span class="player-name">${playerName.value}</span> was defeated.`);
             encounter.value = null;
             clearInterval(timerInterval);
             showRecap.value = true;
@@ -590,44 +590,38 @@ export function useGameHandlers(deps) {
         } else if (itemType === 'flashPowder') {
           if ((inventory.value.flashPowders || 0) > 0) {
             if (isBoss(encounter.value?.enemy)) {
-              log(`🚫 You cannot use Flash Powder during a boss battle.`);
+              log(`<i class="ra ra-x-mark"></i> You cannot use Flash Powder during a boss battle.`);
             } else {
               inventory.value.flashPowders--;
               enemyIsStunned.value = true;
-              log(`💥 You throw Flash Powder! The enemy is blinded and will skip their next turn.`);
+              log(`<i class="ra ra-explosion"></i> You throw Flash Powder! The enemy is blinded and will skip their next turn.`);
             }
           }
         } else if (itemType === 'venomVial') {
           if ((inventory.value.venomVials || 0) > 0) {
             inventory.value.venomVials--;
             enemyStatusEffects.value.push({ type: 'poison', damage: 3, duration: 4 });
-            log(`☠️ You splash the Venom Vial! The enemy is poisoned and will take 3 damage per turn for 4 turns.`);
+            log(`<i class="ra ra-skull"></i> You splash the Venom Vial! The enemy is poisoned and will take 3 damage per turn for 4 turns.`);
           }
         } else if (itemType === 'serratedDagger') {
           if ((inventory.value.serratedDaggers || 0) > 0 && !serratedDaggerActive.value) {
             inventory.value.serratedDaggers--;
             serratedDaggerActive.value = true;
-            log(`🗡️ You coat your blade with the Serrated Dagger. Your next attack will cause the enemy to Bleed.`);
-          }
-        } else if (itemType === 'luckyCoin') {
-          if ((inventory.value.luckyCoins || 0) > 0 && !luckyFleeActive.value) {
-            inventory.value.luckyCoins--;
-            luckyFleeActive.value = true;
-            log(`🪙 You flip the Lucky Coin. Your next Flee attempt is guaranteed to succeed.`);
+            log(`<i class="ra ra-plain-dagger"></i> You coat your blade with the Serrated Dagger. Your next attack will cause the enemy to Bleed.`);
           }
         } else if (itemType === 'wardingShield') {
           if ((inventory.value.wardingShields || 0) > 0 && wardingShieldHitsRemaining.value <= 0) {
             inventory.value.wardingShields--;
             wardingShieldHitsRemaining.value = 3;
-            log(`🛡️ You raise the Warding Shield! Incoming damage is halved for the next 3 hits.`);
+            log(`<i class="ra ra-shield"></i> You raise the Warding Shield! Incoming damage is halved for the next 3 hits.`);
           }
         } else if (itemType === 'smokeBomb') {
           if ((inventory.value.smokeBombs || 0) > 0) {
             if (isBoss(encounter.value?.enemy)) {
-              log(`🚫 You cannot use a Smoke Bomb during a boss battle.`);
+              log(`<i class="ra ra-x-mark"></i> You cannot use a Smoke Bomb during a boss battle.`);
             } else {
               inventory.value.smokeBombs--;
-              log(`💨 You throw a Smoke Bomb. You swiftly escape the combat.`);
+              log(`<i class="ra ra-poison-cloud"></i> You throw a Smoke Bomb. You swiftly escape the combat.`);
               encounter.value = null;
               bossOverlay.value = false;
               itemEndedCombat = true;
@@ -702,7 +696,7 @@ export function useGameHandlers(deps) {
             onFleeSuccess,
             onGoldStolen,
             onHpCapIncrease: () => {
-              const bonus = "💪 Max HP +10";
+              const bonus = '<i class="ra ra-muscle-up"></i> Max HP +10';
               victoryLoot.value = victoryLoot.value ? `${victoryLoot.value} · ${bonus}` : bonus;
             },
             enemyIntents,
@@ -786,7 +780,7 @@ export function useGameHandlers(deps) {
           onFleeSuccess,
           onGoldStolen,
           onHpCapIncrease: () => {
-            const bonus = "💪 Max HP +10";
+            const bonus = '<i class="ra ra-muscle-up"></i> Max HP +10';
             victoryLoot.value = victoryLoot.value ? `${victoryLoot.value} · ${bonus}` : bonus;
           },
           enemyIntents,
@@ -933,38 +927,38 @@ export function useGameHandlers(deps) {
     if (playerClass.value.startingWeaponBonus) {
       weaponBonus.value += playerClass.value.startingWeaponBonus;
       log(
-        `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingWeaponBonus} starting Weapon Damage.`
+        `<i class="ra ra-plain-dagger"></i> <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingWeaponBonus} starting Weapon Damage.`
       );
     }
     if (playerClass.value.startingSpecialUses) {
       specialUsesLeft.value += playerClass.value.startingSpecialUses;
       log(
-        `🎁 <span class="player-name">${playerName.value}</span> starts with +${playerClass.value.startingSpecialUses} Class Ability charges.`
+        `<i class="ra ra-gem"></i> <span class="player-name">${playerName.value}</span> starts with +${playerClass.value.startingSpecialUses} Class Ability charges.`
       );
     }
     if (playerClass.value.startingShieldBonus) {
       shieldBonus.value += playerClass.value.startingShieldBonus;
       log(
-        `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingShieldBonus} starting Defense Bonus.`
+        `<i class="ra ra-plain-dagger"></i> <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingShieldBonus} starting Defense Bonus.`
       );
     }
     if (playerClass.value.startingHealthPotionBonus) {
       inventory.value.healthPotions = playerClass.value.startingHealthPotionBonus;
       log(
-        `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingHealthPotionBonus} starting Health Potions.`
+        `<i class="ra ra-plain-dagger"></i> <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingHealthPotionBonus} starting Health Potions.`
       );
     }
     if (playerClass.value.startingInvisibilityCloaks) {
       inventory.value.invisibilityCloaks =
         playerClass.value.startingInvisibilityCloaks;
       log(
-        `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingInvisibilityCloaks} starting Invisibility Cloaks.`
+        `<i class="ra ra-plain-dagger"></i> <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingInvisibilityCloaks} starting Invisibility Cloaks.`
       );
     }
     if (playerClass.value.startingPlayerGold) {
       playerGold.value = playerClass.value.startingPlayerGold;
       log(
-        `🗡️ <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingPlayerGold} starting Gold.`
+        `<i class="ra ra-plain-dagger"></i> <span class="player-name">${playerName.value}</span> gains +${playerClass.value.startingPlayerGold} starting Gold.`
       );
     }
     log(`Player name: ${playerName.value}`);
@@ -980,7 +974,7 @@ export function useGameHandlers(deps) {
 
     const cost = OFFERING_COSTS[tier - 1][offeringPot.value];
     if (playerGold.value < cost) {
-      log(`🙏 You need ${cost}g to make this offering. You only have ${playerGold.value}g.`);
+      log(`<i class="ra ra-ankh"></i> You need ${cost}g to make this offering. You only have ${playerGold.value}g.`);
       return;
     }
 
@@ -995,9 +989,9 @@ export function useGameHandlers(deps) {
       const tierData = playerClass.value?.specialTiers?.[specialTier.value - 1];
       const newName = tierData?.name ?? playerClass.value?.special;
       const chargeMsg = chargesRestored ? " Special charges restored to 3." : "";
-      log(`✨ The Gods have answered. Your class ability ascends to Tier ${specialTier.value}: <strong>${newName}</strong>!${chargeMsg}`);
+      log(`<i class="ra ra-aura"></i> The Gods have answered. Your class ability ascends to Tier ${specialTier.value}: <strong>${newName}</strong>!${chargeMsg}`);
     } else {
-      log(`🙏 <span class="player-name">${playerName.value}</span> places ${cost}g in the offering bowl... (${offeringPot.value}/3)`);
+      log(`<i class="ra ra-ankh"></i> <span class="player-name">${playerName.value}</span> places ${cost}g in the offering bowl... (${offeringPot.value}/3)`);
     }
   }
 
@@ -1011,7 +1005,7 @@ export function useGameHandlers(deps) {
       libraryReady.value = { ...libraryBook.value };
       libraryBook.value = null;
       libraryProgress.value = 0;
-      log(`📖 You've finished reading <strong>${book.name}</strong>. Visit the Forge to craft it!`);
+      log(`<i class="ra ra-book"></i> You've finished reading <strong>${book.name}</strong>. Visit the Forge to craft it!`);
     }
   });
 
@@ -1019,7 +1013,7 @@ export function useGameHandlers(deps) {
     libraryBook.value = { id, type, levelIndex };
     libraryProgress.value = 0;
     const book = getBook(id);
-    log(`📖 <span class="player-name">${playerName.value}</span> checks out <strong>${book?.name ?? id}</strong> from the Infinite Library.`);
+    log(`<i class="ra ra-book"></i> <span class="player-name">${playerName.value}</span> checks out <strong>${book?.name ?? id}</strong> from the Infinite Library.`);
   }
 
   function craftLibraryBook() {
@@ -1032,7 +1026,7 @@ export function useGameHandlers(deps) {
     inventory.value.scrapMetal -= cost;
     craftedLevels.value[id] = levelIndex + 1;
     libraryReady.value = null;
-    log(`⚒️ <span class="player-name">${playerName.value}</span> forges <strong>${book?.name ?? id}</strong> (Level ${levelIndex + 1})!`);
+    log(`<i class="ra ra-hammer"></i> <span class="player-name">${playerName.value}</span> forges <strong>${book?.name ?? id}</strong> (Level ${levelIndex + 1})!`);
   }
 
   return {

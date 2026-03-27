@@ -61,29 +61,29 @@ export function handleEnemyTurn({
     if (effect.type === "bleed") {
       enemyHP.value -= effect.damage;
       log(
-        `🩸 ${formattedTitle.value} is bleeding. ${formattedTitle.value} takes ${effect.damage} additional damage.`
+        `<i class="ra ra-dripping-blade"></i> ${formattedTitle.value} is bleeding. ${formattedTitle.value} takes ${effect.damage} additional damage.`
       );
     } else if (effect.type === "poison") {
       enemyHP.value -= effect.damage;
       log(
-        `☠️ ${formattedTitle.value} is poisoned. ${formattedTitle.value} takes ${effect.damage} poison damage.`
+        `<i class="ra ra-skull"></i> ${formattedTitle.value} is poisoned. ${formattedTitle.value} takes ${effect.damage} poison damage.`
       );
     } else if (effect.type === "fire") {
       enemyHP.value -= effect.damage;
-      log(`🔥 ${formattedTitle.value} is on fire! Takes ${effect.damage} burn damage.`);
+      log(`<i class="ra ra-fire"></i> ${formattedTitle.value} is on fire! Takes ${effect.damage} burn damage.`);
     } else if (effect.type === "weaken") {
       const turnsLeft = effect.duration - 1;
       if (turnsLeft > 0) {
-        log(`💫 ${formattedTitle.value} is weakened (-${effect.damageReduction} dmg, ${turnsLeft} turn${turnsLeft === 1 ? "" : "s"} left).`);
+        log(`<i class="ra ra-aura"></i> ${formattedTitle.value} is weakened (-${effect.damageReduction} dmg, ${turnsLeft} turn${turnsLeft === 1 ? "" : "s"} left).`);
       } else {
-        log(`💫 ${formattedTitle.value}'s weakness fades.`);
+        log(`<i class="ra ra-aura"></i> ${formattedTitle.value}'s weakness fades.`);
       }
     } else if (effect.type === "chill") {
       const turnsLeft = effect.duration - 1;
       if (turnsLeft > 0) {
-        log(`❄️ ${formattedTitle.value} is chilled (-${effect.damageReduction} dmg, ${turnsLeft} turn${turnsLeft === 1 ? "" : "s"} left).`);
+        log(`<i class="ra ra-snowflake"></i> ${formattedTitle.value} is chilled (-${effect.damageReduction} dmg, ${turnsLeft} turn${turnsLeft === 1 ? "" : "s"} left).`);
       } else {
-        log(`❄️ The chill on ${formattedTitle.value} fades.`);
+        log(`<i class="ra ra-snowflake"></i> The chill on ${formattedTitle.value} fades.`);
       }
     }
 
@@ -92,7 +92,7 @@ export function handleEnemyTurn({
   });
 
   if (enemyHP.value <= 0) {
-    log(`💀 ${playerName.value} defeated ${formattedTitle.value}`);
+    log(`<i class="ra ra-skull"></i> ${playerName.value} defeated ${formattedTitle.value}`);
     onEnemyKilled?.(encounter.value?.enemy);
     return;
   }
@@ -103,7 +103,7 @@ export function handleEnemyTurn({
   const bonus = enrageBonus?.value ?? 0;
 
   if (enemyIsStunned.value) {
-    log(`💤 ${formattedTitle.value} is stunned and skips their turn.`);
+    log(`<i class="ra ra-campfire"></i> ${formattedTitle.value} is stunned and skips their turn.`);
     enemyIsStunned.value = false;
     // For multi-enemy: immediately assign next-round intents so the UI never shows "···"
     if (enemies && enemies.length > 1) {

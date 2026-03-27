@@ -10,7 +10,7 @@
     <span>Loading Wikipedia article...</span>
   </div>
   <div v-if="autoSaveFeedback" class="save-notification">
-    <span>💾</span>
+    <span><i class="ra ra-save"></i></span>
   </div>
   <WeatherOverlay :weather="weatherType" />
   <div v-if="inEncounter" class="overlay"></div>
@@ -33,17 +33,17 @@
       <div class="sky-bar">
         <div class="sky-track" :style="skyTrackStyle">
           <div class="sky-indicator" :style="{ left: skyPercent + '%' }">
-            <span class="sky-icon">{{ isNightTime ? '🌙' : '☀️' }}</span>
+            <span class="sky-icon" :style="isNightTime ? 'filter:drop-shadow(0 0 5px rgba(180,210,255,0.9))' : 'filter:drop-shadow(0 0 5px rgba(255,210,40,0.9))'" v-html="isNightTime ? '<i class=&quot;ra ra-moon-sun&quot; style=&quot;color:#c8d8f0&quot;></i>' : '<i class=&quot;ra ra-sun&quot; style=&quot;color:#ffd700&quot;></i>'"></span>
           </div>
         </div>
       </div>
     </div>
     <div v-if="props.settlementOnThisPage" class="settlement-banner" :class="{ 'settlement-banner-disabled': props.inEncounter, 'settlement-banner-abandoned': props.settlementOnThisPage.abandoned }" @click="!props.inEncounter && emit('open-settlement')">
       <template v-if="props.settlementOnThisPage.abandoned">
-        ☠ {{ props.settlementOnThisPage.town_name }} has been abandoned and is being terrorized by {{ settlementGuardianName }}
+        <i class="ra ra-skull"></i> {{ props.settlementOnThisPage.town_name }} has been abandoned and is being terrorized by {{ settlementGuardianName }}
       </template>
       <template v-else>
-        🏰 Visit {{ props.settlementOnThisPage.town_name }}, claimed by {{ props.settlementClaimedBy }}
+        <i class="ra ra-castle-emblem"></i> Visit {{ props.settlementOnThisPage.town_name }}, claimed by {{ props.settlementClaimedBy }}
       </template>
     </div>
   </div>
@@ -338,7 +338,7 @@ onMounted(load);
 
 <style scoped>
 
-* {
+.article {
   font-family: Arial, Helvetica, sans-serif;
   color: rgb(54, 54, 54);
   font-weight: 400;

@@ -28,7 +28,7 @@
           <div class="co-enemy-wrap co-enemy-turned">
             <img :src="thumbnailUrl ?? enemyPlaceholder" class="co-enemy" alt="" />
           </div>
-          <div class="co-intent-badge co-turned-badge">⚔️ Ally</div>
+          <div class="co-intent-badge co-turned-badge"><i class="ra ra-sword"></i> Ally</div>
           <div class="co-hp-bar-wrap co-enemy-hp-bar">
             <div class="co-hp-bar-fill co-hp-bar-turned" :style="{ width: enemyHpPct(i) + '%' }"></div>
           </div>
@@ -79,7 +79,7 @@
               }"
             >
               <!-- Collapsed: just the icon -->
-              <template v-if="idx !== targetIndex">{{ intentIconFor(idx) }}</template>
+              <template v-if="idx !== targetIndex"><span v-html="intentIconFor(idx)"></span></template>
 
               <!-- Expanded: full status card -->
               <template v-else>
@@ -95,7 +95,7 @@
                 </div>
                 <div v-if="selectedStatusEffects.length" class="co-badge-exp-effects">
                   <span v-for="effect in selectedStatusEffects" :key="effect.type" class="co-badge-exp-effect">
-                    {{ STATUS_ICON[effect.type] ?? '?' }} {{ effectLabel(effect) }}
+                    <span v-html="STATUS_ICON[effect.type] ?? '?'"></span> {{ effectLabel(effect) }}
                   </span>
                 </div>
               </template>
@@ -104,7 +104,7 @@
               <div class="co-hp-bar-fill co-hp-bar-enemy" :style="{ width: enemyHpPct(idx) + '%' }"></div>
             </div>
             <div v-if="statusIconsFor(idx).length" class="co-status-icons">
-              <span v-for="icon in statusIconsFor(idx)" :key="icon" class="co-status-icon">{{ icon }}</span>
+              <span v-for="icon in statusIconsFor(idx)" :key="icon" class="co-status-icon" v-html="icon"></span>
             </div>
             <!-- Damage dealt float -->
             <div v-if="dmgDealtVal && idx === targetIndex" :key="'dealt-' + dmgDealtKey" class="co-float-dmg co-float-dmg--dealt">-{{ dmgDealtVal }}</div>
@@ -302,18 +302,18 @@ const INTENT_TINT = {
   unknown:      null,
 };
 const INTENT_ICON = {
-  attack:       "⚔️",
-  attack_power: "💥",
-  defend:       "🛡️",
-  counter:      "↩️",
-  steal:        "💰 Steal",
-  confuse:      "🌀 Confuse",
-  enrage:       "💢 Enrage",
-  flee:         "🏃 Flee",
-  summon:       "💚 Heal",
+  attack:       '<i class="ra ra-sword"></i>',
+  attack_power: '<i class="ra ra-explosion"></i>',
+  defend:       '<i class="ra ra-shield"></i>',
+  counter:      '<i class="ra ra-player-dodge"></i>',
+  steal:        '<i class="ra ra-gold-bar"></i> Steal',
+  confuse:      '<i class="ra ra-cycle"></i> Confuse',
+  enrage:       '<i class="ra ra-burning-eye"></i> Enrage',
+  flee:         '<i class="ra ra-player-dodge"></i> Flee',
+  summon:       '<i class="ra ra-health"></i> Heal',
   trip:         "🤾 Trip",
-  special:      "✨",
-  idle:         "💤",
+  special:      '<i class="ra ra-aura"></i>',
+  idle:         '<i class="ra ra-hourglass"></i>',
   unknown:      "···",
 };
 
@@ -351,7 +351,7 @@ function intentIconFor(idx) {
 }
 
 // ── Status effect icons per portrait ─────────────────────────────────────────
-const STATUS_ICON = { fire: "🔥", bleed: "🩸", poison: "☠️", weaken: "💫", chill: "❄️" };
+const STATUS_ICON = { fire: '<i class="ra ra-fire"></i>', bleed: '<i class="ra ra-dripping-blade"></i>', poison: '<i class="ra ra-skull"></i>', weaken: '<i class="ra ra-aura"></i>', chill: '<i class="ra ra-snowflake"></i>' };
 
 function statusIconsFor(idx) {
   const effects = idx === targetIndex.value

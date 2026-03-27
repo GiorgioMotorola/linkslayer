@@ -5,8 +5,7 @@ export function useModals() {
   const showShopModal = ref(false);
   const showTipsModal = ref(false);
   const isInventoryModalOpen = ref(false);
-  const isMapModalOpen = ref(false);
-  const restModalCount = ref(0);
+const restModalCount = ref(0);
   const longRestDismissCount = ref(0);
   const showCampfireOverlay = ref(false);
   const campfireReward = ref(null);
@@ -33,7 +32,6 @@ export function useModals() {
     showShopModal,
     showTipsModal,
     isInventoryModalOpen,
-    isMapModalOpen,
     restModalCount,
     longRestDismissCount,
     showCampfireOverlay,

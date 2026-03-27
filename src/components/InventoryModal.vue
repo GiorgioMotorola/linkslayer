@@ -209,7 +209,7 @@
             <div class="item-description">{{ itemDesc.smokeBomb }}</div>
           </div>
           <div class="item-button-box">
-            <span class="combat-action-badge">⚔ Combat Action</span>
+            <span class="combat-action-badge"><i class="ra ra-sword"></i> Combat Action</span>
           </div>
         </div>
 
@@ -253,7 +253,7 @@
             <div class="item-description">{{ itemDesc.sharedSufferingAmulet }}</div>
           </div>
           <div class="item-button-box">
-            <span class="combat-action-badge">⚔ Combat Action</span>
+            <span class="combat-action-badge"><i class="ra ra-sword"></i> Combat Action</span>
           </div>
         </div>
 
@@ -326,7 +326,7 @@
             <div class="item-description">{{ itemDesc.flashPowder }}</div>
           </div>
           <div class="item-button-box">
-            <span class="combat-action-badge">⚔ Combat Action</span>
+            <span class="combat-action-badge"><i class="ra ra-sword"></i> Combat Action</span>
           </div>
         </div>
 
@@ -339,7 +339,7 @@
             <div class="item-description">{{ itemDesc.venomVial }}</div>
           </div>
           <div class="item-button-box">
-            <span class="combat-action-badge">⚔ Combat Action</span>
+            <span class="combat-action-badge"><i class="ra ra-sword"></i> Combat Action</span>
           </div>
         </div>
 
@@ -355,7 +355,7 @@
             </div>
           </div>
           <div class="item-button-box">
-            <span class="combat-action-badge">⚔ Combat Action</span>
+            <span class="combat-action-badge"><i class="ra ra-sword"></i> Combat Action</span>
           </div>
         </div>
 
@@ -387,7 +387,7 @@
             </div>
           </div>
           <div class="item-button-box">
-            <span class="combat-action-badge">⚔ Combat Action</span>
+            <span class="combat-action-badge"><i class="ra ra-sword"></i> Combat Action</span>
           </div>
         </div>
 
@@ -458,7 +458,7 @@
             <div class="item-details-box">
               <div class="item-name-quantity">
                 <span class="item-name">{{ augmentLabel(weaponAugment) }}</span>
-                <span class="augment-type-tag">⚔️ Weapon</span>
+                <span class="augment-type-tag"><i class="ra ra-sword"></i> Weapon</span>
               </div>
               <div class="item-description">{{ augmentDesc(weaponAugment) }}</div>
             </div>
@@ -473,7 +473,7 @@
             <div class="item-details-box">
               <div class="item-name-quantity">
                 <span class="item-name">{{ augmentLabel(defenseAugment) }}</span>
-                <span class="augment-type-tag">🛡️ Defense</span>
+                <span class="augment-type-tag"><i class="ra ra-shield"></i> Defense</span>
               </div>
               <div class="item-description">{{ augmentDesc(defenseAugment) }}</div>
             </div>
@@ -489,7 +489,7 @@
             <div class="item-details-box">
               <div class="item-name-quantity">
                 <span class="item-name">{{ getWeapon(equippedWeapon)?.name ?? equippedWeapon }}</span>
-                <span class="augment-type-tag">⚔️ Special Weapon</span>
+                <span class="augment-type-tag"><i class="ra ra-sword"></i> Special Weapon</span>
               </div>
               <div class="item-description">{{ getWeapon(equippedWeapon)?.description ?? "" }}</div>
             </div>
@@ -505,7 +505,7 @@
             <div class="item-details-box">
               <div class="item-name-quantity">
                 <span class="item-name">{{ getWeapon(wid)?.name ?? wid }}</span>
-                <span class="augment-type-tag">⚔️ Special Weapon</span>
+                <span class="augment-type-tag"><i class="ra ra-sword"></i> Special Weapon</span>
               </div>
               <div class="item-description">{{ getWeapon(wid)?.description ?? "" }}</div>
             </div>
@@ -521,7 +521,7 @@
             <div class="item-details-box">
               <div class="item-name-quantity">
                 <span class="item-name">{{ augmentLabel(key) }}</span>
-                <span class="augment-type-tag">⚔️ Weapon</span>
+                <span class="augment-type-tag"><i class="ra ra-sword"></i> Weapon</span>
               </div>
               <div class="item-description">{{ augmentDesc(key) }}</div>
             </div>
@@ -536,7 +536,7 @@
             <div class="item-details-box">
               <div class="item-name-quantity">
                 <span class="item-name">{{ augmentLabel(key) }}</span>
-                <span class="augment-type-tag">🛡️ Defense</span>
+                <span class="augment-type-tag"><i class="ra ra-shield"></i> Defense</span>
               </div>
               <div class="item-description">{{ augmentDesc(key) }}</div>
             </div>
@@ -551,12 +551,12 @@
           <div class="item-slot-wrapper">
             <div class="item-details-box">
               <div class="item-name-quantity">
-                <span class="item-name">🍺 {{ beer.name }}</span>
+                <span class="item-name"><i class="ra ra-beer"></i> {{ beer.name }}</span>
                 <span class="item-count">x{{ beer.qty }}</span>
               </div>
               <div class="item-description">
                 {{ beer.quality }} brew · Restores {{ beer.hp }} HP.
-                <template v-if="beer.poisonClicks > 0"> ☠ Warning: poisons for {{ beer.poisonClicks }} clicks.</template>
+                <template v-if="beer.poisonClicks > 0"> <i class="ra ra-skull"></i> Warning: poisons for {{ beer.poisonClicks }} clicks.</template>
                 <span class="hp-status"> — HP: {{ playerHP }}/{{ effectiveMaxHP }}</span>
               </div>
             </div>
@@ -570,7 +570,7 @@
         <div v-if="inventory.settlementFlag > 0" class="item-slot-wrapper" :class="{ 'item-slot-claimed': props.pageSettlementClaimedBy }">
           <div class="item-details-box">
             <div class="item-name-quantity">
-              <span class="item-name">🏴 Settlement Flag</span>
+              <span class="item-name"><i class="ra ra-castle-flag"></i> Settlement Flag</span>
             </div>
             <div v-if="props.pageSettlementClaimedBy" class="item-description item-description-blocked">
               This region has already been claimed by <strong>{{ props.pageSettlementClaimedBy }}</strong>. Travel to an unclaimed article to plant your flag.

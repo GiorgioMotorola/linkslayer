@@ -75,7 +75,7 @@ export function getRandomBoss(difficultyLevel = 0) {
     hp: bossData.hp + 4 * difficultyLevel,
     minDamage: bossData.minDamage + 4 * difficultyLevel,
     maxDamage: bossData.maxDamage + 4 * difficultyLevel,
-    name: `💀 ${bossData.type}`,
+    name: `<i class="ra ra-skull"></i> ${bossData.type}`,
     isBoss: true,
     message: `A towering ${bossData.type} blocks your path to ultimate knowledge. Time to roll some true damage.`,
   };

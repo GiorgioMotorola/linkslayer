@@ -81,9 +81,9 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
             playerEnrageCharges.value = Math.min(3, playerEnrageCharges.value + 1);
           }
         }
-        log(`💥 ${other.name} also strikes <span class="player-name">${playerName.value}</span> for ${reduced} damage.`);
+        log(`<i class="ra ra-explosion"></i> ${other.name} also strikes <span class="player-name">${playerName.value}</span> for ${reduced} damage.`);
         if (playerHP.value <= 0) {
-          log(`💀 <span class="player-name">${playerName.value}</span> was defeated.`);
+          log(`<i class="ra ra-skull"></i> <span class="player-name">${playerName.value}</span> was defeated.`);
           encounter.value = null;
           clearTimer();
           setDefeated();
@@ -91,13 +91,13 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
         }
 
       } else if (intent.action === "flee") {
-        log(`🏃 ${other.name} flees from the fight!`);
+        log(`<i class="ra ra-player-dodge"></i> ${other.name} flees from the fight!`);
         other.currentHP = 0;
         other.fled = true;
 
       } else if (intent.action === "enrage") {
         if (enrageBonus) enrageBonus.value += 2;
-        log(`💢 ${other.name} enrages! Their attacks will hit harder.`);
+        log(`<i class="ra ra-burning-eye"></i> ${other.name} enrages! Their attacks will hit harder.`);
 
       } else if (intent.action === "confuse") {
         const actions = ["attack_steady", "attack_power", "attack_enraged", "defend", "special", "flee"];
@@ -108,21 +108,21 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
         }
         const labels = { attack_steady: "Steady", attack_power: "Power", attack_enraged: "Enraged", defend: "Defend", special: "Special", flee: "Flee" };
         const lockedNames = blocked.map(a => `<strong>${labels[a]}</strong>`).join(" and ");
-        log(`🌀 ${other.name} clouds <span class="player-name">${playerName.value}</span>'s mind! ${lockedNames} locked for 1 turn.`);
+        log(`<i class="ra ra-cycle"></i> ${other.name} clouds <span class="player-name">${playerName.value}</span>'s mind! ${lockedNames} locked for 1 turn.`);
 
       } else if (intent.action === "steal") {
         const stealAmount = Math.min(playerGold?.value ?? 0, Math.floor(Math.random() * 6) + 3);
         if (stealAmount > 0 && playerGold) {
           playerGold.value -= stealAmount;
-          log(`💰 ${other.name} snatches ${stealAmount} gold from <span class="player-name">${playerName.value}</span>!`);
+          log(`<i class="ra ra-gold-bar"></i> ${other.name} snatches ${stealAmount} gold from <span class="player-name">${playerName.value}</span>!`);
         } else {
-          log(`💰 ${other.name} reaches for your gold — but finds nothing.`);
+          log(`<i class="ra ra-gold-bar"></i> ${other.name} reaches for your gold — but finds nothing.`);
         }
 
       } else if (intent.action === "summon") {
         const healAmount = 12;
         other.currentHP = Math.min((other.currentHP ?? 0) + healAmount, other.maxHP ?? other.hp ?? 999);
-        log(`💚 ${other.name} heals for ${healAmount} HP!`);
+        log(`<i class="ra ra-health"></i> ${other.name} heals for ${healAmount} HP!`);
 
       } else if (intent.action === "trip") {
         log(`🤾 ${other.name} trips <span class="player-name">${playerName.value}</span>!`);
@@ -136,7 +136,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       confusedTurnsLeft.value--;
       if (confusedTurnsLeft.value <= 0 && confusedAction) {
         confusedAction.value = [];
-        log(`🌀 The confusion fades.`);
+        log(`<i class="ra ra-cycle"></i> The confusion fades.`);
       }
     }
   }
@@ -155,7 +155,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       for (const eff of e.statusEffects) {
         if (eff.type === "fire") {
           e.currentHP = Math.max(0, e.currentHP - eff.damage);
-          log(`🔥 ${e.name} burns for ${eff.damage} damage!`);
+          log(`<i class="ra ra-fire"></i> ${e.name} burns for ${eff.damage} damage!`);
         }
         eff.duration--;
         if (eff.duration > 0) remaining.push(eff);
@@ -226,18 +226,18 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       const bonusNote = coolerStickBonus > 0 ? ` (+${coolerStickBonus} stick)` : "";
       utils.onDiceRoll?.({ roll, rawRoll, bonus: coolerStickBonus, threshold: hitThreshold, didHit });
       await utils.waitForDice?.();
-      log(`🎲 ${dieFace}${bonusNote} (need ${hitThreshold}+) — ${didHit ? "Hit!" : "Miss!"}`);
+      log(`<i class="ra ra-perspective-dice-random"></i> ${dieFace}${bonusNote} (need ${hitThreshold}+) — ${didHit ? "Hit!" : "Miss!"}`);
     }
 
     if (didHit) {
       damageToEnemy = Math.floor(randomDamage * damageMultiplier);
       log(
-        `🗡️ <span class="player-name">${playerName.value}</span> ${attackName} and hits ${formattedTitle} for ${damageToEnemy} damage.`
+        `<i class="ra ra-plain-dagger"></i> <span class="player-name">${playerName.value}</span> ${attackName} and hits ${formattedTitle} for ${damageToEnemy} damage.`
       );
       if (serratedDaggerActive?.value && enemyStatusEffects) {
         enemyStatusEffects.value.push({ type: "bleed", damage: 1, duration: 2 });
         serratedDaggerActive.value = false;
-        log(`🩸 The serrated edge opens a wound — ${formattedTitle} begins to Bleed.`);
+        log(`<i class="ra ra-dripping-blade"></i> The serrated edge opens a wound — ${formattedTitle} begins to Bleed.`);
       }
     } else {
       damageToEnemy = 0;
@@ -249,7 +249,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       }
       utils.onCombatResult?.({ type: "miss_penalty", amount: missPenalty });
       log(
-        `💨 <span class="player-name">${playerName.value}</span> ${attackName} but misses — ${formattedTitle} seizes the opening and deals ${missPenalty} damage.`
+        `<i class="ra ra-poison-cloud"></i> <span class="player-name">${playerName.value}</span> ${attackName} but misses — ${formattedTitle} seizes the opening and deals ${missPenalty} damage.`
       );
     }
   } else if (playerAction === "special") {
@@ -274,19 +274,19 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       if (tier === 1) {
         baseSpecialDamage = 8;
         damageToEnemy = baseSpecialDamage;
-        log(`⚔️ <span class="player-name">${playerName.value}</span> unleashes ${specialName} for ${baseSpecialDamage} damage.`);
+        log(`<i class="ra ra-sword"></i> <span class="player-name">${playerName.value}</span> unleashes ${specialName} for ${baseSpecialDamage} damage.`);
       } else if (tier === 2) {
         baseSpecialDamage = 12;
         damageToEnemy = baseSpecialDamage;
         enemyStatusEffects.value.push({ type: "bleed", damage: 1, duration: 1 });
-        log(`⚔️ <span class="player-name">${playerName.value}</span> cleaves for ${baseSpecialDamage} damage! The wound bleeds.`);
+        log(`<i class="ra ra-sword"></i> <span class="player-name">${playerName.value}</span> cleaves for ${baseSpecialDamage} damage! The wound bleeds.`);
       } else {
         baseSpecialDamage = 18;
         damageToEnemy = baseSpecialDamage;
         enemyIsStunned.value = true;
         enemyNextAction.value = "stunned";
         skipEnemyCurrentTurn = true;
-        log(`⚔️ <span class="player-name">${playerName.value}</span> delivers a Warlord's Strike for ${baseSpecialDamage} damage! The enemy is stunned.`);
+        log(`<i class="ra ra-sword"></i> <span class="player-name">${playerName.value}</span> delivers a Warlord's Strike for ${baseSpecialDamage} damage! The enemy is stunned.`);
       }
     } else if (cls === "Wizard") {
       let minDmg, maxDmg, stunChance;
@@ -297,7 +297,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       baseSpecialDamage = Math.floor(Math.random() * (maxDmg - minDmg + 1)) + minDmg;
       damageToEnemy = baseSpecialDamage;
       const stunned = Math.random() < stunChance;
-      log(`🔥 <span class="player-name">${playerName.value}</span> casts ${specialName}, dealing ${baseSpecialDamage} damage.${stunned ? ` The enemy is stunned.` : ""}`);
+      log(`<i class="ra ra-fire"></i> <span class="player-name">${playerName.value}</span> casts ${specialName}, dealing ${baseSpecialDamage} damage.${stunned ? ` The enemy is stunned.` : ""}`);
       if (stunned) {
         enemyIsStunned.value = true;
         enemyNextAction.value = "stunned";
@@ -311,11 +311,11 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       } else {
         baseSpecialDamage = 15;
         enemyStatusEffects.value.push({ type: "bleed", damage: 1, duration: 2 });
-        log(`🩸 The shadows cut deep — the enemy begins to bleed.`);
+        log(`<i class="ra ra-dripping-blade"></i> The shadows cut deep — the enemy begins to bleed.`);
       }
       damageToEnemy = baseSpecialDamage;
       skipEnemyCurrentTurn = true;
-      log(`🗡️ <span class="player-name">${playerName.value}</span> disappears and executes ${specialName} for ${baseSpecialDamage} damage.`);
+      log(`<i class="ra ra-plain-dagger"></i> <span class="player-name">${playerName.value}</span> disappears and executes ${specialName} for ${baseSpecialDamage} damage.`);
     } else if (cls === "Paladin") {
       let dmg, heal;
       if (tier === 1) { dmg = 5; heal = 3; }
@@ -328,21 +328,21 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
         : Math.min(playerHP.value + heal, effectiveMaxHP.value);
       playerHP.value = newHP;
       const healMsg = tier === 3 ? "fully restores HP" : `heals ${heal} HP`;
-      log(`✨ <span class="player-name">${playerName.value}</span> calls upon ${specialName}, dealing ${baseSpecialDamage} damage and ${healMsg}.`);
+      log(`<i class="ra ra-aura"></i> <span class="player-name">${playerName.value}</span> calls upon ${specialName}, dealing ${baseSpecialDamage} damage and ${healMsg}.`);
     } else if (cls === "Mundane") {
       if (tier === 1) {
         baseSpecialDamage = 5;
         damageToEnemy = baseSpecialDamage;
-        log(`🪨 <span class="player-name">${playerName.value}</span> hurls a rock for ${baseSpecialDamage} damage. The enemy looks almost offended.`);
+        log(`<i class="ra ra-mountains"></i> <span class="player-name">${playerName.value}</span> hurls a rock for ${baseSpecialDamage} damage. The enemy looks almost offended.`);
       } else if (tier === 2) {
         baseSpecialDamage = 0;
         damageToEnemy = 0;
         skipEnemyCurrentTurn = true;
-        log(`🛡️ <span class="player-name">${playerName.value}</span> grits their teeth and braces — the enemy's attack glances off.`);
+        log(`<i class="ra ra-shield"></i> <span class="player-name">${playerName.value}</span> grits their teeth and braces — the enemy's attack glances off.`);
       } else {
         baseSpecialDamage = Math.max(5, (effectiveMaxHP.value - playerHP.value) + 5);
         damageToEnemy = baseSpecialDamage;
-        log(`💢 <span class="player-name">${playerName.value}</span> channels pure desperation into a Grit Surge — ${baseSpecialDamage} damage!`);
+        log(`<i class="ra ra-burning-eye"></i> <span class="player-name">${playerName.value}</span> channels pure desperation into a Grit Surge — ${baseSpecialDamage} damage!`);
       }
     } else {
       log(`<span class="player-name">${playerName.value}</span> uses ${specialName}.`);
@@ -400,9 +400,9 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       if (braceSuccess) {
         playerDefendedThisTurn = true;
         bracedSuccessfully = true;
-        log(`🎲 ${dieFace}${bonusNote} (need ${braceRollThreshold}+) — 🛡️ Braced!`);
+        log(`<i class="ra ra-perspective-dice-random"></i> ${dieFace}${bonusNote} (need ${braceRollThreshold}+) — <i class="ra ra-shield"></i> Braced!`);
       } else {
-        log(`🎲 ${dieFace}${bonusNote} (need ${braceRollThreshold}+) — Failed to brace! Taking full damage.`);
+        log(`<i class="ra ra-perspective-dice-random"></i> ${dieFace}${bonusNote} (need ${braceRollThreshold}+) — Failed to brace! Taking full damage.`);
       }
     } else if (counterableActions.includes(enemyNextAction.value)) {
       // Counter attempt — dice roll at 11+
@@ -415,7 +415,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       const bonusNote = coolerStickBonus > 0 ? ` (+${coolerStickBonus} stick)` : "";
       utils.onDiceRoll?.({ roll, rawRoll, bonus: coolerStickBonus, threshold, didHit: succeeded });
       await utils.waitForDice?.();
-      log(`🎲 ${dieFace}${bonusNote} (need ${threshold}+) — ${succeeded ? "Countered!" : "Failed to counter!"}`);
+      log(`<i class="ra ra-perspective-dice-random"></i> ${dieFace}${bonusNote} (need ${threshold}+) — ${succeeded ? "Countered!" : "Failed to counter!"}`);
       enemyActionCountered = succeeded;
       utils.onCounterResult?.({ succeeded, delay: 0 });
       playerDefendedThisTurn = true;
@@ -430,7 +430,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       const guaranteedFlee = luckyFleeActive?.value;
       if (guaranteedFlee) {
         luckyFleeActive.value = false;
-        log(`🪙 The Lucky Coin shines! <span class="player-name">${playerName.value}</span> escapes without fail.`);
+        log(`<i class="ra ra-gold-bar"></i> The Lucky Coin shines! <span class="player-name">${playerName.value}</span> escapes without fail.`);
         encounter.value = null;
         return;
       } else {
@@ -441,9 +441,9 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
         const dieFace = `<span class="dice-face ${dieClass}">${fleeRoll}</span>`;
         utils.onDiceRoll?.({ roll: fleeRoll, rawRoll: fleeRoll, bonus: 0, threshold: fleeThreshold, didHit: fleeSucceeded });
         await utils.waitForDice?.();
-        log(`🎲 ${dieFace} (need ${fleeThreshold}+) — ${fleeSucceeded ? "Escaped!" : "Caught!"}`);
+        log(`<i class="ra ra-perspective-dice-random"></i> ${dieFace} (need ${fleeThreshold}+) — ${fleeSucceeded ? "Escaped!" : "Caught!"}`);
         if (fleeSucceeded) {
-          log(`🏃 <span class="player-name">${playerName.value}</span> fled successfully.`);
+          log(`<i class="ra ra-player-dodge"></i> <span class="player-name">${playerName.value}</span> fled successfully.`);
           if (utils.onFleeSuccess) {
             utils.onFleeSuccess();
           } else {
@@ -459,7 +459,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
 
   if (player.dogName?.value && damageToEnemy > 0) {
     damageToEnemy += 2;
-    log(`🐶 ${player.dogName.value} bites for 2 extra damage!`);
+    log(`<i class="ra ra-pawprint"></i> ${player.dogName.value} bites for 2 extra damage!`);
   }
 
   // Bloodpact Rune: once active, add +3 to attack damage
@@ -477,10 +477,10 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
     ) {
       finalDamageToEnemy = Math.floor(finalDamageToEnemy * 0.5);
       log(
-        `🛡️ ${formattedTitle} defends, reducing incoming damage to ${finalDamageToEnemy}HP.`
+        `<i class="ra ra-shield"></i> ${formattedTitle} defends, reducing incoming damage to ${finalDamageToEnemy}HP.`
       );
     } else if (enemyNextAction.value === "defend" && isExploit) {
-      log(`⚡ ${formattedTitle}'s guard is broken — full damage lands!`);
+      log(`<i class="ra ra-lightning-bolt"></i> ${formattedTitle}'s guard is broken — full damage lands!`);
     }
     enemyHP.value -= finalDamageToEnemy;
     utils.onCombatResult?.({ type: "dealt", amount: finalDamageToEnemy });
@@ -491,21 +491,21 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       const roll = Math.random();
       if (wAug === "bleedEdge" && roll < 0.30) {
         enemyStatusEffects.value.push({ type: "bleed", damage: 2, duration: 4 });
-        log(`🩸 Serrated Edge bites deep — enemy Bleeds (2 dmg × 4 turns)!`);
+        log(`<i class="ra ra-dripping-blade"></i> Serrated Edge bites deep — enemy Bleeds (2 dmg × 4 turns)!`);
       } else if (wAug === "venomCoat" && roll < 0.30) {
         enemyStatusEffects.value.push({ type: "poison", damage: 3, duration: 3 });
-        log(`☠️ Venom Coat seeps in — enemy Poisoned (3 dmg × 3 turns)!`);
+        log(`<i class="ra ra-skull"></i> Venom Coat seeps in — enemy Poisoned (3 dmg × 3 turns)!`);
       } else if (wAug === "thunderstrike" && roll < 0.25) {
         enemyIsStunned.value = true;
         enemyNextAction.value = "stunned";
         skipEnemyCurrentTurn = true;
-        log(`⚡ Thunderstrike Rune fires — enemy stunned!`);
+        log(`<i class="ra ra-lightning-bolt"></i> Thunderstrike Rune fires — enemy stunned!`);
       } else if (wAug === "emberTemper" && roll < 0.30) {
         enemyStatusEffects.value.push({ type: "fire", damage: 5, duration: 2 });
-        log(`🔥 Ember Temper ignites the wound — enemy on Fire (5 dmg × 2 turns)!`);
+        log(`<i class="ra ra-fire"></i> Ember Temper ignites the wound — enemy on Fire (5 dmg × 2 turns)!`);
       } else if (wAug === "cursedRune" && roll < 0.20) {
         enemyStatusEffects.value.push({ type: "weaken", damageReduction: 2, duration: 3 });
-        log(`💫 Cursed Rune drains their strength — enemy Weakened (-2 dmg × 3 turns)!`);
+        log(`<i class="ra ra-aura"></i> Cursed Rune drains their strength — enemy Weakened (-2 dmg × 3 turns)!`);
       }
     }
 
@@ -516,7 +516,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       const turnedAlly = conscEnc.enemies[turnedAllyIdx];
       enemyHP.value = Math.max(0, enemyHP.value - finalDamageToEnemy);
       utils.onCombatResult?.({ type: "dealt", amount: finalDamageToEnemy });
-      log(`⛓️ ${turnedAlly.name} fights for <span class="player-name">${playerName.value}</span> — strikes ${formattedTitle} for ${finalDamageToEnemy} damage, then collapses!`);
+      log(`<i class="ra ra-chain"></i> ${turnedAlly.name} fights for <span class="player-name">${playerName.value}</span> — strikes ${formattedTitle} for ${finalDamageToEnemy} damage, then collapses!`);
       turnedAlly.currentHP = 0;
       turnedAlly.turned = false;
     }
@@ -534,7 +534,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       if (alive.length > 0) {
         const { e } = alive[Math.floor(Math.random() * alive.length)];
         e.currentHP = Math.max(0, e.currentHP - 10);
-        log(`🏹 <span class="player-name">${playerName.value}</span>'s Crossbow fires — ${e.name} takes 10 damage!`);
+        log(`<i class="ra ra-broadhead-arrow"></i> <span class="player-name">${playerName.value}</span>'s Crossbow fires — ${e.name} takes 10 damage!`);
       }
     }
   }
@@ -550,7 +550,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
         const e = enc.enemies[i];
         if (!e || e.currentHP <= 0) continue;
         e.currentHP = Math.max(0, e.currentHP - sweepDmg);
-        log(`🔨 Flail sweeps ${e.name} for ${sweepDmg} damage!`);
+        log(`<i class="ra ra-hammer"></i> Flail sweeps ${e.name} for ${sweepDmg} damage!`);
       }
     }
   }
@@ -563,7 +563,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
     utils.onDiceRoll?.({ roll: halberdRoll, rawRoll: halberdRoll, bonus: 0, threshold: 10, didHit: halberdHit });
     await utils.waitForDice?.();
     if (halberdHit) {
-      log(`🎲 <span class="dice-face hit">${halberdRoll}</span> — <em>Give Me Blood!</em> The Halberd screams!`);
+      log(`<i class="ra ra-perspective-dice-random"></i> <span class="dice-face hit">${halberdRoll}</span> — <em>Give Me Blood!</em> The Halberd screams!`);
       const enc = encounter.value;
       if (enc?.enemies?.length > 1) {
         const tidx = enc.targetIndex ?? 0;
@@ -574,7 +574,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
           if (Math.random() < 0.5) {
             e.currentHP = 0;
             e.fled = true;
-            log(`🏃 ${e.name} flees in terror!`);
+            log(`<i class="ra ra-player-dodge"></i> ${e.name} flees in terror!`);
           } else {
             e.forcedNextAction = 'trip';
             log(`🤾 ${e.name} trips and falls — loses their next action!`);
@@ -582,7 +582,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
         }
       }
     } else {
-      log(`🎲 <span class="dice-face miss">${halberdRoll}</span> — Give Me Blood: the Halberd's shout falls silent.`);
+      log(`<i class="ra ra-perspective-dice-random"></i> <span class="dice-face miss">${halberdRoll}</span> — Give Me Blood: the Halberd's shout falls silent.`);
     }
   }
 
@@ -596,9 +596,9 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       const stealAmt = Math.floor(Math.random() * 16) + 10;
       if (playerGold) playerGold.value = (playerGold.value ?? 0) + stealAmt;
       utils.onGoldStolen?.(stealAmt);
-      log(`🎲 <span class="dice-face hit">${rapierRoll}</span> — <em>Greed is Good!</em> Pilfered ${stealAmt} gold from ${formattedTitle}!`);
+      log(`<i class="ra ra-perspective-dice-random"></i> <span class="dice-face hit">${rapierRoll}</span> — <em>Greed is Good!</em> Pilfered ${stealAmt} gold from ${formattedTitle}!`);
     } else {
-      log(`🎲 <span class="dice-face miss">${rapierRoll}</span> — Greed is Good: nothing to steal.`);
+      log(`<i class="ra ra-perspective-dice-random"></i> <span class="dice-face miss">${rapierRoll}</span> — Greed is Good: nothing to steal.`);
     }
   }
 
@@ -609,7 +609,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
     utils.onDiceRoll?.({ roll: staffRoll, rawRoll: staffRoll, bonus: 0, threshold: 10, didHit: staffHit });
     await utils.waitForDice?.();
     if (staffHit) {
-      log(`🎲 <span class="dice-face hit">${staffRoll}</span> — <em>Burn enemies, not books!</em>`);
+      log(`<i class="ra ra-perspective-dice-random"></i> <span class="dice-face hit">${staffRoll}</span> — <em>Burn enemies, not books!</em>`);
       const enc = encounter.value;
       if (enc?.enemies?.length > 1) {
         const tidx = enc.targetIndex ?? 0;
@@ -619,14 +619,14 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
           if (!e || e.currentHP <= 0) continue;
           e.statusEffects = e.statusEffects ?? [];
           e.statusEffects.push({ type: "fire", damage: 5, duration: 3 });
-          log(`🔥 ${e.name} is set ablaze!`);
+          log(`<i class="ra ra-fire"></i> ${e.name} is set ablaze!`);
         }
       } else {
         enemyStatusEffects.value.push({ type: "fire", damage: 5, duration: 3 });
-        log(`🔥 ${formattedTitle} is set ablaze!`);
+        log(`<i class="ra ra-fire"></i> ${formattedTitle} is set ablaze!`);
       }
     } else {
-      log(`🎲 <span class="dice-face miss">${staffRoll}</span> — The staff's flames fizzle.`);
+      log(`<i class="ra ra-perspective-dice-random"></i> <span class="dice-face miss">${staffRoll}</span> — The staff's flames fizzle.`);
     }
   }
 
@@ -644,24 +644,24 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       if (candidates.length > 0) {
         const { e: victim } = candidates[Math.floor(Math.random() * candidates.length)];
         victim.turned = true;
-        log(`🎲 <span class="dice-face hit">${conscriptRoll}</span> — <em>Conscripted!</em> ${victim.name} breaks rank — they fight for you next attack!`);
+        log(`<i class="ra ra-perspective-dice-random"></i> <span class="dice-face hit">${conscriptRoll}</span> — <em>Conscripted!</em> ${victim.name} breaks rank — they fight for you next attack!`);
       } else {
-        log(`🎲 <span class="dice-face hit">${conscriptRoll}</span> — Conscript: no enemy left to turn.`);
+        log(`<i class="ra ra-perspective-dice-random"></i> <span class="dice-face hit">${conscriptRoll}</span> — Conscript: no enemy left to turn.`);
       }
     } else {
-      log(`🎲 <span class="dice-face miss">${conscriptRoll}</span> — Conscript: they resist the pull.`);
+      log(`<i class="ra ra-perspective-dice-random"></i> <span class="dice-face miss">${conscriptRoll}</span> — Conscript: they resist the pull.`);
     }
   }
 
   if (enemyHP.value <= 0) {
     log(
-      `💀 <span class="player-name">${playerName.value}</span> defeated ${formattedTitle}`
+      `<i class="ra ra-skull"></i> <span class="player-name">${playerName.value}</span> defeated ${formattedTitle}`
     );
     // Soul Shard: 15% chance on kill to restore 8 HP
     if (weaponAugment?.value === "soulShard" && Math.random() < 0.15) {
       const soulHeal = 8;
       playerHP.value = Math.min(playerHP.value + soulHeal, effectiveMaxHP.value);
-      log(`💠 Soul Shard pulses — you recover ${soulHeal} HP from the fallen.`);
+      log(`<i class="ra ra-crystal-cluster"></i> Soul Shard pulses — you recover ${soulHeal} HP from the fallen.`);
     }
     // Other attacking enemies still deal damage even if you killed this one
     if (runSidekickAttacks()) return;
@@ -674,7 +674,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
     if (combatWinsSinceLastCapIncrease.value >= 10) {
       hpCapBonus.value += 10;
       log(
-        `🎉 You have gained experience from defeating the evil in this land and your maximum HP increased by <strong>10</strong>. New max HP: ${effectiveMaxHP.value}`
+        `<i class="ra ra-trophy"></i> You have gained experience from defeating the evil in this land and your maximum HP increased by <strong>10</strong>. New max HP: ${effectiveMaxHP.value}`
       );
       utils.onHpCapIncrease?.();
       combatWinsSinceLastCapIncrease.value = 0;
@@ -688,7 +688,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
 
   if (!skipEnemyCurrentTurn) {
     if (enemyIsStunned.value) {
-      log(`💤 ${formattedTitle} is stunned and skips their turn.`);
+      log(`<i class="ra ra-campfire"></i> ${formattedTitle} is stunned and skips their turn.`);
       enemyIsStunned.value = false;
       damageToPlayer = 0;
     } else {
@@ -699,7 +699,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
         // 20% chance for enemy to land a brutal hit (1.5x damage)
         if (Math.random() < 0.20) {
           damageToPlayer = Math.floor(damageToPlayer * 1.5);
-          log(`💥 ${formattedTitle} lands a <strong>brutal hit</strong>!`);
+          log(`<i class="ra ra-explosion"></i> ${formattedTitle} lands a <strong>brutal hit</strong>!`);
         }
 
         // Apply weaken/chill status debuffs on the enemy
@@ -713,19 +713,19 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
         if (defenseAugment?.value === "ironWill" && !ironWillUsed?.value) {
           ironWillUsed.value = true;
           damageToPlayer = 0;
-          log(`🧱 Iron Will absorbs the first blow entirely!`);
+          log(`<i class="ra ra-barrier"></i> Iron Will absorbs the first blow entirely!`);
         }
 
         // Stoneskin: 20% chance to fully block
         if (damageToPlayer > 0 && defenseAugment?.value === "stoneskin" && Math.random() < 0.20) {
           damageToPlayer = 0;
-          log(`🪨 Stoneskin activates — attack fully blocked!`);
+          log(`<i class="ra ra-mountains"></i> Stoneskin activates — attack fully blocked!`);
         }
 
         // Warden's Ward: 25% chance to halve damage
         if (damageToPlayer > 0 && defenseAugment?.value === "wardensWard" && Math.random() < 0.25) {
           damageToPlayer = Math.floor(damageToPlayer * 0.5);
-          log(`✨ Warden's Ward pulses — damage halved to ${damageToPlayer}!`);
+          log(`<i class="ra ra-aura"></i> Warden's Ward pulses — damage halved to ${damageToPlayer}!`);
         }
 
         damageToPlayer = Math.max(
@@ -735,35 +735,35 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
 
         if (bracedSuccessfully) {
           damageToPlayer = Math.max(0, Math.floor(damageToPlayer * 0.2));
-          log(`🛡️ <em>BRACE!</em> <span class="player-name">${playerName.value}</span> absorbs the blow — only ${damageToPlayer} damage gets through!`);
+          log(`<i class="ra ra-shield"></i> <em>BRACE!</em> <span class="player-name">${playerName.value}</span> absorbs the blow — only ${damageToPlayer} damage gets through!`);
         } else if (playerDefendedThisTurn) {
           damageToPlayer = Math.max(0, Math.floor(damageToPlayer * 0.5));
-          log(`🛡️ <span class="player-name">${playerName.value}</span> defended the attack, taking ${damageToPlayer} damage.`);
+          log(`<i class="ra ra-shield"></i> <span class="player-name">${playerName.value}</span> defended the attack, taking ${damageToPlayer} damage.`);
         } else {
           log(
-            `💥 ${formattedTitle} attacks back and <span class="player-name">${playerName.value}</span> takes ${damageToPlayer} damage.`
+            `<i class="ra ra-explosion"></i> ${formattedTitle} attacks back and <span class="player-name">${playerName.value}</span> takes ${damageToPlayer} damage.`
           );
         }
 
         if (wardingShieldHitsRemaining?.value > 0) {
           damageToPlayer = Math.max(0, Math.floor(damageToPlayer * 0.5));
           wardingShieldHitsRemaining.value--;
-          log(`🛡️ Warding Shield absorbs half the blow! Reduced to ${damageToPlayer} damage. (${wardingShieldHitsRemaining.value} hits remaining)`);
+          log(`<i class="ra ra-shield"></i> Warding Shield absorbs half the blow! Reduced to ${damageToPlayer} damage. (${wardingShieldHitsRemaining.value} hits remaining)`);
           if (wardingShieldHitsRemaining.value <= 0) {
-            log(`🛡️ The Warding Shield shatters.`);
+            log(`<i class="ra ra-shield"></i> The Warding Shield shatters.`);
           }
         }
       } else if (enemyNextAction.value === "trip") {
         damageToPlayer = 0;
       } else if (enemyNextAction.value === "flee") {
-        log(`🏃 ${formattedTitle} flees.`);
+        log(`<i class="ra ra-player-dodge"></i> ${formattedTitle} flees.`);
         encounter.value = null;
         return;
       } else if (enemyNextAction.value === "defend") {
         damageToPlayer = 0;
       } else if (enemyNextAction.value === "steal") {
         if (enemyActionCountered) {
-          log(`🛡️ <span class="player-name">${playerName.value}</span> guards their coin pouch — the theft fails!`);
+          log(`<i class="ra ra-shield"></i> <span class="player-name">${playerName.value}</span> guards their coin pouch — the theft fails!`);
         } else {
           const stealAmount = Math.min(
             playerGold?.value ?? 0,
@@ -771,23 +771,23 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
           );
           if (stealAmount > 0 && playerGold) {
             playerGold.value -= stealAmount;
-            log(`💰 ${formattedTitle} snatches ${stealAmount} gold from <span class="player-name">${playerName.value}</span>!`);
+            log(`<i class="ra ra-gold-bar"></i> ${formattedTitle} snatches ${stealAmount} gold from <span class="player-name">${playerName.value}</span>!`);
           } else {
-            log(`💰 ${formattedTitle} reaches for your gold — but finds nothing.`);
+            log(`<i class="ra ra-gold-bar"></i> ${formattedTitle} reaches for your gold — but finds nothing.`);
           }
         }
         damageToPlayer = 0;
       } else if (enemyNextAction.value === "enrage") {
         if (enemyActionCountered) {
-          log(`🛡️ ${formattedTitle}'s enrage is disrupted!`);
+          log(`<i class="ra ra-shield"></i> ${formattedTitle}'s enrage is disrupted!`);
         } else {
           if (enrageBonus) enrageBonus.value += 2;
-          log(`💢 ${formattedTitle} enrages! Future attacks will hit harder.`);
+          log(`<i class="ra ra-burning-eye"></i> ${formattedTitle} enrages! Future attacks will hit harder.`);
         }
         damageToPlayer = 0;
       } else if (enemyNextAction.value === "confuse") {
         if (enemyActionCountered) {
-          log(`🛡️ <span class="player-name">${playerName.value}</span> resists the confusion!`);
+          log(`<i class="ra ra-shield"></i> <span class="player-name">${playerName.value}</span> resists the confusion!`);
         } else {
           const actions = ["attack_steady", "attack_power", "attack_enraged", "defend", "special", "flee"];
           const shuffled = actions.sort(() => Math.random() - 0.5);
@@ -798,16 +798,16 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
           }
           const labels = { attack_steady: "Steady", attack_power: "Power", attack_enraged: "Enraged", defend: "Defend", special: "Special", flee: "Flee" };
           const lockedNames = blocked.map(a => `<strong>${labels[a]}</strong>`).join(" and ");
-          log(`🌀 ${formattedTitle} clouds <span class="player-name">${playerName.value}</span>'s mind! ${lockedNames} locked for 1 turn.`);
+          log(`<i class="ra ra-cycle"></i> ${formattedTitle} clouds <span class="player-name">${playerName.value}</span>'s mind! ${lockedNames} locked for 1 turn.`);
         }
         damageToPlayer = 0;
       } else if (enemyNextAction.value === "summon") {
         if (enemyActionCountered) {
-          log(`🛡️ ${formattedTitle}'s healing is interrupted!`);
+          log(`<i class="ra ra-shield"></i> ${formattedTitle}'s healing is interrupted!`);
         } else {
           const summonAmount = 12;
           enemyHP.value += summonAmount;
-          log(`💚 ${formattedTitle} heals for ${summonAmount} HP!`);
+          log(`<i class="ra ra-health"></i> ${formattedTitle} heals for ${summonAmount} HP!`);
         }
         damageToPlayer = 0;
       }
@@ -842,16 +842,16 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       const thornDmg = 2;
       enemyHP.value = Math.max(0, enemyHP.value - thornDmg);
       utils.onCombatResult?.({ type: "dealt", amount: thornDmg });
-      log(`🌵 Thornplate reflects ${thornDmg} damage back at ${formattedTitle}!`);
+      log(`<i class="ra ra-thorny-vine"></i> Thornplate reflects ${thornDmg} damage back at ${formattedTitle}!`);
       if (enemyHP.value <= 0) {
-        log(`💀 <span class="player-name">${playerName.value}</span> defeated ${formattedTitle} with Thornplate!`);
+        log(`<i class="ra ra-skull"></i> <span class="player-name">${playerName.value}</span> defeated ${formattedTitle} with Thornplate!`);
         const defeatedEnemyData = encounter.value?.enemy;
         utils.onEnemyKilled?.(defeatedEnemyData);
         if (enemiesKilled) enemiesKilled.value++;
         combatWinsSinceLastCapIncrease.value++;
         if (combatWinsSinceLastCapIncrease.value >= 10) {
           hpCapBonus.value += 10;
-          log(`🎉 Your maximum HP increased by <strong>10</strong>. New max HP: ${effectiveMaxHP.value}`);
+          log(`<i class="ra ra-trophy"></i> Your maximum HP increased by <strong>10</strong>. New max HP: ${effectiveMaxHP.value}`);
           utils.onHpCapIncrease?.();
           combatWinsSinceLastCapIncrease.value = 0;
           playerHP.value = Math.min(playerHP.value, effectiveMaxHP.value);
@@ -863,7 +863,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
     // Frostbound: 20% chance to Chill enemy (-1 dmg next hit) when damage landed
     if (daug === "frostbound" && damageToPlayer > 0 && Math.random() < 0.20) {
       enemyStatusEffects.value.push({ type: "chill", damageReduction: 1, duration: 1 });
-      log(`❄️ Frostbound retaliates — ${formattedTitle} is Chilled (-1 dmg next hit)!`);
+      log(`<i class="ra ra-snowflake"></i> Frostbound retaliates — ${formattedTitle} is Chilled (-1 dmg next hit)!`);
     }
   }
 
@@ -875,12 +875,12 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
     playerHP.value < effectiveMaxHP.value * 0.25
   ) {
     bloodpactActive.value = true;
-    log(`🩸 Bloodpact Rune awakens — rage fills the wound! +3 damage for the rest of this combat.`);
+    log(`<i class="ra ra-dripping-blade"></i> Bloodpact Rune awakens — rage fills the wound! +3 damage for the rest of this combat.`);
   }
 
   if (playerHP.value <= 0) {
     log(
-      `💀 <span class="player-name">${playerName.value}</span> was defeated.`
+      `<i class="ra ra-skull"></i> <span class="player-name">${playerName.value}</span> was defeated.`
     );
     encounter.value = null;
     clearTimer();

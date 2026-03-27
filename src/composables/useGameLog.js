@@ -17,28 +17,28 @@ export function useGameLog(getFormattedTimer) {
     let message = "";
     switch (enemyNextAction.value) {
       case "attack":
-        message = `🗡️ Enemy is now attacking for ${nextEnemyAttack.value} damage.`;
+        message = `<i class="ra ra-plain-dagger"></i> Enemy is now attacking for ${nextEnemyAttack.value} damage.`;
         break;
       case "defend":
-        message = "🛡️ Enemy is defending your next attack.";
+        message = `<i class="ra ra-shield"></i> Enemy is defending your next attack.`;
         break;
       case "flee":
-        message = "🏃 Enemy is about to flee.";
+        message = `<i class="ra ra-player-dodge"></i> Enemy is about to flee.`;
         break;
       case "trip":
         message = "🤾 Enemy tripped. You get a free attack.";
         break;
       case "steal":
-        message = "💰 Enemy eyes your gold with a wicked grin.";
+        message = `<i class="ra ra-gold-bar"></i> Enemy eyes your gold with a wicked grin.`;
         break;
       case "enrage":
-        message = "💢 Enemy enrages! Their attacks will grow stronger.";
+        message = `<i class="ra ra-burning-eye"></i> Enemy enrages! Their attacks will grow stronger.`;
         break;
       case "confuse":
-        message = "🌀 Enemy readies a confounding strike.";
+        message = `<i class="ra ra-cycle"></i> Enemy readies a confounding strike.`;
         break;
       case "summon":
-        message = "💚 Enemy readies a heal.";
+        message = `<i class="ra ra-health"></i> Enemy readies a heal.`;
         break;
       default:
         message = "";

@@ -37,8 +37,6 @@ export function useGameFlow() {
   const bossDefeated = ref(false);
   const selectedBossType = ref("");
   const bossOverlay = ref(false);
-  const hasReachedFinalArticle = ref(false);
-
   const combatEncountersFought = ref(0);
   const enemiesKilled = ref(0);
   const combatWinsSinceLastCapIncrease = ref(0);
@@ -107,7 +105,6 @@ export function useGameFlow() {
     bossDefeated,
     selectedBossType,
     bossOverlay,
-    hasReachedFinalArticle,
 
     combatEncountersFought,
     enemiesKilled,

@@ -1,0 +1,13 @@
+- id: lore_shipwreck_001
+  name: The Ardent Mara
+  text: "A full-sized ship sits wedged impossibly between two hills, miles from any water. Salt-bleached wood creaks in the wind. A rope ladder sways from the rail."
+  options:
+    - text: Board the ship
+      result: open_explorer
+      mapId: shipwreck
+    - text: 🗺️ Come back later
+      result: come_back_later
+      responseText: "The ship isn't going anywhere. You mark it on your map."
+    - text: Continue your journey
+      result: none
+      responseText: "You leave the strange sight behind and press on."

@@ -10,19 +10,19 @@
   leaveLog: "You step back from the cave. The notice remains on the board if you wish to return."
   turnInLog: "You recount your deed at the bar. The innkeeper slides 50g across the counter. <em>The Growling Dark</em> — complete."
   steps:
-    - scene: "The mouth of the cave yawns open in the hillside, cold air spilling out like a held breath. Claw marks score the stone on either side — deep, fresh, and wide as your hand."
+    - scene: "The mouth of the cave yawns open in the hillside, cold air spilling out like a held breath. Claw marks score the stone on either side... deep, fresh, and wide as your hand."
       choices:
         - text: Step inside
           next: 1
         - text: Turn back
           next: leave
-    - scene: "The tunnel slopes downward. Your boots crunch on bones — small animals, picked clean. Somewhere below, water drips in slow rhythm with something else. Something large. Breathing."
+    - scene: "The tunnel slopes downward. Your boots crunch on bones: small animals, picked clean. Somewhere below, water drips in slow rhythm with something else. Something large. Breathing."
       choices:
         - text: Draw your weapon and press forward
           next: 2
         - text: Hold your torch high and read the tracks
           next: 2
-    - scene: "The passage opens into a wide cavern. A shape stirs in the far shadow — enormous, shaggy, ancient. Amber eyes catch your torchlight. The Brown Bear rises to its full height and fills the cave with a roar that shakes dust from the ceiling."
+    - scene: "The passage opens into a wide cavern. A shape stirs in the far shadow: enormous, shaggy, ancient. Amber eyes catch your torchlight. The Brown Bear rises to its full height and fills the cave with a roar that shakes dust from the ceiling."
       choices:
         - text: Fight!
           next: combat

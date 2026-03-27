@@ -39,7 +39,7 @@
           placeholder="What is your name?"
           class="name-input"
         />
-        <button @click="randomizeName" class="randomize-name-button">🎲</button>
+        <button @click="randomizeName" class="randomize-name-button"><i class="ra ra-perspective-dice-random"></i></button>
       </div>
       <div class="goal-input-group">
         <input
@@ -47,7 +47,7 @@
           placeholder="What is your goal?"
           class="name-input goal-input"
         />
-        <button @click="randomizeGoal" class="randomize-name-button">🎲</button>
+        <button @click="randomizeGoal" class="randomize-name-button"><i class="ra ra-perspective-dice-random"></i></button>
       </div>
 
       <div class="journey-length-selection">
@@ -72,12 +72,12 @@
             <button class="class-select-btn" @click="selectClass(key)">Select ▶</button>
           </div>
           <div class="class-card-stats">
-            <span class="stat-pill">❤️ {{ c.maxHP }} HP</span>
-            <span v-if="c.startingWeaponBonus > 0" class="stat-pill">🗡 +{{ c.startingWeaponBonus }} Weapon</span>
-            <span v-if="c.startingShieldBonus > 0" class="stat-pill">🛡 +{{ c.startingShieldBonus }} Defense</span>
-            <span v-if="c.startingPlayerGold > 0" class="stat-pill">💰 {{ c.startingPlayerGold }}g</span>
-            <span v-if="c.startingSpecialUses > 0" class="stat-pill">✨ +{{ c.startingSpecialUses }} Charges</span>
-            <span v-if="key === 'Mundane'" class="stat-pill stat-pill-hard">⚠️ Hard Mode</span>
+            <span class="stat-pill"><i class="ra ra-health"></i> {{ c.maxHP }} HP</span>
+            <span v-if="c.startingWeaponBonus > 0" class="stat-pill"><i class="ra ra-plain-dagger"></i> +{{ c.startingWeaponBonus }} Weapon</span>
+            <span v-if="c.startingShieldBonus > 0" class="stat-pill"><i class="ra ra-shield"></i> +{{ c.startingShieldBonus }} Defense</span>
+            <span v-if="c.startingPlayerGold > 0" class="stat-pill"><i class="ra ra-gold-bar"></i> {{ c.startingPlayerGold }}g</span>
+            <span v-if="c.startingSpecialUses > 0" class="stat-pill"><i class="ra ra-aura"></i> +{{ c.startingSpecialUses }} Charges</span>
+            <span v-if="key === 'Mundane'" class="stat-pill stat-pill-hard"><i class="ra ra-aware"></i> Hard Mode</span>
           </div>
           <div class="class-card-desc">{{ c.specialTiers[0].name }}: {{ c.specialTiers[0].description }}</div>
         </div>

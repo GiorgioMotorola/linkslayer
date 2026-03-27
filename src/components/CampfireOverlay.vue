@@ -5,7 +5,7 @@
 
     <div class="campfire-card">
       <div class="campfire-name">{{ reward.name }}</div>
-      <div class="campfire-fire">🔥</div>
+      <div class="campfire-fire"><i class="ra ra-fire ra-2x"></i></div>
       <p class="campfire-tagline">Sit at the fire for a minute.</p>
       <button
         v-if="rested"

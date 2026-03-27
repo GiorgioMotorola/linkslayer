@@ -2,7 +2,7 @@
   <div class="game-modal-overlay">
     <div class="game-modal-content">
 
-      <div class="modal-icon">☠️</div>
+      <div class="modal-icon"><i class="ra ra-skull ra-3x"></i></div>
 
       <div class="modal-title">Defeated</div>
 
@@ -89,7 +89,7 @@
 
       <div class="modal-buttons">
         <button @click="share" class="modal-btn">⬆ Share Results</button>
-        <button @click="copyLogToClipboard" class="modal-btn">📋 Copy Log</button>
+        <button @click="copyLogToClipboard" class="modal-btn"><i class="ra ra-scroll-unfurled"></i> Copy Log</button>
         <button @click="handleRestart" class="modal-btn modal-btn-primary">↩ Play Again</button>
       </div>
 

@@ -2,7 +2,7 @@
   <div class="auth-overlay">
     <div class="auth-modal">
 
-      <div class="auth-icon">⚔️</div>
+      <div class="auth-icon"><i class="ra ra-sword ra-3x"></i></div>
       <div class="auth-title">{{ isSignUp ? "Create Account" : "Welcome Back" }}</div>
 
       <div v-if="confirmed" class="auth-message auth-success">
@@ -99,7 +99,7 @@ async function submit() {
 </script>
 
 <style scoped>
-* {
+.auth-overlay {
   font-family: "IBM Plex Sans", sans-serif;
 }
 </style>

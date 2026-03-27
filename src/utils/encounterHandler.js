@@ -33,19 +33,19 @@ function applyTreasureReward(reward, playerState, utilityFunctions) {
   const { log } = utilityFunctions;
   if (reward.type === "weaponAugment") {
     inventory.value.pendingWeaponAugments = [...(inventory.value.pendingWeaponAugments ?? []), reward.key];
-    log(`⚔️ <span class="player-name">${playerName.value}</span> unearthed a <strong>${reward.name}</strong> weapon augment. It's been added to your pending augments.`);
+    log(`<i class="ra ra-sword"></i> <span class="player-name">${playerName.value}</span> unearthed a <strong>${reward.name}</strong> weapon augment. It's been added to your pending augments.`);
   } else if (reward.type === "defenseAugment") {
     inventory.value.pendingDefenseAugments = [...(inventory.value.pendingDefenseAugments ?? []), reward.key];
-    log(`🛡️ <span class="player-name">${playerName.value}</span> unearthed a <strong>${reward.name}</strong> defense augment. It's been added to your pending augments.`);
+    log(`<i class="ra ra-shield"></i> <span class="player-name">${playerName.value}</span> unearthed a <strong>${reward.name}</strong> defense augment. It's been added to your pending augments.`);
   } else if (reward.type === "scrap") {
     inventory.value.scrapMetal = (inventory.value.scrapMetal || 0) + reward.amount;
-    log(`🔩 <span class="player-name">${playerName.value}</span> unearthed ${reward.amount} Scrap Metal.`);
+    log(`<i class="ra ra-cog"></i> <span class="player-name">${playerName.value}</span> unearthed ${reward.amount} Scrap Metal.`);
   } else if (reward.type === "healthPotions") {
     inventory.value.healthPotions = (inventory.value.healthPotions || 0) + reward.amount;
-    log(`🧪 <span class="player-name">${playerName.value}</span> unearthed ${reward.amount} Major Health Potions.`);
+    log(`<i class="ra ra-corked-tube"></i> <span class="player-name">${playerName.value}</span> unearthed ${reward.amount} Major Health Potions.`);
   } else if (reward.type === "gold") {
     playerGold.value += reward.amount;
-    log(`💰 <span class="player-name">${playerName.value}</span> unearthed ${reward.amount} Gold Pieces.`);
+    log(`<i class="ra ra-gold-bar"></i> <span class="player-name">${playerName.value}</span> unearthed ${reward.amount} Gold Pieces.`);
   }
   return reward;
 }
@@ -75,13 +75,13 @@ function applyOptionEffects({
       if (option.details === "health_potion_consumable") {
         inventory.value.healthPotions++;
         log(
-          `➕ <span class="player-name">${playerName.value}</span> found a Health Potion. It's been added to your backpack.`
+          `+ <span class="player-name">${playerName.value}</span> found a Health Potion. It's been added to your backpack.`
         );
       }
       if (option.details === "health") {
         inventory.value.breadcrumbs++;
         log(
-          `🍞 <span class="player-name">${playerName.value}</span> received some Breadcrumbs. They've been added to your backpack.`
+          `<i class="ra ra-acorn"></i> <span class="player-name">${playerName.value}</span> received some Breadcrumbs. They've been added to your backpack.`
         );
       }
       if (option.details === "health-major") {
@@ -90,7 +90,7 @@ function applyOptionEffects({
           Number(effectiveMaxHP || 0)
         );
         log(
-          `🎲 <span class="player-name">${
+          `<i class="ra ra-perspective-dice-random"></i> <span class="player-name">${
             playerName.value
           }</span> has gained +${option.healthAmount || 15} HP.`
         );
@@ -99,14 +99,14 @@ function applyOptionEffects({
         const scrapAmount = Number(option.amount || 1) * 2;
         inventory.value.scrapMetal = (inventory.value.scrapMetal || 0) + scrapAmount;
         log(
-          `🔩 <span class="player-name">${playerName.value}</span> found ${scrapAmount} Scrap Metal.`
+          `<i class="ra ra-cog"></i> <span class="player-name">${playerName.value}</span> found ${scrapAmount} Scrap Metal.`
         );
       }
       if (option.details === "whisky") {
         const duration = Number(option.amount) || 4;
         blurClicksLeft.value += duration;
         log(
-          `🥃 <span class="player-name">${playerName.value}</span> knocks back the whisky. Your vision becomes blurry for ${duration} clicks.`
+          `<i class="ra ra-beer"></i> <span class="player-name">${playerName.value}</span> knocks back the whisky. Your vision becomes blurry for ${duration} clicks.`
         );
       }
       if (option.details === "poison") {
@@ -116,7 +116,7 @@ function applyOptionEffects({
         poisonedClicksLeft.value += duration;
         poisonDamagePerClick.value = damage;
         log(
-          `🤢 <span class="player-name">${playerName.value}</span> is poisoned. You will lose ${damage} HP for the next ${duration} clicks.`
+          `<i class="ra ra-venomous-snake"></i> <span class="player-name">${playerName.value}</span> is poisoned. You will lose ${damage} HP for the next ${duration} clicks.`
         );
       }
       if (option.details === "whisky-health") {
@@ -129,14 +129,14 @@ function applyOptionEffects({
           Number(effectiveMaxHP || 0)
         );
         log(
-          `🥃 <span class="player-name">${playerName.value}</span> knocks back the whisky. Your vision blurs for ${duration} clicks and you gained ${healthAmount} HP.`
+          `<i class="ra ra-beer"></i> <span class="player-name">${playerName.value}</span> knocks back the whisky. Your vision blurs for ${duration} clicks and you gained ${healthAmount} HP.`
         );
       }
       if (option.details === "gold") {
         const amount = Number(option.amount) || 0;
         playerGold.value += amount;
         log(
-          `💰 <span class="player-name">${playerName.value}</span> obtained ${amount} Gold Pieces.`
+          `<i class="ra ra-gold-bar"></i> <span class="player-name">${playerName.value}</span> obtained ${amount} Gold Pieces.`
         );
       }
       if (option.details === "health-gold-loss") {
@@ -150,11 +150,11 @@ function applyOptionEffects({
           );
           playerGold.value -= goldCost;
           log(
-            `❤️‍🩹 <span class="player-name">${playerName.value}</span> gained ${healthAmount} HP but lost ${goldCost} Gold.`
+            `<i class="ra ra-health-increase"></i> <span class="player-name">${playerName.value}</span> gained ${healthAmount} HP but lost ${goldCost} Gold.`
           );
         } else {
           log(
-            `❌ <span class="player-name">${playerName.value}</span> doesn't have enough Gold for this. (Need: ${goldCost}, Have: ${playerGold.value})`
+            `<i class="ra ra-x-mark"></i> <span class="player-name">${playerName.value}</span> doesn't have enough Gold for this. (Need: ${goldCost}, Have: ${playerGold.value})`
           );
         }
       }
@@ -171,11 +171,11 @@ function applyOptionEffects({
           );
           playerGold.value -= goldCost;
           log(
-            `🥃 <span class="player-name">${playerName.value}</span> knocks back the whisky. Your vision blurs for ${duration} clicks and you gained ${healthAmount} HP, but lost ${goldCost} Gold.`
+            `<i class="ra ra-beer"></i> <span class="player-name">${playerName.value}</span> knocks back the whisky. Your vision blurs for ${duration} clicks and you gained ${healthAmount} HP, but lost ${goldCost} Gold.`
           );
         } else {
           log(
-            `❌ <span class="player-name">${playerName.value}</span> can't afford that. (Need: ${goldCost}, Have: ${playerGold.value})`
+            `<i class="ra ra-x-mark"></i> <span class="player-name">${playerName.value}</span> can't afford that. (Need: ${goldCost}, Have: ${playerGold.value})`
           );
         }
       }
@@ -183,7 +183,7 @@ function applyOptionEffects({
         const scrapAmount = Number(option.amount || 1) * 2;
         inventory.value.scrapMetal = (inventory.value.scrapMetal || 0) + scrapAmount;
         log(
-          `🔩 <span class="player-name">${playerName.value}</span> found ${scrapAmount} Scrap Metal.`
+          `<i class="ra ra-cog"></i> <span class="player-name">${playerName.value}</span> found ${scrapAmount} Scrap Metal.`
         );
       }
       break;
@@ -191,27 +191,27 @@ function applyOptionEffects({
       if (option.id === "health_potion_consumable") {
         inventory.value.healthPotions++;
         log(
-          `➕ <span class="player-name">${playerName.value}</span> found a Health Potion.`
+          `+ <span class="player-name">${playerName.value}</span> found a Health Potion.`
         );
       } else if (option.id === "arcane_compass") {
         inventory.value.compass++;
         log(
-          `🧭 <span class="player-name">${playerName.value}</span> found an Arcane Compass.`
+          `<i class="ra ra-compass"></i> <span class="player-name">${playerName.value}</span> found an Arcane Compass.`
         );
       } else if (option.id === "turkey_leg_consumable") {
         inventory.value.turkeyLegs++;
         log(
-          `🍖 <span class="player-name">${playerName.value}</span> found a Turkey Leg.`
+          `<i class="ra ra-chicken-leg"></i> <span class="player-name">${playerName.value}</span> found a Turkey Leg.`
         );
       } else if (option.id === "bark_tea_consumable") {
         inventory.value.barkTeas++;
         log(
-          `☕ <span class="player-name">${playerName.value}</span> found Bark Tea.`
+          `<i class="ra ra-coffee-mug"></i> <span class="player-name">${playerName.value}</span> found Bark Tea.`
         );
       } else if (option.details === "enlightenmentFish") {
         inventory.value.enlightenmentFish = 1;
         log(
-          `🐟 <span class="player-name">${playerName.value}</span> acquired The Fish of Eternal Enlightenment.`
+          `<i class="ra ra-fish"></i> <span class="player-name">${playerName.value}</span> acquired The Fish of Eternal Enlightenment.`
         );
       }
       break;
@@ -222,7 +222,7 @@ function applyOptionEffects({
         0
       );
       log(
-        `🎲 <span class="player-name">${playerName.value}</span> took ${
+        `<i class="ra ra-perspective-dice-random"></i> <span class="player-name">${playerName.value}</span> took ${
           option.amount || 5
         } damage.`
       );
@@ -233,7 +233,7 @@ function applyOptionEffects({
         0
       );
       log(
-        `🎲 <span class="player-name">${playerName.value}</span> took ${
+        `<i class="ra ra-perspective-dice-random"></i> <span class="player-name">${playerName.value}</span> took ${
           option.amount || 1
         } damage.`
       );
@@ -244,7 +244,7 @@ function applyOptionEffects({
         0
       );
       log(
-        `🎲 <span class="player-name">${playerName.value}</span> took ${
+        `<i class="ra ra-perspective-dice-random"></i> <span class="player-name">${playerName.value}</span> took ${
           option.amount || 50
         } damage.`
       );
@@ -254,7 +254,7 @@ function applyOptionEffects({
         const amount = Number(option.amount) || 1;
         specialUsesLeft.value += amount;
         log(
-          `🎲 <span class="player-name">${
+          `<i class="ra ra-perspective-dice-random"></i> <span class="player-name">${
             playerName.value
           }</span> regained ${amount} class ability charges ${
             amount > 1 ? "s" : ""
@@ -275,7 +275,7 @@ function applyOptionEffects({
       );
       playerState.shortcutsUsedCount.value++;
       log(
-        `🎲 <span class="player-name">${playerName.value}</span> took ${damageTaken} damage for taking the shortcut, but saved ${clicksReduced} clicks.`
+        `<i class="ra ra-perspective-dice-random"></i> <span class="player-name">${playerName.value}</span> took ${damageTaken} damage for taking the shortcut, but saved ${clicksReduced} clicks.`
       );
       break;
     case "shortcut":
@@ -287,7 +287,7 @@ function applyOptionEffects({
         );
         playerState.shortcutsUsedCount.value++;
         log(
-          `🎲 <span class="player-name">${playerName.value}</span> discovered a shortcut. Click count reduced by ${amount}.`
+          `<i class="ra ra-perspective-dice-random"></i> <span class="player-name">${playerName.value}</span> discovered a shortcut. Click count reduced by ${amount}.`
         );
       }
       break;
@@ -400,7 +400,7 @@ export function handleEncounterOption({
     const { inventory, playerGold, playerName } = playerState;
     const { log } = utilityFunctions;
     if (playerGold.value < cost) {
-      log(`❌ You need ${cost}g to buy this map. You have ${playerGold.value}g.`);
+      log(`<i class="ra ra-x-mark"></i> You need ${cost}g to buy this map. You have ${playerGold.value}g.`);
       return; // stay on encounter, don't close
     }
     playerGold.value -= cost;
@@ -413,7 +413,7 @@ export function handleEncounterOption({
       tier: option.tier ?? "common",
     };
     inventory.value.treasureMaps = [...(inventory.value.treasureMaps ?? []), newMap];
-    log(`🗺️ <span class="player-name">${playerName.value}</span> received a Treasure Map — Sealed. Open it from your backpack when you're ready.`);
+    log(`<i class="ra ra-scroll-unfurled"></i> <span class="player-name">${playerName.value}</span> received a Treasure Map — Sealed. Open it from your backpack when you're ready.`);
     if (option.responseText && canShowFinalScene) {
       showFinalScene(option.responseText, currentEncounter, enemyState);
     } else {
@@ -444,7 +444,7 @@ export function handleEncounterOption({
     if (daysCount) {
       daysCount.value += amount;
     }
-    log(`⏳ <span class="player-name">${playerName.value}</span> lost ${amount} days to the suspended sands.`);
+    log(`<i class="ra ra-campfire"></i> <span class="player-name">${playerName.value}</span> lost ${amount} days to the suspended sands.`);
     if (option.responseText && canShowFinalScene) {
       showFinalScene(option.responseText, currentEncounter, enemyState);
     } else {
@@ -492,7 +492,7 @@ export function handleEncounterOption({
       ? `<strong>${enemyName}s</strong>`
       : `a <strong>${enemyName}</strong>`;
     utilityFunctions.log(
-      `🗡️ Your choice has led to combat — you are attacked by ${enemyLabel}. What do you do?`
+      `<i class="ra ra-plain-dagger"></i> Your choice has led to combat — you are attacked by ${enemyLabel}. What do you do?`
     );
     return;
   }
@@ -521,13 +521,13 @@ export function handleEncounterOption({
     enemyState.enemyNextAction.value = "attack";
     playerState.combatEncountersFought.value++;
     utilityFunctions.log(
-      `💥 You are attacked by <strong>${miniBoss.name}</strong> What do you do?`
+      `<i class="ra ra-explosion"></i> You are attacked by <strong>${miniBoss.name}</strong> What do you do?`
     );
     return;
   }
 
   if (option.routeTitle) {
-    utilityFunctions.log(`📚 You choose: ${option.text}`);
+    utilityFunctions.log(`<i class="ra ra-book"></i> You choose: ${option.text}`);
     gameData.current.value = option.routeTitle;
     playerState.path.value.push(option.routeTitle);
     playerState.clickCount.value++;

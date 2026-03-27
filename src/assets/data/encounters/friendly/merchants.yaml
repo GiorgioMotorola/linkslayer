@@ -86,7 +86,7 @@
           effect: item
           details: shield
           amount: 1
-          responseText: "Mornik grunts. 'Aye, the shield's seen better days, but the metal's still good. Take these pieces — ye can reforge something useful.' You gain 2 Scrap Metal."
+          responseText: "Mornik grunts. 'Aye, the shield's seen better days, but the metal's still good. Take these pieces. Ye can reforge something useful.' You gain 2 Scrap Metal."
           flow: dialogue_branch
           next_node_id: wake_up_hangover
         - text: Fascinating. Any other tales?
@@ -128,63 +128,14 @@
       text: "A narrow opening, almost hidden by thick vines, leads into a dark cave. A faint, earthy smell wafts from within, along with a whisper of cool air."
       options:
         - text: Venture inside cautiously.
-          flow: dialogue_branch
-          next_node_id: cave_entrance
+          result: open_explorer
+          mapId: mysteriouscave
         - text: Leave the cave undisturbed.
           flow: close_encounter
           responseText: You decide your journey is too important. You continue on.
         - text: 🗺️ Come back later.
           result: come_back_later
           responseText: "This point of interest has been marked on your map."
-    cave_entrance:
-      text: "The darkness inside is absolute, broken only by the drip of water. You can barely make out two paths ahead: one narrow and winding, the other wider and leading deeper."
-      options:
-        - text: Take the narrow, winding path.
-          flow: dialogue_branch
-          next_node_id: narrow_path
-        - text: Take the wider, deeper path.
-          flow: dialogue_branch
-          next_node_id: wide_path
-        - text: "This is too spooky. I'm leaving."
-          flow: close_encounter
-          responseText: "The cave's eerie silence is too much. You carefully backtrack and exit the cave."
-    narrow_path:
-      text: "You squeeze through a tight passage. The passage seems to become more and more narrow as you go on."
-      options:
-        - text: Continue down the narrow passage.
-          flow: dialogue_branch
-          next_node_id: narrow_path_outcome
-        - text: Give up and return to the entrance.
-          flow: dialogue_branch
-          next_node_id: cave_entrance
-    narrow_path_outcome:
-      text: You manage to catch yourself and regroup.
-      options:
-        - text: Continue exploring the narrow path.
-          flow: close_encounter
-          responseText: You proceed further, finding nothing else of note at the moment. The path eventually leads you out of the cave.
-        - text: Return to the main entrance.
-          flow: dialogue_branch
-          next_node_id: cave_entrance
-    wide_path:
-      text: "The wider path leads to a large cavern. In the center, a faint light flickers, revealing a strange altar."
-      options:
-        - text: Investigate the altar.
-          flow: dialogue_branch
-          next_node_id: wide_path_outcome
-        - text: "Decide it's too dangerous and turn back."
-          flow: dialogue_branch
-          next_node_id: cave_entrance
-    wide_path_outcome:
-      text: "The alter glows, shakes and emits a heat that plucks every pore on your skin."
-      options:
-        - text: Touch the alter.
-          result: mini_boss_combat
-          miniBossType: Mind Flayer Spawn
-          responseText: "'You'll learn to regret touching my altar.'"
-        - text: "'I don't want any part of this. I am outta here.'"
-          flow: dialogue_branch
-          next_node_id: cave_entrance
 
 - id: npc_dinner_guests
   name: The Dinner Guests

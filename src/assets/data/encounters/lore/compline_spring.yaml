@@ -29,54 +29,9 @@
     enter_compline_opening:
       text: "You walk for half a mile in the dark until you hit a wall. You turn to the left and see a path. You turn to the right and see another path."
       options:
-        - text: Take the left path.
-          flow: dialogue_branch
-          next_node_id: left_path
-        - text: Take the right path.
-          flow: dialogue_branch
-          next_node_id: right_path
+        - text: Venture into the cave.
+          result: open_explorer
+          mapId: complinespring
         - text: Turn around and leave.
           flow: close_encounter
           responseText: "You make your way back through the long dark passage and step out into the open air. The limestone wall grinds shut behind you."
-
-    left_path:
-      text: "You find an old canvas bag sitting on top of a skeleton. You pick up the bag and open it, revealing 50 gold pieces. Then, without warning, the rocks behind you seal shut with a deep, grinding thud. An opening ahead of you slowly reveals two doors, side by side."
-      options:
-        - text: "Take Door One and leave."
-          result: item
-          details: gold
-          amount: 50
-          flow: close_encounter
-          responseText: "You grab the coin and take Door One. It opens into the pale light of the outside world. You step through, glad to be breathing fresh air."
-        - text: "Take Door Two."
-          result: combat
-
-    right_path:
-      text: "You walk into a room with a large statue of an old man sitting on an hourglass. The hourglass appears to be shattered, but the sand is intact and suspended in mid air, as if time forgot to finish falling."
-      options:
-        - text: Try to go back.
-          flow: dialogue_branch
-          next_node_id: right_path
-          responseText: "The path behind you has sealed. You aren't going anywhere."
-        - text: Touch the sand.
-          flow: dialogue_branch
-          next_node_id: days_increase
-        - text: Eat the sand.
-          flow: dialogue_branch
-          next_node_id: days_increase_sand
-
-    days_increase:
-      text: "You reach out and touch the suspended sand. You feel light, then torn apart. Your bones smash and stretch. You wake up what feels like minutes, maybe hours. You step outside and look at the sky. The light is wrong. The seasons are wrong. You have been in there for days."
-      options:
-        - text: Step out and keep moving.
-          result: days_increase
-          amount: 100
-          responseText: "Fifty days. Gone. The world moved on without you, and now you have to catch up."
-
-    days_increase_sand:
-      text: "You eat the sand. Alright then. Whatever your reasons, they are your own. You feel light, then torn apart. Your bones smash and stretch. You wake up what feels like minutes, maybe hours. You step outside and look at the sky. The light is wrong. The seasons are wrong. You have been in there for days."
-      options:
-        - text: Step out and keep moving.
-          result: days_increase
-          amount: 100
-          responseText: "Fifty days. Gone. The world moved on without you, and now you have to catch up."

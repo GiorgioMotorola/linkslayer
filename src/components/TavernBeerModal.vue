@@ -22,8 +22,8 @@
             <div v-if="expandedIdx === idx" class="shop-item-body">
               <p class="shop-item-desc">
                 <span :style="{ color: qualityColor(beer.quality) }">{{ beer.quality }}</span>
-                · ❤️ {{ beer.hp }} HP per bottle · ×{{ beer.qty }} available
-                <template v-if="beer.poisonClicks > 0"><br><span class="tavern-poison">☠ Caution: swill (poisons for {{ beer.poisonClicks }} clicks)</span></template>
+                · <i class="ra ra-health"></i> {{ beer.hp }} HP per bottle · ×{{ beer.qty }} available
+                <template v-if="beer.poisonClicks > 0"><br><span class="tavern-poison"><i class="ra ra-skull"></i> Caution: swill (poisons for {{ beer.poisonClicks }} clicks)</span></template>
               </p>
               <button
                 class="shop-buy-btn"

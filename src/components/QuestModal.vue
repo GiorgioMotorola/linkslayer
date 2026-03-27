@@ -3,7 +3,7 @@
     <div class="transition-fade" :class="{ active: isTransitioning }"></div>
     <div class="quest-modal">
 
-      <div class="quest-icon">🕯️</div>
+      <div class="quest-icon"><i class="ra ra-candle-fire"></i></div>
 
       <div class="quest-title">The Growling Dark</div>
 

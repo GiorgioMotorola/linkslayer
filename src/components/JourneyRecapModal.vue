@@ -5,7 +5,7 @@
       <div class="scroll-body">
         <div class="scroll-inner">
 
-          <div class="recap-title">{{ type === 'victory' ? '⚔️ A Tale of Valor' : '💀 A Hero Falls' }}</div>
+          <div class="recap-title"><template v-if="type === 'victory'"><i class="ra ra-sword"></i> A Tale of Valor</template><template v-else><i class="ra ra-skull"></i> A Hero Falls</template></div>
           <div class="recap-divider">✦ ✦ ✦</div>
 
           <p class="recap-text" v-html="narrative"></p>

@@ -142,9 +142,9 @@
     main_entrance:
       text: "The heavy oak doors are slightly ajar, revealing a dark, dusty foyer. A faint, metallic scent hangs in the air."
       options:
-        - text: "Step cautiously into the foyer, trying to make not even a footstep apparent."
-          flow: dialogue_branch
-          next_node_id: foyer
+        - text: "Step cautiously into the foyer."
+          result: open_explorer
+          mapId: wizardstower
         - text: Push the doors wide open and announce your presence.
           result: mini_boss_combat
           miniBossType: "Bog Hag (Wearing the skin of the Wizard)"
@@ -164,107 +164,14 @@
     service_entrance:
       text: "The service door creaks open with surprising ease. Inside, a narrow, dimly lit corridor stretches before you. You notice a glimmer in a shadowy corner."
       options:
-        - text: Investigate the glimmer.
-          effect: item
-          details: gold
-          amount: 25
-          responseText: "You find a small pouch dropped by a previous visitor, containing 10 gold pieces. You continue on..."
-          flow: dialogue_branch
-          next_node_id: foyer
+        - text: Investigate the glimmer first, then head inside.
+          result: open_explorer
+          mapId: wizardstower
+          goldBonus: 25
+          responseText: "You find a small pouch dropped by a previous visitor, containing 25 gold pieces."
         - text: Proceed down the corridor.
-          flow: dialogue_branch
-          next_node_id: foyer
-    foyer:
-      text: "The foyer is grand but decaying. A majestic, spiraling staircase dominates the center, and two dark corridors lead off to the left and right."
-      options:
-        - text: Ascend the grand staircase.
-          flow: dialogue_branch
-          next_node_id: grand_staircase
-        - text: Take the left corridor.
-          flow: dialogue_branch
-          next_node_id: left_corridor
-        - text: Take the right corridor.
-          flow: dialogue_branch
-          next_node_id: right_corridor
-    grand_staircase:
-      text: "The stairs creak under your weight, echoing loudly. Halfway up, a trap unsprings and you see a dozen nails flying in your direction."
-      options:
-        - text: Quickly dodge the nail trap.
-          effect: damage-minor
-          amount: 3
-          responseText: "You manage to avoid the worst, but a nail grazes your arm. You take 3 damage. You continue on."
-          flow: dialogue_branch
-          next_node_id: top_of_tower
-        - text: Tank the nail trap.
-          flow: dialogue_branch
-          effect: damage-minor
-          amount: 10
-          responseText: "You tank the nails and a few get stuck in your skin. You take 10 damage. You continue on."
-          next_node_id: top_of_tower
-    left_corridor:
-      text: "This corridor is lined with empty shelves and overturned furniture. It smells faintly of dust and something sweet. You spot a discarded vial on the floor."
-      options:
-        - text: Pick up the vial.
-          result: item
-          details: healthPotion
-          responseText: "You pick up the vial. It's a Health Potion. A lucky find. You continue on."
-          flow: dialogue_branch
-          next_node_id: dead_end_left
-        - text: Continue to the end of the corridor.
-          flow: dialogue_branch
-          next_node_id: dead_end_left
-    right_corridor:
-      text: "This corridor is surprisingly well-maintained, adorned with faded tapestries. The air here is colder, and you hear a faint, guttural growl from deeper within."
-      options:
-        - text: Follow the growling sound.
-          flow: dialogue_branch
-          next_node_id: monster_lair_approach
-        - text: Return to the foyer.
-          flow: dialogue_branch
-          next_node_id: foyer
-    dead_end_left:
-      text: "The corridor ends abruptly at a solid, unyielding wall. There's no way forward here."
-      options:
-        - text: Return to the foyer.
-          flow: dialogue_branch
-          next_node_id: foyer
-    monster_lair_approach:
-      text: "The growling grows louder, echoing from a large, ornate door at the end of the corridor."
-      options:
-        - text: Brace yourself and open the door.
-          result: mini_boss_combat
-          miniBossType: "Bog Hag (Wearing the skin of the Wizard)"
-          responseText: The monster announces their presence by emitting an ear piercing growl.
-        - text: Hesitate and return to the foyer.
-          flow: dialogue_branch
-          next_node_id: foyer
-    top_of_tower:
-      text: "You reach the top floor. The wizard's study is here, filled with arcane instruments and dusty tomes. A strange, pulsating orb floats in the center of the room."
-      options:
-        - text: Confront the pulsating orb.
-          result: mini_boss_combat
-          miniBossType: "Bog Hag (Wearing the skin of the Wizard)"
-          responseText: "The orb flares brightly, revealing its true, monstrous form."
-        - text: Search the study for clues.
-          effect: item
-          details: gold
-          amount: 30
-          responseText: "You quickly search the study, finding a hidden stash of gold beneath a loose floorboard."
-          flow: dialogue_branch
-          next_node_id: top_of_tower_search_outcome
-        - text: Descend the stairs and leave the tower.
-          flow: close_encounter
-          responseText: "You decide the top floor is too dangerous for now. You carefully descend and leave the tower."
-    top_of_tower_search_outcome:
-      text: "You've found some gold."
-      options:
-        - text: Confront the pulsating orb.
-          result: mini_boss_combat
-          miniBossType: "Bog Hag (Wearing the skin of the Wizard)"
-          responseText: "The orb flares brightly, revealing its true, monstrous form."
-        - text: Descend the stairs and leave the tower.
-          flow: close_encounter
-          responseText: "You decide the top floor is too dangerous for now. You carefully descend and leave the tower."
+          result: open_explorer
+          mapId: wizardstower
 
 - id: lore_028_rune_cache_common
   name: The Stone Cache
@@ -280,7 +187,7 @@
 
 - id: lore_029_rune_cache_uncommon
   name: The Sealed Reliquary
-  text: "Tucked into a collapsed archway, you find a carved stone reliquary sealed with ancient runes etched across its face. The symbols light up one by one in a repeating pattern — an old cipher, perhaps a key known only to the order that placed it here."
+  text: "Tucked into a collapsed archway, you find a carved stone reliquary sealed with ancient runes etched across its face. The symbols light up one by one in a repeating pattern: an old cipher, perhaps a key known only to the order that placed it here."
   options:
     - text: "Trace the rune sequence and try to open it."
       result: rune_cache

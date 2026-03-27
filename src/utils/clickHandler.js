@@ -58,7 +58,7 @@ export async function handleClick({
     return;
   }
 
-  utilityFunctions.log(`📍 ARTICLE: ${title}`);
+  utilityFunctions.log(`<i class="ra ra-archery-target"></i> ARTICLE: ${title}`);
 
   const finalTarget = gameData.chain[journeyLength.value - 1];
 
@@ -68,23 +68,23 @@ export async function handleClick({
 
   if (title === gameData.chain[playerState.currentTargetIndex.value + 1]) {
     playerState.currentTargetIndex.value++;
-    utilityFunctions.log(`🎯 You have reached ${title.replaceAll("_", " ")}.`);
+    utilityFunctions.log(`<i class="ra ra-archery-target"></i> You have reached ${title.replaceAll("_", " ")}.`);
   }
 
   let encounterPreventedByCloak = false;
 
   if (isCloakActive.value && title !== finalTarget) {
     utilityFunctions.log(
-      `✨ Cloak of Invisibility active: ${cloakClicksRemaining.value} clicks remaining.`
+      `<i class="ra ra-aura"></i> Cloak of Invisibility active: ${cloakClicksRemaining.value} clicks remaining.`
     );
     utilityFunctions.log(
-      "👻 You slip past unseen thanks to the Cloak of Invisibility."
+      `<i class="ra ra-angel-wings"></i> You slip past unseen thanks to the Cloak of Invisibility.`
     );
     encounterPreventedByCloak = true;
   }
 
   if (wardStoneActive?.value && title !== finalTarget) {
-    utilityFunctions.log("🪨 The Ward Stone hums — you pass by unnoticed.");
+    utilityFunctions.log(`<i class="ra ra-mountains"></i> The Ward Stone hums — you pass by unnoticed.`);
     encounterPreventedByCloak = true;
   }
 
@@ -106,7 +106,7 @@ export async function handleClick({
       enemy: boss,
     };
     enemyState.enemyHP.value = boss.hp;
-    enemyState.encounterMessage.value = `💀 A terrifying ${boss.name} rises to defend ${gameData.formattedTitle.value}. Time to roll some true damage.`;
+    enemyState.encounterMessage.value = `<i class="ra ra-skull"></i> A terrifying ${boss.name} rises to defend ${gameData.formattedTitle.value}. Time to roll some true damage.`;
 
     enemyState.nextEnemyAttack.value =
       Math.floor(Math.random() * (boss.maxDamage - boss.minDamage + 1)) +
@@ -117,7 +117,7 @@ export async function handleClick({
     playerState.combatEncountersFought.value++;
 
     utilityFunctions.log(
-      `💀 <strong>BOSS ENCOUNTER:</strong> ${boss.name}.<br><br>${
+      `<i class="ra ra-skull"></i> <strong>BOSS ENCOUNTER:</strong> ${boss.name}.<br><br>${
         boss.message || "Roll for damage."
       }`
     );
@@ -182,9 +182,9 @@ export async function handleClick({
         const npc = availableNPCs[Math.floor(Math.random() * availableNPCs.length)];
         gameData.seenNPCEncounters.value.push(npc.id);
         enemyState.encounter.value = { type: "npc", npc };
-        utilityFunctions.log(`🏮 The Encounter Beacon draws a friendly face — ${npc.greeting}`);
+        utilityFunctions.log(`<i class="ra ra-lantern-flame"></i> The Encounter Beacon draws a friendly face — ${npc.greeting}`);
       } else {
-        utilityFunctions.log(`🏮 The Encounter Beacon pulses, but all known travelers have passed through.`);
+        utilityFunctions.log(`<i class="ra ra-lantern-flame"></i> The Encounter Beacon pulses, but all known travelers have passed through.`);
       }
       return;
     }
@@ -255,7 +255,7 @@ export async function handleClick({
           ? `<strong>${enemyName}s</strong>`
           : `a <strong>${enemyName}</strong>`;
         utilityFunctions.log(
-          `🗡️ You've been attacked near <strong>${
+          `<i class="ra ra-plain-dagger"></i> You've been attacked near <strong>${
             gameData.formattedTitle.value
           }</strong> by ${enemyLabel}. What do you do?`
         );
@@ -291,8 +291,8 @@ export async function handleClick({
         lore: {
           id: `dog_find_${Date.now()}`,
           name: "Dog Find",
-          text: `🐶 ${dogName} sniffs the ground and begins digging and growling excitedly. They found <strong>${item.name}</strong>! It has been added to your inventory.`,
-          options: [{ text: "Good dog! 🐾", flow: "close_encounter" }],
+          text: `<i class="ra ra-pawprint"></i> ${dogName} sniffs the ground and begins digging and growling excitedly. They found <strong>${item.name}</strong>! It has been added to your inventory.`,
+          options: [{ text: `Good dog! <i class="ra ra-pawprint"></i>`, flow: "close_encounter" }],
         },
       };
     }

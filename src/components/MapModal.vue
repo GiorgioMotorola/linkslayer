@@ -64,14 +64,14 @@
               :class="{ 'poi-engaged': engagedPOIs.includes(poi.id), 'poi-revisitable': !engagedPOIs.includes(poi.id) && isIdle, 'poi-unavailable': !engagedPOIs.includes(poi.id) && !isIdle }"
               @click="!engagedPOIs.includes(poi.id) && isIdle && $emit('revisit-poi', poi)"
             >
-              🗺️ {{ poi.name }}
+              <i class="ra ra-compass"></i> {{ poi.name }}
             </div>
           </div>
 
           <div v-if="props.hasSettlement" class="poi-section settlement-section">
             <div class="poi-section-title">Settlement</div>
             <div class="poi-item poi-revisitable" @click="$emit('visit-settlement')">
-              🏰 Visit Your Settlement
+              <i class="ra ra-castle-emblem"></i> Visit Your Settlement
             </div>
           </div>
         </div>

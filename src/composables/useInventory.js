@@ -9,16 +9,10 @@ import {
   useBarkTea as externalUseBarkTea,
   useFrenchOnionSoup as externalUseFrenchOnionSoup,
   useAntidote as externalUseAntidote,
-  useSmokeBomb as externalUseSmokeBomb,
   useAdventurersRations as externalUseAdventurersRations,
   useEnlightenmentFish as externalUseEnlightenmentFish,
-  useAmuletOfSharedSuffering as externalUseAmuletOfSharedSuffering,
   useMinorHealthPotion as externalUseMinorHealthPotion,
-  useFlashPowder as externalUseFlashPowder,
-  useVenomVial as externalUseVenomVial,
-  useSerratedDagger as externalUseSerratedDagger,
   useLuckyCoin as externalUseLuckyCoin,
-  useWardingShield as externalUseWardingShield,
   useWardStone as externalUseWardStone,
   useEncounterBeacon as externalUseEncounterBeacon,
   useGoldPouch as externalUseGoldPouch,
@@ -247,25 +241,6 @@ export function useInventory() {
         );
       },
 
-      useSmokeBomb: () => {
-        externalUseSmokeBomb(
-          {
-            inventory,
-          },
-          {
-            log: utilityFunctions.log,
-            isBoss: utilityFunctions.isBoss,
-            closeInventoryModal: modalState.closeInventoryModal,
-          },
-          {
-            encounter: combatData.encounter,
-          },
-          {
-            bossOverlay: modalState.bossOverlay,
-          }
-        );
-      },
-
       useAdventurersRations: () => {
         externalUseAdventurersRations(
           {
@@ -300,31 +275,6 @@ export function useInventory() {
         );
       },
 
-      useAmuletOfSharedSuffering: () => {
-        externalUseAmuletOfSharedSuffering(
-          {
-            inventory,
-            playerHP: playerState.playerHP,
-            effectiveMaxHP: playerState.effectiveMaxHP,
-          },
-          {
-            log: utilityFunctions.log,
-            closeInventoryModal: modalState.closeInventoryModal,
-            handleLootDrop: utilityFunctions.handleLootDrop,
-            handleCloseEncounter: utilityFunctions.handleCloseEncounter,
-            isBoss: utilityFunctions.isBoss,
-          },
-          {
-            encounter: combatData.encounter,
-            enemyHP: combatData.enemyHP,
-          },
-          {
-            AMULET_ENEMY_DAMAGE,
-            AMULET_PLAYER_DAMAGE,
-          }
-        );
-      },
-
       useMinorHealthPotion: () => {
         externalUseMinorHealthPotion(
           {
@@ -341,43 +291,11 @@ export function useInventory() {
         );
       },
 
-      useFlashPowder: () => {
-        externalUseFlashPowder(
-          { inventory },
-          { log: utilityFunctions.log, closeInventoryModal: modalState.closeInventoryModal },
-          { encounter: combatData.encounter, enemyIsStunned: combatData.enemyIsStunned }
-        );
-      },
-
-      useVenomVial: () => {
-        externalUseVenomVial(
-          { inventory },
-          { log: utilityFunctions.log, closeInventoryModal: modalState.closeInventoryModal },
-          { encounter: combatData.encounter, enemyStatusEffects: combatData.enemyStatusEffects }
-        );
-      },
-
-      useSerratedDagger: () => {
-        externalUseSerratedDagger(
-          { inventory },
-          { log: utilityFunctions.log, closeInventoryModal: modalState.closeInventoryModal },
-          { encounter: combatData.encounter, serratedDaggerActive: statusEffects.serratedDaggerActive }
-        );
-      },
-
       useLuckyCoin: () => {
         externalUseLuckyCoin(
           { inventory },
           { log: utilityFunctions.log, closeInventoryModal: modalState.closeInventoryModal },
           { encounter: combatData.encounter, luckyFleeActive: statusEffects.luckyFleeActive }
-        );
-      },
-
-      useWardingShield: () => {
-        externalUseWardingShield(
-          { inventory },
-          { log: utilityFunctions.log, closeInventoryModal: modalState.closeInventoryModal },
-          { wardingShieldHitsRemaining: statusEffects.wardingShieldHitsRemaining }
         );
       },
 

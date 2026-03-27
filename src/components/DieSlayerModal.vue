@@ -3,8 +3,8 @@
     <div class="die-slayer-modal">
       <img :src="dieSlayerImg" class="modal-banner-img" alt="" />
       <div class="ds-title">
-        ⚔ Die Slayer
-        <span class="ds-gold-display">💰 {{ playerGold }}g</span>
+        <i class="ra ra-sword"></i> Die Slayer
+        <span class="ds-gold-display"><i class="ra ra-gold-bar"></i> {{ playerGold }}g</span>
       </div>
 
       <div class="ds-npc-bar">
@@ -157,17 +157,17 @@
         </div>
 
         <div class="ds-tie-notice" v-if="tieWaitingForClick">
-          🎲 It's a tie! Both must reroll.
+          <i class="ra ra-perspective-dice-random"></i> It's a tie! Both must reroll.
           <button class="ds-btn ds-btn-primary" @click="executeTieReroll">Reroll</button>
         </div>
         <div class="ds-tie-notice" v-if="tieRolling">
-          🎲 Rerolling...
+          <i class="ra ra-perspective-dice-random"></i> Rerolling...
         </div>
       </div>
 
       <div v-if="phase === 'end'" class="ds-phase ds-end-phase">
         <div class="ds-end-result" :class="gameWon ? 'ds-result-win' : 'ds-result-lose'">
-          {{ gameWon ? '⚔ Victory!' : '💀 Defeated!' }}
+          {{ gameWon ? '' : '' }}<template v-if="gameWon"><i class="ra ra-sword"></i> Victory!</template><template v-else><i class="ra ra-skull"></i> Defeated!</template>
         </div>
         <div class="ds-end-gold">
           {{ gameWon ? '+' + (bet * 2) + ' Gold' : '-' + bet + ' Gold' }}
@@ -198,7 +198,7 @@
 
       <div v-if="showHowToPlay" class="ds-htp-overlay" @click.self="showHowToPlay = false">
         <div class="ds-htp-box">
-          <div class="ds-htp-title">⚔ How to Play Die Slayer</div>
+          <div class="ds-htp-title"><i class="ra ra-sword"></i> How to Play Die Slayer</div>
           <div class="ds-htp-body">
             <p><strong>Entry:</strong> Bet between 1g and all your gold. Win and take home double your bet.</p>
             <p><strong>Setup:</strong> Roll your 5 dice. You get up to 3 rolls total — reroll as many times as you like, then lock in your best hand. Your opponent rolls secretly at the same time.</p>

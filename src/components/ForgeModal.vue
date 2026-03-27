@@ -2,7 +2,7 @@
   <div class="forge-overlay" @click.self="$emit('close')">
     <div class="forge-modal">
       <img :src="forgeImg" class="modal-banner-img" alt="" />
-      <div class="forge-title">⚒️ The Forge</div>
+      <div class="forge-title"><i class="ra ra-hammer"></i> The Forge</div>
 
       <div class="forge-scrap">
         <span class="forge-scrap-label">Scrap Metal</span>
@@ -11,7 +11,7 @@
 
       <!-- Library: Ready to Craft -->
       <div v-if="libraryReady" class="forge-augments forge-craft-section">
-        <div class="forge-augment-title">📖 Ready to Craft</div>
+        <div class="forge-augment-title"><i class="ra ra-book"></i> Ready to Craft</div>
         <div class="forge-craft-row">
           <div class="forge-craft-info">
             <div class="forge-craft-name">{{ craftReadyBook?.name }}</div>
@@ -33,7 +33,7 @@
 
       <!-- Weapon Equip Section -->
       <div v-if="showWeaponSection" class="forge-augments forge-weapons-section">
-        <div class="forge-augment-title">⚔️ Special Weapons</div>
+        <div class="forge-augment-title"><i class="ra ra-sword"></i> Special Weapons</div>
         <div class="forge-weapon-row">
           <div class="forge-weapon-equipped">
             <span class="forge-weapon-equipped-label">Equipped:</span>
@@ -56,7 +56,7 @@
       <div class="forge-columns">
         <!-- Weapon Column -->
         <div class="forge-col">
-          <div class="forge-col-header">⚔️ Weapon</div>
+          <div class="forge-col-header"><i class="ra ra-sword"></i> Weapon</div>
           <div class="forge-col-current">Current bonus: +{{ weaponBonus }}</div>
           <div class="forge-counter">
             <button class="forge-adj" @click="adjustWeapon(-2)" :disabled="weaponAlloc < 2">−</button>
@@ -82,7 +82,7 @@
 
         <!-- Defense Column -->
         <div class="forge-col">
-          <div class="forge-col-header">🛡️ Defense</div>
+          <div class="forge-col-header"><i class="ra ra-shield"></i> Defense</div>
           <div class="forge-col-current">Current bonus: +{{ shieldBonus }}</div>
           <div class="forge-counter">
             <button class="forge-adj" @click="adjustDefense(-2)" :disabled="defenseAlloc < 2">−</button>
@@ -109,11 +109,11 @@
 
       <!-- Augment Slots -->
       <div v-if="showAugmentSection" class="forge-augments">
-        <div class="forge-augment-title">⚗️ Augment Slots</div>
+        <div class="forge-augment-title"><i class="ra ra-flask"></i> Augment Slots</div>
         <div class="forge-augment-row">
           <!-- Weapon Slot -->
           <div class="forge-augment-slot">
-            <div class="forge-augment-slot-label">⚔️ Weapon</div>
+            <div class="forge-augment-slot-label"><i class="ra ra-sword"></i> Weapon</div>
             <div class="forge-augment-current">
               {{ weaponAugment ? augmentLabel(weaponAugment) : '— Empty —' }}
             </div>
@@ -134,7 +134,7 @@
 
           <!-- Defense Slot -->
           <div class="forge-augment-slot">
-            <div class="forge-augment-slot-label">🛡️ Defense</div>
+            <div class="forge-augment-slot-label"><i class="ra ra-shield"></i> Defense</div>
             <div class="forge-augment-current">
               {{ defenseAugment ? augmentLabel(defenseAugment) : '— Empty —' }}
             </div>

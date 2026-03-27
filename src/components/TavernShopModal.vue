@@ -8,7 +8,7 @@
       </div>
 
       <div class="tshop-body">
-        <div class="tshop-section-label">🏕️ Camp Supplies</div>
+        <div class="tshop-section-label"><i class="ra ra-campfire"></i> Camp Supplies</div>
         <div class="tshop-list">
           <div
             v-for="item in campItems"
@@ -22,7 +22,7 @@
             <div class="tshop-item-header" @click="toggle(`camp-${item.tier}`)">
               <span class="tshop-item-name">{{ item.name }}</span>
               <span v-if="campTier >= item.tier" class="tshop-check">✓</span>
-              <span v-else-if="item.tier > campTier + 1" class="tshop-lock">🔒</span>
+              <span v-else-if="item.tier > campTier + 1" class="tshop-lock"><i class="ra ra-locked-fortress"></i></span>
               <span v-else class="tshop-chevron" :class="{ open: expandedId === `camp-${item.tier}` }">›</span>
             </div>
             <div v-if="expandedId === `camp-${item.tier}`" class="tshop-item-body">
@@ -42,7 +42,7 @@
 
       </div>
 
-        <div class="tshop-section-label">🏴 Land</div>
+        <div class="tshop-section-label"><i class="ra ra-castle-flag"></i> Land</div>
         <div class="tshop-list">
           <div
             class="tshop-item"
@@ -68,7 +68,7 @@
           </div>
         </div>
 
-        <div class="tshop-section-label">⚔️ Combat</div>
+        <div class="tshop-section-label"><i class="ra ra-sword"></i> Combat</div>
         <div class="tshop-list">
           <!-- Quick Hands Charm: always shown, owned once extraActions >= 1 -->
           <div

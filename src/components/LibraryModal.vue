@@ -1,7 +1,7 @@
 <template>
   <div class="library-overlay" @click.self="$emit('close')">
     <div class="library-modal">
-      <div class="library-title">📚 Infinite Library</div>
+      <div class="library-title"><i class="ra ra-book"></i> Infinite Library</div>
 
       <div class="library-subtitle">Check out one book at a time. Read it between rests, then forge it.</div>
 
@@ -16,7 +16,7 @@
       </div>
 
       <div v-else-if="libraryReady" class="library-ready-status">
-        📖 <strong>{{ getBook(libraryReady.id)?.name }}</strong> is ready to forge!
+        <i class="ra ra-book"></i> <strong>{{ getBook(libraryReady.id)?.name }}</strong> is ready to forge!
         <span class="ready-hint">Visit the Forge to craft it.</span>
       </div>
 
@@ -30,7 +30,7 @@
             class="library-book-row"
             :class="{ 'is-reading': libraryBook?.id === book.id, 'is-ready': libraryReady?.id === book.id }"
           >
-            <div class="book-icon">{{ book.icon }}</div>
+            <div class="book-icon" v-html="book.icon"></div>
             <div class="book-info">
               <div class="book-name">
                 {{ book.name }}
@@ -38,8 +38,8 @@
               </div>
               <div class="book-desc">{{ nextLevel(book)?.label }}</div>
               <div class="book-meta">
-                <span>📖 {{ nextLevel(book)?.readClicks }} clicks</span>
-                <span>🔩 {{ nextLevel(book)?.forgeCost }} scrap to forge</span>
+                <span><i class="ra ra-book"></i> {{ nextLevel(book)?.readClicks }} clicks</span>
+                <span><i class="ra ra-cog"></i> {{ nextLevel(book)?.forgeCost }} scrap to forge</span>
               </div>
             </div>
             <div class="book-action">
@@ -79,9 +79,9 @@ const props = defineProps({
 const emit = defineEmits(["close", "start-reading"]);
 
 const sections = [
-  { label: "⚔️ Weapons",       books: LIBRARY_BOOKS.filter(b => b.type === "weapon") },
-  { label: "⚗️ Weapon Relics", books: LIBRARY_BOOKS.filter(b => b.type === "weapon_relic") },
-  { label: "🛡️ Defense Relics",books: LIBRARY_BOOKS.filter(b => b.type === "defense_relic") },
+  { label: "Weapons",       books: LIBRARY_BOOKS.filter(b => b.type === "weapon") },
+  { label: "Weapon Relics", books: LIBRARY_BOOKS.filter(b => b.type === "weapon_relic") },
+  { label: "Defense Relics",books: LIBRARY_BOOKS.filter(b => b.type === "defense_relic") },
 ];
 
 function nextLevel(book) {

@@ -73,7 +73,7 @@ export const BUILDING_DEFS = {
   },
   smithy: {
     name: "Smithy",
-    emoji: "⚒️",
+    emoji: '<i class="ra ra-hammer"></i>',
     cost: 50,
     description: "Earns 1g per click. Produces 3 Scrap Metal per 25 clicks. Limit: 1 per 3 houses.",
     category: "structure",
@@ -106,7 +106,7 @@ export const BUILDING_DEFS = {
   },
   apothecary: {
     name: "Apothecary",
-    emoji: "⚗️",
+    emoji: '<i class="ra ra-flask"></i>',
     cost: 75,
     description: "Produces 1 Health Potion per 20 clicks. Limit: 1 per 3 houses.",
     category: "structure",
@@ -128,7 +128,7 @@ export const BUILDING_DEFS = {
   },
   castle: {
     name: "Castle",
-    emoji: "🏰",
+    emoji: '<i class="ra ra-castle-emblem"></i>',
     cost: 200,
     description: "Earns 3g per click. Grants access to a short rest and the Forge while visiting.",
     category: "structure",
@@ -141,7 +141,7 @@ export const BUILDING_DEFS = {
   },
   farm: {
     name: "Farm",
-    emoji: "🌾",
+    emoji: '<i class="ra ra-grass"></i>',
     cost: 80,
     description: "A working farm. Grow ingredients for the brewery. Limit: 1 per settlement.",
     category: "structure",
@@ -150,7 +150,7 @@ export const BUILDING_DEFS = {
   },
   brewery: {
     name: "Brewery",
-    emoji: "🍺",
+    emoji: '<i class="ra ra-beer"></i>',
     cost: 100,
     description: "A brewery. Brew beer from farm ingredients. Requires a Farm. Limit: 1 per settlement.",
     category: "structure",
@@ -159,7 +159,7 @@ export const BUILDING_DEFS = {
   },
   tavern: {
     name: "Tavern",
-    emoji: "🍺",
+    emoji: '<i class="ra ra-beer"></i>',
     cost: 60,
     description: "Earns 1g per click. Limit: 1 per 3 houses.",
     category: "structure",

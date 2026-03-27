@@ -9,24 +9,24 @@ export function handleShopPurchase(
 ) {
   let purchased = false;
   if (item.details === "dog" && playerState.dogName?.value) {
-    utilityFunctions.log(`🐶 You already have a companion: ${playerState.dogName.value}!`);
+    utilityFunctions.log(`<i class="ra ra-pawprint"></i> You already have a companion: ${playerState.dogName.value}!`);
     return;
   }
   if (item.isSpecialLoot) {
     purchased = true;
     utilityFunctions.log(
-      `✨ <span class="player-name">${gameData.playerName.value}</span> obtained ${item.name}.`
+      `<i class="ra ra-aura"></i> <span class="player-name">${gameData.playerName.value}</span> obtained ${item.name}.`
     );
   } else if (playerState.playerGold.value >= item.cost) {
     playerState.playerGold.value -= item.cost;
     if (playerState.goldSpent) playerState.goldSpent.value += item.cost;
     purchased = true;
     utilityFunctions.log(
-      `💸 <span class="player-name">${gameData.playerName.value}</span> purchased ${item.name} for ${item.cost} Gold.`
+      `<i class="ra ra-gold-bar"></i> <span class="player-name">${gameData.playerName.value}</span> purchased ${item.name} for ${item.cost} Gold.`
     );
   } else {
     utilityFunctions.log(
-      `❌ Not enough Gold for ${item.name}. (Cost: ${item.cost}, You have: ${playerState.playerGold.value})`
+      `<i class="ra ra-x-mark"></i> Not enough Gold for ${item.name}. (Cost: ${item.cost}, You have: ${playerState.playerGold.value})`
     );
     return;
   }
@@ -39,25 +39,25 @@ export function handleShopPurchase(
           playerState.effectiveMaxHP.value
         );
         utilityFunctions.log(
-          `➕ ${gameData.playerName.value} gained ${item.amount} HP.`
+          `+ ${gameData.playerName.value} gained ${item.amount} HP.`
         );
         break;
       case "weapon":
         playerState.weaponBonus.value += item.amount;
         utilityFunctions.log(
-          `🗡️ ${gameData.playerName.value} gained +${item.amount} Weapon Bonus.`
+          `<i class="ra ra-plain-dagger"></i> ${gameData.playerName.value} gained +${item.amount} Weapon Bonus.`
         );
         break;
       case "shield":
         playerState.shieldBonus.value += item.amount;
         utilityFunctions.log(
-          `🛡️ ${gameData.playerName.value} gained +${item.amount} Defense Bonus.`
+          `<i class="ra ra-shield"></i> ${gameData.playerName.value} gained +${item.amount} Defense Bonus.`
         );
         break;
       case "special":
         playerState.specialUsesLeft.value += item.amount;
         utilityFunctions.log(
-          `✨ ${gameData.playerName.value} gained +${item.amount} Ability charges.`
+          `<i class="ra ra-aura"></i> ${gameData.playerName.value} gained +${item.amount} Ability charges.`
         );
         break;
       case "longRest":
@@ -66,7 +66,7 @@ export function handleShopPurchase(
           playerState.longRestsUsed.value - item.amount
         );
         utilityFunctions.log(
-          `🛌 ${gameData.playerName.value} refreshed ${item.amount} Long Rest(s).`
+          `<i class="ra ra-campfire"></i> ${gameData.playerName.value} refreshed ${item.amount} Long Rest(s).`
         );
         break;
       case "shortRest":
@@ -75,12 +75,12 @@ export function handleShopPurchase(
           playerState.shortRestsUsed.value - item.amount
         );
         utilityFunctions.log(
-          `🧘 ${gameData.playerName.value} refreshed ${item.amount} Short Rest(s).`
+          `<i class="ra ra-campfire"></i> ${gameData.playerName.value} refreshed ${item.amount} Short Rest(s).`
         );
         break;
       case "blurCure":
         playerState.blurClicksLeft.value = 0;
-        utilityFunctions.log(`🧼 ${gameData.playerName.value} sobered up.`);
+        utilityFunctions.log(`<i class="ra ra-flask"></i> ${gameData.playerName.value} sobered up.`);
         break;
 
       case "weaponAugment":
@@ -89,7 +89,7 @@ export function handleShopPurchase(
         }
         playerState.inventory.value.pendingWeaponAugments.push(item.details);
         utilityFunctions.log(
-          `🔩 ${gameData.playerName.value} acquired <strong>${item.name}</strong> — install it at the Forge.`
+          `<i class="ra ra-cog"></i> ${gameData.playerName.value} acquired <strong>${item.name}</strong> — install it at the Forge.`
         );
         break;
 
@@ -99,7 +99,7 @@ export function handleShopPurchase(
         }
         playerState.inventory.value.pendingDefenseAugments.push(item.details);
         utilityFunctions.log(
-          `🔩 ${gameData.playerName.value} acquired <strong>${item.name}</strong> — install it at the Forge.`
+          `<i class="ra ra-cog"></i> ${gameData.playerName.value} acquired <strong>${item.name}</strong> — install it at the Forge.`
         );
         break;
 
@@ -107,28 +107,28 @@ export function handleShopPurchase(
         if (item.details === "compass") {
           playerState.inventory.value.compass++;
           utilityFunctions.log(
-            `🧭 ${gameData.playerName.value} acquired an Arcane Compass.`
+            `<i class="ra ra-compass"></i> ${gameData.playerName.value} acquired an Arcane Compass.`
           );
         } else if (item.details === "healthPotion") {
           playerState.inventory.value.healthPotions++;
           utilityFunctions.log(
-            `➕ ${gameData.playerName.value} acquired a Health Potion.`
+            `+ ${gameData.playerName.value} acquired a Health Potion.`
           );
         } else if (item.details === "turkeyLeg") {
           playerState.inventory.value.turkeyLegs++;
           utilityFunctions.log(
-            `🍗 ${gameData.playerName.value} acquired a Turkey Leg.`
+            `<i class="ra ra-chicken-leg"></i> ${gameData.playerName.value} acquired a Turkey Leg.`
           );
         } else if (item.details === "barkTea") {
           playerState.inventory.value.barkTeas =
             Number(playerState.inventory.value.barkTeas || 0) + 1;
           utilityFunctions.log(
-            `☕ ${gameData.playerName.value} acquired Bark Tea.`
+            `<i class="ra ra-coffee-mug"></i> ${gameData.playerName.value} acquired Bark Tea.`
           );
         } else if (item.details === "invisibilityCloak") {
           playerState.inventory.value.invisibilityCloaks++;
           utilityFunctions.log(
-            `👻 ${gameData.playerName.value} acquired a Cloak of Invisibility.`
+            `<i class="ra ra-angel-wings"></i> ${gameData.playerName.value} acquired a Cloak of Invisibility.`
           );
           console.log(
             "Inventory after cloak purchase:",
@@ -137,123 +137,123 @@ export function handleShopPurchase(
         } else if (item.details === "stickItem") {
           playerState.inventory.value.stickItem++;
           utilityFunctions.log(
-            `😎 ${gameData.playerName.value} acquired a Cool Stick.`
+            `${gameData.playerName.value} acquired a Cool Stick.`
           );
         } else if (item.details === "coolerStickItem") {
           playerState.inventory.value.coolerStickItem++;
           utilityFunctions.log(
-            `🪄 ${gameData.playerName.value} acquired a Cooler Stick. +2 to all combat dice rolls.`
+            `<i class="ra ra-crystal-wand"></i> ${gameData.playerName.value} acquired a Cooler Stick. +2 to all combat dice rolls.`
           );
         } else if (item.details === "evenCoolerStickItem") {
           playerState.inventory.value.evenCoolerStickItem++;
           utilityFunctions.log(
-            `🌟 ${gameData.playerName.value} acquired an Even Cooler Stick. +3 to all combat dice rolls.`
+            `<i class="ra ra-sun-symbol"></i> ${gameData.playerName.value} acquired an Even Cooler Stick. +3 to all combat dice rolls.`
           );
         } else if (item.details === "herbalPoultice") {
           playerState.inventory.value.herbalPoultices++;
           utilityFunctions.log(
-            `🌿 ${gameData.playerName.value} acquired a Herbal Poultice.`
+            `<i class="ra ra-leaf"></i> ${gameData.playerName.value} acquired a Herbal Poultice.`
           );
         } else if (item.details === "frenchOnionSoup") {
           playerState.inventory.value.frenchOnionSoups =
             Number(playerState.inventory.value.frenchOnionSoups || 0) + 1;
           utilityFunctions.log(
-            `🥣 ${gameData.playerName.value} acquired French Onion Soup.`
+            `${gameData.playerName.value} acquired French Onion Soup.`
           );
         } else if (item.details === "smokeBomb") {
           playerState.inventory.value.smokeBombs =
             Number(playerState.inventory.value.smokeBombs || 0) + 1;
           utilityFunctions.log(
-            `💨 ${gameData.playerName.value} acquired a Smoke Bomb.`
+            `<i class="ra ra-poison-cloud"></i> ${gameData.playerName.value} acquired a Smoke Bomb.`
           );
         } else if (item.details === "antidote") {
           playerState.inventory.value.antidotes =
             Number(playerState.inventory.value.antidotes || 0) + 1;
           utilityFunctions.log(
-            `🧪 ${gameData.playerName.value} acquired an Antidote.`
+            `<i class="ra ra-corked-tube"></i> ${gameData.playerName.value} acquired an Antidote.`
           );
         } else if (item.details === "adventurersRations") {
           playerState.inventory.value.adventurersRations =
             Number(playerState.inventory.value.adventurersRations || 0) + 1;
           utilityFunctions.log(
-            `🍞 ${gameData.playerName.value} acquired Adventurer's Rations.`
+            `<i class="ra ra-acorn"></i> ${gameData.playerName.value} acquired Adventurer's Rations.`
           );
         } else if (item.details === "enlightenmentFish") {
           playerState.inventory.value.enlightenmentFish = 1;
           utilityFunctions.log(
-            `🐟 ${gameData.playerName.value} acquired The Fish of Eternal Enlightenment.`
+            `<i class="ra ra-fish"></i> ${gameData.playerName.value} acquired The Fish of Eternal Enlightenment.`
           );
         } else if (item.details === "sharedSufferingAmulet") {
           playerState.inventory.value.sharedSufferingAmulets =
             Number(playerState.inventory.value.sharedSufferingAmulets || 0) + 1;
           utilityFunctions.log(
-            `💔 ${gameData.playerName.value} acquired an Amulet of Shared Suffering.`
+            `<i class="ra ra-broken-heart"></i> ${gameData.playerName.value} acquired an Amulet of Shared Suffering.`
           );
         } else if (item.details === "minorHealthPotion") {
           playerState.inventory.value.minorHealthPotions =
             Number(playerState.inventory.value.minorHealthPotions || 0) + 1;
           utilityFunctions.log(
-            `➕ ${gameData.playerName.value} acquired a Potion of Minor Health.`
+            `+ ${gameData.playerName.value} acquired a Potion of Minor Health.`
           );
         } else if (item.details === "flashPowder") {
           playerState.inventory.value.flashPowders =
             Number(playerState.inventory.value.flashPowders || 0) + 1;
           utilityFunctions.log(
-            `✨ ${gameData.playerName.value} acquired Flash Powder.`
+            `<i class="ra ra-aura"></i> ${gameData.playerName.value} acquired Flash Powder.`
           );
         } else if (item.details === "venomVial") {
           playerState.inventory.value.venomVials =
             Number(playerState.inventory.value.venomVials || 0) + 1;
           utilityFunctions.log(
-            `☠️ ${gameData.playerName.value} acquired a Venom Vial.`
+            `<i class="ra ra-skull"></i> ${gameData.playerName.value} acquired a Venom Vial.`
           );
         } else if (item.details === "serratedDagger") {
           playerState.inventory.value.serratedDaggers =
             Number(playerState.inventory.value.serratedDaggers || 0) + 1;
           utilityFunctions.log(
-            `🗡️ ${gameData.playerName.value} acquired a Serrated Dagger.`
+            `<i class="ra ra-plain-dagger"></i> ${gameData.playerName.value} acquired a Serrated Dagger.`
           );
         } else if (item.details === "luckyCoin") {
           playerState.inventory.value.luckyCoins =
             Number(playerState.inventory.value.luckyCoins || 0) + 1;
           utilityFunctions.log(
-            `🪙 ${gameData.playerName.value} acquired a Lucky Coin.`
+            `<i class="ra ra-gold-bar"></i> ${gameData.playerName.value} acquired a Lucky Coin.`
           );
         } else if (item.details === "wardingShield") {
           playerState.inventory.value.wardingShields =
             Number(playerState.inventory.value.wardingShields || 0) + 1;
           utilityFunctions.log(
-            `🛡️ ${gameData.playerName.value} acquired a Warding Shield.`
+            `<i class="ra ra-shield"></i> ${gameData.playerName.value} acquired a Warding Shield.`
           );
         } else if (item.details === "wardStone") {
           playerState.inventory.value.wardStones =
             Number(playerState.inventory.value.wardStones || 0) + 1;
           utilityFunctions.log(
-            `🪨 ${gameData.playerName.value} acquired a Ward Stone.`
+            `<i class="ra ra-mountains"></i> ${gameData.playerName.value} acquired a Ward Stone.`
           );
         } else if (item.details === "encounterBeacon") {
           playerState.inventory.value.encounterBeacons =
             Number(playerState.inventory.value.encounterBeacons || 0) + 1;
           utilityFunctions.log(
-            `🔦 ${gameData.playerName.value} acquired an Encounter Beacon.`
+            `<i class="ra ra-lantern-flame"></i> ${gameData.playerName.value} acquired an Encounter Beacon.`
           );
         } else if (item.details === "goldPouch") {
           playerState.inventory.value.goldPouches =
             Number(playerState.inventory.value.goldPouches || 0) + 1;
           utilityFunctions.log(
-            `👜 ${gameData.playerName.value} acquired a Gold Pouch.`
+            `<i class="ra ra-ammo-bag"></i> ${gameData.playerName.value} acquired a Gold Pouch.`
           );
         } else if (item.details === "bountyScroll") {
           playerState.inventory.value.bountyScrolls =
             Number(playerState.inventory.value.bountyScrolls || 0) + 1;
           utilityFunctions.log(
-            `📜 ${gameData.playerName.value} acquired a Bounty Scroll.`
+            `<i class="ra ra-scroll-unfurled"></i> ${gameData.playerName.value} acquired a Bounty Scroll.`
           );
         } else if (item.details === "dog") {
           if (modalState?.showDogNameModal) {
             modalState.showDogNameModal.value = true;
           }
-          utilityFunctions.log(`🐶 A dog trots up to you expectantly...`);
+          utilityFunctions.log(`<i class="ra ra-pawprint"></i> A dog trots up to you expectantly...`);
         }
         break;
 
@@ -273,16 +273,16 @@ export function useCompass(
   const fullChain = gameData.chain;
 
   if (playerState.inventory.value.compass <= 0) {
-    utilityFunctions.log(`🧭 You don't have any Arcane Compasses to use.`);
+    utilityFunctions.log(`<i class="ra ra-compass"></i> You don't have any Arcane Compasses to use.`);
     return;
   }
 
   playerState.inventory.value.compass--;
-  utilityFunctions.log(`🧭 You use an Arcane Compass!`);
+  utilityFunctions.log(`<i class="ra ra-compass"></i> You use an Arcane Compass!`);
 
   if (!fullChain || fullChain.length === 0) {
     utilityFunctions.log(
-      `🧭 The compass spins wildly; there's no defined path to jump within yet.`
+      `<i class="ra ra-compass"></i> The compass spins wildly; there's no defined path to jump within yet.`
     );
     console.warn(
       "useCompass: Attempted to use compass when fullChain is undefined or empty."
@@ -296,7 +296,7 @@ export function useCompass(
     utilityFunctions.isBoss(combatData.encounter.value.enemy)
   ) {
     utilityFunctions.log(
-      `🚫 You cannot use the Arcane Compass during a boss battle.`
+      `<i class="ra ra-x-mark"></i> You cannot use the Arcane Compass during a boss battle.`
     );
     return;
   }
@@ -322,7 +322,7 @@ export function useCompass(
     playerState.shortcutsUsedCount.value++;
 
     utilityFunctions.log(
-      `🧭 The compass pulls you, disorienting you for a moment, then guides you directly to ${targetArticle.replaceAll(
+      `<i class="ra ra-compass"></i> The compass pulls you, disorienting you for a moment, then guides you directly to ${targetArticle.replaceAll(
         "_",
         " "
       )}.`
@@ -331,10 +331,10 @@ export function useCompass(
     const targetIndexInChain = fullChain.indexOf(targetArticle);
     playerState.currentTargetIndex.value = targetIndexInChain;
 
-    utilityFunctions.log(`✨ You feel a step closer to your goal.`);
+    utilityFunctions.log(`<i class="ra ra-aura"></i> You feel a step closer to your goal.`);
   } else {
     utilityFunctions.log(
-      `🧭 The compass seems confused; there are no intermediate paths to jump to. (Perhaps you're at the start/end or only one article in length?)`
+      `<i class="ra ra-compass"></i> The compass seems confused; there are no intermediate paths to jump to. (Perhaps you're at the start/end or only one article in length?)`
     );
   }
 
@@ -377,7 +377,7 @@ export const useBreadcrumb = (playerState, utilityFunctions, itemConstants) => {
       playerState.effectiveMaxHP.value
     );
     utilityFunctions.log(
-      `🍞 You ate some Breadcrumbs and recovered ${itemConstants.BREADCRUMB_HEAL_AMOUNT} HP. Your HP is now ${playerState.playerHP.value}.`
+      `<i class="ra ra-acorn"></i> You ate some Breadcrumbs and recovered ${itemConstants.BREADCRUMB_HEAL_AMOUNT} HP. Your HP is now ${playerState.playerHP.value}.`
     );
   } else {
     utilityFunctions.log("You don't have any Breadcrumbs to use.");
@@ -392,7 +392,7 @@ export const useTurkeyLeg = (playerState, utilityFunctions, itemConstants) => {
       playerState.effectiveMaxHP.value
     );
     utilityFunctions.log(
-      `🍖 You consumed a Turkey Leg and recovered ${itemConstants.TURKEY_LEG_HEAL_AMOUNT} HP. Your HP is now ${playerState.playerHP.value}.`
+      `<i class="ra ra-chicken-leg"></i> You consumed a Turkey Leg and recovered ${itemConstants.TURKEY_LEG_HEAL_AMOUNT} HP. Your HP is now ${playerState.playerHP.value}.`
     );
   } else {
     utilityFunctions.log("You don't have any Turkey Legs to use.");
@@ -407,7 +407,7 @@ export const useBarkTea = (playerState, utilityFunctions, itemConstants) => {
       playerState.effectiveMaxHP.value
     );
     utilityFunctions.log(
-      `☕ You drank Bark Team and recovered ${itemConstants.BARK_TEA_HEAL_AMOUNT} HP. Your HP is now ${playerState.playerHP.value}.`
+      `<i class="ra ra-coffee-mug"></i> You drank Bark Tea and recovered ${itemConstants.BARK_TEA_HEAL_AMOUNT} HP. Your HP is now ${playerState.playerHP.value}.`
     );
   } else {
     utilityFunctions.log("You don't have any Bark Tea to use.");
@@ -433,7 +433,7 @@ export const useFrenchOnionSoup = (
     playerState.specialUsesLeft.value += specialRestored;
 
     utilityFunctions.log(
-      `🥣 You consumed French Onion Soup and recovered ${healedAmount} HP and ${specialRestored} special use. Your HP is now ${playerState.playerHP.value}.`
+      `You consumed French Onion Soup and recovered ${healedAmount} HP and ${specialRestored} special use. Your HP is now ${playerState.playerHP.value}.`
     );
   } else {
     utilityFunctions.log("You don't have any French Onion Soup to use.");
@@ -448,12 +448,12 @@ export const useAntidote = (playerState, utilityFunctions) => {
       playerState.poisonedClicksLeft.value = 0;
       playerState.poisonDamagePerClick.value = 0;
       utilityFunctions.log(
-        `✅ You consumed an Antidote. The poison has been neutralized.`
+        `<i class="ra ra-health"></i> You consumed an Antidote. The poison has been neutralized.`
       );
       utilityFunctions.closeInventoryModal();
     } else {
       utilityFunctions.log(
-        `🚫 You are not poisoned. You don't need to use an Antidote.`
+        `<i class="ra ra-x-mark"></i> You are not poisoned. You don't need to use an Antidote.`
       );
     }
   } else {
@@ -467,7 +467,7 @@ export const useInvisibilityCloak = (
   itemConstants
 ) => {
   if (playerState.isCloakActive.value) {
-    utilityFunctions.log(`👻 The Cloak of Invisibility is already active.`);
+    utilityFunctions.log(`<i class="ra ra-angel-wings"></i> The Cloak of Invisibility is already active.`);
     return;
   }
   if (playerState.inventory.value.invisibilityCloaks > 0) {
@@ -475,16 +475,16 @@ export const useInvisibilityCloak = (
     playerState.isCloakActive.value = true;
     playerState.cloakClicksRemaining.value = itemConstants.CLOAK_DURATION;
     utilityFunctions.log(
-      `👻 You don the Cloak of Invisibility. You will avoid non-boss encounters for ${itemConstants.CLOAK_DURATION} clicks.`
+      `<i class="ra ra-angel-wings"></i> You don the Cloak of Invisibility. You will avoid non-boss encounters for ${itemConstants.CLOAK_DURATION} clicks.`
     );
   } else {
-    utilityFunctions.log(`👻 You don't have a Cloak of Invisibility.`);
+    utilityFunctions.log(`<i class="ra ra-angel-wings"></i> You don't have a Cloak of Invisibility.`);
   }
 };
 
 export const useHerbalPoultice = (playerState, utilityFunctions) => {
   if (playerState.healthRegenActive.value) {
-    utilityFunctions.log(`🌿 A health regeneration effect is already active.`);
+    utilityFunctions.log(`<i class="ra ra-leaf"></i> A health regeneration effect is already active.`);
     return;
   }
   if (playerState.inventory.value.herbalPoultices > 0) {
@@ -501,7 +501,7 @@ export const useHerbalPoultice = (playerState, utilityFunctions) => {
       playerState.healthRegenMaxHeal.value = poulticeDetails.maxHeal;
       playerState.healthRegenHealedCount.value = 0;
       utilityFunctions.log(
-        `🌿 You applied a Herbal Poultice. Health will regenerate for ${poulticeDetails.durationClicks} clicks.`
+        `<i class="ra ra-leaf"></i> You applied a Herbal Poultice. Health will regenerate for ${poulticeDetails.durationClicks} clicks.`
       );
     } else {
       utilityFunctions.log(`Error: Herbal Poultice details not found.`);
@@ -509,40 +509,6 @@ export const useHerbalPoultice = (playerState, utilityFunctions) => {
     }
   } else {
     utilityFunctions.log("You don't have any Herbal Poultices to use.");
-  }
-};
-
-export const useSmokeBomb = (
-  playerState,
-  utilityFunctions,
-  combatData,
-  modalState
-) => {
-  if (playerState.inventory.value.smokeBombs > 0) {
-    if (
-      combatData.encounter.value &&
-      combatData.encounter.value.type === "combat"
-    ) {
-      if (utilityFunctions.isBoss(combatData.encounter.value.enemy)) {
-        utilityFunctions.log(
-          `🚫 You cannot use a Smoke Bomb during a boss battle.`
-        );
-        return;
-      }
-
-      playerState.inventory.value.smokeBombs =
-        Number(playerState.inventory.value.smokeBombs || 0) - 1;
-      utilityFunctions.log(
-        `💨 You throw a Smoke Bomb. You swiftly escape the combat.`
-      );
-      combatData.encounter.value = null;
-      modalState.bossOverlay.value = false;
-      utilityFunctions.closeInventoryModal();
-    } else {
-      utilityFunctions.log(`🚫 You can only use a Smoke Bomb during combat.`);
-    }
-  } else {
-    utilityFunctions.log("You don't have any Smoke Bombs to use.");
   }
 };
 
@@ -563,11 +529,11 @@ export const useAdventurersRations = (
 
     if (playerState.blurClicksLeft.value > 0) {
       playerState.blurClicksLeft.value = 0;
-      utilityFunctions.log(`✨ Your vision clears.`);
+      utilityFunctions.log(`<i class="ra ra-aura"></i> Your vision clears.`);
     }
 
     utilityFunctions.log(
-      `🍞 You consumed Adventurer's Rations and recovered ${healedAmount} HP.`
+      `<i class="ra ra-acorn"></i> You consumed Adventurer's Rations and recovered ${healedAmount} HP.`
     );
     utilityFunctions.closeInventoryModal();
   } else {
@@ -584,7 +550,7 @@ export const useEnlightenmentFish = (
     const healedAmount = fishHPState.enlightenmentFishAccumulatedHP.value;
     if (healedAmount <= 0) {
       utilityFunctions.log(
-        `🐟 The Fish of Eternal Enlightenment has no HP accumulated yet.`
+        `<i class="ra ra-fish"></i> The Fish of Eternal Enlightenment has no HP accumulated yet.`
       );
       return;
     }
@@ -597,66 +563,11 @@ export const useEnlightenmentFish = (
     fishHPState.enlightenmentFishAccumulatedHP.value = 0;
 
     utilityFunctions.log(
-      `🐟 You consumed The Fish of Eternal Enlightenment and recovered ${healedAmount} HP. Your HP is now ${playerState.playerHP.value}.`
+      `<i class="ra ra-fish"></i> You consumed The Fish of Eternal Enlightenment and recovered ${healedAmount} HP. Your HP is now ${playerState.playerHP.value}.`
     );
   } else {
     utilityFunctions.log("You don't have The Fish of Eternal Enlightenment.");
   }
-};
-
-export const useAmuletOfSharedSuffering = (
-  playerState,
-  utilityFunctions,
-  combatData,
-  itemConstants
-) => {
-  if (playerState.inventory.value.sharedSufferingAmulets <= 0) {
-    utilityFunctions.log(
-      `💔 You don't have an Amulet of Shared Suffering to use.`
-    );
-    return;
-  }
-
-  const isInCombat =
-    combatData.encounter.value && combatData.encounter.value.type === "combat";
-
-  if (!isInCombat) {
-    utilityFunctions.log(
-      `🚫 The Amulet of Shared Suffering can only be used in combat.`
-    );
-    return;
-  }
-
-  const enemyDamage = itemConstants.AMULET_ENEMY_DAMAGE;
-  const playerDamage = itemConstants.AMULET_PLAYER_DAMAGE;
-
-  playerState.inventory.value.sharedSufferingAmulets--;
-
-  combatData.enemyHP.value = Math.max(
-    0,
-    combatData.enemyHP.value - enemyDamage
-  );
-  utilityFunctions.log(
-    `💔 You activate the Amulet of Shared Suffering. The enemy takes ${enemyDamage} damage.`
-  );
-
-  playerState.playerHP.value = Math.max(
-    0,
-    playerState.playerHP.value - playerDamage
-  );
-  utilityFunctions.log(
-    `💔 You also feel the pain, taking ${playerDamage} damage.`
-  );
-
-  if (combatData.enemyHP.value <= 0) {
-    utilityFunctions.log(`💥 The enemy was defeated by the amulet's power.`);
-    utilityFunctions.handleLootDrop(combatData.encounter.value.enemy);
-    utilityFunctions.handleCloseEncounter();
-  } else {
-    utilityFunctions.log(`Enemy HP: ${combatData.enemyHP.value}`);
-  }
-
-  utilityFunctions.closeInventoryModal();
 };
 
 export const useMinorHealthPotion = (
@@ -679,67 +590,6 @@ export const useMinorHealthPotion = (
   }
 };
 
-export const useFlashPowder = (playerState, utilityFunctions, combatData) => {
-  const { inventory } = playerState;
-  const { log, closeInventoryModal } = utilityFunctions;
-  const { encounter, enemyIsStunned } = combatData;
-
-  if (inventory.value.flashPowders <= 0) {
-    log(`You don't have any Flash Powder.`);
-    return;
-  }
-  if (!encounter.value || encounter.value.type !== "combat") {
-    log(`🚫 Flash Powder can only be used during combat.`);
-    return;
-  }
-  inventory.value.flashPowders--;
-  enemyIsStunned.value = true;
-  log(`💥 You throw Flash Powder! The enemy is blinded and will skip their next turn.`);
-  closeInventoryModal();
-};
-
-export const useVenomVial = (playerState, utilityFunctions, combatData) => {
-  const { inventory } = playerState;
-  const { log, closeInventoryModal } = utilityFunctions;
-  const { encounter, enemyStatusEffects } = combatData;
-
-  if (inventory.value.venomVials <= 0) {
-    log(`You don't have any Venom Vials.`);
-    return;
-  }
-  if (!encounter.value || encounter.value.type !== "combat") {
-    log(`🚫 Venom Vial can only be used during combat.`);
-    return;
-  }
-  inventory.value.venomVials--;
-  enemyStatusEffects.value.push({ type: "poison", damage: 3, duration: 4 });
-  log(`☠️ You splash the Venom Vial! The enemy is poisoned and will take 3 damage per turn for 4 turns.`);
-  closeInventoryModal();
-};
-
-export const useSerratedDagger = (playerState, utilityFunctions, combatData) => {
-  const { inventory } = playerState;
-  const { log, closeInventoryModal } = utilityFunctions;
-  const { encounter, serratedDaggerActive } = combatData;
-
-  if (inventory.value.serratedDaggers <= 0) {
-    log(`You don't have any Serrated Daggers.`);
-    return;
-  }
-  if (!encounter.value || encounter.value.type !== "combat") {
-    log(`🚫 Serrated Dagger can only be used during combat.`);
-    return;
-  }
-  if (serratedDaggerActive.value) {
-    log(`🗡️ A bleed effect is already primed on your next attack.`);
-    return;
-  }
-  inventory.value.serratedDaggers--;
-  serratedDaggerActive.value = true;
-  log(`🗡️ You coat your blade with the Serrated Dagger. Your next attack will cause the enemy to Bleed.`);
-  closeInventoryModal();
-};
-
 export const useLuckyCoin = (playerState, utilityFunctions, combatData) => {
   const { inventory } = playerState;
   const { log, closeInventoryModal } = utilityFunctions;
@@ -750,35 +600,16 @@ export const useLuckyCoin = (playerState, utilityFunctions, combatData) => {
     return;
   }
   if (!encounter.value || encounter.value.type !== "combat") {
-    log(`🚫 Lucky Coin can only be used during combat.`);
+    log(`<i class="ra ra-x-mark"></i> Lucky Coin can only be used during combat.`);
     return;
   }
   if (luckyFleeActive.value) {
-    log(`🪙 A guaranteed flee is already active.`);
+    log(`<i class="ra ra-gold-bar"></i> A guaranteed flee is already active.`);
     return;
   }
   inventory.value.luckyCoins--;
   luckyFleeActive.value = true;
-  log(`🪙 You flip the Lucky Coin. Your next Flee attempt is guaranteed to succeed.`);
-  closeInventoryModal();
-};
-
-export const useWardingShield = (playerState, utilityFunctions, combatData) => {
-  const { inventory } = playerState;
-  const { log, closeInventoryModal } = utilityFunctions;
-  const { wardingShieldHitsRemaining } = combatData;
-
-  if (inventory.value.wardingShields <= 0) {
-    log(`You don't have any Warding Shields.`);
-    return;
-  }
-  if (wardingShieldHitsRemaining.value > 0) {
-    log(`🛡️ A Warding Shield is already active (${wardingShieldHitsRemaining.value} hits remaining).`);
-    return;
-  }
-  inventory.value.wardingShields--;
-  wardingShieldHitsRemaining.value = 3;
-  log(`🛡️ You raise the Warding Shield! Incoming enemy attack damage is halved for the next 3 hits.`);
+  log(`<i class="ra ra-gold-bar"></i> You flip the Lucky Coin. Your next Flee attempt is guaranteed to succeed.`);
   closeInventoryModal();
 };
 
@@ -792,13 +623,13 @@ export const useWardStone = (playerState, utilityFunctions, combatData) => {
     return;
   }
   if (wardStoneActive.value) {
-    log(`🪨 A Ward Stone is already active (${wardStoneClicksRemaining.value} clicks remaining).`);
+    log(`<i class="ra ra-mountains"></i> A Ward Stone is already active (${wardStoneClicksRemaining.value} clicks remaining).`);
     return;
   }
   inventory.value.wardStones--;
   wardStoneActive.value = true;
   wardStoneClicksRemaining.value = 5;
-  log(`🪨 You activate the Ward Stone. Non-boss encounters suppressed for 5 clicks.`);
+  log(`<i class="ra ra-mountains"></i> You activate the Ward Stone. Non-boss encounters suppressed for 5 clicks.`);
 };
 
 export const useEncounterBeacon = (playerState, utilityFunctions, combatData) => {
@@ -811,12 +642,12 @@ export const useEncounterBeacon = (playerState, utilityFunctions, combatData) =>
     return;
   }
   if (encounterBeaconActive.value) {
-    log(`🏮 An Encounter Beacon is already active.`);
+    log(`<i class="ra ra-lantern-flame"></i> An Encounter Beacon is already active.`);
     return;
   }
   inventory.value.encounterBeacons--;
   encounterBeaconActive.value = true;
-  log(`🏮 You light the Encounter Beacon. Your next encounter will be a friendly NPC.`);
+  log(`<i class="ra ra-lantern-flame"></i> You light the Encounter Beacon. Your next encounter will be a friendly NPC.`);
 };
 
 export const useBountyScroll = (playerState, utilityFunctions, combatData) => {
@@ -829,12 +660,12 @@ export const useBountyScroll = (playerState, utilityFunctions, combatData) => {
     return;
   }
   if (bountyScrollActive.value) {
-    log(`📜 A Bounty Scroll is already active.`);
+    log(`<i class="ra ra-scroll-unfurled"></i> A Bounty Scroll is already active.`);
     return;
   }
   inventory.value.bountyScrolls--;
   bountyScrollActive.value = true;
-  log(`📜 You unfurl the Bounty Scroll. Your next combat victory will drop loot twice.`);
+  log(`<i class="ra ra-scroll-unfurled"></i> You unfurl the Bounty Scroll. Your next combat victory will drop loot twice.`);
   closeInventoryModal();
 };
 
@@ -848,13 +679,13 @@ export const useGoldPouch = (playerState, utilityFunctions, goldPouchData) => {
     return;
   }
   if (goldPouchAccumulatedGold.value <= 0) {
-    log(`👜 Your Gold Pouch is empty. Keep clicking to accumulate gold.`);
+    log(`<i class="ra ra-ammo-bag"></i> Your Gold Pouch is empty. Keep clicking to accumulate gold.`);
     return;
   }
   const collected = goldPouchAccumulatedGold.value;
   playerGold.value += collected;
   goldPouchAccumulatedGold.value = 0;
   inventory.value.goldPouches--;
-  log(`👜 You collect ${collected} gold from your Gold Pouch.`);
+  log(`<i class="ra ra-ammo-bag"></i> You collect ${collected} gold from your Gold Pouch.`);
   closeInventoryModal();
 };
