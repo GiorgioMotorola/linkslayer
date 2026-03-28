@@ -3,6 +3,33 @@ import { ENEMY_TYPES } from "@/utils/enemies";
 const npcModules = import.meta.glob("@/assets/data/encounters/friendly/*.yaml", { eager: true });
 export const npcData = Object.values(npcModules).flatMap((m) => m.default);
 
+// For NPCs with sequential IDs (e.g. npc_pell_001, npc_pell_002), only expose
+// the next unseen entry in the series. Standalone NPCs are included if unseen.
+const SERIES_RE = /^(.+)_(\d+)$/;
+export function getAvailableNPCs(allNpcs, seenIds) {
+  const seriesMap = {};
+  const standalone = [];
+  for (const npc of allNpcs) {
+    const m = npc.id.match(SERIES_RE);
+    if (m) {
+      (seriesMap[m[1]] ??= []).push(npc);
+    } else {
+      standalone.push(npc);
+    }
+  }
+  const available = standalone.filter((npc) => !seenIds.includes(npc.id));
+  for (const entries of Object.values(seriesMap)) {
+    entries.sort((a, b) => {
+      const na = parseInt(a.id.match(/(\d+)$/)[1]);
+      const nb = parseInt(b.id.match(/(\d+)$/)[1]);
+      return na - nb;
+    });
+    const next = entries.find((npc) => !seenIds.includes(npc.id));
+    if (next) available.push(next);
+  }
+  return available;
+}
+
 const loreModules = import.meta.glob("@/assets/data/encounters/lore/*.yaml", { eager: true });
 export const loreData = Object.values(loreModules).flatMap((m) => m.default);
 

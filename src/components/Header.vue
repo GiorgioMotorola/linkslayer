@@ -59,7 +59,7 @@
               :disabled="combatLocked || lockedActions.length === 0"
               @click="confirmTurn"
             >
-              <i class="ra ra-lightning-bolt"></i> Go
+              Go
             </button>
           </div>
 

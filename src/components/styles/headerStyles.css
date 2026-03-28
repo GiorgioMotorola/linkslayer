@@ -1135,6 +1135,7 @@ header {
 .action-queue-row {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   margin-top: 10px;
 }
@@ -1142,7 +1143,6 @@ header {
 .action-slots {
   display: flex;
   gap: 6px;
-  flex: 1;
   position: relative;
   align-items: center;
 }
@@ -1306,24 +1306,26 @@ header {
 
 .btn-confirm-turn {
   white-space: nowrap;
-  padding: 6px 14px;
-  border: 1px solid rgba(255, 220, 60, 0.5);
-  border-radius: 6px;
-  background: rgba(40, 35, 0, 0.8);
-  color: #ffe066;
+  padding: 6px 4px;
+  border: 1px solid #cc0000;
+  border-radius: 8px;
+  background: none;
+  color: #000;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition: color 0.15s;
   margin-bottom: 0;
-  height: 34px;
+  width: 64px;
+  min-height: 64px;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .btn-confirm-turn:hover:not(:disabled) {
-  background: rgba(70, 60, 0, 0.9);
-  border-color: rgba(255, 220, 60, 0.85);
+  color: #cc0000;
+  background: none;
 }
 
 .btn-confirm-turn:disabled {

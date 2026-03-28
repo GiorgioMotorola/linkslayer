@@ -36,7 +36,7 @@
     - text: Take the knife
       result: item
       details: weapon
-      amount: 1
+      amount: 2
       responseText: "You take the knife. Your hand hurts where you gripped it too hard. It is a good knife."
     - text: Go a different way
       result: none

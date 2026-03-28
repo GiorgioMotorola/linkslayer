@@ -1,6 +1,6 @@
 - id: npc_hermit_crane
   name: Old Crane
-  greeting: "She lives in a tower that is somehow shorter on the inside than the outside. She opens the door before you knock. 'Sit,' she says, pointing at a chair that isn't there. You sit anyway. She looks at your hands for a long time. 'You've killed something recently,' she says. 'Or you're about to.'"
+  greeting: "The hermi opens the door before you knock and invites you in. 'Sit,' she says, pointing at a chair that isn't there. You sit anyway. She looks at your hands for a long time. 'You've killed something recently,' she says. 'Or you're about to.'"
   options:
     - text: Ask about the road ahead
       result: none
@@ -10,4 +10,4 @@
       cost: 20
     - text: Leave immediately
       result: none
-      responseText: "She calls after you: 'The number is three.'"
+      responseText: "She calls after you: 'Watch out for that group of bandits tomorrow...'"

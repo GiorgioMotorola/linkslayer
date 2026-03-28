@@ -1,5 +1,5 @@
 import { getRandomBoss, isBoss } from "@/utils/bossGenerator";
-import { rollEncounter, npcData, loreData } from "@/utils/encounterGenerator";
+import { rollEncounter, npcData, loreData, getAvailableNPCs } from "@/utils/encounterGenerator";
 import { shopItems } from "@/utils/shopItems";
 import { buildGroupIntents } from "@/utils/enemyTurnHandler";
 
@@ -175,9 +175,7 @@ export async function handleClick({
   ) {
     if (encounterBeaconActive?.value) {
       encounterBeaconActive.value = false;
-      const availableNPCs = npcData.filter(
-        (npc) => !gameData.seenNPCEncounters.value.includes(npc.id)
-      );
+      const availableNPCs = getAvailableNPCs(npcData, gameData.seenNPCEncounters.value);
       if (availableNPCs.length > 0) {
         const npc = availableNPCs[Math.floor(Math.random() * availableNPCs.length)];
         gameData.seenNPCEncounters.value.push(npc.id);
@@ -193,14 +191,11 @@ export async function handleClick({
     let fullEncounter = null;
 
     if (roll.type === "npc") {
-      const availableNPCs = npcData.filter(
-        (npc) => !gameData.seenNPCEncounters.value.includes(npc.id)
-      );
+      const availableNPCs = getAvailableNPCs(npcData, gameData.seenNPCEncounters.value);
       if (availableNPCs.length === 0) {
         console.warn("All NPCs seen, skipping NPC encounter.");
       } else {
-        const npc =
-          availableNPCs[Math.floor(Math.random() * availableNPCs.length)];
+        const npc = availableNPCs[Math.floor(Math.random() * availableNPCs.length)];
         gameData.seenNPCEncounters.value.push(npc.id);
         fullEncounter = { type: "npc", npc };
         utilityFunctions.log(`${npc.greeting}`);

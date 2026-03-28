@@ -89,20 +89,15 @@ function applyOptionEffects({
         );
       }
       if (option.details === "health") {
-        inventory.value.breadcrumbs++;
+        inventory.value.minorHealthPotions = (inventory.value.minorHealthPotions || 0) + 1;
         log(
-          `<i class="ra ra-acorn"></i> <span class="player-name">${playerName.value}</span> received some Breadcrumbs. They've been added to your backpack.`
+          `<i class="ra ra-corked-tube"></i> <span class="player-name">${playerName.value}</span> found a Minor Health Potion. It's been added to your backpack.`
         );
       }
       if (option.details === "health-major") {
-        playerHP.value = Math.min(
-          Number(playerHP.value || 0) + (option.healthAmount || 15),
-          Number(effectiveMaxHP || 0)
-        );
+        inventory.value.healthPotions = (inventory.value.healthPotions || 0) + 1;
         log(
-          `<i class="ra ra-perspective-dice-random"></i> <span class="player-name">${
-            playerName.value
-          }</span> has gained +${option.healthAmount || 15} HP.`
+          `<i class="ra ra-corked-tube"></i> <span class="player-name">${playerName.value}</span> found a Health Potion. It's been added to your backpack.`
         );
       }
       if (option.details === "weapon") {
@@ -222,10 +217,10 @@ function applyOptionEffects({
         log(
           `<i class="ra ra-chicken-leg"></i> <span class="player-name">${playerName.value}</span> found a Turkey Leg.`
         );
-      } else if (option.id === "bark_tea_consumable") {
-        inventory.value.barkTeas++;
+      } else if (option.id === "bark_tea_consumable" || option.details === "barkTea") {
+        inventory.value.barkTeas = (inventory.value.barkTeas || 0) + 1;
         log(
-          `<i class="ra ra-coffee-mug"></i> <span class="player-name">${playerName.value}</span> found Bark Tea.`
+          `<i class="ra ra-coffee-mug"></i> <span class="player-name">${playerName.value}</span> found Bark Tea. It's been added to your backpack.`
         );
       } else if (option.details === "enlightenmentFish") {
         inventory.value.enlightenmentFish = 1;

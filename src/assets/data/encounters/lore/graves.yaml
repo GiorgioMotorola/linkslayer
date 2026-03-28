@@ -5,7 +5,7 @@
     - text: Dig it up
       result: item
       details: weapon
-      amount: 1
+      amount: 2
       responseText: "There is nothing in the ground except a second marker, facing down."
     - text: Leave a stone on it
       result: inventoryItem
@@ -22,7 +22,7 @@
     - text: Dig it up
       result: item
       details: weapon
-      amount: 1
+      amount: 2
       responseText: "The grave is empty. The stone was placed from inside."
     - text: Leave a stone on it
       result: inventoryItem
@@ -54,7 +54,7 @@
     - text: Dig it up
       result: item
       details: weapon
-      amount: 1
+      amount: 2
       responseText: "There are two skeletons. They are facing each other."
     - text: Leave a stone on it
       result: inventoryItem
@@ -71,7 +71,7 @@
     - text: Dig it up
       result: item
       details: weapon
-      amount: 1
+      amount: 2
       responseText: "Whatever was buried here was wrapped very carefully. You rebury it."
     - text: Leave a stone on it
       result: inventoryItem

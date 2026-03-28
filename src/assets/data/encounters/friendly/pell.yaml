@@ -1,6 +1,6 @@
 - id: npc_pell_001
   name: Pell
-  greeting: "A small man with an enormous pack steps around a bend. 'Oh good,' he says, as if he was expecting you. 'I've been carrying this for three days and I think it was meant for someone else.' He holds up a stoppered vial that glows faintly amber."
+  greeting: "A small man with an enormous pack steps around a bend. 'Oh good,' he says, as if he was expecting you. 'I've been carrying this for three days and I think it was meant for someone else.' By his body language, it appears he expects you to pay for... whatever it is."
   options:
     - text: Buy whatever he has - 40g
       result: mystery_item
@@ -14,7 +14,7 @@
 
 - id: npc_pell_002
   name: Pell
-  greeting: "The same small man, the same enormous pack. He's eating an apple. He offers you half without looking up. 'Funny road,' he says. 'I keep seeing the same faces.'"
+  greeting: "The same small man, the same enormous pack. He's eating an apple. He offers you half without looking up. 'Small world' he says. 'I keep seeing the same faces.'"
   options:
     - text: Buy whatever he has - 40g
       result: mystery_item
