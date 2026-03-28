@@ -48,7 +48,7 @@
             <div
               class="co-enemy-wrap"
               :class="{
-                'co-enemy-active': idx === targetIndex,
+                'co-enemy-active': idx === targetIndex && playerSelectedTarget,
                 'co-enemy-dead': enemyList[idx]?.currentHP <= 0,
                 'img-flash--dealt': idx === targetIndex && flashType === 'dealt',
                 'co-low-hp-aura': isLowHP(idx),
@@ -70,16 +70,16 @@
             <!-- Intent badge — collapses to icon, expands to full status when selected -->
             <div
               v-if="intentIconFor(idx)"
-              :key="'badge-' + idx"
+              :key="'badge-' + idx + '-' + badgeAnimKey"
               class="co-intent-badge"
               :class="{
                 'co-intent-badge--loading': getIntentFor(idx)?.action === 'unknown',
                 'co-intent-badge--danger': isDangerIntent(idx),
-                'co-intent-badge--expanded': idx === targetIndex,
+                'co-intent-badge--expanded': idx === targetIndex && playerSelectedTarget,
               }"
             >
               <!-- Collapsed: just the icon -->
-              <template v-if="idx !== targetIndex"><span v-html="intentIconFor(idx)"></span></template>
+              <template v-if="!(idx === targetIndex && playerSelectedTarget)"><span v-html="intentIconFor(idx)"></span></template>
 
               <!-- Expanded: full status card -->
               <template v-else>
@@ -149,9 +149,14 @@ const props = defineProps({
   enemyStatusEffects:  { type: Array, default: () => [] },
   lastGoldStolen:      { type: Number, default: null },
   enemyTurnKey:        { type: Number, default: 0 },
+  playerSelectedTarget: { type: Boolean, default: false },
 });
 
 defineEmits(["switch-target"]);
+
+// ── Intent badge refresh animation ───────────────────────────────────────────
+const badgeAnimKey = ref(0);
+watch(() => props.enemyTurnKey, () => { badgeAnimKey.value++; });
 
 // ── Flash animation ─────────────────────────────────────────────────────────
 const flashType = ref(null);
@@ -600,7 +605,8 @@ watch(
   font-size: clamp(14px, 2.2vh, 22px);
   line-height: 1;
   filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8));
-  animation: badge-pop 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: badge-rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: 0.18s;
   pointer-events: none;
   z-index: 2;
   color: #ca1111;
@@ -609,9 +615,10 @@ watch(
   border: white 1px solid;
 }
 
-@keyframes badge-pop {
-  from { transform: scale(0.4); opacity: 0; }
-  to   { transform: scale(1);   opacity: 1; }
+@keyframes badge-rise {
+  0%   { transform: translateY(28px) scale(0.5); opacity: 0; }
+  70%  { transform: translateY(-2px) scale(1.08); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
 }
 
 .co-intent-badge--loading {

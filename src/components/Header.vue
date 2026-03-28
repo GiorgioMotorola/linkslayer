@@ -63,6 +63,10 @@
             </button>
           </div>
 
+          <Transition name="no-target-fade">
+            <div v-if="noTargetNotice" class="no-target-notice">Select an enemy first</div>
+          </Transition>
+
           <div v-if="props.enemyNextAction === 'victory'" class="victory-panel">
             <div v-if="props.victoryLoot" class="victory-loot">
               Loot: <span v-html="props.victoryLoot"></span>
@@ -136,9 +140,9 @@
       <div class="header-main-row">
         <div class="header-stats-section">
           <div v-if="props.dogName" class="header-dog-btn dog-desktop" @click="petDog" :title="'Pet ' + props.dogName">
-            <span><i class="ra ra-pawprint"></i></span>
+            <span>🐶</span>
             <div v-if="headerHeartCount > 0" class="dog-hearts">
-              <span v-for="i in headerHeartCount" :key="i" class="dog-heart"><i class="ra ra-two-hearts"></i></span>
+              <span v-for="i in headerHeartCount" :key="i" class="dog-heart">❤️</span>
             </div>
             <div v-if="dogPlusOneVisible" class="dog-plus-one">+2</div>
           </div>
@@ -189,9 +193,9 @@
             </div>
           </div>
           <div v-if="props.dogName" class="header-dog-btn dog-mobile" @click="petDog" :title="'Pet ' + props.dogName">
-            <span><i class="ra ra-pawprint"></i></span>
+            <span>🐶</span>
             <div v-if="headerHeartCount > 0" class="dog-hearts">
-              <span v-for="i in headerHeartCount" :key="i" class="dog-heart"><i class="ra ra-two-hearts"></i></span>
+              <span v-for="i in headerHeartCount" :key="i" class="dog-heart">❤️</span>
             </div>
             <div v-if="dogPlusOneVisible" class="dog-plus-one">+2</div>
           </div>
@@ -399,6 +403,7 @@ const props = defineProps({
   maxActionsPerTurn: { type: Number, default: 1 },
   combatInventory: { type: Object, default: () => ({}) },
   serratedDaggerActive: { type: Boolean, default: false },
+  playerSelectedTarget: { type: Boolean, default: false },
 });
 
 const emit = defineEmits([
@@ -724,6 +729,8 @@ const confusedActionLabel = computed(() => {
 
 const activeAction = ref("");
 const lockedActions = ref([]);
+const noTargetNotice = ref(false);
+let noTargetTimer = null;
 const typedLine = ref("");
 const typedGreeting = ref("");
 let typeInterval = null;
@@ -1330,6 +1337,13 @@ function onSlotClick(idx) {
 }
 
 function selectAction(action) {
+  if (!props.playerSelectedTarget && action !== 'flee') {
+    openSlotIdx.value = null;
+    noTargetNotice.value = true;
+    clearTimeout(noTargetTimer);
+    noTargetTimer = setTimeout(() => { noTargetNotice.value = false; }, 2200);
+    return;
+  }
   handleAction(action);
   openSlotIdx.value = null;
 }

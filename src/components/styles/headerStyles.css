@@ -1032,6 +1032,27 @@ header {
   letter-spacing: 0.3px;
 }
 
+.no-target-notice {
+  font-size: 0.8em;
+  color: #ffcc44;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 200, 60, 0.4);
+  border-radius: 4px;
+  padding: 4px 10px;
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+  text-align: center;
+}
+
+.no-target-fade-enter-active,
+.no-target-fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.no-target-fade-enter-from,
+.no-target-fade-leave-to {
+  opacity: 0;
+}
+
 .btn-group {
   margin-top: 20px;
 }

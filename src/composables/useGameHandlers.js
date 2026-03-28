@@ -336,7 +336,12 @@ export function useGameHandlers(deps) {
 
   function handleSwitchTarget(newIndex) {
     const enc = encounter.value;
-    if (!enc?.enemies) return;
+    if (!enc) return;
+    if (!enc.enemies) {
+      // Single-enemy encounter — just mark as selected
+      encounter.value.targetIndex = newIndex;
+      return;
+    }
     const target = enc.enemies[newIndex];
     if (!target || target.currentHP <= 0) return;
     // Mutate in place — avoid replacing the ref value which triggers watchers

@@ -1,9 +1,10 @@
 - id: horse
   name: A Man About a Horse and a Horse
+  icon: '<i class="ra ra-compass"></i>'
+  explorerMapId: horse_quest
   tavernHint: "My horse was taken. Tracks go east into the Thornwood. Good reward offered for her return."
   combatType: Talking Horse
   combatEmoji: "🐴"
-  postCombatStep: 4
   turnInGold: 100
   turnInScrap: 4
   rewardLabel: "The horse is returned. Claim your 100g and 4 Scrap Metal."
@@ -14,30 +15,6 @@
     - scene: "A traveler on the road steps into your path, hat in hand. 'Beg your pardon,' he says. 'My horse was taken last night. She was stabled outside the inn and was gone by morning. I followed the tracks as far as the Vinewoods Pass before I lost my nerve. The tracks go east, into the trees. There's a clearing not far in.' He holds your gaze. 'I'd pay good coin to have her back.'"
       choices:
         - text: Follow the tracks into the Thornwood
-          next: 1
+          next: open_explorer
         - text: You can't help him
-          next: leave
-    - scene: "Vinewoods Pass closes in quickly. The light comes through in thin shafts. The tracks are easy enough to follow. Hooves pressed into soft earth, heading east. You follow them deeper. After a few minutes, the trees start to open up. You begin to hear something ahead. Two things, actually. One is the unhurried, rhythmic sound of something eating grass. The other is more frantic.Someone or something working very hard against a rope."
-      choices:
-        - text: Move toward the sounds
-          next: 2
-        - text: Turn back
-          next: leave
-    - scene: "The treeline breaks at a small clearing. You stop. There is a horse, tied up gnawling feverishly at its binds. There is another horse standing in the center of the clearing. It appears to be grazing. It has a dagger in its mouth."
-      choices:
-        - text: Step into the clearing
-          next: 3
-    - scene: "The horse with the dagger looks up. Its eyes are very wide. It is a very nervous horse. It does not move its jaw when it speaks. The words come out of the far corner of its mouth, low and sideways. 'Didn't see you there.' A pause. 'Nice day.' It glances very briefly at the tied horse, then back at you. 'That's my horse, by the way. The tied one. I tied her up because...' Another pause. 'well, I tied her because on the count umm... because she is scared of the rain. No. Not rain. She is scared of ghosts. You know, ghouls and the like. Spiders. Skeletons. They say the Tavern is going to be scary next year and I want to prepare her. The Barkeep is a mummy. Next year, I mean. And the ropes make her feel safe.' The tied horse lets out a sound that is unmistakably disagreement."
-      choices:
-        - text: Draw your weapon!
-          next: combat
-        - text: "'That horse is not yours.' Draw your weapon."
-          next: combat
-    - scene: "The Talking Horse is down. The dagger is in the grass. You cross to the birch tree and work the knot. The stolen horse steps free. She looks at you. You wait. Just for a moment. She does not speak. Thats good. You climb on. She does not speak then either. Thats great. The two of you ride west through Vinewoods Pass in complete silence, the trees thinning around you, the light coming back in."
-      choices:
-        - text: Ride back to find the man
-          next: 5
-    - scene: "The traveler is exactly where you left him on the road. He sees the horse before he sees you, and his whole face changes. He checks her over, running his hands along her neck and flanks, saying something quiet that isn't meant for you. Then he straightens up and turns toward you with wet eyes. 'She's alright,' he says. 'She's alright. Thank you. I genuinely don't have words for it.' He presses the gold into your hand. You walk away down the road. You are perhaps thirty yards off when you hear it, clearly, behind you: 'Thank you.' The man is too far away to have said it. The horse is facing the other direction. You keep walking."
-      choices:
-        - text: Keep walking
-          next: complete
+          next: -1

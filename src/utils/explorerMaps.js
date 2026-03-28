@@ -461,6 +461,101 @@ export const EXPLORER_MAPS = {
       },
     },
   },
+
+  // ── Quest: The Growling Dark ──────────────────────────────────────────────
+  cave_bear_quest: {
+    title: "Bortsville Mining Cave",
+    subtitle: "Something large is breathing in the dark.",
+    gridCols: 3,
+    gridRows: 7,
+    entrance: "cave_mouth",
+    exitNode: "cave_exit",
+    nodes: {
+      cave_exit: {
+        label: "Exit", icon: '<i class="ra ra-metal-gate"></i>', col: 2, row: 1, isExit: true,
+        connections: ["cave_mouth"],
+      },
+      cave_mouth: {
+        label: "Cave Mouth", icon: '<i class="ra ra-hole-ladder"></i>', col: 2, row: 3, isEntrance: true,
+        connections: ["cave_exit", "dark_passage"],
+        buildEncounter: (name) => ({ type: "lore", lore: { id: "cb_mouth", name,
+          text: "The tunnel slopes downward. Your boots crunch on bones: small animals, picked clean. Somewhere below, water drips in slow rhythm with something else. Something large. Breathing.",
+          options: [
+            { text: "Press deeper into the cave.", result: "explorer_room_complete" },
+          ],
+        }}),
+      },
+      dark_passage: {
+        label: "Dark Passage", icon: '<i class="ra ra-torch"></i>', col: 2, row: 5, outcome: "lore",
+        connections: ["cave_mouth", "bear_den"],
+        buildEncounter: (name) => ({ type: "lore", lore: { id: "cb_passage", name,
+          text: "The tunnel slopes down and narrows. Your boot catches something — a miner's pickaxe, bent nearly in half, the iron head twisted like tin. Whoever came down here last didn't bring it back up. Somewhere ahead, something large is breathing.",
+          options: [
+            { text: "Keep moving. Weapon ready.", result: "explorer_room_complete" },
+          ],
+        }}),
+      },
+      bear_den: {
+        label: "Bear's Den", icon: '<i class="ra ra-wolf-howl"></i>', col: 2, row: 7, outcome: "combat",
+        connections: ["dark_passage"],
+        buildEncounter: (name) => ({ type: "lore", lore: { id: "cb_den", name,
+          text: "The passage opens into a wide cavern. A shape stirs in the far shadow: enormous, shaggy, ancient. Amber eyes catch your torchlight. The Brown Bear rises to its full height and fills the cave with a roar that shakes dust from the ceiling.",
+          options: [
+            { text: "Fight!", result: "explorer_quest_combat", miniBossType: "Brown Bear" },
+            { text: "Retreat into the tunnel.", flow: "close_encounter" },
+          ],
+        }}),
+      },
+    },
+  },
+
+  // ── Quest: A Man About a Horse and a Horse ────────────────────────────────
+  horse_quest: {
+    title: "Vinewoods Pass",
+    subtitle: "The tracks go east, into the trees.",
+    gridCols: 7,
+    gridRows: 3,
+    entrance: "trail_head",
+    exitNode: "vine_exit",
+    nodes: {
+      vine_exit: {
+        label: "Head West", icon: '<i class="ra ra-metal-gate"></i>', col: 1, row: 2, isExit: true,
+        connections: ["trail_head"],
+      },
+      trail_head: {
+        label: "Trail Head", icon: '<i class="ra ra-pine-tree"></i>', col: 3, row: 2, isEntrance: true,
+        connections: ["vine_exit", "deep_woods"],
+        buildEncounter: (name) => ({ type: "lore", lore: { id: "hq_trail", name,
+          text: "Vinewoods Pass closes in quickly. The light comes through in thin shafts. The tracks are easy enough to follow. Hooves pressed into soft earth, heading east. You follow them deeper. After a few minutes, the trees start to open up. You begin to hear something ahead.",
+          options: [
+            { text: "Follow the sounds.", result: "explorer_room_complete" },
+          ],
+        }}),
+      },
+      deep_woods: {
+        label: "Deep Woods", icon: '<i class="ra ra-oak"></i>', col: 5, row: 2, outcome: "lore",
+        connections: ["trail_head", "the_clearing"],
+        buildEncounter: (name) => ({ type: "lore", lore: { id: "hq_woods", name,
+          text: "Two things, actually. One is the unhurried, rhythmic sound of something eating grass. The other is more frantic.Someone or something working very hard against a rope.",
+          options: [
+            { text: "Move toward the clearing.", result: "explorer_room_complete" },
+          ],
+        }}),
+      },
+      the_clearing: {
+        label: "The Clearing", icon: '<i class="ra ra-knight-helmet"></i>', col: 7, row: 2, outcome: "combat",
+        connections: ["deep_woods"],
+        buildEncounter: (name) => ({ type: "lore", lore: { id: "hq_clearing", name,
+          text: "The horse with the dagger looks up. Its eyes are very wide. It is a very nervous horse. It does not move its jaw when it speaks. The words come out of the far corner of its mouth, low and sideways. 'Didn't see you there.' A pause. 'Nice day.' It glances very briefly at the tied horse, then back at you. 'That\\'s my horse, by the way. The tied one. I tied her up because...' Another pause. 'well, I tied her because on the count umm... because she is scared of the rain. No. Not rain. She is scared of ghosts. You know, ghouls and the like. Spiders. Skeletons. They say the Tavern is going to be scary next year and I want to prepare her. The Barkeep is a mummy. Next year, I mean. And the ropes make her feel safe.' The tied horse lets out a sound that is unmistakably disagreement.",
+          options: [
+            { text: "Draw your weapon.", result: "explorer_quest_combat", miniBossType: "Talking Horse" },
+            { text: "'That horse is not yours.' Draw your weapon.", result: "explorer_quest_combat", miniBossType: "Talking Horse" },
+            { text: "Back away slowly.", flow: "close_encounter" },
+          ],
+        }}),
+      },
+    },
+  },
 };
 
 export function buildExplorerState(mapId) {

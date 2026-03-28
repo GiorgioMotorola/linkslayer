@@ -68,8 +68,9 @@
     :autoSaveFeedback="autoSaveFeedback"
     :scrapMetal="inventory.scrapMetal"
     @restart="handleRestart"
-    @switch-target="handleSwitchTarget"
+    @switch-target="onSwitchTarget"
     :victoryLoot="victoryLoot"
+    :playerSelectedTarget="playerSelectedTarget"
     :equippedWeaponId="equippedWeapon"
     :enemyIntents="enemyIntents"
     :maxActionsPerTurn="maxActionsPerTurn"
@@ -191,7 +192,8 @@
         @link-clicked="handleLinkClicked"
         @open-map="hubOpen = true; hubTab = 'map'"
         @open-settlement="openPageSettlement"
-        @switch-target="handleSwitchTarget"
+        @switch-target="onSwitchTarget"
+        :playerSelectedTarget="playerSelectedTarget"
         :path="path"
         :fullChain="chain"
         :currentTargetIndex="currentTargetIndex"
@@ -958,6 +960,24 @@ setupClickWatcher({
 const lastBattle = ref({ enemyName: '', article: '' });
 const recapDismissed = ref(false);
 
+// ── Enemy selection (player must click to select) ─────────────────────────
+const playerSelectedTarget = ref(false);
+
+watch(encounter, (newEnc, oldEnc) => {
+  if (newEnc?.type === 'combat' && oldEnc?.type !== 'combat') {
+    playerSelectedTarget.value = false;
+  }
+});
+
+watch(enemyTurnKey, () => {
+  playerSelectedTarget.value = false;
+});
+
+function onSwitchTarget(idx) {
+  handleSwitchTarget(idx);
+  playerSelectedTarget.value = true;
+}
+
 watch(isGameComplete, (val) => {
   if (val && !recapDismissed.value) {
     showRecap.value = true;
@@ -1489,6 +1509,10 @@ function handleOptionChosen(option) {
       encounter.value = null;
       activeQuestId.value = null;
       log(`<i class="ra ra-scroll-unfurled"></i> ${quest?.leaveLog ?? "You turn back. The quest scroll remains on the board."}`);
+    } else if (option.questStep === "open_explorer") {
+      encounter.value = null;
+      explorerState.value = buildExplorerState(quest.explorerMapId);
+      showExplorer.value = true;
     } else {
       advanceQuestStep(option.questStep);
     }
@@ -1537,6 +1561,20 @@ function handleOptionChosen(option) {
       }
       encounter.value = { type: "combat", enemies, targetIndex: 0, enemy };
       enemyHP.value = enemy.currentHP;
+    }
+    explorerActiveRoom.value = null;
+    return;
+  }
+
+  if (option.result === "explorer_quest_combat") {
+    const nodeId = explorerActiveRoom.value;
+    if (nodeId) {
+      explorerCombatRoom.value = nodeId;
+      const boss = generateMiniBoss(option.miniBossType, enemyDifficultyLevel.value);
+      encounter.value = { type: "combat", enemies: [boss], targetIndex: 0, enemy: boss };
+      enemyHP.value = boss.currentHP;
+      questCombatActive.value = true;
+      combatEncountersFought.value++;
     }
     explorerActiveRoom.value = null;
     return;
