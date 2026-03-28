@@ -35,6 +35,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
     serratedDaggerActive,
     luckyFleeActive,
     wardingShieldHitsRemaining,
+    luckyStoneRollsLeft,
     coolerStickBonus = 0,
   } = itemEffects;
 
@@ -219,12 +220,14 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
     let didHit = true;
     if (hitThreshold !== null) {
       const rawRoll = Math.floor(Math.random() * 20) + 1;
-      const roll = rawRoll + coolerStickBonus;
+      const luckyBonus = (luckyStoneRollsLeft?.value ?? 0) > 0 ? 1 : 0;
+      if (luckyBonus > 0) { luckyStoneRollsLeft.value--; }
+      const roll = rawRoll + coolerStickBonus + luckyBonus;
       didHit = roll >= hitThreshold;
       const dieClass = didHit ? "hit" : "miss";
       const dieFace = `<span class="dice-face ${dieClass}">${roll}</span>`;
-      const bonusNote = coolerStickBonus > 0 ? ` (+${coolerStickBonus} stick)` : "";
-      utils.onDiceRoll?.({ roll, rawRoll, bonus: coolerStickBonus, threshold: hitThreshold, didHit });
+      const bonusNote = (coolerStickBonus + luckyBonus) > 0 ? ` (+${coolerStickBonus + luckyBonus})` : "";
+      utils.onDiceRoll?.({ roll, rawRoll, bonus: coolerStickBonus + luckyBonus, threshold: hitThreshold, didHit });
       await utils.waitForDice?.();
       log(`<i class="ra ra-perspective-dice-random"></i> ${dieFace}${bonusNote} (need ${hitThreshold}+) — ${didHit ? "Hit!" : "Miss!"}`);
     }
@@ -390,12 +393,14 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       // BRACE: high incoming hit — requires a dice roll (8+)
       const braceRollThreshold = 8;
       const rawRoll = Math.floor(Math.random() * 20) + 1;
-      const roll = rawRoll + coolerStickBonus;
+      const luckyBonus = (luckyStoneRollsLeft?.value ?? 0) > 0 ? 1 : 0;
+      if (luckyBonus > 0) { luckyStoneRollsLeft.value--; }
+      const roll = rawRoll + coolerStickBonus + luckyBonus;
       const braceSuccess = roll >= braceRollThreshold;
       const dieClass = braceSuccess ? "hit" : "miss";
       const dieFace = `<span class="dice-face ${dieClass}">${roll}</span>`;
-      const bonusNote = coolerStickBonus > 0 ? ` (+${coolerStickBonus} stick)` : "";
-      utils.onDiceRoll?.({ roll, rawRoll, bonus: coolerStickBonus, threshold: braceRollThreshold, didHit: braceSuccess });
+      const bonusNote = (coolerStickBonus + luckyBonus) > 0 ? ` (+${coolerStickBonus + luckyBonus})` : "";
+      utils.onDiceRoll?.({ roll, rawRoll, bonus: coolerStickBonus + luckyBonus, threshold: braceRollThreshold, didHit: braceSuccess });
       await utils.waitForDice?.();
       if (braceSuccess) {
         playerDefendedThisTurn = true;
@@ -407,13 +412,15 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
     } else if (counterableActions.includes(enemyNextAction.value)) {
       // Counter attempt — dice roll at 11+
       const rawRoll = Math.floor(Math.random() * 20) + 1;
-      const roll = rawRoll + coolerStickBonus;
+      const luckyBonus = (luckyStoneRollsLeft?.value ?? 0) > 0 ? 1 : 0;
+      if (luckyBonus > 0) { luckyStoneRollsLeft.value--; }
+      const roll = rawRoll + coolerStickBonus + luckyBonus;
       const threshold = 11;
       const succeeded = roll >= threshold;
       const dieClass = succeeded ? "hit" : "miss";
       const dieFace = `<span class="dice-face ${dieClass}">${roll}</span>`;
-      const bonusNote = coolerStickBonus > 0 ? ` (+${coolerStickBonus} stick)` : "";
-      utils.onDiceRoll?.({ roll, rawRoll, bonus: coolerStickBonus, threshold, didHit: succeeded });
+      const bonusNote = (coolerStickBonus + luckyBonus) > 0 ? ` (+${coolerStickBonus + luckyBonus})` : "";
+      utils.onDiceRoll?.({ roll, rawRoll, bonus: coolerStickBonus + luckyBonus, threshold, didHit: succeeded });
       await utils.waitForDice?.();
       log(`<i class="ra ra-perspective-dice-random"></i> ${dieFace}${bonusNote} (need ${threshold}+) — ${succeeded ? "Countered!" : "Failed to counter!"}`);
       enemyActionCountered = succeeded;

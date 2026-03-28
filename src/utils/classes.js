@@ -1,7 +1,7 @@
 export const classes = {
   Fighter: {
     name: "Fighter",
-    maxHP: 6500,
+    maxHP: 65,
     special: "Power Strike",
     description:
       "65 HP. Class Ability(Power Strike) deals 8 damage. Starts with +1 Weapon Damage.",
@@ -11,9 +11,9 @@ export const classes = {
       { name: "Warlord's Strike", description: "Deals 18 damage and stuns the enemy." },
     ],
     specialEffect: (enemyHP) => enemyHP - 8,
-    startingWeaponBonus: 200,
+    startingWeaponBonus: 2,
     startingSpecialUses: 0,
-    startingShieldBonus: 200,
+    startingShieldBonus: 0,
     startingHealthPotionBonus: 0,
     startingInvisibilityCloaks: 0,
     startingPlayerGold: 0,

@@ -189,6 +189,7 @@
         :inEncounter="inEncounter"
         :settlementOnThisPage="pageSettlement"
         :settlementClaimedBy="pageSettlementClaimedBy"
+        :panelOpen="showSettlementView || showVisitorSettlement || showBrewery"
         @link-clicked="handleLinkClicked"
         @open-map="hubOpen = true; hubTab = 'map'"
         @open-settlement="openPageSettlement"
@@ -218,6 +219,41 @@
         :enemyIntents="enemyIntents"
         :enemyTurnKey="enemyTurnKey"
       />
+
+      <!-- Settlement side panel -->
+      <div v-if="showSettlementView || showVisitorSettlement" class="settlement-side-panel">
+        <SettlementModal
+          v-if="showSettlementView && settlement"
+          :settlement="settlement"
+          :playerGold="playerGold"
+          :isOwner="true"
+          :clicksSince="clickCount - lastSettlementVisitClickCount"
+          :daysCount="daysCount"
+          @close="closeSettlement"
+          @collect="handleSettlementCollect"
+          @place-building="handleSettlementPlaceBuilding"
+          @remove-building="handleSettlementRemoveBuilding"
+          @change-terrain="handleSettlementChangeTerrain"
+          :canShortRest="canShortRestAtSettlement"
+          @open-forge="showForge = true"
+          @open-brewery="showBrewery = true"
+          @short-rest="handleSettlementShortRest"
+          @update-town-meta="handleTownMetaUpdate"
+        />
+        <SettlementModal
+          v-if="showVisitorSettlement && visitingSettlementData"
+          :settlement="visitingSettlementData"
+          :playerGold="0"
+          :isOwner="false"
+          :readOnly="true"
+          :canChallenge="canChallengeSettlement"
+          :playerHasSettlement="!!settlementId"
+          :tavernBeers="visitingTavernBeers"
+          @close="showVisitorSettlement = false; visitingSettlementData = null"
+          @challenge-boss="handleChallengeSettlementBoss"
+          @open-tavern="showTavernBeerModal = true"
+        />
+      </div>
 
       <!-- Gold stolen popup -->
       <div v-if="lastGoldStolen" :key="goldPopupKey" class="gold-stolen-popup">
@@ -315,6 +351,7 @@
         :is-serrated-dagger-active="serratedDaggerActive"
         :is-lucky-flee-active="luckyFleeActive"
         :warding-shield-hits-remaining="wardingShieldHitsRemaining"
+        :luckyStoneRollsLeft="luckyStoneRollsLeft"
         :is-ward-stone-active="wardStoneActive"
         :ward-stone-clicks-remaining="wardStoneClicksRemaining"
         :is-encounter-beacon-active="encounterBeaconActive"
@@ -528,49 +565,14 @@
     </div>
   </div>
 
-  <!-- Settlement View (owner) -->
-  <SettlementModal
-    v-if="showSettlementView && settlement"
-    :settlement="settlement"
-    :playerGold="playerGold"
-    :isOwner="true"
-    :clicksSince="clickCount - lastSettlementVisitClickCount"
-    @close="closeSettlement"
-    @collect="handleSettlementCollect"
-    @place-building="handleSettlementPlaceBuilding"
-    @remove-building="handleSettlementRemoveBuilding"
-    @change-terrain="handleSettlementChangeTerrain"
-    :canShortRest="canShortRestAtSettlement"
-
-    @open-forge="showForge = true"
-    @open-brewery="showBrewery = true"
-    @short-rest="handleSettlementShortRest"
-  />
-
   <!-- Explorer backdrop — keeps background dark during room encounters -->
   <div v-if="showExplorer && !isInCombat" class="explorer-backdrop"></div>
 
-  <!-- Settlement View (visitor — read-only) -->
   <ExplorerModal
     v-if="showExplorer && explorerState && !inEncounter"
     :explorerState="explorerState"
     @move="handleExplorerMove"
     @exit="handleExplorerExit"
-  />
-
-  <SettlementModal
-    v-if="showVisitorSettlement && visitingSettlementData"
-    :settlement="visitingSettlementData"
-    :playerGold="0"
-    :isOwner="false"
-    :readOnly="true"
-    :canChallenge="canChallengeSettlement"
-    :playerHasSettlement="!!settlementId"
-    :tavernBeers="visitingTavernBeers"
-
-    @close="showVisitorSettlement = false; visitingSettlementData = null"
-    @challenge-boss="handleChallengeSettlementBoss"
-    @open-tavern="showTavernBeerModal = true"
   />
 
   <!-- Tavern Beer Shop (visitor buying from another player's tavern) -->
@@ -923,6 +925,7 @@ const {
   serratedDaggerActive,
   luckyFleeActive,
   wardingShieldHitsRemaining,
+  luckyStoneRollsLeft,
   wardStoneActive,
   wardStoneClicksRemaining,
   encounterBeaconActive,
@@ -1069,6 +1072,7 @@ const {
   gameFlow,
   log,
   logEnemyAction,
+  gameLog,
   modals,
   player,
   inventory,
@@ -1126,6 +1130,7 @@ const itemHandlers = createItemHandlers({
     enemyHP,
     enemyIsStunned: combat.enemyIsStunned,
     enemyStatusEffects: combat.enemyStatusEffects,
+    luckyStoneRollsLeft,
   },
   statusEffects: {
     poisonedClicksLeft,
@@ -1200,6 +1205,8 @@ const {
   saveBuildings,
   saveTerrain,
   saveBreweryState,
+  saveTownMeta,
+  getTownMetaFromBuildings,
   getSettlementByWikiTitle,
   markAbandoned,
   markAbandonedByOwner,
@@ -1970,6 +1977,11 @@ async function handleSettlementRemoveBuilding({ cellIndex, refund }) {
   await triggerAutoSave();
 }
 
+async function handleTownMetaUpdate({ townLog, deadNames }) {
+  if (!settlementId.value || !settlement.value) return;
+  await saveTownMeta(settlementId.value, { townLog, deadNames });
+}
+
 async function handleSettlementChangeTerrain({ cellIndex, terrainType }) {
   if (!settlementId.value || !settlement.value) return;
   const terrain = [...(settlement.value.terrain ?? [])];
@@ -2063,6 +2075,8 @@ function handleUseInventoryItem(itemType, mapId) {
     itemHandlers.useGoldPouch();
   } else if (itemType === "bountyScroll") {
     itemHandlers.useBountyScroll();
+  } else if (itemType === "luckyStone") {
+    itemHandlers.useLuckyStone();
   } else if (itemType === "settlementFlag") {
     if (pageSettlement.value) {
       const claimedBy = pageSettlement.value.lord_history?.[0]?.playerName ?? "another player";
@@ -2361,6 +2375,28 @@ watch(user, async (newUser, oldUser) => {
 
 <style scoped>
 @import "./styles/gameViewStyles.css";
+
+.settlement-side-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 680px;
+  height: 100dvh;
+  z-index: 150;
+  background: #111111;
+  border-left: 1px solid #2a2a2a;
+  box-shadow: -6px 0 32px rgba(0, 0, 0, 0.7);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 700px) {
+  .settlement-side-panel {
+    width: 100vw;
+    border-left: none;
+  }
+}
 </style>
 
 <style>

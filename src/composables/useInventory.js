@@ -17,6 +17,7 @@ import {
   useEncounterBeacon as externalUseEncounterBeacon,
   useGoldPouch as externalUseGoldPouch,
   useBountyScroll as externalUseBountyScroll,
+  useLuckyStone as externalUseLuckyStone,
 } from "@/utils/itemHandlers";
 
 export function useInventory() {
@@ -43,6 +44,7 @@ export function useInventory() {
     venomVials: 0,
     serratedDaggers: 0,
     luckyCoins: 0,
+    luckyStones: 0,
     wardingShields: 0,
     wardStones: 0,
     encounterBeacons: 0,
@@ -328,6 +330,14 @@ export function useInventory() {
           { inventory },
           { log: utilityFunctions.log, closeInventoryModal: modalState.closeInventoryModal },
           { bountyScrollActive: statusEffects.bountyScrollActive }
+        );
+      },
+
+      useLuckyStone: () => {
+        externalUseLuckyStone(
+          { inventory },
+          { log: utilityFunctions.log, closeInventoryModal: modalState.closeInventoryModal },
+          { encounter: combatData.encounter, luckyStoneRollsLeft: combatData.luckyStoneRollsLeft }
         );
       },
     };

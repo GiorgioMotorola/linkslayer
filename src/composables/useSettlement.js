@@ -267,6 +267,27 @@ export function useSettlement() {
    * Claim an abandoned settlement after defeating the guardian boss.
    * Transfers ownership, clears abandoned flag, and records history events.
    */
+  // ── Town meta (dead names + town log) stored as sentinels in buildings ──
+  function getTownMetaFromBuildings(buildings) {
+    const deadNames = (buildings ?? []).find(b => b.type === "__residents__")?.deadNames ?? [];
+    const townLog   = (buildings ?? []).find(b => b.type === "__townlog__")?.townLog ?? {};
+    return { deadNames, townLog };
+  }
+
+  async function saveTownMeta(sId, { deadNames, townLog }) {
+    const current  = settlement.value?.buildings ?? [];
+    const filtered = current.filter(b => b.type !== "__residents__" && b.type !== "__townlog__");
+    const updated  = [
+      ...filtered,
+      { type: "__residents__", cellIndex: -3, deadNames },
+      { type: "__townlog__",   cellIndex: -4, townLog   },
+    ];
+    await saveBuildings(sId, updated);
+    if (settlement.value) {
+      settlement.value = { ...settlement.value, buildings: updated };
+    }
+  }
+
   async function saveBreweryState(sId, breweryState) {
     // Embed brewery state as a hidden sentinel at the end of the buildings array.
     // This avoids needing a separate brewery_state DB column.
@@ -337,5 +358,7 @@ export function useSettlement() {
     markAbandonedByOwner,
     claimSettlement,
     saveBreweryState,
+    saveTownMeta,
+    getTownMetaFromBuildings,
   };
 }

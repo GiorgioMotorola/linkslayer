@@ -250,6 +250,17 @@ export const shopItems = [
     haikuThree: "Fate awaits the cut.",
   },
   {
+    id: "lucky_stone",
+    name: "Lucky Stone",
+    cost: 15,
+    effect: "inventoryItem",
+    details: "luckyStone",
+    description: "A small grey stone. +1 to your next 3 dice rolls in combat.",
+    haikuOne: "Stone worn smooth by hands",
+    haikuTwo: "Fortune pressed into the palm",
+    haikuThree: "Three more chances, held.",
+  },
+  {
     id: "bounty_scroll",
     name: "Bounty Scroll",
     cost: 20,

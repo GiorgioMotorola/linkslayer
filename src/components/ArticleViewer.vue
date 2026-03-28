@@ -70,12 +70,11 @@
   <div class="article" :class="{ 'blurred-content': isBlurred || props.isInCombat }">
     <div v-if="inEncounter" class="overlay"></div>
     <div class="title">{{ formattedTitle }}</div>
-    <div v-if="isLoading" class="loader-overlay">
-  </div>
+    <div v-if="isLoading" class="loader-overlay"></div>
     <div
       v-html="articleHtml"
       @click.prevent="handleLinkClick"
-      :style="{ pointerEvents: inEncounter || isLoading ? 'none' : 'auto' }"
+      :style="{ pointerEvents: inEncounter || isLoading || props.panelOpen ? 'none' : 'auto' }"
     ></div>
   </div>
 </template>
@@ -111,6 +110,7 @@ const props = defineProps({
   lastDamageTaken: { type: Number, default: null },
   enemyStatusEffects:  { type: Array, default: () => [] },
   settlementOnThisPage: { type: Object, default: null },
+  panelOpen: { type: Boolean, default: false },
   settlementClaimedBy:  { type: String, default: "" },
   encounter:            { type: Object, default: null },
   enemyNextAction:      { type: String, default: null },
@@ -196,6 +196,7 @@ const hideElementTimeout = ref(null);
 const isLoading = ref(false);
 
 const formattedTitle = computed(() => props.articleTitle.replaceAll("_", " "));
+
 
 function parseWikipediaUrl(url) {
   try {
@@ -344,7 +345,9 @@ onMounted(load);
   font-family: Arial, Helvetica, sans-serif;
   color: rgb(54, 54, 54);
   font-weight: 400;
+  position: relative;
 }
+
 
 .settlement-banner {
   background: #4169E1;

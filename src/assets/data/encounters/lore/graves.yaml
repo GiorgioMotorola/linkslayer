@@ -1,0 +1,82 @@
+- id: lore_grave_001
+  name: Here Lies M.
+  text: "A grave marker, hand-cut, shoved into the earth at a slight angle. The inscription reads: HERE LIES M. Below that, in smaller letters, someone has added: HE KNEW."
+  options:
+    - text: Dig it up
+      result: item
+      details: weapon
+      amount: 1
+      responseText: "There is nothing in the ground except a second marker, facing down."
+    - text: Leave a stone on it
+      result: inventoryItem
+      id: lucky_stone
+      responseText: "You set a stone on the grave. Old tradition. Means something."
+    - text: Read the inscription again
+      result: none
+      responseText: "On second reading, it says: HE KNEW EVERYTHING."
+
+- id: lore_grave_002
+  name: Here Lies the Author of This
+  text: "A flat stone, flush with the earth. Someone took time with the lettering: HERE LIES THE AUTHOR OF THIS. There is no date. There is no name."
+  options:
+    - text: Dig it up
+      result: item
+      details: weapon
+      amount: 1
+      responseText: "The grave is empty. The stone was placed from inside."
+    - text: Leave a stone on it
+      result: inventoryItem
+      id: lucky_stone
+      responseText: "You set a stone on the grave. Old tradition. Means something."
+    - text: Read it twice
+      result: none
+      responseText: "On second reading, the inscription says: DON'T."
+
+- id: lore_grave_003
+  name: Here Lies Our Dog
+  text: "A small mound with a carefully painted sign. Someone loved this dog very much. The sign lists fourteen qualities of the dog, including brave, loyal, and better at directions than Father."
+  options:
+    - text: Dig it up
+      result: none
+      responseText: "You put the shovel down."
+    - text: Leave a stone on it
+      result: inventoryItem
+      id: lucky_stone
+      responseText: "You set a stone on the grave. Old tradition. Means something."
+    - text: Read the whole list
+      result: none
+      responseText: "The last quality on the list is: present."
+
+- id: lore_grave_004
+  name: Here Lies a Reasonable Man
+  text: "A weathered stone. The inscription reads: HERE LIES A REASONABLE MAN. Someone has scratched underneath, in a different hand: HE WASN'T."
+  options:
+    - text: Dig it up
+      result: item
+      details: weapon
+      amount: 1
+      responseText: "There are two skeletons. They are facing each other."
+    - text: Leave a stone on it
+      result: inventoryItem
+      id: lucky_stone
+      responseText: "You set a stone on the grave. Old tradition. Means something."
+    - text: Read the scratched part again
+      result: none
+      responseText: "On second look, the scratched part says: NOT YET."
+
+- id: lore_grave_005
+  name: No Marker
+  text: "A mound in the earth, shaped deliberately, no marker. Someone knew where it was. Someone made sure it could not be found by name."
+  options:
+    - text: Dig it up
+      result: item
+      details: weapon
+      amount: 1
+      responseText: "Whatever was buried here was wrapped very carefully. You rebury it."
+    - text: Leave a stone on it
+      result: inventoryItem
+      id: lucky_stone
+      responseText: "You set a stone on the grave. Old tradition. Means something."
+    - text: Stand there for a moment
+      result: none
+      responseText: "You stand there for a moment."

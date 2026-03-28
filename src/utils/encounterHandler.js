@@ -2,6 +2,16 @@ import { generateEnemy, generateEnemyGroup } from "@/utils/encounterGenerator";
 import { generateMiniBoss } from "@/utils/miniBossGenerator";
 import { getRandomTreasureMapArticle } from "@/utils/treasureMapArticles";
 
+const MYSTERY_ITEM_POOL = [
+  { inv: 'healthPotions',     name: 'Health Potion' },
+  { inv: 'turkeyLegs',        name: 'Turkey Leg' },
+  { inv: 'barkTea',           name: 'Bark Tea' },
+  { inv: 'luckyStones',       name: 'Lucky Stone' },
+  { inv: 'smokeBombs',        name: 'Smoke Bomb' },
+  { inv: 'minorHealthPotions',name: 'Minor Health Potion' },
+  { inv: 'antidotes',         name: 'Antidote' },
+];
+
 const TREASURE_AUGMENT_POOL = [
   { type: "weaponAugment", key: "bleedEdge",    name: "Serrated Edge" },
   { type: "weaponAugment", key: "venomCoat",    name: "Venom Coat" },
@@ -186,6 +196,15 @@ function applyOptionEffects({
           `<i class="ra ra-cog"></i> <span class="player-name">${playerName.value}</span> found ${scrapAmount} Scrap Metal.`
         );
       }
+      if (option.details === "gold_damage") {
+        const goldAmount = Number(option.goldAmount) || 25;
+        const damageAmount = Number(option.damageAmount) || 5;
+        playerGold.value += goldAmount;
+        playerHP.value = Math.max(0, Number(playerHP.value || 0) - damageAmount);
+        log(
+          `<i class="ra ra-gold-bar"></i> <span class="player-name">${playerName.value}</span> took ${goldAmount} Gold but lost ${damageAmount} HP.`
+        );
+      }
       break;
     case "inventoryItem":
       if (option.id === "health_potion_consumable") {
@@ -212,6 +231,11 @@ function applyOptionEffects({
         inventory.value.enlightenmentFish = 1;
         log(
           `<i class="ra ra-fish"></i> <span class="player-name">${playerName.value}</span> acquired The Fish of Eternal Enlightenment.`
+        );
+      } else if (option.id === "lucky_stone") {
+        inventory.value.luckyStones = (inventory.value.luckyStones ?? 0) + 1;
+        log(
+          `<i class="ra ra-mountains"></i> <span class="player-name">${playerName.value}</span> picked up a Lucky Stone.`
         );
       }
       break;
@@ -565,6 +589,46 @@ export function handleEncounterOption({
     modalState.showCampfireOverlay.value = true;
     enemyState.encounter.value = null;
     modalState.bossOverlay.value = false;
+    return;
+  }
+
+  if (option.result === "mystery_item") {
+    const cost = Number(option.cost) || 40;
+    const { playerGold, inventory, playerName } = playerState;
+    const { log } = utilityFunctions;
+    if (playerGold.value < cost) {
+      log(`<i class="ra ra-x-mark"></i> You need ${cost}g. You have ${playerGold.value}g.`);
+      return;
+    }
+    playerGold.value -= cost;
+    const pick = MYSTERY_ITEM_POOL[Math.floor(Math.random() * MYSTERY_ITEM_POOL.length)];
+    inventory.value[pick.inv] = (inventory.value[pick.inv] ?? 0) + 1;
+    const resultText = `You hand over ${cost}g. He reaches into the pack without looking. He produces: ${pick.name}.`;
+    showFinalScene(resultText, currentEncounter, enemyState);
+    return;
+  }
+
+  if (option.result === "read_log") {
+    const cost = Number(option.cost) || 20;
+    const { playerGold, playerName } = playerState;
+    const { log, gameLog } = utilityFunctions;
+    if (playerGold.value < cost) {
+      log(`<i class="ra ra-x-mark"></i> You need ${cost}g. You have ${playerGold.value}g.`);
+      return;
+    }
+    playerGold.value -= cost;
+    const entries = (gameLog ?? [])
+      .filter(e => e.text && !e.text.includes('You select:') && !e.text.includes('Select an enemy'))
+      .slice(-30);
+    let resultText;
+    if (entries.length > 3) {
+      const entry = entries[Math.floor(Math.random() * (entries.length - 3))];
+      const stripped = entry.text.replace(/<[^>]*>/g, '').replace(/^\d+\.\s*/, '').trim();
+      resultText = `She closes her eyes. After a long silence she says: "${stripped}"`;
+    } else {
+      resultText = `She looks at your hands. "You have not done enough yet for me to read."`;
+    }
+    showFinalScene(resultText, currentEncounter, enemyState);
     return;
   }
 

@@ -1,63 +1,107 @@
-/* ── Overlay ──────────────────────────────────────────────────────────────── */
-.settlement-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.92);
-  z-index: 200;
-  overflow-y: auto;
+/* ── Panel header ─────────────────────────────────────────────────────────── */
+.sp-header {
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid #2a2a2a;
+}
+.sp-title-group {
   display: flex;
-  justify-content: center;
-  padding: 16px 8px 32px;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.sp-town-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f5deb3;
+  font-family: Georgia, serif;
+}
+.sp-region {
+  font-size: 0.78rem;
+  color: #6a5a40;
+}
+.sp-lord-line {
+  font-size: 0.78rem;
+  color: #7a6a50;
+  margin-top: 2px;
 }
 
+/* ── Minimal buttons ──────────────────────────────────────────────────────── */
+.sp-btn {
+  background: none;
+  border: none;
+  color: #a08060;
+  padding: 2px 6px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 0.12s;
+}
+.sp-btn:hover:not(:disabled) { color: #f5deb3; }
+.sp-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.sp-btn-active { color: #c8a96e; }
+.sp-btn-leave { margin-left: auto; color: #7a5040; }
+.sp-btn-leave:hover { color: #e09070; }
+.sp-btn-history {
+  display: block;
+  color: #5a4a30;
+  font-size: 0.75rem;
+  padding: 2px 0;
+}
+.sp-btn-history:hover { color: #a08060; }
+
+/* ── Button rows ──────────────────────────────────────────────────────────── */
+.sp-btn-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  position: relative;
+}
+.sp-resource-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 4px 0 2px;
+  border-top: 1px solid #1e1e1e;
+}
+
+/* ── Overlay (kept for compat) ────────────────────────────────────────────── */
+.settlement-overlay {
+  width: 100%;
+}
 .settlement-panel {
   width: 100%;
-  max-width: 760px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
 /* ── Header ───────────────────────────────────────────────────────────────── */
 .settlement-header {
-  border-bottom: 1px solid #01345e;
+  border-bottom: 1px solid #a2a9b1;
   padding-bottom: 10px;
 }
 
 .settlement-town-name {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #f5deb3;
+  color: #000;
   letter-spacing: 0.04em;
+  font-family: Linux Libertine, Georgia, Times, serif;
 }
 
 .settlement-region {
   font-size: 0.8rem;
-  color: #f0efee;
+  color: #54595d;
   margin-top: 2px;
 }
 
-.settlement-close-btn {
-  background: none;
-  border: 1px solid #4a3728;
-  color: #f1f1f1;
-  padding: 6px 14px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: color 0.15s, border-color 0.15s;
-  white-space: nowrap;
-}
-.settlement-close-btn:hover {
-  color: #01345e;
-  border-color: #7a5738;
-}
 
 /* ── Lord bar ─────────────────────────────────────────────────────────────── */
 .settlement-visitor-badge {
-  background: #1a2a1a;
-  border: 1px solid #3a6a3a;
-  color: #7acc7a;
+  background: #eaf3ea;
+  border: 1px solid #6a9f6a;
+  color: #2a6a2a;
   font-size: 0.8rem;
   font-weight: 600;
   padding: 4px 10px;
@@ -68,14 +112,14 @@
 
 .settlement-lord-bar {
   font-size: 0.85rem;
-  color: #c8a96e;
+  color: #54595d;
   display: flex;
   gap: 6px;
   align-items: center;
 }
-.lord-label { color: #7a6040; }
-.lord-name  { font-weight: 600; color: #f5deb3; }
-.lord-since { color: #7a6040; }
+.lord-label { color: #54595d; }
+.lord-name  { font-weight: 600; color: #202122; }
+.lord-since { color: #72777d; }
 
 /* ── Resources ────────────────────────────────────────────────────────────── */
 .settlement-resources {
@@ -90,7 +134,7 @@
 }
 
 .resource-item {
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   color: #6a5040;
   display: flex;
   align-items: center;
@@ -101,25 +145,6 @@
   color: #c8a96e;
 }
 
-.collect-btn {
-  margin-left: auto;
-  background: #2c3e1a;
-  border: 1px solid #4a7a28;
-  color: #8fc050;
-  padding: 5px 14px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background 0.15s, color 0.15s;
-}
-.collect-btn:hover:not(:disabled) {
-  background: #3a5220;
-  color: #b0e060;
-}
-.collect-btn:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
 
 /* ── Castle actions ───────────────────────────────────────────────────────── */
 .settlement-castle-actions {
@@ -151,6 +176,12 @@
   opacity: 0.45;
   cursor: not-allowed;
 }
+.btn-divider {
+  color: #4a4a4a;
+  padding: 0 2px;
+  user-select: none;
+}
+
 .castle-rest-used {
   font-size: 0.75rem;
   color: #8a7a5a;
@@ -159,21 +190,22 @@
 
 /* ── Grid (canvas) ────────────────────────────────────────────────────────── */
 .settlement-grid-wrapper {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
 }
 
 .settlement-canvas {
   display: block;
-  max-width: 100%;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 640 / 512;
 }
 
 .canvas-cell-label {
   margin-top: 4px;
   font-size: 1rem;
-  color: #d4d4d3;
+  color: #54595d;
   min-height: 1.2em;
 }
 
@@ -251,63 +283,55 @@
   font-style: italic;
 }
 .building-info-deconstruct {
-  margin-top: 6px;
-  background: #2a0a0a;
-  border: 1px solid #7a2a2a;
-  color: #c07070;
-  padding: 5px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.82rem;
+  background: none;
+  border: none;
+  color: #804040;
+  padding: 2px 0;
+  font-size: 0.75rem;
   font-family: inherit;
+  cursor: pointer;
 }
-.building-info-deconstruct:hover {
-  background: #3e1010;
-  color: #e09090;
+.building-info-deconstruct:hover { color: #e07070; }
+
+.building-info-residents {
+  margin: 4px 0 6px;
+}
+.building-info-residents-title {
+  font-size: 0.7rem;
+  color: #6a5040;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 3px;
+}
+.building-info-resident {
+  font-size: 0.8rem;
+  color: #a08060;
+  line-height: 1.6;
 }
 
 /* ── Building palette ─────────────────────────────────────────────────────── */
 .building-palette {
   background: #161616;
-  border: 1px solid #3b3b3b;
-  border-radius: 6px;
-  padding: 10px 12px;
-}
-
-.build-btn-wrapper {
-  position: relative;
+  border-top: 1px solid #222;
+  padding: 6px 12px 10px;
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px;
+  flex-direction: column;
+  gap: 2px;
 }
-
 
 .build-popup-btn {
-  background: #1b1b1b;
-  border: 1px solid #f5deb3;
-  color: #f5deb3;
-  padding: 6px 14px;
+  background: none;
+  border: none;
+  color: #a08060;
+  padding: 2px 6px;
   font-size: 0.82rem;
-  font-weight: 600;
+  font-family: inherit;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background 0.15s, color 0.15s;
+  transition: color 0.12s;
 }
-.build-popup-btn:hover {
-  background: #999896;
-  color: #f5deb3;
-}
-.build-popup-btn.selected {
-  background: #1b1b1b;
-  color: #f5deb3;
-  border-color: #c8a96e;
-}
-.build-popup-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
+.build-popup-btn:hover { color: #f5deb3; }
+.build-popup-btn.selected { color: #c8a96e; }
+.build-popup-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
 /* ── Placement confirm dialog ─────────────────────────────────────────────── */
 .placement-confirm-overlay {
@@ -527,6 +551,8 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  max-height: 280px;
+  overflow-y: auto;
 }
 
 .history-title {
@@ -549,6 +575,31 @@
 .history-end-reason { color: #c06060; font-style: italic; }
 
 .history-empty { font-size: 0.8rem; color: #5a4030; font-style: italic; }
+
+.history-day-block {
+  margin-bottom: 10px;
+}
+.history-day-label {
+  font-size: 0.7rem;
+  color: #6a5040;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 3px;
+}
+.history-town-event {
+  font-size: 0.8rem;
+  color: #ede8e0;
+  line-height: 1.5;
+  padding: 1px 0;
+  margin-bottom: 2px;
+  display: flex;
+  gap: 6px;
+}
+.history-bullet {
+  color: #7a6a5a;
+  flex-shrink: 0;
+  user-select: none;
+}
 
 .history-event {
   font-size: 0.78rem;

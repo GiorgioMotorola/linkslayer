@@ -1,0 +1,66 @@
+- id: npc_pell_001
+  name: Pell
+  greeting: "A small man with an enormous pack steps around a bend. 'Oh good,' he says, as if he was expecting you. 'I've been carrying this for three days and I think it was meant for someone else.' He holds up a stoppered vial that glows faintly amber."
+  options:
+    - text: Buy whatever he has - 40g
+      result: mystery_item
+      cost: 40
+    - text: Ask where he's headed
+      result: none
+      responseText: "He names a place you have never heard of. He tips his hat and walks on."
+    - text: Pass him by
+      result: none
+      responseText: "He watches you go. You hear the pack shifting as he starts walking again."
+
+- id: npc_pell_002
+  name: Pell
+  greeting: "The same small man, the same enormous pack. He's eating an apple. He offers you half without looking up. 'Funny road,' he says. 'I keep seeing the same faces.'"
+  options:
+    - text: Buy whatever he has - 40g
+      result: mystery_item
+      cost: 40
+    - text: Ask where he's headed
+      result: none
+      responseText: "'Eventually I got there. Strange place. You'd hate it.' He names somewhere else and starts walking."
+    - text: Pass him by
+      result: none
+      responseText: "He tips his hat as you pass."
+
+- id: npc_pell_003
+  name: Pell
+  greeting: "He's sitting on a rock, boots off. He looks up when he hears you. 'You again.' He seems pleased. He produces something from the pack without being asked."
+  options:
+    - text: Buy whatever he has - 40g
+      result: mystery_item
+      cost: 40
+    - text: Ask where he's going this time
+      result: none
+      responseText: "He names a place. Adds that he has heard it is quiet. He says quiet like it means something specific."
+    - text: Pass him by
+      result: none
+      responseText: "He raises a hand. 'Safe roads,' he says."
+
+- id: npc_pell_004
+  name: Pell
+  greeting: "You hear him before you see him. He rounds a corner as you round a corner. You nearly collide. 'Ha,' he says. He does not seem surprised."
+  options:
+    - text: Buy whatever he has - 40g
+      result: mystery_item
+      cost: 40
+    - text: Ask where he's going
+      result: none
+      responseText: "'There's someone there who owes me a debt. Or I owe them. I can never remember which.' He walks."
+    - text: Pass him by
+      result: none
+      responseText: "You both step aside at the same time, then the other way. He laughs."
+
+- id: npc_pell_005
+  name: Pell
+  greeting: "He's standing still in the middle of the road, pack on the ground, looking at the sky. He turns when he hears you. Something in his face has changed. 'I don't know where I'm going,' he says. 'I've been walking for a long time and I'm not sure I ever did.' He picks up the pack. He keeps walking."
+  options:
+    - text: Call after him
+      result: none
+      responseText: "He raises a hand without turning around."
+    - text: Watch him go
+      result: none
+      responseText: "He gets smaller. Then he is gone."

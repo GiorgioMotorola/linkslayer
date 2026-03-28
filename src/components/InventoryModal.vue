@@ -375,6 +375,22 @@
           </div>
         </div>
 
+        <div v-if="inventory.luckyStones > 0" class="item-slot-wrapper">
+          <div class="item-details-box">
+            <div class="item-name-quantity">
+              <span class="item-name">Lucky Stone</span>
+              <span class="item-count">x{{ inventory.luckyStones }}</span>
+            </div>
+            <div class="item-description">
+              {{ itemDesc.luckyStone }}
+              <template v-if="luckyStoneRollsLeft > 0"> ({{ luckyStoneRollsLeft }} rolls remaining.)</template>
+            </div>
+          </div>
+          <div class="item-button-box">
+            <button class="buy-button-details" @click.stop="useItem('luckyStone')" :disabled="!isInCombat || luckyStoneRollsLeft > 0">Use</button>
+          </div>
+        </div>
+
         <div v-if="inventory.wardingShields > 0" class="item-slot-wrapper">
           <div class="item-details-box">
             <div class="item-name-quantity">
@@ -727,6 +743,10 @@ const props = defineProps({
     default: false,
   },
   wardingShieldHitsRemaining: {
+    type: Number,
+    default: 0,
+  },
+  luckyStoneRollsLeft: {
     type: Number,
     default: 0,
   },

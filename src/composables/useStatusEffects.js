@@ -14,6 +14,7 @@ export function useStatusEffects() {
   const serratedDaggerActive = ref(false);
   const luckyFleeActive = ref(false);
   const wardingShieldHitsRemaining = ref(0);
+  const luckyStoneRollsLeft = ref(0);
   const wardStoneActive = ref(false);
   const wardStoneClicksRemaining = ref(0);
   const encounterBeaconActive = ref(false);
@@ -174,6 +175,7 @@ export function useStatusEffects() {
     serratedDaggerActive,
     luckyFleeActive,
     wardingShieldHitsRemaining,
+    luckyStoneRollsLeft,
     wardStoneActive,
     wardStoneClicksRemaining,
     encounterBeaconActive,

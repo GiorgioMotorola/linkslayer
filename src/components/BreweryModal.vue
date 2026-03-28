@@ -1,5 +1,5 @@
 <template>
-  <div class="brewery-overlay" @click.self="$emit('close')">
+  <div class="brewery-overlay">
     <div class="brewery-panel">
 
       <!-- Header -->
@@ -633,25 +633,28 @@ const markerPct = computed(() => Math.min((clickDelta.value / QUALITY_BAR_MAX) *
 
 .brewery-overlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.70);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 0;
+  right: 0;
+  bottom: 0;
   z-index: 1200;
+  pointer-events: none;
 }
 
 .brewery-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 680px;
+  height: 100dvh;
   background: #131820;
-  border: 1px solid #2d3f55;
-  border-radius: 8px;
-  width: min(720px, 96vw);
-  max-height: 88vh;
+  border-left: 1px solid #2d3f55;
+  box-shadow: -6px 0 32px rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   font-family: "IBM Plex Sans", Arial, sans-serif;
   color: #c8d8e8;
+  pointer-events: all;
 }
 
 .brewery-header {
@@ -1122,14 +1125,10 @@ const markerPct = computed(() => Math.min((clickDelta.value / QUALITY_BAR_MAX) *
 .stock-btn-sell:hover { background: #2a2a18; }
 
 /* ─── MOBILE ─── */
-@media (max-width: 520px) {
+@media (max-width: 700px) {
   .brewery-panel {
     width: 100vw;
-    max-height: 100dvh;
-    border-radius: 0;
     border-left: none;
-    border-right: none;
-    border-top: none;
   }
 
   .brewery-content {

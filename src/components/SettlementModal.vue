@@ -1,196 +1,130 @@
 <template>
-  <div class="settlement-overlay">
-    <div class="settlement-panel">
-
-      <!-- Header -->
-      <div class="settlement-header">
-        <div class="settlement-title-block">
-          <div class="settlement-town-name"><i class="ra ra-castle-emblem"></i> {{ settlement.town_name }}</div>
-          <div class="settlement-region"><i class="ra ra-archery-target"></i> {{ settlement.wiki_title.replaceAll("_", " ") }}</div>
-        </div>
-      </div>
-
-      <!-- Lord info -->
-      <div class="settlement-lord-bar" v-if="currentLord">
-        <template v-if="props.readOnly">
-          <span class="lord-label"><i class="ra ra-castle-flag"></i> Claimed by</span>
-          <span class="lord-name">{{ (currentLord.signInEmail ?? currentLord.playerName ?? "").split("@")[0] }}</span>
-        </template>
-        <template v-else>
-          <span class="lord-label"><i class="ra ra-crown"></i> Lord</span>
-          <span class="lord-name">{{ currentLord.playerName }}</span>
-        </template>
-      </div>
-
-        <div class="canvas-cell-label" v-if="hoveredLabel">{{ hoveredLabel }}</div>
-        <div class="placement-error" v-if="placementError">{{ placementError }}</div>
-
-      <!-- Read-only visitor badge -->
-      <div v-if="props.readOnly" class="settlement-visitor-badge"><i class="ra ra-eyeball"></i> Visiting — Read Only</div>
-
-      <!-- Grid (canvas) -->
-      <div class="settlement-grid-wrapper">
-        <canvas
-          ref="canvasRef"
-          width="640"
-          height="512"
-          class="settlement-canvas"
-          :style="{ cursor: selectedBuildingType ? 'pointer' : 'default' }"
-          @click="handleCanvasClick"
-          @mousemove="handleCanvasMouseMove"
-          @mouseleave="onCanvasMouseLeave"
-        />
-      </div>
-
-      <!-- Building info panel (cursor mode) -->
-      <div v-if="selectedBuilding" class="building-info-panel">
-        <button class="building-info-close" @click="selectedBuilding = null">✕</button>
-        <div class="building-info-header">
-          <img :src="paletteUrls[selectedBuilding.building.type]" class="building-info-img" />
-          <div>
-            <div class="building-info-name">{{ selectedBuilding.building.name || selectedBuilding.def.name }}</div>
-            <div class="building-info-worker"><i class="ra ra-player"></i> {{ workerName(selectedBuilding.building.cellIndex) }}</div>
-          </div>
-        </div>
-        <div class="building-info-desc">{{ selectedBuilding.def.description }}</div>
-        <button
-          v-if="!props.readOnly && selectedBuilding.def.category === 'structure'"
-          class="building-info-deconstruct"
-          @click="pendingDeconstruct = { building: selectedBuilding.building, def: selectedBuilding.def }"
-        ><i class="ra ra-shovel"></i> Deconstruct (refund {{ selectedBuilding.def.cost }}g)</button>
-        <div class="building-info-earnings">
-          <div class="building-info-earnings-title">All-time earnings</div>
-          <div v-if="selectedBuilding.building.totalEarned?.gold > 0"><i class="ra ra-gold-bar"></i> {{ selectedBuilding.building.totalEarned.gold }}g</div>
-          <div v-if="selectedBuilding.building.totalEarned?.scrap > 0"><i class="ra ra-cog"></i> {{ selectedBuilding.building.totalEarned.scrap }} scrap</div>
-          <div v-if="selectedBuilding.building.totalEarned?.healthPotions > 0"><i class="ra ra-flask"></i> {{ selectedBuilding.building.totalEarned.healthPotions }} potions</div>
-          <div v-if="!selectedBuilding.building.totalEarned?.gold && !selectedBuilding.building.totalEarned?.scrap && !selectedBuilding.building.totalEarned?.healthPotions" class="building-info-none">Nothing collected yet.</div>
-        </div>
-      </div>
-
-      <!-- Building palette popup -->
-      <div class="building-palette" v-if="!props.readOnly">
-        <div class="settlement-resources">
-          <div class="resource-item" :class="{ 'resource-has-value': pendingGold > 0 }">
-            <i class="ra ra-gold-bar"></i> <span>{{ pendingGold }}g pending</span>
-          </div>
-          <div class="resource-item" :class="{ 'resource-has-value': pendingScrap > 0 }">
-            <i class="ra ra-cog"></i> <span>{{ pendingScrap }} scrap pending</span>
-          </div>
-          <div class="resource-item" :class="{ 'resource-has-value': pendingPotions > 0 }">
-            <i class="ra ra-flask"></i> <span>{{ pendingPotions }} potions pending</span>
-          </div>
-          <button
-            class="collect-btn"
-            :disabled="pendingGold === 0 && pendingScrap === 0 && pendingPotions === 0"
-            @click="$emit('collect')"
-          >
-            Collect All
-          </button>
-        </div>
-        <div class="build-btn-wrapper">
-            <button
-              class="build-popup-btn cursor-btn"
-              :class="{ selected: selectedBuildingType === null }"
-              @click="selectedBuildingType = null"
-            >Select</button>
-            <button class="build-popup-btn" @click="showPalette = !showPalette">
-              Build {{ showPalette ? '▲' : '▼' }}
-            </button>
-            <template v-if="hasCastle">
-              <button class="build-popup-btn" @click="$emit('open-forge')">Forge</button>
-              <button class="build-popup-btn" :disabled="!props.canShortRest" :title="!props.canShortRest ? 'Already rested today' : ''" @click="$emit('short-rest')">Short Rest</button>
-              <span v-if="!props.canShortRest" class="castle-rest-used">Already rested today</span>
-            </template>
-            <template v-if="hasBrewerySetup && !props.readOnly">
-              <button class="build-popup-btn" @click="$emit('open-brewery')">Brewery</button>
-            </template>
-            <div v-if="showPalette" class="build-popup">
-              <div class="build-popup-title">Buildings</div>
-              <button
-                v-for="(def, key) in BUILDING_DEFS"
-                :key="key"
-                class="palette-list-row"
-                :class="{ selected: selectedBuildingType === key }"
-                @click="toggleBuildingSelect(key)"
-              >
-                <span class="palette-list-name">{{ def.name }}</span>
-                <span class="palette-list-desc"> - {{ def.description }}</span>
-                <span class="palette-list-cost"> ({{ def.cost }}g)</span>
-              </button>
-              <div class="build-popup-title">Terrain</div>
-              <button
-                v-for="(def, key) in TERRAIN_PAINTS"
-                :key="key"
-                class="palette-list-row"
-                :class="{ selected: selectedBuildingType === key }"
-                @click="toggleBuildingSelect(key)"
-              >
-                <span class="palette-list-name">{{ def.name }}</span>
-                <span class="palette-list-desc"> - {{ def.description }}</span>
-                <span class="palette-list-cost"> (free)</span>
-              </button>
-              <div v-if="selectedBuildingType" class="palette-selected-info">
-                <strong>{{ (BUILDING_DEFS[selectedBuildingType] ?? TERRAIN_PAINTS[selectedBuildingType])?.name }}</strong>
-                — {{ (BUILDING_DEFS[selectedBuildingType] ?? TERRAIN_PAINTS[selectedBuildingType])?.description }}
-                <button class="palette-cancel" @click="selectedBuildingType = null">Cancel</button>
-              </div>
-            </div>
-          </div>
-      </div>
-
-      <!-- History book toggle -->
-      <div class="settlement-history">
-        <div v-if="props.readOnly && props.tavernBeers?.length" class="tavern-visit-bar">
-          <button class="tavern-visit-btn" @click="$emit('open-tavern')"><i class="ra ra-beer"></i> Visit Tavern</button>
-          <span class="tavern-visit-hint">{{ props.tavernBeers.length }} beer{{ props.tavernBeers.length !== 1 ? 's' : '' }} on tap</span>
-        </div>
-
-        <div v-if="props.readOnly && settlement.abandoned && guardianBossName" class="challenge-blurb">
-          <img :src="ruinsImg" class="ruins-banner-img" alt="" />
-          <span class="challenge-blurb-text">A <strong>{{ guardianBossName }}</strong> guards these ruins.</span>
-          <button
-            class="challenge-boss-btn"
-            :disabled="!props.canChallenge"
-            :title="props.playerHasSettlement ? 'You already are a lord of a settlement.' : (!props.canChallenge ? 'You cannot challenge right now.' : '')"
-            @click="$emit('challenge-boss')"
-          ><i class="ra ra-sword"></i> Challenge</button>
-          <span v-if="props.playerHasSettlement" class="challenge-owned-msg">You already are a lord of a settlement.</span>
-        </div>
-        <div class="settlement-history-bar">
-          <button class="history-toggle-btn" @click="showHistory = !showHistory">
-            <i class="ra ra-book"></i> {{ showHistory ? 'Hide' : 'Show' }} History Book
-          </button>
-          <button class="settlement-close-btn" @click="$emit('close')">⎯ Leave Settlement ⎯</button>
-        </div>
-        <div v-if="showHistory" class="history-list">
-          <div class="history-title"><i class="ra ra-book"></i> Lords of {{ settlement.town_name }}</div>
-          <template v-for="(entry, i) in settlement.lord_history" :key="i">
-            <!-- Lord tenure entry -->
-            <div v-if="!entry.type" class="history-entry">
-              <span class="history-lord-name">{{ entry.playerName }}</span>
-              <span v-if="!entry.endDay" class="history-days">– present</span>
-              <span v-if="entry.endReason" class="history-end-reason">{{ entry.endReason }}</span>
-            </div>
-            <!-- Event: abandoned -->
-            <div v-else-if="entry.type === 'abandoned'" class="history-event history-event-abandoned">
-              <i class="ra ra-wooden-sign"></i> Settlement abandoned
-            </div>
-            <!-- Event: terrorized -->
-            <div v-else-if="entry.type === 'terrorized'" class="history-event history-event-terrorized">
-              <i class="ra ra-skull"></i> Terrorized by a {{ SETTLEMENT_BOSS_DEFS[entry.bossKey]?.name ?? entry.bossKey }}
-            </div>
-            <!-- Event: claimed -->
-            <div v-else-if="entry.type === 'claimed'" class="history-event history-event-claimed">
-              <i class="ra ra-sword"></i> {{ entry.playerName }} defeated the guardian
-            </div>
-          </template>
-          <div v-if="!settlement.lord_history?.length" class="history-empty">No history yet.</div>
-        </div>
-      </div>
-
+  <!-- Header -->
+  <div class="sp-header">
+    <div class="sp-title-group">
+      <span class="sp-town-name">{{ props.settlement.town_name }}</span>
+      <span class="sp-region" v-if="props.settlement.wiki_title">{{ props.settlement.wiki_title.replaceAll('_', ' ') }}</span>
     </div>
+    <div class="sp-lord-line">Lord {{ props.settlement.lord_history?.[0]?.playerName ?? '—' }}</div>
+  </div>
 
-    <!-- Placement confirmation dialog -->
+  <!-- Canvas -->
+  <div class="settlement-grid-wrapper" @mouseleave="onCanvasMouseLeave">
+    <canvas
+      ref="canvasRef"
+      width="640"
+      height="512"
+      class="settlement-canvas"
+      :style="{ cursor: selectedBuildingType ? 'crosshair' : 'default' }"
+      @click="handleCanvasClick"
+      @mousemove="handleCanvasMouseMove"
+      @mouseleave="onCanvasMouseLeave"
+    />
+  </div>
+
+  <!-- Building info panel (cursor mode) -->
+  <div v-if="selectedBuilding" class="building-info-panel">
+    <button class="building-info-close" @click="selectedBuilding = null">✕</button>
+    <div class="building-info-header">
+      <img :src="paletteUrls[selectedBuilding.building.type]" class="building-info-img" />
+      <div>
+        <div class="building-info-name">{{ selectedBuilding.building.name || selectedBuilding.def.name }}</div>
+        <!-- Non-house: single worker -->
+        <div v-if="selectedBuilding.building.type !== 'house'" class="building-info-worker">
+          <i class="ra ra-player"></i> {{ workerName(selectedBuilding.building.cellIndex) }}
+        </div>
+      </div>
+    </div>
+    <!-- House: list all 5 residents -->
+    <div v-if="selectedBuilding.building.type === 'house'" class="building-info-residents">
+      <div class="building-info-residents-title">Residents</div>
+      <div v-for="name in houseResidentsList(selectedBuilding.building.cellIndex)" :key="name" class="building-info-resident">
+        <i class="ra ra-player"></i> {{ name }}
+      </div>
+    </div>
+    <div class="building-info-desc">{{ selectedBuilding.def.description }}</div>
+    <button
+      v-if="!props.readOnly && selectedBuilding.def.category === 'structure'"
+      class="building-info-deconstruct"
+      @click="pendingDeconstruct = { building: selectedBuilding.building, def: selectedBuilding.def }"
+    ><i class="ra ra-shovel"></i> Deconstruct (refund {{ selectedBuilding.def.cost }}g)</button>
+    <div class="building-info-earnings">
+      <div class="building-info-earnings-title">All-time earnings</div>
+      <div v-if="selectedBuilding.building.totalEarned?.gold > 0"><i class="ra ra-gold-bar"></i> {{ selectedBuilding.building.totalEarned.gold }}g</div>
+      <div v-if="selectedBuilding.building.totalEarned?.scrap > 0"><i class="ra ra-cog"></i> {{ selectedBuilding.building.totalEarned.scrap }} scrap</div>
+      <div v-if="selectedBuilding.building.totalEarned?.healthPotions > 0"><i class="ra ra-flask"></i> {{ selectedBuilding.building.totalEarned.healthPotions }} potions</div>
+      <div v-if="!selectedBuilding.building.totalEarned?.gold && !selectedBuilding.building.totalEarned?.scrap && !selectedBuilding.building.totalEarned?.healthPotions" class="building-info-none">Nothing collected yet.</div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="building-palette">
+    <template v-if="!props.readOnly">
+      <!-- Row 1: action buttons -->
+      <div class="sp-btn-row">
+        <button class="sp-btn" :class="{ 'sp-btn-active': selectedBuildingType === null }" @click="selectedBuildingType = null">Select</button>
+        <button class="sp-btn" @click="showPalette = !showPalette">Build {{ showPalette ? '▲' : '▼' }}</button>
+        <button class="sp-btn" v-if="hasCastle" @click="$emit('open-forge')">Forge</button>
+        <button class="sp-btn" v-if="hasCastle" :disabled="!props.canShortRest" @click="$emit('short-rest')">Short Rest</button>
+        <button class="sp-btn" v-if="hasBrewerySetup" @click="$emit('open-brewery')">Brewery</button>
+        <button class="sp-btn sp-btn-leave" @click="$emit('close')">Leave</button>
+        <div v-if="showPalette" class="build-popup">
+          <div class="build-popup-title">Buildings</div>
+          <button v-for="(def, key) in BUILDING_DEFS" :key="key" class="palette-list-row" :class="{ selected: selectedBuildingType === key }" @click="toggleBuildingSelect(key)">
+            <span class="palette-list-name">{{ def.name }}</span>
+            <span class="palette-list-desc"> - {{ def.description }}</span>
+            <span class="palette-list-cost"> ({{ def.cost }}g)</span>
+          </button>
+          <div class="build-popup-title">Terrain</div>
+          <button v-for="(def, key) in TERRAIN_PAINTS" :key="key" class="palette-list-row" :class="{ selected: selectedBuildingType === key }" @click="toggleBuildingSelect(key)">
+            <span class="palette-list-name">{{ def.name }}</span>
+            <span class="palette-list-desc"> - {{ def.description }}</span>
+            <span class="palette-list-cost"> (free)</span>
+          </button>
+          <div v-if="selectedBuildingType" class="palette-selected-info">
+            <strong>{{ (BUILDING_DEFS[selectedBuildingType] ?? TERRAIN_PAINTS[selectedBuildingType])?.name }}</strong>
+            — {{ (BUILDING_DEFS[selectedBuildingType] ?? TERRAIN_PAINTS[selectedBuildingType])?.description }}
+            <button class="palette-cancel" @click="selectedBuildingType = null">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <!-- Row 2: resources + collect -->
+      <div class="sp-resource-row">
+        <span class="resource-item" :class="{ 'resource-has-value': pendingGold > 0 }"><i class="ra ra-gold-bar"></i> {{ pendingGold }}g</span>
+        <span class="resource-item" :class="{ 'resource-has-value': pendingScrap > 0 }"><i class="ra ra-cog"></i> {{ pendingScrap }}</span>
+        <span class="resource-item" :class="{ 'resource-has-value': pendingPotions > 0 }"><i class="ra ra-flask"></i> {{ pendingPotions }}</span>
+        <button class="sp-btn" :disabled="pendingGold === 0 && pendingScrap === 0 && pendingPotions === 0" @click="$emit('collect')">Collect</button>
+      </div>
+      <!-- Row 3: history -->
+      <button class="sp-btn sp-btn-history" @click="showHistory = !showHistory">{{ showHistory ? 'Hide' : 'Show' }} History Book</button>
+      <div v-if="showHistory" class="history-list">
+        <template v-if="allHistoryLines.length > 0">
+          <div v-for="(line, i) in allHistoryLines" :key="i" class="history-town-event">
+            <span class="history-bullet">·</span> {{ line }}
+          </div>
+        </template>
+        <div v-else-if="hasHouse" class="history-empty">No events recorded yet.</div>
+        <div v-else class="history-empty">Build a house to begin recording town history.</div>
+      </div>
+    </template>
+
+    <!-- Visitor controls -->
+    <template v-else>
+      <div class="sp-btn-row">
+        <button class="sp-btn" v-if="props.tavernBeers?.length" @click="$emit('open-tavern')"><i class="ra ra-beer"></i> Visit Tavern</button>
+        <template v-if="settlement.abandoned && guardianBossName">
+          <button class="challenge-boss-btn" :disabled="!props.canChallenge" :title="props.playerHasSettlement ? 'You already are a lord of a settlement.' : (!props.canChallenge ? 'You cannot challenge right now.' : '')" @click="$emit('challenge-boss')"><i class="ra ra-sword"></i> Challenge {{ guardianBossName }}</button>
+          <span v-if="props.playerHasSettlement" class="challenge-owned-msg">You already are a lord of a settlement.</span>
+        </template>
+        <button class="sp-btn sp-btn-leave" @click="$emit('close')">Leave</button>
+      </div>
+    </template>
+
+    <div class="canvas-cell-label">{{ hoveredLabel }}</div>
+    <div class="placement-error" v-if="placementError">{{ placementError }}</div>
+  </div>
+
+  <!-- Placement confirmation dialog -->
     <div v-if="pendingPlacement" class="placement-confirm-overlay" @click.self="cancelPlacement">
       <div class="placement-confirm-dialog">
         <div class="placement-confirm-title">Place {{ pendingPlacement.def.name }}?</div>
@@ -235,16 +169,14 @@
         </div>
       </div>
     </div>
-
-  </div>
 </template>
 
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { BUILDING_DEFS, TERRAIN_PAINTS, computeYield, isRoadConnected as _isRoadConnected, GRID_COLS, GRID_ROWS } from "@/utils/buildingDefs.js";
 import { SETTLEMENT_BOSS_DEFS } from "@/utils/settlementBossGenerator.js";
+import { getHouseResidents, getDeadNames, getTownLog, generateDayEvents } from "@/utils/townEventGenerator.js";
 
-const ruinsImg = new URL("../assets/ruins-img.jpg", import.meta.url).href;
 
 const CELL_SIZE = 32;
 const COLS = GRID_COLS;
@@ -252,40 +184,6 @@ const ROWS = GRID_ROWS;
 
 
 const paletteUrls = ref({});
-let parchmentCanvas = null;
-
-// ── Parchment texture (generated once, reused every draw) ─────────────────
-function generateParchmentTexture(w, h) {
-  const off = document.createElement("canvas");
-  off.width = w; off.height = h;
-  const pctx = off.getContext("2d");
-
-  // White paper base
-  pctx.fillStyle = "#f8f8f6";
-  pctx.fillRect(0, 0, w, h);
-
-  // Subtle paper grain
-  const imageData = pctx.getImageData(0, 0, w, h);
-  const data = imageData.data;
-  let seed = 0xdeadbeef;
-  const rand = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 0xffffffff; };
-  for (let i = 0; i < data.length; i += 4) {
-    const n = (rand() - 0.5) * 10;
-    data[i]     = Math.min(255, Math.max(0, data[i]     + n));
-    data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + n));
-    data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + n));
-  }
-  pctx.putImageData(imageData, 0, 0);
-
-  // Very light vignette
-  const vg = pctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.3, w / 2, h / 2, Math.max(w, h) * 0.82);
-  vg.addColorStop(0, "rgba(0,0,0,0)");
-  vg.addColorStop(1, "rgba(0,0,0,0.12)");
-  pctx.fillStyle = vg;
-  pctx.fillRect(0, 0, w, h);
-
-  return off;
-}
 
 // ── Canvas map-style drawing helpers ──────────────────────────────────────
 
@@ -604,9 +502,6 @@ function generatePaletteThumbnails() {
 
 function preloadImages() {
   generatePaletteThumbnails();
-  // Parchment texture sized to the canvas (generated once)
-  const canvas = canvasRef.value;
-  if (canvas) parchmentCanvas = generateParchmentTexture(canvas.width, canvas.height);
   drawGrid();
 }
 
@@ -620,16 +515,18 @@ const props = defineProps({
   playerHasSettlement: { type: Boolean, default: false },
   clicksSince:  { type: Number, default: 0 },
   tavernBeers:  { type: Array,   default: () => [] },
+  daysCount:    { type: Number,  default: 1 },
 });
 
-const emit = defineEmits(["close", "collect", "place-building", "remove-building", "change-terrain", "open-forge", "open-brewery", "short-rest", "challenge-boss", "open-tavern"]);
+const emit = defineEmits(["close", "collect", "place-building", "remove-building", "change-terrain", "open-forge", "open-brewery", "short-rest", "challenge-boss", "open-tavern", "update-town-meta"]);
 
 // ── Pulse animation state ───────────────────────────────────────────────────
 let pulseRafId = null;
 let pulseT     = 0;
 
-const showHistory          = ref(false);
+
 const showPalette          = ref(false);
+const showHistory          = ref(true);
 const selectedBuildingType = ref(null);
 const canvasRef      = ref(null);
 const hoveredCell    = ref(null);
@@ -656,14 +553,7 @@ function showPlacementError(msg) {
 }
 
 // ── Computed ───────────────────────────────────────────────────────────────
-const lordEntries = computed(() =>
-  (props.settlement.lord_history ?? []).filter(e => !e.type)
-);
 
-const currentLord = computed(() => {
-  const entries = lordEntries.value;
-  return entries.find(e => !e.endDay) ?? entries[entries.length - 1] ?? null;
-});
 
 const guardianBossName = computed(() => {
   const key = props.settlement.guardian_boss;
@@ -691,13 +581,68 @@ const hasBrewerySetup = computed(() =>
 );
 
 const hoveredLabel = computed(() => {
-  if (hoveredCell.value === null) return 'None';
+  if (hoveredCell.value === null) return "None";
   const i = hoveredCell.value;
   const building = buildingAt(i);
   if (building) return BUILDING_DEFS[building.type]?.name ?? building.type;
   const tile = props.settlement.terrain[i] ?? "grass";
   return tile.charAt(0).toUpperCase() + tile.slice(1);
 });
+
+// ── Town meta (dead names, town log) ───────────────────────────────────────
+const deadNames    = computed(() => getDeadNames(props.settlement.buildings));
+const townLogFromProp = computed(() => getTownLog(props.settlement.buildings));
+const localTownLog = ref({});
+const hasHouse  = computed(() => (props.settlement.buildings ?? []).some(b => b.type === "house"));
+
+// Keep localTownLog in sync when the prop updates (e.g. after save round-trip)
+watch(townLogFromProp, (val) => {
+  // Merge: keep any locally-generated days that haven't persisted yet
+  localTownLog.value = { ...val, ...localTownLog.value };
+}, { immediate: true });
+
+const townLog = localTownLog;
+
+const sortedLogDays = computed(() =>
+  Object.keys(townLog.value).map(Number).sort((a, b) => b - a)
+);
+
+const allHistoryLines = computed(() => {
+  const lines = [];
+  // Lord history entries sorted newest-first — only typed events
+  const lordHistory = (props.settlement.lord_history ?? [])
+    .filter(e => e.type === "claimed" || e.type === "abandoned")
+    .slice()
+    .sort((a, b) => (b.day ?? 0) - (a.day ?? 0));
+  for (const e of lordHistory) {
+    if (e.type === "claimed" && e.playerName) lines.push(`Claimed by ${e.playerName}`);
+    else if (e.type === "abandoned") lines.push(e.playerName ? `Abandoned by ${e.playerName}` : "Abandoned");
+  }
+  // Town events newest-first
+  for (const day of sortedLogDays.value) {
+    for (const evt of townLog.value[day]) lines.push(evt);
+  }
+  return lines;
+});
+
+// ── Generate today's events if not yet recorded ─────────────────────────────
+watch(showHistory, (open) => {
+  if (!open || !hasHouse.value || props.readOnly) return;
+  const day = props.daysCount;
+  const log = townLog.value;
+  if (log[day]) return; // already generated
+  const buildings = (props.settlement.buildings ?? []).filter(b => !b.type?.startsWith("__"));
+  const dead = deadNames.value;
+  const { events, newDeaths } = generateDayEvents(buildings, dead, day);
+  const updatedLog = { ...log, [day]: events };
+  const updatedDead = newDeaths.length ? [...dead, ...newDeaths] : dead;
+  localTownLog.value = updatedLog; // update immediately for display
+  emit("update-town-meta", { townLog: updatedLog, deadNames: updatedDead });
+}, { immediate: false });
+
+function houseResidentsList(cellIndex) {
+  return getHouseResidents(cellIndex, deadNames.value);
+}
 
 // ── Building size registry ──────────────────────────────────────────────────
 const BUILDING_SIZES = {
@@ -757,19 +702,10 @@ function drawGrid() {
   const ctx = canvas.getContext("2d");
   const terrain = props.settlement.terrain ?? [];
   const hovered = hoveredCell.value;
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.imageSmoothingEnabled = false;
 
   const TALL_TREES = new Set(["tree"]);
-
-  // Parchment base
-  if (parchmentCanvas) {
-    ctx.drawImage(parchmentCanvas, 0, 0);
-  } else {
-    ctx.fillStyle = "#f8f8f6";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
 
   // Pass 1a: hand-drawn terrain tiles
   for (let i = 0; i < COLS * ROWS; i++) {
@@ -932,7 +868,7 @@ function drawGrid() {
 
     } else {
       // grass (and tree cells — ground layer only, tree sprite drawn later)
-      ctx.fillStyle = "#FAFCF7";
+      ctx.fillStyle = "#f0eded";
       ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
     }
   }
@@ -986,15 +922,6 @@ function drawGrid() {
     }
   }
 
-  // Faint grid lines for usability
-  ctx.strokeStyle = "rgba(100,80,40,0.12)";
-  ctx.lineWidth = 0.5;
-  for (let c = 0; c <= COLS; c++) {
-    ctx.beginPath(); ctx.moveTo(c * CELL_SIZE, 0); ctx.lineTo(c * CELL_SIZE, canvas.height); ctx.stroke();
-  }
-  for (let r = 0; r <= ROWS; r++) {
-    ctx.beginPath(); ctx.moveTo(0, r * CELL_SIZE); ctx.lineTo(canvas.width, r * CELL_SIZE); ctx.stroke();
-  }
 
   // Pass 2: trees first so buildings paint over them
   for (let i = 0; i < COLS * ROWS; i++) {
@@ -1040,7 +967,7 @@ function drawGrid() {
             eW = { x: bx, y: mcy };
       const connections = [hasN, hasS, hasE, hasW].filter(Boolean).length;
       ctx.strokeStyle = "#000000"; ctx.lineWidth = 1; ctx.lineCap = "round";
-      ctx.setLineDash([2, 4]);
+      ctx.setLineDash([10, 6]);
 
       if (connections === 0) {
         ctx.beginPath(); ctx.arc(mcx, mcy, 2, 0, Math.PI * 2); ctx.stroke();
@@ -1171,7 +1098,7 @@ function drawGrid() {
     const drawn = new Set();
     ctx.textAlign = "center";
     ctx.textBaseline = "bottom";
-    const labelFontSize = window.innerWidth < 640 ? 10 : 11;
+    const labelFontSize = 11;
     const lineH = labelFontSize + 3;
     ctx.font = `italic ${labelFontSize}px Georgia, serif`;
 
@@ -1470,7 +1397,22 @@ watch(
   { deep: true }
 );
 
-onMounted(preloadImages);
+onMounted(() => {
+  preloadImages();
+  // Generate today's events on open if history is already visible
+  if (showHistory.value && hasHouse.value && !props.readOnly) {
+    const day = props.daysCount;
+    if (!townLog.value[day]) {
+      const buildings = (props.settlement.buildings ?? []).filter(b => !b.type?.startsWith("__"));
+      const dead = deadNames.value;
+      const { events, newDeaths } = generateDayEvents(buildings, dead, day);
+      const updatedLog = { ...townLog.value, [day]: events };
+      const updatedDead = newDeaths.length ? [...dead, ...newDeaths] : dead;
+      localTownLog.value = updatedLog;
+      emit("update-town-meta", { townLog: updatedLog, deadNames: updatedDead });
+    }
+  }
+});
 </script>
 
 <style scoped>

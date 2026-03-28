@@ -1,0 +1,46 @@
+- id: lore_wagon_001
+  name: The Apothecary's Cart
+  text: "A covered cart, one wheel broken, tilted into a ditch. The canvas is printed with faded symbols. Herbs, scales, a mortar. The horse is long gone. The drawers inside have been ransacked, but not thoroughly."
+  options:
+    - text: Search carefully
+      result: inventoryItem
+      id: bark_tea_consumable
+      responseText: "Behind a loose panel, a sealed jar of bark tea. Still good."
+    - text: Check the driver's seat
+      result: none
+      responseText: "A ledger. Names, dosages. One entry is just a date with no name."
+    - text: Push it off the road
+      result: none
+      responseText: "It takes effort. You feel better about the road."
+
+- id: lore_wagon_002
+  name: The Tax Collector's Cart
+  text: "An official-looking wagon, royal seal on the side, completely overturned. Strongbox open and empty. Papers everywhere. None of the papers are tax documents. They are all personal letters, in the same handwriting, addressed to someone called M."
+  options:
+    - text: Search the wagon
+      result: item
+      details: gold
+      amount: 15
+      responseText: "Fifteen gold scattered in the wreck. Found money."
+    - text: Read the letters
+      result: none
+      responseText: "The last one is unfinished. The sentence stops mid-word."
+    - text: Leave it
+      result: none
+      responseText: "You cannot help noticing there are no bodies."
+
+- id: lore_wagon_003
+  name: The Puppet Cart
+  text: "A small painted wagon, cheery colors, theatrical curtain across the front. The horse is gone but the wagon is intact. Inside: forty-seven puppets, all facing the entrance."
+  options:
+    - text: Search it
+      result: item
+      details: weapon
+      amount: 1
+      responseText: "You find two scrap pieces wedged under the stage. You do not look at the puppets directly."
+    - text: Check under the stage
+      result: none
+      responseText: "A locked box. No key. Sounds empty when you shake it. Sounds full when you don't."
+    - text: Leave immediately
+      result: none
+      responseText: "The curtain was open when you arrived. It is closed when you leave."

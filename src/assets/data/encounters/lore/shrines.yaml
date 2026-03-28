@@ -1,0 +1,53 @@
+- id: lore_shrine_001
+  name: The Drowned God
+  text: "A waist-high stone sits at the river's edge, worn smooth by years of water and hands. Someone has left a coin on it. The coin is very old. You don't recognize the face."
+  options:
+    - text: Leave a coin
+      result: item
+      details: health-gold-loss
+      healthAmount: 5
+      goldCost: 25
+      responseText: "You place the coin on the stone. The water is very still."
+    - text: Say a prayer
+      result: none
+      responseText: "You say the words anyway. The water takes what the water wants."
+    - text: Take the coin
+      result: item
+      details: gold_damage
+      goldAmount: 25
+      damageAmount: 5
+      responseText: "You pocket the coin. Something cold moves through you. Then it passes."
+
+- id: lore_shrine_002
+  name: The Ash Shrine
+  text: "A blackened stone pillar, half-buried in a clearing. Someone has been leaving offerings here for a long time. Charred scraps of cloth, small bones, a cup filled with ash. The cup is never empty."
+  options:
+    - text: Leave something
+      result: item
+      details: weapon
+      amount: 1
+      responseText: "The ash accepts it. You feel lighter."
+    - text: Touch the stone
+      result: none
+      responseText: "It is warm. It should not be warm."
+    - text: Pour out the cup
+      result: damage
+      amount: 5
+      responseText: "The ash scatters. Something moves in the tree line. That was a mistake."
+
+- id: lore_shrine_003
+  name: The Pale Lady
+  text: "At a fork in a narrow path, a crude figure carved from white wood is nailed to a post. Her face has been worn away by weather. Someone has tied fresh flowers at her feet. Fresh, and out of season."
+  options:
+    - text: Leave gold
+      result: item
+      details: health-gold-loss
+      healthAmount: 5
+      goldCost: 25
+      responseText: "The flowers sway with no wind. You feel steadier than before."
+    - text: Take the flowers
+      result: none
+      responseText: "You feel watched for a long time after."
+    - text: Bow your head
+      result: none
+      responseText: "You don't know why. It feels correct."

@@ -1,0 +1,46 @@
+- id: lore_crossroads_001
+  name: The Deal
+  text: "A man stands at the crossroads. No horse. No pack. Not going anywhere. He watches you approach without moving. 'I can take something from you,' he says, 'or I can give something to you. But I won't tell you which until after.'"
+  options:
+    - text: Accept
+      result: item
+      details: health-gold-loss
+      healthAmount: 0
+      goldCost: 15
+      responseText: "He takes fifteen gold pieces and hands you nothing. Then he steps aside. Then you notice you feel sharper. Faster. Something has shifted."
+    - text: Decline
+      result: none
+      responseText: "He nods like you passed a test. He is still there when you look back."
+    - text: Ask who he is
+      result: none
+      responseText: "'Depends on the day.' He turns away."
+
+- id: lore_crossroads_002
+  name: The Answer
+  text: "A woman at the crossroads, sitting on a stone, reading a book with no title on the cover. She closes it when she sees you. 'I'll answer one question,' she says. 'Truthfully. But you have to ask the right one.'"
+  options:
+    - text: Ask about danger ahead
+      result: none
+      responseText: "She tells you something is waiting. She does not say what. She goes back to reading."
+    - text: Ask who she is
+      result: none
+      responseText: "'Irrelevant.' She does not look up."
+    - text: Ask what she's reading
+      result: none
+      responseText: "'The same thing you are.' She looks at the road ahead of you."
+
+- id: lore_crossroads_003
+  name: The Warning
+  text: "Nobody at the crossroads. Just a note pinned to a post with a black-handled knife. The note reads: DON'T GO NORTH. You were going north."
+  options:
+    - text: Take the knife
+      result: item
+      details: weapon
+      amount: 1
+      responseText: "You take the knife. Your hand hurts where you gripped it too hard. It is a good knife."
+    - text: Go a different way
+      result: none
+      responseText: "You take the long way. Nothing happens. The note was probably wrong."
+    - text: Go north anyway
+      result: none
+      responseText: "Nothing happens. The note was probably wrong. Probably."

@@ -28,6 +28,7 @@ export function useGameHandlers(deps) {
     gameFlow,
     log,
     logEnemyAction,
+    gameLog,
     modals,
     player,
     inventory,
@@ -97,6 +98,7 @@ export function useGameHandlers(deps) {
     serratedDaggerActive,
     luckyFleeActive,
     wardingShieldHitsRemaining,
+    luckyStoneRollsLeft,
     wardStoneActive,
     encounterBeaconActive,
     bountyScrollActive,
@@ -796,6 +798,7 @@ export function useGameHandlers(deps) {
           serratedDaggerActive,
           luckyFleeActive,
           wardingShieldHitsRemaining,
+          luckyStoneRollsLeft,
           coolerStickBonus: (inventory.value.coolerStickItem > 0 ? 2 : 0) + (inventory.value.evenCoolerStickItem > 0 ? 3 : 0),
         },
       });
@@ -884,6 +887,7 @@ export function useGameHandlers(deps) {
       },
       utilityFunctions: {
         log,
+        gameLog,
       },
     });
   }

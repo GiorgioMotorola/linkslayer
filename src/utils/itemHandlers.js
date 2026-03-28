@@ -613,6 +613,29 @@ export const useLuckyCoin = (playerState, utilityFunctions, combatData) => {
   closeInventoryModal();
 };
 
+export const useLuckyStone = (playerState, utilityFunctions, combatData) => {
+  const { inventory } = playerState;
+  const { log, closeInventoryModal } = utilityFunctions;
+  const { encounter, luckyStoneRollsLeft } = combatData;
+
+  if ((inventory.value.luckyStones ?? 0) <= 0) {
+    log(`You don't have any Lucky Stones.`);
+    return;
+  }
+  if (!encounter.value || encounter.value.type !== 'combat') {
+    log(`<i class="ra ra-mountains"></i> Lucky Stone can only be used during combat.`);
+    return;
+  }
+  if (luckyStoneRollsLeft.value > 0) {
+    log(`<i class="ra ra-mountains"></i> A Lucky Stone is already active (${luckyStoneRollsLeft.value} rolls remaining).`);
+    return;
+  }
+  inventory.value.luckyStones--;
+  luckyStoneRollsLeft.value = 3;
+  log(`<i class="ra ra-mountains"></i> You grip the Lucky Stone. Your next 3 dice rolls gain +1.`);
+  closeInventoryModal();
+};
+
 export const useWardStone = (playerState, utilityFunctions, combatData) => {
   const { inventory } = playerState;
   const { log } = utilityFunctions;
