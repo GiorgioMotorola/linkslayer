@@ -9,10 +9,10 @@
     <div v-for="i in 19" :key="i" class="raindrop"><div class="inner">|</div></div>
   </div>
   <div v-else-if="weather === 'leaves'" class="leaffall" aria-hidden="true">
-    <div v-for="i in 10" :key="i" class="leaf"><div class="inner"><i class="ra ra-leaf"></i></div></div>
+    <div v-for="i in 10" :key="i" class="leaf"><div class="inner">🍂</div></div>
   </div>
   <div v-else-if="weather === 'blossom'" class="blossomfall" aria-hidden="true">
-    <div v-for="i in 10" :key="i" class="blossom"><div class="inner"><i class="ra ra-flower"></i></div></div>
+    <div v-for="i in 10" :key="i" class="blossom"><div class="inner">🌸</div></div>
   </div>
 </template>
 
