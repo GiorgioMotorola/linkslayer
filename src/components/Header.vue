@@ -199,6 +199,7 @@
             </div>
             <div v-if="dogPlusOneVisible" class="dog-plus-one">+2</div>
           </div>
+          <button @click="emit('open-world-map')" class="inventory-button world-map-button">World Map</button>
           <button @click="emit('open-hub')" class="inventory-button">Inventory</button>
         </div>
       </div>
@@ -431,6 +432,7 @@ const emit = defineEmits([
   "show-tips",
   "use-compass",
   "open-hub",
+  "open-world-map",
   "switch-target",
 ]);
 

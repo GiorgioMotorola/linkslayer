@@ -18,7 +18,7 @@ export function useSettlement() {
   const settlement = ref(null);
   const isLoadingSettlement = ref(false);
 
-  async function createSettlement({ userId, townName, playerName, wikiTitle, signInEmail }) {
+  async function createSettlement({ userId, townName, playerName, wikiTitle, signInEmail, continent }) {
     const terrain = generateTerrain();
     const lordEntry = {
       playerName: playerName ?? townName,
@@ -40,6 +40,7 @@ export function useSettlement() {
         pending_scrap: 0,
         pending_health_potions: 0,
         click_count_at_last_visit: 0,
+        continent: continent ?? null,
       })
       .select()
       .single();

@@ -9,7 +9,7 @@
       </div>
 
       <div class="modal-body">
-        <div class="map-container">
+        <div v-if="!props.hideMap" class="map-container">
           <img
             src="https://linkslayer.mweatherford.rocks/map-nobg.png"
             alt="LINKSLAYER map"
@@ -90,6 +90,7 @@ import { defineProps, defineEmits } from "vue";
 
 const props = defineProps({
   embedded: { type: Boolean, default: false },
+  hideMap:   { type: Boolean, default: false },
   fullChain: { type: Array, default: () => [] },
   currentTargetIndex: { type: Number, default: -1 },
   markedPOIs: { type: Array, default: () => [] },

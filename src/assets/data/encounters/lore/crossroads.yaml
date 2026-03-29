@@ -2,12 +2,12 @@
   name: The Deal
   text: "A man stands at the crossroads. No horse. No pack. Not going anywhere. He watches you approach without moving. 'I can take something from you,' he says, 'or I can give something to you. But I won't tell you which until after.'"
   options:
-    - text: Accept
+    - text: Accept - 15g
       result: item
       details: health-gold-loss
-      healthAmount: 0
+      healthAmount: 10
       goldCost: 15
-      responseText: "He takes fifteen gold pieces and hands you nothing. Then he steps aside. Then you notice you feel sharper. Faster. Something has shifted."
+      responseText: "He takes fifteen gold pieces and hands you nothing. Then he steps aside. Then you notice you feel sharper. Faster. Something has shifted. You gained 10hp."
     - text: Decline
       result: none
       responseText: "He nods like you passed a test. He is still there when you look back."

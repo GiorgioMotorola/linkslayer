@@ -19,8 +19,8 @@
             <button class="hub-close-btn" @click="$emit('close')">⎯ &nbsp; Close Inventory &nbsp; ⎯</button>
           </div>
         </div>
-        <div v-else-if="activeTab === 'map'" class="hub-tab-pane">
-          <slot name="map" />
+        <div v-else-if="activeTab === 'journey'" class="hub-tab-pane">
+          <slot name="journey" />
           <div class="hub-close-bar">
             <button class="hub-close-btn" @click="$emit('close')">⎯ &nbsp; Close Inventory &nbsp; ⎯</button>
           </div>
@@ -74,7 +74,7 @@ const props = defineProps({
 const tabs = computed(() => {
   const base = [
     { id: 'backpack', label: 'Backpack' },
-    { id: 'map',      label: 'Map' },
+    { id: 'journey',  label: 'Journey' },
     { id: 'journal',  label: 'Journal' },
     { id: 'quests',   label: 'Quests' },
   ];

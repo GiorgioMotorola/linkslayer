@@ -65,6 +65,7 @@
     :enemyHitKey="props.enemyHitKey"
     :playerHitKey="props.playerHitKey"
     :playerSelectedTarget="props.playerSelectedTarget"
+    :actionsPlaying="props.actionsPlaying"
     @switch-target="$emit('switch-target', $event)"
   />
   <div class="article" :class="{ 'blurred-content': isBlurred || props.isInCombat }">
@@ -120,6 +121,7 @@ const props = defineProps({
   enemyHitKey:          { type: Number, default: 0 },
   playerHitKey:         { type: Number, default: 0 },
   playerSelectedTarget: { type: Boolean, default: false },
+  actionsPlaying:       { type: Boolean, default: false },
 });
 
 function dayWeather(day) {

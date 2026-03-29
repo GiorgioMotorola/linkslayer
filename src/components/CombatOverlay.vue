@@ -150,6 +150,7 @@ const props = defineProps({
   lastGoldStolen:      { type: Number, default: null },
   enemyTurnKey:        { type: Number, default: 0 },
   playerSelectedTarget: { type: Boolean, default: false },
+  actionsPlaying:       { type: Boolean, default: false },
 });
 
 defineEmits(["switch-target"]);
@@ -327,6 +328,8 @@ const INTENT_ICON = {
 function getIntentFor(idx) {
   const enemy = enemyList.value[idx];
   if (!enemy || enemy.currentHP <= 0) return null;
+
+  if (props.actionsPlaying) return { action: "unknown", damage: null };
 
   const intents = props.enemyIntents;
   if (intents?.length) return intents[idx] ?? { action: "unknown", damage: null };

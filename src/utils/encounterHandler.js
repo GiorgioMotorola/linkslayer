@@ -612,7 +612,7 @@ export function handleEncounterOption({
       return;
     }
     playerGold.value -= cost;
-    const entries = (gameLog ?? [])
+    const entries = (gameLog?.value ?? gameLog ?? [])
       .filter(e => e.text && !e.text.includes('You select:') && !e.text.includes('Select an enemy'))
       .slice(-30);
     let resultText;

@@ -2,7 +2,7 @@
   name: The Drowned God
   text: "A waist-high stone sits at the river's edge, worn smooth by years of water and hands. Someone has left a coin on it. The coin is very old. You don't recognize the face."
   options:
-    - text: Leave a coin
+    - text: Leave a coin - 25g
       result: item
       details: health-gold-loss
       healthAmount: 5
@@ -39,7 +39,7 @@
   name: The Pale Lady
   text: "At a fork in a narrow path, a crude figure carved from white wood is nailed to a post. Her face has been worn away by weather. Someone has tied fresh flowers at her feet. Fresh, and out of season."
   options:
-    - text: Leave gold
+    - text: Leave gold - 25g
       result: item
       details: health-gold-loss
       healthAmount: 5

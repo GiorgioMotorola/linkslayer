@@ -670,11 +670,14 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       playerHP.value = Math.min(playerHP.value + soulHeal, effectiveMaxHP.value);
       log(`<i class="ra ra-crystal-cluster"></i> Soul Shard pulses — you recover ${soulHeal} HP from the fallen.`);
     }
-    // Other attacking enemies still deal damage even if you killed this one
-    if (runSidekickAttacks()) return;
+    // Other attacking enemies still deal damage when you kill this one,
+    // but only at end of a full player turn — not mid-queue.
+    if (!utils.skipEnemyTurn) {
+      if (runSidekickAttacks()) return;
+    }
 
     const defeatedEnemyData = encounter.value?.enemy;
-    utils.onEnemyKilled?.(defeatedEnemyData);
+    utils.onEnemyKilled?.(defeatedEnemyData, { skipGotoEnemyTurn: utils.skipEnemyTurn });
 
     if (enemiesKilled) enemiesKilled.value++;
     combatWinsSinceLastCapIncrease.value++;
@@ -853,7 +856,7 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       if (enemyHP.value <= 0) {
         log(`<i class="ra ra-skull"></i> <span class="player-name">${playerName.value}</span> defeated ${formattedTitle} with Thornplate!`);
         const defeatedEnemyData = encounter.value?.enemy;
-        utils.onEnemyKilled?.(defeatedEnemyData);
+        utils.onEnemyKilled?.(defeatedEnemyData, { skipGotoEnemyTurn: utils.skipEnemyTurn });
         if (enemiesKilled) enemiesKilled.value++;
         combatWinsSinceLastCapIncrease.value++;
         if (combatWinsSinceLastCapIncrease.value >= 10) {

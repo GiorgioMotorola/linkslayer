@@ -37,6 +37,7 @@
     @show-tips="showTipsModal = true"
     :game-chain="chain"
     @open-hub="hubOpen = true; hubTab = 'backpack'"
+    @open-world-map="showWorldMap = true"
     :is-cloak-active="isCloakActive"
     :isBlurred="isBlurred"
     :isPlayerPoisoned="isPlayerPoisoned"
@@ -54,7 +55,7 @@
     :combatWinsSinceLastCapIncrease="combatWinsSinceLastCapIncrease"
     :hpCapBonus="hpCapBonus"
     :formattedTitle="formattedTitle"
-    @open-map-modal="hubOpen = true; hubTab = 'map'"
+    @open-map-modal="hubOpen = true; hubTab = 'journey'"
     :lastDiceRoll="lastDiceRoll"
     :lastDamageDealt="lastDamageDealt"
     :lastDamageTaken="lastDamageTaken"
@@ -191,7 +192,7 @@
         :settlementClaimedBy="pageSettlementClaimedBy"
         :panelOpen="showSettlementView || showVisitorSettlement || showBrewery"
         @link-clicked="handleLinkClicked"
-        @open-map="hubOpen = true; hubTab = 'map'"
+        @open-map="hubOpen = true; hubTab = 'journey'"
         @open-settlement="openPageSettlement"
         @switch-target="onSwitchTarget"
         :playerSelectedTarget="playerSelectedTarget"
@@ -218,6 +219,7 @@
         :nextEnemyAttack="nextEnemyAttack"
         :enemyIntents="enemyIntents"
         :enemyTurnKey="enemyTurnKey"
+        :actionsPlaying="actionsPlaying"
       />
 
       <!-- Settlement side panel -->
@@ -419,9 +421,10 @@
         :pendingWeapons="inventory.pendingWeapons ?? []"
       />
     </template>
-    <template #map>
+    <template #journey>
       <MapModal
         embedded
+        :hideMap="true"
         :fullChain="chain"
         :currentTargetIndex="currentTargetIndex"
         :markedPOIs="markedPOIs"
@@ -501,6 +504,17 @@
       </div>
     </template>
   </HubModal>
+
+  <WorldMapModal
+    v-if="showWorldMap"
+    :userId="user?.id"
+    :settlementId="settlementId"
+    :hasSettlement="!!settlementId"
+    :fullChain="chain"
+    :currentTargetIndex="currentTargetIndex"
+    @close="showWorldMap = false"
+    @visit-settlement="openSettlement(); showWorldMap = false"
+  />
 
   <Transition name="quest-notif-fade">
     <div v-if="showQuestNotification" class="quest-notification">
@@ -671,6 +685,7 @@ import RestModal from "@/components/RestModal.vue";
 import ShopModal from "@/components/ShopModal.vue";
 import InventoryModal from "@/components/InventoryModal.vue";
 import MapModal from "@/components/MapModal.vue";
+import WorldMapModal from "@/components/WorldMapModal.vue";
 import NotesModal from "@/components/NotesModal.vue";
 import HubModal from "@/components/HubModal.vue";
 import DieSlayerModal from "@/components/DieSlayerModal.vue";
@@ -697,6 +712,7 @@ import { QUESTS } from "@/utils/quests";
 import { getWeapon } from "@/utils/weapons";
 import { classes } from "@/utils/classes";
 import { supabase } from "@/lib/supabase";
+import { classifyArticle } from "@/utils/continentClassifier";
 import { useAuth } from "@/composables/useAuth";
 
 import { useGameFlow } from "@/composables/useGameFlow";
@@ -762,6 +778,7 @@ const {
 
 const hubOpen = ref(false);
 const hubTab = ref("backpack");
+const showWorldMap = ref(false);
 const showTavernShop = ref(false);
 const pageSettlement = ref(null); // settlement claimed on the current article (any player)
 
@@ -1062,6 +1079,7 @@ const {
   handleSwitchTarget,
   victoryLoot,
   enemyIntents,
+  actionsPlaying,
   libraryBook,
   libraryProgress,
   libraryReady,
@@ -1856,12 +1874,14 @@ async function submitTownName() {
   }
 
   try {
+    const continent = await classifyArticle(wikiTitle);
     const id = await createSettlement({
       userId: user.value.id,
       townName: name,
       playerName: playerName.value,
       wikiTitle,
       signInEmail: user.value.user_metadata?.username ?? null,
+      continent,
     });
     settlementId.value = id;
     settlementFlagAccepted.value = true;

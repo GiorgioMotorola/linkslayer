@@ -72,6 +72,7 @@
   margin-bottom: 22px;
   filter: drop-shadow(0 0 18px rgba(255, 120, 20, 0.7));
   animation: fire-pulse 2.5s ease-in-out infinite;
+  color: orange;
 }
 
 @keyframes fire-pulse {

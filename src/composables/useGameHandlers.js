@@ -104,6 +104,8 @@ export function useGameHandlers(deps) {
     bountyScrollActive,
   } = statusEffects;
 
+  const actionsPlaying = ref(false);
+
   const {
     encounter,
     encounterMessage,
@@ -298,7 +300,7 @@ export function useGameHandlers(deps) {
     }, victoryDelay);
   }
 
-  function onEnemyKilled(defeatedEnemyData) {
+  function onEnemyKilled(defeatedEnemyData, options = {}) {
     const enc = encounter.value;
     if (!enc?.enemies) {
       // Single-enemy or boss — use old victory path
@@ -332,7 +334,16 @@ export function useGameHandlers(deps) {
       encounter.value.enemy = nextEnemy;
       enemyHP.value = nextEnemy.currentHP;
       log(`<i class="ra ra-sword"></i> <span class="player-name">${playerName.value}</span> now faces ${nextEnemy.name}!`);
-      gotoEnemyTurn();
+      if (options.skipGotoEnemyTurn) {
+        // Mid-queue kill: sync the new target's pre-assigned intent without re-rolling
+        const intent = enemyIntents.value[nextIdx];
+        if (intent) {
+          enemyNextAction.value = intent.action ?? "attack";
+          nextEnemyAttack.value = intent.damage ?? null;
+        }
+      } else {
+        gotoEnemyTurn();
+      }
     }, victoryDelay);
   }
 
@@ -355,13 +366,9 @@ export function useGameHandlers(deps) {
     if (intent) {
       enemyNextAction.value = intent.action ?? "attack";
       nextEnemyAttack.value = intent.damage ?? null;
-    } else {
-      // Intents not assigned yet — keep a tentative attack value
-      enemyNextAction.value = "attack";
-      nextEnemyAttack.value =
-        Math.floor(Math.random() * (target.maxDamage - target.minDamage + 1)) +
-        target.minDamage;
     }
+    // If no pre-built intent exists (single-enemy group), keep the current
+    // nextEnemyAttack value as-is — do not re-roll on every target click.
   }
 
   function waitForDice() {
@@ -555,6 +562,7 @@ export function useGameHandlers(deps) {
       ? playerAction
       : [{ action: playerAction, targetIndex: encounter.value?.targetIndex ?? 0 }];
 
+    if (actions.length > 1) actionsPlaying.value = true;
     for (let i = 0; i < actions.length; i++) {
       if (encounter.value === null) break; // combat ended mid-queue
 
@@ -806,6 +814,7 @@ export function useGameHandlers(deps) {
       // Between queued actions: wait for dice result to fully display before starting the next roll
       if (!isLast) await waitForInterAction();
     }
+    actionsPlaying.value = false;
   }
 
   function gotoEnemyTurn() {
@@ -1061,6 +1070,7 @@ export function useGameHandlers(deps) {
     handleSwitchTarget,
     victoryLoot,
     enemyIntents,
+    actionsPlaying,
     libraryBook,
     libraryProgress,
     libraryReady,
