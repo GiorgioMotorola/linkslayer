@@ -228,6 +228,7 @@
           :playerGold="playerGold"
           :isOwner="true"
           :clicksSince="clickCount - lastSettlementVisitClickCount"
+          :lastVisitClickCount="lastSettlementVisitClickCount"
           :daysCount="daysCount"
           @close="closeSettlement"
           @collect="handleSettlementCollect"
@@ -766,15 +767,15 @@ const pageSettlement = ref(null); // settlement claimed on the current article (
 
 const pageSettlementClaimedBy = computed(() => {
   if (!pageSettlement.value) return "";
-  // Current user's own settlement — use live auth email
-  if (pageSettlement.value.owner_id === user.value?.id && user.value?.email) {
-    return user.value.email.split("@")[0];
+  // Current user's own settlement — use live username
+  if (pageSettlement.value.owner_id === user.value?.id && user.value?.user_metadata?.username) {
+    return user.value.user_metadata.username;
   }
   // Another player's settlement — use stored signInEmail, fall back to playerName
   const stored = pageSettlement.value.lord_history?.[0]?.signInEmail
     ?? pageSettlement.value.lord_history?.[0]?.playerName
     ?? "Someone";
-  return stored.split("@")[0];
+  return stored;
 });
 const showForge   = ref(false);
 const showLibrary = ref(false);
@@ -1836,8 +1837,7 @@ async function submitTownName() {
   const name = pendingTownName.value.trim();
   if (!name) return;
 
-  const { data: { user: currentUser } } = await supabase.auth.getUser();
-  if (!currentUser) {
+  if (!user.value?.id) {
     log('<i class="ra ra-aware"></i> You must be logged in to found a settlement.');
     return;
   }
@@ -1857,11 +1857,11 @@ async function submitTownName() {
 
   try {
     const id = await createSettlement({
-      userId: currentUser.id,
+      userId: user.value.id,
       townName: name,
       playerName: playerName.value,
       wikiTitle,
-      signInEmail: currentUser.email ?? null,
+      signInEmail: user.value.user_metadata?.username ?? null,
     });
     settlementId.value = id;
     settlementFlagAccepted.value = true;
@@ -1911,7 +1911,8 @@ async function handleSettlementCollect() {
   const { gold, scrap, healthPotions } = computeYield(
     settlement.value.buildings ?? [],
     settlement.value.terrain ?? [],
-    clicksSince
+    clickCount.value,
+    lastSettlementVisitClickCount.value
   );
   if (gold > 0)          playerGold.value += gold;
   if (scrap > 0)         inventory.value.scrapMetal = (inventory.value.scrapMetal || 0) + scrap;
@@ -1927,14 +1928,17 @@ async function handleSettlementCollect() {
       const def = BUILDING_DEFS[b.type];
       if (!def) return b;
       const e = { gold: 0, scrap: 0, healthPotions: 0 };
+      const bClicks = (b.placedAtClick != null && b.placedAtClick > lastSettlementVisitClickCount.value)
+        ? Math.max(0, clickCount.value - b.placedAtClick)
+        : clicksSince;
       if (def.requiresBuildingOnMap === "mine" && !hasMine) { /* skip */ }
       else {
         if (def.yieldType === "gold" && def.yieldEvery)
-          e.gold += Math.floor(clicksSince / def.yieldEvery) * def.yieldAmount;
+          e.gold += Math.floor(bClicks / def.yieldEvery) * def.yieldAmount;
         if (def.yieldType === "healthPotion" && def.yieldEvery)
-          e.healthPotions += Math.floor(clicksSince / def.yieldEvery) * def.yieldAmount;
+          e.healthPotions += Math.floor(bClicks / def.yieldEvery) * def.yieldAmount;
         if (def.bonusYieldType === "scrap" && def.bonusYieldEvery)
-          e.scrap += Math.floor(clicksSince / def.bonusYieldEvery) * def.bonusYieldAmount;
+          e.scrap += Math.floor(bClicks / def.bonusYieldEvery) * def.bonusYieldAmount;
         if (b.type === "house" && houseGoldPerClick > 0)
           e.gold += houseGoldPerClick * clicksSince;
       }
@@ -1961,7 +1965,7 @@ async function handleSettlementPlaceBuilding({ cellIndex, type, cost, name }) {
   if (!settlementId.value || !settlement.value) return;
   if (playerGold.value < cost) return;
   const buildings = [...(settlement.value.buildings ?? [])];
-  buildings.push({ cellIndex, type, name: name ?? null, totalEarned: { gold: 0, scrap: 0, healthPotions: 0 } });
+  buildings.push({ cellIndex, type, name: name ?? null, placedAtClick: clickCount.value, totalEarned: { gold: 0, scrap: 0, healthPotions: 0 } });
   settlement.value = { ...settlement.value, buildings };
   playerGold.value -= cost;
   await saveBuildings(settlementId.value, buildings);
@@ -1996,13 +2000,12 @@ watch(encounter, async (newVal, oldVal) => {
     const data = visitingSettlementData.value;
     if (!defeated.value && enemyHP.value <= 0 && data) {
       // Player won — claim the settlement
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
-      if (currentUser) {
+      if (user.value?.id) {
         await claimSettlement(
           data.id,
-          currentUser.id,
+          user.value.id,
           playerName.value,
-          currentUser.email,
+          user.value.user_metadata?.username ?? null,
           daysCount.value
         );
         // Grant the loot
@@ -2130,11 +2133,11 @@ async function loadPageSettlement(wikiTitle) {
     : await getSettlementByWikiTitle(wikiTitle);
   if (!base) { pageSettlement.value = null; return; }
 
-  // If signInEmail was never stored, inject it from the current auth user for their own settlement
-  const ownerEmail = base.lord_history?.[0]?.signInEmail;
-  if (!ownerEmail && base.owner_id === user.value?.id && user.value?.email) {
+  // If signInEmail was never stored, inject username from the current auth user for their own settlement
+  const ownerName = base.lord_history?.[0]?.signInEmail;
+  if (!ownerName && base.owner_id === user.value?.id && user.value?.user_metadata?.username) {
     const history = (base.lord_history ?? []).map((e, i) =>
-      i === 0 ? { ...e, signInEmail: user.value.email } : e
+      i === 0 ? { ...e, signInEmail: user.value.user_metadata.username } : e
     );
     pageSettlement.value = { ...base, lord_history: history };
   } else {
@@ -2176,10 +2179,9 @@ watch(current, (title) => {
 });
 
 async function saveGame() {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user.value?.id) return;
   await supabase.from("saves").upsert({
-    user_id: user.id,
+    user_id: user.value.id,
     updated_at: new Date().toISOString(),
     game_state: {
       playerClassName: playerClass.value?.name,
@@ -2334,10 +2336,8 @@ function restoreGameState(s) {
 }
 
 async function handleRestart() {
-  const { data: { user: currentUser } } = await supabase.auth.getUser();
-  if (currentUser) {
+  if (user.value?.id) {
     // Mark the player's settlement as abandoned before wiping their save.
-    // Use settlementId from state if available; otherwise query by owner_id.
     if (settlementId.value) {
       await markAbandoned(
         settlementId.value,
@@ -2345,9 +2345,9 @@ async function handleRestart() {
         daysCount.value
       );
     } else {
-      await markAbandonedByOwner(currentUser.id, daysCount.value);
+      await markAbandonedByOwner(user.value.id, daysCount.value);
     }
-    await supabase.from("saves").delete().eq("user_id", currentUser.id);
+    await supabase.from("saves").delete().eq("user_id", user.value.id);
   }
   location.reload();
 }
@@ -2364,8 +2364,7 @@ async function loadSave(userId) {
 }
 
 onMounted(async () => {
-  const { data: { user: currentUser } } = await supabase.auth.getUser();
-  if (currentUser) await loadSave(currentUser.id);
+  if (user.value?.id) await loadSave(user.value.id);
 });
 
 watch(user, async (newUser, oldUser) => {

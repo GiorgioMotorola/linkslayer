@@ -252,18 +252,8 @@
             <template v-else>
               <button class="hbb-link" @click="toggleForm('signin')">Sign in</button>
               <span class="hbb-sep">·</span>
-              <button class="hbb-link" @click="toggleForm('signup')">Sign up</button>
+              <button class="hbb-link" @click="toggleForm('signup')">Create account</button>
             </template>
-            <div v-if="showForm" class="hbb-dropdown">
-              <div class="hbb-dropdown-title">{{ showForm === 'signup' ? 'Create Account' : 'Sign In' }}</div>
-              <input v-model="authEmail" type="email" placeholder="Email" class="hbb-input" @keyup.enter="submitAuth" />
-              <input v-model="authPassword" type="password" placeholder="Password" class="hbb-input" @keyup.enter="submitAuth" />
-              <div v-if="authError" class="hbb-error">{{ authError }}</div>
-              <div v-if="authSuccess" class="hbb-success">{{ authSuccess }}</div>
-              <button class="hbb-submit" @click="submitAuth" :disabled="authLoading">
-                {{ authLoading ? '...' : showForm === 'signup' ? 'Create Account' : 'Sign In' }}
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -282,6 +272,29 @@
           <transition name="dice-bonus-pop">
             <div class="dice-bonus" v-if="lastDiceRoll.isBonusing">+{{ lastDiceRoll.bonus }}</div>
           </transition>
+        </div>
+      </transition>
+    </Teleport>
+
+    <Teleport to="body">
+      <transition name="auth-fade">
+        <div v-if="showForm" class="auth-modal-overlay" @click.self="toggleForm(null)">
+          <div class="auth-modal">
+            <div class="auth-modal-header">
+              <button class="auth-modal-close" @click="toggleForm(null)">✕</button>
+              <div class="auth-modal-icon">⚔️</div>
+              <div class="auth-modal-title">{{ showForm === 'signup' ? 'Create your account' : 'Welcome back. Sign in.' }}</div>
+            </div>
+            <div class="auth-modal-body">
+              <input v-model="authUsername" type="text" placeholder="Username" class="hbb-input" @keyup.enter="submitAuth" maxlength="30" />
+              <input v-model="authPassword" type="password" placeholder="Password" class="hbb-input" @keyup.enter="submitAuth" />
+              <div v-if="authError" class="hbb-error">{{ authError }}</div>
+              <div v-if="authSuccess" class="hbb-success">{{ authSuccess }}</div>
+              <button class="hbb-submit" @click="submitAuth" :disabled="authLoading">
+                {{ authLoading ? '...' : showForm === 'signup' ? 'Create Account' : 'Sign In' }}
+              </button>
+            </div>
+          </div>
         </div>
       </transition>
     </Teleport>
@@ -421,7 +434,7 @@ const emit = defineEmits([
   "switch-target",
 ]);
 
-const { user: authUser, signIn, signUp, signOut } = useAuth();
+const { user: authUser, signUp, signIn, signOut, getUsername } = useAuth();
 
 
 const enemyThumbnailUrl = ref(null);
@@ -437,25 +450,25 @@ watch(() => props.formattedTitle, async (title) => {
 }, { immediate: true });
 
 const showForm = ref(null);
-const authEmail = ref("");
+const authUsername = ref("");
 const authPassword = ref("");
 const authError = ref("");
-const authLoading = ref(false);
 const authSuccess = ref("");
+const authLoading = ref(false);
 
-const userLabel = computed(() => authUser.value?.email?.split("@")[0] ?? "");
+const userLabel = computed(() => getUsername(authUser.value));
 
 function toggleForm(mode) {
   showForm.value = showForm.value === mode ? null : mode;
-  authEmail.value = "";
+  authUsername.value = "";
   authPassword.value = "";
   authError.value = "";
   authSuccess.value = "";
 }
 
 async function submitAuth() {
-  if (!authEmail.value || !authPassword.value) {
-    authError.value = "Email and password required.";
+  if (!authUsername.value.trim() || !authPassword.value) {
+    authError.value = "Username and password required.";
     return;
   }
   authLoading.value = true;
@@ -463,11 +476,10 @@ async function submitAuth() {
   authSuccess.value = "";
   try {
     if (showForm.value === "signup") {
-      const data = await signUp(authEmail.value, authPassword.value);
-      if (data.session) { showForm.value = null; }
-      else { authSuccess.value = "Check your email to confirm."; }
+      await signUp(authUsername.value, authPassword.value);
+      authSuccess.value = "Account created! You can now sign in.";
     } else {
-      await signIn(authEmail.value, authPassword.value);
+      await signIn(authUsername.value, authPassword.value);
       showForm.value = null;
     }
   } catch (err) {

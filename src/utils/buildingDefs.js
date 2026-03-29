@@ -268,8 +268,18 @@ export function cellEmoji(tileType, building) {
  * Compute resources accumulated since last visit.
  * Returns { gold, scrap, healthPotions }
  */
-export function computeYield(buildings, terrain, clicksSince) {
+export function computeYield(buildings, terrain, currentClickCount, lastVisitClickCount) {
+  const clicksSince = currentClickCount - lastVisitClickCount;
   if (!clicksSince || clicksSince <= 0) return { gold: 0, scrap: 0, healthPotions: 0 };
+
+  // Returns clicks that should count for this building — capped at clicksSince,
+  // but reduced for buildings placed after the last visit.
+  function effectiveClicks(building) {
+    if (building.placedAtClick != null && building.placedAtClick > lastVisitClickCount) {
+      return Math.max(0, currentClickCount - building.placedAtClick);
+    }
+    return clicksSince;
+  }
 
   let gold = 0;
   let scrap = 0;
@@ -292,17 +302,20 @@ export function computeYield(buildings, terrain, clicksSince) {
     const def = BUILDING_DEFS[building.type];
     if (!def) continue;
 
+    const bClicks = effectiveClicks(building);
+    if (bClicks <= 0) continue;
+
     // Primary yield
     if (def.yieldType === "gold" && def.yieldEvery) {
-      gold += Math.floor(clicksSince / def.yieldEvery) * def.yieldAmount;
+      gold += Math.floor(bClicks / def.yieldEvery) * def.yieldAmount;
     }
     if (def.yieldType === "healthPotion" && def.yieldEvery) {
-      healthPotions += Math.floor(clicksSince / def.yieldEvery) * def.yieldAmount;
+      healthPotions += Math.floor(bClicks / def.yieldEvery) * def.yieldAmount;
     }
 
     // Bonus yield (Smithy scrap)
     if (def.bonusYieldType === "scrap" && def.bonusYieldEvery) {
-      scrap += Math.floor(clicksSince / def.bonusYieldEvery) * def.bonusYieldAmount;
+      scrap += Math.floor(bClicks / def.bonusYieldEvery) * def.bonusYieldAmount;
     }
   }
 

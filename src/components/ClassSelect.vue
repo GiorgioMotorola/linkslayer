@@ -11,16 +11,6 @@
           <span class="cs-auth-sep">·</span>
           <button class="cs-auth-link" @click="toggleForm('signup')">Sign up</button>
         </template>
-        <div v-if="showForm" class="cs-auth-dropdown">
-          <div class="cs-auth-dropdown-title">{{ showForm === 'signup' ? 'Create Account' : 'Sign In' }}</div>
-          <input v-model="authEmail" type="email" placeholder="Email" class="cs-auth-input" @keyup.enter="submitAuth" />
-          <input v-model="authPassword" type="password" placeholder="Password" class="cs-auth-input" @keyup.enter="submitAuth" />
-          <div v-if="authError" class="cs-auth-error">{{ authError }}</div>
-          <div v-if="authSuccess" class="cs-auth-success">{{ authSuccess }}</div>
-          <button class="cs-auth-submit" @click="submitAuth" :disabled="authLoading">
-            {{ authLoading ? '...' : showForm === 'signup' ? 'Create Account' : 'Sign In' }}
-          </button>
-        </div>
       </div>
 
       <div class="game-title">
@@ -86,6 +76,29 @@
       <TipsModal v-if="isModalOpen" @close="closeModal" />
     </div>
   </div>
+
+  <Teleport to="body">
+    <transition name="auth-fade">
+      <div v-if="showForm" class="auth-modal-overlay" @click.self="toggleForm(null)">
+        <div class="auth-modal">
+          <div class="auth-modal-header">
+            <button class="auth-modal-close" @click="toggleForm(null)">✕</button>
+            <div class="auth-modal-icon">⚔️</div>
+            <div class="auth-modal-title">{{ showForm === 'signup' ? 'Create your account' : 'Welcome back. Sign in.' }}</div>
+          </div>
+          <div class="auth-modal-body">
+            <input v-model="authUsername" type="text" placeholder="Username" class="hbb-input" @keyup.enter="submitAuth" maxlength="30" />
+            <input v-model="authPassword" type="password" placeholder="Password" class="hbb-input" @keyup.enter="submitAuth" />
+            <div v-if="authError" class="hbb-error">{{ authError }}</div>
+            <div v-if="authSuccess" class="hbb-success">{{ authSuccess }}</div>
+            <button class="hbb-submit" @click="submitAuth" :disabled="authLoading">
+              {{ authLoading ? '...' : showForm === 'signup' ? 'Create Account' : 'Sign In' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
+  </Teleport>
 </template>
 
 <script setup>
@@ -97,28 +110,28 @@ import randomNames from "@/assets/data/randomNames.json";
 import logo from "../assets/link-slayer-logo.png";
 import { useAuth } from "@/composables/useAuth";
 
-const { user, signIn, signUp, signOut } = useAuth();
+const { user, signIn, signUp, signOut, getUsername } = useAuth();
 
 const showForm = ref(null);
-const authEmail = ref("");
+const authUsername = ref("");
 const authPassword = ref("");
 const authError = ref("");
 const authLoading = ref(false);
 const authSuccess = ref("");
 
-const userLabel = computed(() => user.value?.email?.split("@")[0] ?? "");
+const userLabel = computed(() => getUsername(user.value));
 
 function toggleForm(mode) {
   showForm.value = showForm.value === mode ? null : mode;
-  authEmail.value = "";
+  authUsername.value = "";
   authPassword.value = "";
   authError.value = "";
   authSuccess.value = "";
 }
 
 async function submitAuth() {
-  if (!authEmail.value || !authPassword.value) {
-    authError.value = "Please enter email and password.";
+  if (!authUsername.value.trim() || !authPassword.value) {
+    authError.value = "Username and password required.";
     return;
   }
   authLoading.value = true;
@@ -126,14 +139,10 @@ async function submitAuth() {
   authSuccess.value = "";
   try {
     if (showForm.value === "signup") {
-      const data = await signUp(authEmail.value, authPassword.value);
-      if (data.session) {
-        showForm.value = null;
-      } else {
-        authSuccess.value = "Check your email to confirm your account.";
-      }
+      await signUp(authUsername.value, authPassword.value);
+      authSuccess.value = "Account created! You can now sign in.";
     } else {
-      await signIn(authEmail.value, authPassword.value);
+      await signIn(authUsername.value, authPassword.value);
       showForm.value = null;
     }
   } catch (err) {
@@ -328,4 +337,8 @@ watch(
 
 <style scoped>
 @import "./styles/classSelectStyles.css";
+</style>
+
+<style>
+@import "./styles/headerStyles.css";
 </style>

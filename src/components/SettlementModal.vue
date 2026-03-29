@@ -513,7 +513,8 @@ const props = defineProps({
   canShortRest: { type: Boolean, default: true },
   canChallenge:        { type: Boolean, default: false },
   playerHasSettlement: { type: Boolean, default: false },
-  clicksSince:  { type: Number, default: 0 },
+  clicksSince:         { type: Number, default: 0 },
+  lastVisitClickCount: { type: Number, default: 0 },
   tavernBeers:  { type: Array,   default: () => [] },
   daysCount:    { type: Number,  default: 1 },
 });
@@ -564,7 +565,8 @@ const pending = computed(() =>
   computeYield(
     props.settlement.buildings ?? [],
     props.settlement.terrain ?? [],
-    props.clicksSince
+    props.lastVisitClickCount + props.clicksSince,
+    props.lastVisitClickCount
   )
 );
 const pendingGold    = computed(() => pending.value.gold);

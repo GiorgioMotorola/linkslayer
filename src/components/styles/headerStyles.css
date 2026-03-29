@@ -698,29 +698,64 @@ header {
 }
 .hbb-link:hover { color: #aac8e8; }
 
-.hbb-dropdown {
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 0;
+.auth-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.auth-modal {
   background: white;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 10px;
-  width: 220px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-radius: 10px;
+  width: 360px;
+  max-width: 92vw;
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  z-index: 100;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  overflow: hidden;
+  position: relative;
 }
-.hbb-dropdown-title {
-  font-size: 12px;
+.auth-modal-header {
+  background: #2c3e50;
+  padding: 2rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+.auth-modal-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+.auth-modal-title {
+  font-size: 15px;
   font-weight: 600;
-  color: #333;
+  color: #fff;
   text-align: center;
-  padding-bottom: 4px;
-  border-bottom: 1px solid #eee;
 }
+.auth-modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.auth-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+  line-height: 1;
+}
+.auth-modal-close:hover { color: #fff; }
+.auth-fade-enter-active, .auth-fade-leave-active { transition: opacity 0.15s ease; }
+.auth-fade-enter-from, .auth-fade-leave-to { opacity: 0; }
 .hbb-input {
   padding: 5px 8px;
   border: 1px solid #ccc;

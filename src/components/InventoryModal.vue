@@ -4,7 +4,29 @@
       <button v-if="!props.embedded" @click="closeModal" class="close-button-game-style">⎯ &nbsp; Close Backpack &nbsp; ⎯</button>
       <h2 class="inventory-title">Backpack</h2>
 
-      <div class="inventory-items-container">
+      <div class="inv-tabs">
+        <button class="inv-tab" :class="{ 'inv-tab-active': activeTab === 'backpack' }" @click="activeTab = 'backpack'">Backpack</button>
+        <button class="inv-tab" :class="{ 'inv-tab-active': activeTab === 'game' }" @click="activeTab = 'game'">Game</button>
+      </div>
+
+      <!-- Game tab -->
+      <div v-if="activeTab === 'game'" class="inv-game-tab">
+        <div class="inv-game-section">
+          <div class="inv-game-label">Signed in as</div>
+          <div class="inv-game-current">{{ getUsername(authUser) || 'Not signed in' }}</div>
+          <template v-if="authUser">
+            <div class="inv-username-row">
+              <input v-model="newUsername" class="inv-username-input" type="text" placeholder="New username" maxlength="30" @keyup.enter="changeUsername" />
+              <button class="inv-username-btn" @click="changeUsername" :disabled="!newUsername.trim() || usernameLoading">
+                {{ usernameLoading ? '...' : 'Change' }}
+              </button>
+            </div>
+            <div v-if="usernameMsg" class="inv-username-msg">{{ usernameMsg }}</div>
+          </template>
+        </div>
+      </div>
+
+      <div v-if="activeTab === 'backpack'" class="inventory-items-container">
         <div v-if="inventory.minorHealthPotions > 0" class="item-slot-wrapper">
           <div class="item-details-box">
             <div class="item-name-quantity">
@@ -654,9 +676,10 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, computed } from "vue";
+import { defineProps, defineEmits, computed, ref } from "vue";
 import { shopItems } from "@/utils/shopItems.js";
 import { getWeapon } from "@/utils/weapons";
+import { useAuth } from "@/composables/useAuth";
 
 const itemDesc = Object.fromEntries(
   shopItems.filter((i) => i.details && i.description).map((i) => [i.details, i.description])
@@ -786,6 +809,29 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "use-item", "use-beer", "visit-settlement"]);
 
+const { user: authUser, getUsername, updateUsername } = useAuth();
+const activeTab     = ref("backpack");
+const newUsername   = ref("");
+const usernameMsg   = ref("");
+const usernameLoading = ref(false);
+
+async function changeUsername() {
+  const name = newUsername.value.trim();
+  if (!name) return;
+  usernameLoading.value = true;
+  usernameMsg.value = "";
+  try {
+    await updateUsername(name);
+    newUsername.value = "";
+    usernameMsg.value = `Username changed to "${name}".`;
+  } catch (err) {
+    usernameMsg.value = err.message ?? "Something went wrong.";
+  } finally {
+    usernameLoading.value = false;
+    setTimeout(() => { usernameMsg.value = ""; }, 3000);
+  }
+}
+
 const uniquePendingWeapon   = computed(() => [...new Set(props.pendingWeaponAugments)]);
 const uniquePendingDefense  = computed(() => [...new Set(props.pendingDefenseAugments)]);
 const uniquePendingWeapons  = computed(() => [...new Set(props.pendingWeapons)]);
@@ -820,4 +866,76 @@ function useItem(itemType) {
 
 <style scoped>
 @import "./styles/inventoryModalStyles.css";
+
+.inv-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #d0c8b8;
+  padding-bottom: 0;
+}
+.inv-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 5px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #888;
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+.inv-tab-active {
+  color: #333;
+  border-bottom-color: #333;
+}
+.inv-game-tab {
+  padding: 8px 2px;
+}
+.inv-game-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.inv-game-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #999;
+  font-weight: 600;
+}
+.inv-game-current {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}
+.inv-username-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+.inv-username-input {
+  flex: 1;
+  padding: 5px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+.inv-username-btn {
+  padding: 5px 12px;
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.inv-username-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.inv-username-msg {
+  font-size: 0.78rem;
+  color: #5a8a5a;
+}
 </style>

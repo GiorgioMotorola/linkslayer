@@ -112,6 +112,77 @@
   padding: 2rem;
 }
 
+.hub-account-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 360px;
+}
+
+.hub-account-label {
+  font-size: 12px;
+  color: #a09080;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hub-account-name {
+  font-size: 17px;
+  color: #e8d8b8;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.hub-username-row {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+
+.hub-username-input {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(200,180,140,0.3);
+  border-radius: 5px;
+  color: #e8d8b8;
+  font-size: 14px;
+  padding: 0.45rem 0.7rem;
+  font-family: "IBM Plex Sans", sans-serif;
+  outline: none;
+}
+
+.hub-username-input:focus {
+  border-color: rgba(200,180,140,0.6);
+}
+
+.hub-username-btn {
+  background: rgba(80,60,30,0.5);
+  border: 1px solid rgba(200,160,80,0.4);
+  border-radius: 5px;
+  color: #d4b87a;
+  font-size: 13px;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+  font-family: "IBM Plex Sans", sans-serif;
+  transition: background 0.15s;
+}
+
+.hub-username-btn:hover:not(:disabled) {
+  background: rgba(100,75,35,0.65);
+}
+
+.hub-username-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.hub-username-msg {
+  font-size: 13px;
+  color: #90c080;
+}
+
 .hub-newgame-warning {
   color: #e08060;
   font-size: 15px;

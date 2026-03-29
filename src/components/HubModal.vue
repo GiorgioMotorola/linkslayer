@@ -39,6 +39,17 @@
         </div>
         <div v-else-if="activeTab === 'newgame'" class="hub-tab-pane hub-newgame-pane">
           <div class="hub-newgame-center">
+            <div class="hub-account-section">
+              <div class="hub-account-label">Signed in as</div>
+              <div class="hub-account-name">{{ getUsername(user) }}</div>
+              <div class="hub-username-row">
+                <input v-model="newUsername" class="hub-username-input" type="text" placeholder="New username" maxlength="30" @keyup.enter="changeUsername" />
+                <button class="hub-username-btn" @click="changeUsername" :disabled="!newUsername.trim() || usernameLoading">
+                  {{ usernameLoading ? '...' : 'Change' }}
+                </button>
+              </div>
+              <div v-if="usernameMsg" class="hub-username-msg">{{ usernameMsg }}</div>
+            </div>
             <p class="hub-newgame-warning">Starting a new game will delete your current save.</p>
             <button class="hub-newgame-btn" @click="$emit('restart')"><i class="ra ra-sword"></i> Start New Game</button>
           </div>
@@ -52,7 +63,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+import { useAuth } from '@/composables/useAuth';
 
 const props = defineProps({
   activeTab: { type: String, default: 'backpack' },
@@ -69,6 +81,28 @@ const tabs = computed(() => {
   if (props.isLoggedIn) base.push({ id: 'newgame', label: 'Game' });
   return base;
 });
+
+const { user, getUsername, updateUsername } = useAuth();
+const newUsername    = ref('');
+const usernameMsg    = ref('');
+const usernameLoading = ref(false);
+
+async function changeUsername() {
+  const name = newUsername.value.trim();
+  if (!name) return;
+  usernameLoading.value = true;
+  usernameMsg.value = '';
+  try {
+    await updateUsername(name);
+    newUsername.value = '';
+    usernameMsg.value = `Username changed to "${name}".`;
+  } catch (err) {
+    usernameMsg.value = err.message ?? 'Something went wrong.';
+  } finally {
+    usernameLoading.value = false;
+    setTimeout(() => { usernameMsg.value = ''; }, 3000);
+  }
+}
 
 defineEmits(['close', 'change-tab', 'restart']);
 </script>
