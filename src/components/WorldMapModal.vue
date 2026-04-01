@@ -24,6 +24,18 @@
 
             <!-- Settlement dots overlay -->
             <svg class="wm-dots-svg" :viewBox="`0 0 ${mapW} ${mapH}`" xmlns="http://www.w3.org/2000/svg">
+              <!-- Continent labels -->
+              <g v-for="(pos, name) in LABEL_POSITIONS" :key="name" class="wm-label-group">
+                <text
+                  :x="pos.x * mapW / 2500"
+                  :y="pos.y * mapH / 2500"
+                  :font-size="labelFontSize"
+                  class="wm-continent-label"
+                  text-anchor="middle"
+                  dominant-baseline="middle"
+                >{{ name }}</text>
+              </g>
+
               <!-- Other players' settlements (blue) -->
               <g v-for="s in otherSettlements" :key="s.id" @click="selectDot(s)" @touchend.stop="selectDot(s)" class="wm-dot-group">
                 <circle :cx="s.x" :cy="s.y" :r="dotRadius * 4" class="wm-hit" />
@@ -56,7 +68,7 @@
         <div v-if="selected" class="wm-card">
           <button class="wm-card-close" @click="selected = null">✕</button>
           <template v-if="selected.type === 'settlement'">
-            <div class="wm-card-continent">{{ selected.continent ?? 'The Void' }}</div>
+            <div class="wm-card-continent">{{ selected.continent }}</div>
             <div class="wm-card-name">{{ selected.town_name }}</div>
             <div class="wm-card-article">{{ selected.wiki_title?.replaceAll('_', ' ') }}</div>
             <div class="wm-card-lord">Lord: {{ selected.lord }}</div>
@@ -91,7 +103,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { supabase } from '@/lib/supabase';
-const mapImageUrl = new URL('../assets/jpegworld.jpeg', import.meta.url).href;
+const mapImageUrl = new URL('../assets/jpegworld-new.JPG', import.meta.url).href;
 
 const props = defineProps({
   userId:             { type: String, default: null },
@@ -134,6 +146,7 @@ const canvasStyle = computed(() => ({
 }));
 
 const dotRadius = computed(() => Math.max(2, 5 / scale.value));
+const labelFontSize = computed(() => Math.max(8, 18 / scale.value));
 
 function getViewportSize() {
   const el = viewportEl.value;
@@ -228,19 +241,39 @@ function onTouchEnd() { dragging.value = false; lastTouchDist = null; }
 // ── Deterministic position from article title ────────────────────────────────
 
 // Continent bounding boxes within the 2500x2500 map space (rough placements)
+// Bounds in 2500×2500 design space, mapped to actual image via titleToPos scaling.
+// Placed to sit on landmass based on the jpegworld-new.JPG layout:
+//   - Ocean: top-left corner, top-right corner, far-right edge, bottom-center inlet
+//   - Large inland sea: left side mid-to-lower
+//   - Large lake: right side mid
 const CONTINENT_BOUNDS = {
-  "The Gilded Expanse":  { x: 200,  y: 200,  w: 400, h: 350 },
-  "The Hall of Names":   { x: 700,  y: 150,  w: 380, h: 320 },
-  "The Known Lands":     { x: 1200, y: 180,  w: 420, h: 380 },
-  "The Healer's Isle":   { x: 1750, y: 200,  w: 300, h: 280 },
-  "The Ancient Reaches": { x: 200,  y: 700,  w: 450, h: 380 },
-  "The Arcane Wastes":   { x: 750,  y: 650,  w: 360, h: 320 },
-  "The Wilds":           { x: 1250, y: 680,  w: 420, h: 380 },
-  "The Sacred Grounds":  { x: 1780, y: 700,  w: 340, h: 320 },
-  "The Grand Forum":     { x: 220,  y: 1300, w: 420, h: 380 },
-  "The Arena":           { x: 760,  y: 1280, w: 360, h: 340 },
-  "The Iron Kingdoms":   { x: 1260, y: 1300, w: 420, h: 380 },
-  "The Void":            { x: 1800, y: 1350, w: 350, h: 300 },
+  "Realm One":    { x: 300,  y: 100,  w: 480, h: 700 },
+  "Realm Two":    { x: 820,  y: 100,  w: 460, h: 680 },
+  "Realm Three":  { x: 1320, y: 100,  w: 500, h: 700 },
+  "Realm Four":   { x: 1860, y: 150,  w: 380, h: 620 },
+  "Realm Five":   { x: 300,  y: 900,  w: 520, h: 700 },
+  "Realm Six":    { x: 870,  y: 900,  w: 560, h: 700 },
+  "Realm Seven":  { x: 1480, y: 900,  w: 520, h: 700 },
+  "Realm Eight":  { x: 2050, y: 950,  w: 300, h: 600 },
+  "Realm Nine":   { x: 300,  y: 1700, w: 580, h: 600 },
+  "Realm Ten":    { x: 950,  y: 1720, w: 620, h: 580 },
+  "Realm Eleven": { x: 1620, y: 1720, w: 580, h: 560 },
+};
+
+// Label positions are independent of dot bounds so they can be freely staggered.
+// Coordinates in 2500×2500 design space, scaled to actual map by (x * mapW/2500).
+const LABEL_POSITIONS = {
+  "Realm One":    { x: 540,  y: 280  },
+  "Realm Two":    { x: 1050, y: 520  },
+  "Realm Three":  { x: 1570, y: 320  },
+  "Realm Four":   { x: 2050, y: 480  },
+  "Realm Five":   { x: 560,  y: 1050 },
+  "Realm Six":    { x: 1150, y: 1320 },
+  "Realm Seven":  { x: 1740, y: 1080 },
+  "Realm Eight":  { x: 2200, y: 1280 },
+  "Realm Nine":   { x: 590,  y: 1820 },
+  "Realm Ten":    { x: 1260, y: 2050 },
+  "Realm Eleven": { x: 1910, y: 1880 },
 };
 
 // Null-continent settlements get spread across the middle of the map
@@ -286,11 +319,21 @@ const selected = ref(null);
 
 const journeyChain = computed(() => props.fullChain ?? []);
 
+const REALM_NAMES = Object.keys(CONTINENT_BOUNDS);
+
+function resolveContinent(wikiTitle, continent) {
+  if (continent && CONTINENT_BOUNDS[continent]) return continent;
+  // Old settlement with no continent — hash the title to a deterministic realm
+  const h = hashTitle(wikiTitle ?? '');
+  return REALM_NAMES[h % REALM_NAMES.length];
+}
+
 const mappedSettlements = computed(() =>
   allSettlements.value.map(s => {
-    const pos = titleToPos(s.wiki_title, s.continent);
+    const continent = resolveContinent(s.wiki_title, s.continent);
+    const pos = titleToPos(s.wiki_title, continent);
     const lord = s.lord_history?.[s.lord_history.length - 1]?.playerName ?? s.lord_history?.[0]?.playerName ?? 'Unknown';
-    return { ...s, ...pos, lord };
+    return { ...s, continent, ...pos, lord };
   })
 );
 
@@ -455,6 +498,23 @@ onMounted(async () => {
   width: 100%;
   height: 100%;
   pointer-events: none;
+}
+
+.wm-label-group {
+  pointer-events: none;
+}
+
+.wm-continent-label {
+  fill: #3a2000;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.45;
+  paint-order: stroke;
+  stroke: rgba(240, 220, 180, 0.5);
+  stroke-width: 4px;
+  stroke-linejoin: round;
 }
 
 .wm-dot-group {
