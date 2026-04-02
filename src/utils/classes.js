@@ -16,7 +16,7 @@ export const classes = {
     startingShieldBonus: 0,
     startingHealthPotionBonus: 0,
     startingInvisibilityCloaks: 0,
-    startingPlayerGold: 1000,
+    startingPlayerGold: 0,
   },
   Paladin: {
     name: "Paladin",
