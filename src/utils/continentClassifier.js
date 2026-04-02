@@ -6,17 +6,17 @@
  */
 
 export const CONTINENTS = {
-  ARTS:        "Realm One",
-  BIOGRAPHY:   "Realm Two",
-  GEOGRAPHY:   "Realm Three",
-  HEALTH:      "Realm Four",
-  HISTORY:     "Realm Five",
-  MATHEMATICS: "Realm Six",
-  NATURE:      "Realm Seven",
-  PHILOSOPHY:  "Realm Eight",
-  SOCIETY:     "Realm Nine",
-  SPORTS:      "Realm Ten",
-  TECHNOLOGY:  "Realm Eleven",
+  ARTS:        "Kala Tundra",
+  BIOGRAPHY:   "Bywyd Forest",
+  GEOGRAPHY:   "Terra Plains",
+  HEALTH:      "Salud Wetlands",
+  HISTORY:     "Storia Hills",
+  MATHEMATICS: "Hisab Prairie",
+  NATURE:      "Natura Fens",
+  PHILOSOPHY:  "Jnana Pines",
+  SOCIETY:     "Civitas Steppe",
+  SPORTS:      "Igra Shallows",
+  TECHNOLOGY:  "Forge Marsh",
 };
 
 // Keyword patterns matched against lowercased category titles, in priority order

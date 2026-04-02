@@ -44,14 +44,29 @@
                 :key="i"
                 class="action-slot"
                 :class="{
-                  'action-slot-filled': lockedActions[i-1],
-                  'action-slot-empty': !lockedActions[i-1],
-                  'action-slot-open': openSlotIdx === i-1,
+                  'action-slot-filled':   !!slotAction(i-1),
+                  'action-slot-empty':    !slotAction(i-1) && !actionsPlaying,
+                  'action-slot-open':     openSlotIdx === i-1 && !actionsPlaying,
+                  'action-slot-active':   actionsPlaying && i-1 === currentActionIndex,
+                  'action-slot-done':     actionsPlaying && i-1 < currentActionIndex,
+                  'action-slot-waiting':  actionsPlaying && i-1 > currentActionIndex,
                 }"
-                @click="onSlotClick(i-1)"
+                @click="!actionsPlaying && onSlotClick(i-1)"
               >
-                <span v-if="lockedActions[i-1]" v-html="actionSlotLabel(lockedActions[i-1].action) + ' ✕'"></span>
-                <span v-else class="slot-empty-indicator">+ Action</span>
+                <span v-if="slotAction(i-1)" v-html="actionSlotLabel(slotAction(i-1).action) + (actionsPlaying ? '' : ' ✕')"></span>
+                <span v-else-if="!actionsPlaying" class="slot-empty-indicator">+ Action</span>
+                <!-- Dice roll rendered inside the active slot -->
+                <div
+                  v-if="actionsPlaying && i-1 === currentActionIndex && props.lastDiceRoll"
+                  class="slot-dice"
+                  :class="props.lastDiceRoll.isRolling ? 'slot-dice-rolling' : (props.lastDiceRoll.didHit ? 'slot-dice-hit' : 'slot-dice-miss')"
+                >
+                  <div class="slot-dice-num">{{ props.lastDiceRoll.roll }}</div>
+                  <div class="slot-dice-label" v-if="!props.lastDiceRoll.isRolling">{{ props.lastDiceRoll.threshold }}+</div>
+                  <transition name="dice-bonus-pop">
+                    <div class="slot-dice-bonus" v-if="props.lastDiceRoll.isBonusing">+{{ props.lastDiceRoll.bonus }}</div>
+                  </transition>
+                </div>
               </div>
             </div>
             <button
@@ -263,7 +278,7 @@
     <Teleport to="body">
       <transition name="dice-roll-fade">
         <div
-          v-if="lastDiceRoll"
+          v-if="lastDiceRoll && !actionsPlaying && !encounter"
           class="dice-roll-display"
           :class="lastDiceRoll.isRolling ? 'dice-rolling' : (lastDiceRoll.didHit ? 'dice-hit' : 'dice-miss')"
           :style="diceRollBadgeStyle"
@@ -304,6 +319,8 @@
 
 <script setup>
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from "vue";
+import { useCombatScene } from "@/composables/useCombatScene";
+const { actionsPlaying, currentActionIndex } = useCombatScene();
 import TipsModal from "./TipsModal.vue";
 import "./styles/headerStyles.css";
 import { shopItems } from "@/utils/shopItems";
@@ -1188,9 +1205,20 @@ function handleAction(action) {
   setTimeout(() => { activeAction.value = ""; }, 300);
 }
 
+const submittedActions = ref([]);
+
+watch(actionsPlaying, (playing) => {
+  if (!playing) setTimeout(() => { submittedActions.value = []; }, 500);
+});
+
+function slotAction(i) {
+  return actionsPlaying.value ? submittedActions.value[i] : lockedActions.value[i];
+}
+
 function confirmTurn() {
   if (lockedActions.value.length === 0) return;
   const toSubmit = [...lockedActions.value];
+  submittedActions.value = toSubmit;
   lockedActions.value = [];
   emit("confirm-turn", toSubmit);
 }

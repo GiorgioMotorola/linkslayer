@@ -1,4 +1,5 @@
-import { ref, watch } from "vue";
+import { ref, watch, nextTick } from "vue";
+import { useCombatScene } from "@/composables/useCombatScene";
 import { classes } from "@/utils/classes";
 import { isBoss } from "@/utils/bossGenerator";
 import { handleCombatAction } from "@/utils/combat";
@@ -12,6 +13,7 @@ import { handleShopPurchase as externalHandleShopPurchase } from "@/utils/itemHa
 import { getRandomChain } from "@/utils/randomPair";
 import { getBook } from "@/utils/libraryBooks";
 export function useGameHandlers(deps) {
+  const { actionsPlaying, currentActionIndex, selectionLocked } = useCombatScene();
   const daysCount = ref(1);
 
   // ── Infinite Library state ─────────────────────────────────────────────────
@@ -104,7 +106,7 @@ export function useGameHandlers(deps) {
     bountyScrollActive,
   } = statusEffects;
 
-  const actionsPlaying = ref(false);
+  const actionFlash = ref({ type: null, key: 0 });
 
   const {
     encounter,
@@ -562,11 +564,18 @@ export function useGameHandlers(deps) {
       ? playerAction
       : [{ action: playerAction, targetIndex: encounter.value?.targetIndex ?? 0 }];
 
-    if (actions.length > 1) actionsPlaying.value = true;
+    currentActionIndex.value = -1; // reset so first iteration always triggers a change
+    actionsPlaying.value = true;
+    selectionLocked.value = true;
+    const sceneStart = Date.now();
     for (let i = 0; i < actions.length; i++) {
       if (encounter.value === null) break; // combat ended mid-queue
 
       const { action: singleAction, targetIndex: actionTargetIndex } = actions[i];
+      currentActionIndex.value = i;
+      await new Promise(r => { nextTick(() => requestAnimationFrame(r)); });
+      const flashType = singleAction.startsWith('use_item:') ? 'use_item' : singleAction;
+      actionFlash.value = { type: flashType, key: actionFlash.value.key + 1 };
       const isLast = i === actions.length - 1;
 
       // Switch target if this queued action targets a different enemy
@@ -814,7 +823,13 @@ export function useGameHandlers(deps) {
       // Between queued actions: wait for dice result to fully display before starting the next roll
       if (!isLast) await waitForInterAction();
     }
+    // Ensure the scene is visible long enough for flash animations to play (~600ms)
+    const elapsed = Date.now() - sceneStart;
+    if (elapsed < 600) await new Promise(r => setTimeout(r, 600 - elapsed));
+
     actionsPlaying.value = false;
+    selectionLocked.value = false; // always release — covers victory/flee/defeat paths that skip gotoEnemyTurn
+    actionFlash.value = { type: null, key: actionFlash.value.key };
   }
 
   function gotoEnemyTurn() {
@@ -849,6 +864,8 @@ export function useGameHandlers(deps) {
         onEnemyKilled,
       },
     });
+    // Intents are now set — allow the player to select a target
+    selectionLocked.value = false;
   }
 
   async function callHandleEncounterOption(option) {
@@ -1070,7 +1087,7 @@ export function useGameHandlers(deps) {
     handleSwitchTarget,
     victoryLoot,
     enemyIntents,
-    actionsPlaying,
+    actionFlash,
     libraryBook,
     libraryProgress,
     libraryReady,

@@ -4,29 +4,8 @@
       <button v-if="!props.embedded" @click="closeModal" class="close-button-game-style">⎯ &nbsp; Close Backpack &nbsp; ⎯</button>
       <h2 class="inventory-title">Backpack</h2>
 
-      <div class="inv-tabs">
-        <button class="inv-tab" :class="{ 'inv-tab-active': activeTab === 'backpack' }" @click="activeTab = 'backpack'">Backpack</button>
-        <button class="inv-tab" :class="{ 'inv-tab-active': activeTab === 'game' }" @click="activeTab = 'game'">Game</button>
-      </div>
 
-      <!-- Game tab -->
-      <div v-if="activeTab === 'game'" class="inv-game-tab">
-        <div class="inv-game-section">
-          <div class="inv-game-label">Signed in as</div>
-          <div class="inv-game-current">{{ getUsername(authUser) || 'Not signed in' }}</div>
-          <template v-if="authUser">
-            <div class="inv-username-row">
-              <input v-model="newUsername" class="inv-username-input" type="text" placeholder="New username" maxlength="30" @keyup.enter="changeUsername" />
-              <button class="inv-username-btn" @click="changeUsername" :disabled="!newUsername.trim() || usernameLoading">
-                {{ usernameLoading ? '...' : 'Change' }}
-              </button>
-            </div>
-            <div v-if="usernameMsg" class="inv-username-msg">{{ usernameMsg }}</div>
-          </template>
-        </div>
-      </div>
-
-      <div v-if="activeTab === 'backpack'" class="inventory-items-container">
+      <div class="inventory-items-container">
         <div v-if="inventory.minorHealthPotions > 0" class="item-slot-wrapper">
           <div class="item-details-box">
             <div class="item-name-quantity">
@@ -679,7 +658,6 @@
 import { defineProps, defineEmits, computed, ref } from "vue";
 import { shopItems } from "@/utils/shopItems.js";
 import { getWeapon } from "@/utils/weapons";
-import { useAuth } from "@/composables/useAuth";
 
 const itemDesc = Object.fromEntries(
   shopItems.filter((i) => i.details && i.description).map((i) => [i.details, i.description])
@@ -809,28 +787,6 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "use-item", "use-beer", "visit-settlement"]);
 
-const { user: authUser, getUsername, updateUsername } = useAuth();
-const activeTab     = ref("backpack");
-const newUsername   = ref("");
-const usernameMsg   = ref("");
-const usernameLoading = ref(false);
-
-async function changeUsername() {
-  const name = newUsername.value.trim();
-  if (!name) return;
-  usernameLoading.value = true;
-  usernameMsg.value = "";
-  try {
-    await updateUsername(name);
-    newUsername.value = "";
-    usernameMsg.value = `Username changed to "${name}".`;
-  } catch (err) {
-    usernameMsg.value = err.message ?? "Something went wrong.";
-  } finally {
-    usernameLoading.value = false;
-    setTimeout(() => { usernameMsg.value = ""; }, 3000);
-  }
-}
 
 const uniquePendingWeapon   = computed(() => [...new Set(props.pendingWeaponAugments)]);
 const uniquePendingDefense  = computed(() => [...new Set(props.pendingDefenseAugments)]);

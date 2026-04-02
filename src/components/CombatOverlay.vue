@@ -1,11 +1,11 @@
 <template>
   <Transition name="combat-overlay">
-    <div v-if="inEncounter" class="combat-backdrop" aria-hidden="true">
+    <div v-if="inEncounter" :class="['combat-backdrop', { 'combat-backdrop--scene': props.actionsPlaying }]" aria-hidden="true">
       <div class="scanlines"></div>
     </div>
   </Transition>
   <Transition name="combat-overlay">
-    <div v-if="inEncounter" class="combat-overlay" aria-hidden="true">
+    <div v-if="inEncounter" :class="['combat-overlay', { 'combat-overlay--scene': props.actionsPlaying }]" aria-hidden="true">
 
       <!-- Player portrait with HP badge -->
       <div class="co-player-portrait" :class="{ 'co-player-recoil': playerShakeActive }">
@@ -35,6 +35,15 @@
         </div>
       </div>
 
+      <!-- Action flash overlays -->
+      <div
+        v-if="props.actionFlash?.type"
+        :key="props.actionFlash?.key"
+        class="co-scene-flash"
+        :class="`co-scene-flash--${props.actionFlash.type}`"
+      ></div>
+      <div v-if="enemyAttackFlashActive" class="co-enemy-attack-flash"></div>
+
       <!-- Enemy group — layout driven by enemy count -->
       <div class="co-enemy-group" :class="`co-enemy-group--${visibleEnemyCount}`">
         <div v-for="(row, rowIdx) in enemyRows" :key="rowIdx" class="co-enemy-row">
@@ -42,8 +51,8 @@
           <div
             v-if="!enemyList[idx]?.fled && !enemyList[idx]?.turned"
             class="co-enemy-portrait"
-            :class="{ 'co-enemy-shake': shakeActive && idx === targetIndex }"
-            @click="enemyList[idx]?.currentHP > 0 && $emit('switch-target', idx)"
+            :class="{ 'co-enemy-shake': shakeActive && idx === targetIndex, 'co-enemy-locked': selectionLocked }"
+            @click="!selectionLocked && enemyList[idx]?.currentHP > 0 && $emit('switch-target', idx)"
           >
             <div
               class="co-enemy-wrap"
@@ -123,6 +132,8 @@
 
 <script setup>
 import { ref, computed, watch } from "vue";
+import { useCombatScene } from "@/composables/useCombatScene";
+const { selectionLocked } = useCombatScene();
 
 const knightImg        = new URL("../assets/knight-img.jpg",        import.meta.url).href;
 const paladinImg       = new URL("../assets/paladin-img.jpg",       import.meta.url).href;
@@ -151,6 +162,7 @@ const props = defineProps({
   enemyTurnKey:        { type: Number, default: 0 },
   playerSelectedTarget: { type: Boolean, default: false },
   actionsPlaying:       { type: Boolean, default: false },
+  actionFlash:          { type: Object,  default: null },
 });
 
 defineEmits(["switch-target"]);
@@ -201,6 +213,15 @@ watch(() => props.enemyHitKey, () => {
     clearTimeout(shakeTimer);
     shakeTimer = setTimeout(() => { shakeActive.value = false; }, 900);
   }));
+});
+
+// ── Enemy attack flash ────────────────────────────────────────────────────────
+const enemyAttackFlashActive = ref(false);
+let enemyAttackFlashTimer = null;
+watch(() => props.playerHitKey, () => {
+  enemyAttackFlashActive.value = true;
+  clearTimeout(enemyAttackFlashTimer);
+  enemyAttackFlashTimer = setTimeout(() => { enemyAttackFlashActive.value = false; }, 500);
 });
 
 // ── Player portrait recoil ────────────────────────────────────────────────────
@@ -932,6 +953,116 @@ watch(
   .co-enemy-group--3 .co-enemy { height: clamp(42px,  8vh,  65px); width: clamp(42px,  8vh,  65px); }
   .co-enemy-group--4 .co-enemy { height: clamp(38px,  7vh,  58px); width: clamp(38px,  7vh,  58px); }
   .co-enemy-group--5 .co-enemy { height: clamp(34px,  6vh,  52px); width: clamp(34px,  6vh,  52px); }
+}
+
+/* ── Scene mode (cinematic lock) ─────────────────────────────────────────── */
+.combat-backdrop {
+  transition: background-color 0.2s ease;
+}
+.combat-backdrop--scene {
+  background-color: #000000ff;
+}
+
+.combat-overlay {
+  transition: transform 0.22s ease-out;
+  transform-origin: center 85%;
+}
+.combat-overlay--scene {
+  transform: scale(1.07);
+}
+
+.co-enemy-locked {
+  cursor: not-allowed !important;
+}
+
+/* ── Action flash overlays ───────────────────────────────────────────────── */
+.co-scene-flash,
+.co-enemy-attack-flash {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 96;
+}
+
+.co-scene-flash--attack_steady {
+  animation: flash-steady 0.38s ease-out both;
+  background: radial-gradient(ellipse 55% 80% at 65% 48%, rgba(255, 210, 80, 0.5) 0%, transparent 100%);
+}
+@keyframes flash-steady {
+  0%   { opacity: 0; transform: scaleX(0.5) translateX(20%); }
+  22%  { opacity: 1; transform: scaleX(1.08) translateX(-1%); }
+  100% { opacity: 0; transform: scaleX(1) translateX(0); }
+}
+
+.co-scene-flash--attack_power {
+  animation: flash-power 0.52s ease-out both;
+  background: radial-gradient(ellipse 85% 100% at 65% 50%, rgba(255, 255, 200, 0.75) 0%, rgba(255, 130, 0, 0.4) 50%, transparent 82%);
+}
+@keyframes flash-power {
+  0%   { opacity: 0; transform: scale(0.7); }
+  12%  { opacity: 1; transform: scale(1.12); }
+  45%  { opacity: 0.8; transform: scale(1.04); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+.co-scene-flash--attack_enraged {
+  animation: flash-enrage 0.5s ease-out both;
+  background: radial-gradient(ellipse 85% 100% at 65% 50%, rgba(255, 50, 0, 0.7) 0%, rgba(200, 0, 0, 0.35) 55%, transparent 82%);
+}
+@keyframes flash-enrage {
+  0%   { opacity: 0; transform: scale(0.75); }
+  14%  { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+.co-scene-flash--special {
+  animation: flash-special 0.58s ease-out both;
+  background: radial-gradient(ellipse 80% 100% at 37% 50%, rgba(170, 60, 255, 0.6) 0%, rgba(90, 0, 200, 0.28) 55%, transparent 82%);
+}
+@keyframes flash-special {
+  0%   { opacity: 0; transform: scale(0.65); }
+  18%  { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+.co-scene-flash--defend {
+  animation: flash-defend 0.55s ease-out both;
+  background: radial-gradient(ellipse 65% 90% at 34% 50%, rgba(30, 160, 255, 0.58) 0%, rgba(0, 90, 220, 0.25) 55%, transparent 82%);
+}
+@keyframes flash-defend {
+  0%   { opacity: 0; }
+  18%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.co-scene-flash--flee {
+  animation: flash-flee 0.42s ease-out both;
+  background: radial-gradient(ellipse at 35% 50%, rgba(0, 210, 90, 0.42) 0%, transparent 72%);
+}
+@keyframes flash-flee {
+  0%   { opacity: 0; }
+  18%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.co-scene-flash--use_item {
+  animation: flash-item 0.42s ease-out both;
+  background: radial-gradient(ellipse at 50% 50%, rgba(255, 220, 0, 0.48) 0%, rgba(200, 150, 0, 0.22) 55%, transparent 82%);
+}
+@keyframes flash-item {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.co-enemy-attack-flash {
+  animation: flash-enemy-hit 0.48s ease-out both;
+  background: radial-gradient(ellipse 68% 90% at 76% 50%, rgba(255, 0, 0, 0.48) 0%, rgba(200, 0, 0, 0.22) 55%, transparent 82%);
+}
+@keyframes flash-enemy-hit {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 /* ── Overlay transitions ─────────────────────────────────────────────────── */

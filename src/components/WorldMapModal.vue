@@ -81,7 +81,7 @@
             </button>
           </template>
           <template v-else-if="selected.type === 'journey'">
-            <div class="wm-card-continent">Your Journey</div>
+            <div class="wm-card-continent">{{ resolveContinent(selected.article, journeyContinents[selected.article] ?? null) }}</div>
             <div class="wm-card-name">{{ selected.article?.replaceAll('_', ' ') }}</div>
             <div class="wm-card-lord">
               {{ selected.idx < currentTargetIndex ? '✓ Visited' : selected.idx === currentTargetIndex ? '▶ Current' : '○ Upcoming' }}
@@ -103,6 +103,10 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { supabase } from '@/lib/supabase';
+import { classifyArticle } from '@/utils/continentClassifier';
+
+// Module-level cache so repeated map opens don't re-fetch
+const journeyContientCache = {};
 const mapImageUrl = new URL('../assets/jpegworld-new.JPG', import.meta.url).href;
 
 const props = defineProps({
@@ -247,33 +251,33 @@ function onTouchEnd() { dragging.value = false; lastTouchDist = null; }
 //   - Large inland sea: left side mid-to-lower
 //   - Large lake: right side mid
 const CONTINENT_BOUNDS = {
-  "Realm One":    { x: 300,  y: 100,  w: 480, h: 700 },
-  "Realm Two":    { x: 820,  y: 100,  w: 460, h: 680 },
-  "Realm Three":  { x: 1320, y: 100,  w: 500, h: 700 },
-  "Realm Four":   { x: 1860, y: 150,  w: 380, h: 620 },
-  "Realm Five":   { x: 300,  y: 900,  w: 520, h: 700 },
-  "Realm Six":    { x: 870,  y: 900,  w: 560, h: 700 },
-  "Realm Seven":  { x: 1480, y: 900,  w: 520, h: 700 },
-  "Realm Eight":  { x: 2050, y: 950,  w: 300, h: 600 },
-  "Realm Nine":   { x: 300,  y: 1700, w: 580, h: 600 },
-  "Realm Ten":    { x: 950,  y: 1720, w: 620, h: 580 },
-  "Realm Eleven": { x: 1620, y: 1720, w: 580, h: 560 },
+  "Kala Tundra":    { x: 300,  y: 100,  w: 480, h: 700 },
+  "Bywyd Forest":   { x: 820,  y: 100,  w: 460, h: 680 },
+  "Terra Plains":   { x: 1320, y: 100,  w: 500, h: 700 },
+  "Salud Wetlands": { x: 1860, y: 150,  w: 380, h: 620 },
+  "Storia Hills":   { x: 300,  y: 900,  w: 520, h: 700 },
+  "Hisab Prairie":  { x: 870,  y: 900,  w: 560, h: 700 },
+  "Natura Fens":    { x: 1480, y: 900,  w: 520, h: 700 },
+  "Jnana Pines":    { x: 2050, y: 950,  w: 300, h: 600 },
+  "Civitas Steppe": { x: 300,  y: 1700, w: 580, h: 600 },
+  "Igra Shallows":  { x: 950,  y: 1720, w: 620, h: 580 },
+  "Forge Marsh":    { x: 1620, y: 1720, w: 580, h: 560 },
 };
 
 // Label positions are independent of dot bounds so they can be freely staggered.
 // Coordinates in 2500×2500 design space, scaled to actual map by (x * mapW/2500).
 const LABEL_POSITIONS = {
-  "Realm One":    { x: 540,  y: 280  },
-  "Realm Two":    { x: 1050, y: 520  },
-  "Realm Three":  { x: 1570, y: 320  },
-  "Realm Four":   { x: 2050, y: 480  },
-  "Realm Five":   { x: 560,  y: 1050 },
-  "Realm Six":    { x: 1150, y: 1320 },
-  "Realm Seven":  { x: 1740, y: 1080 },
-  "Realm Eight":  { x: 2200, y: 1280 },
-  "Realm Nine":   { x: 590,  y: 1820 },
-  "Realm Ten":    { x: 1260, y: 2050 },
-  "Realm Eleven": { x: 1910, y: 1880 },
+  "Kala Tundra":    { x: 540,  y: 280  },
+  "Bywyd Forest":   { x: 1050, y: 520  },
+  "Terra Plains":   { x: 1570, y: 320  },
+  "Salud Wetlands": { x: 2050, y: 480  },
+  "Storia Hills":   { x: 560,  y: 1050 },
+  "Hisab Prairie":  { x: 1150, y: 1320 },
+  "Natura Fens":    { x: 1740, y: 1080 },
+  "Jnana Pines":    { x: 2200, y: 1280 },
+  "Civitas Steppe": { x: 590,  y: 1820 },
+  "Igra Shallows":  { x: 1260, y: 2050 },
+  "Forge Marsh":    { x: 1910, y: 1880 },
 };
 
 // Null-continent settlements get spread across the middle of the map
@@ -302,15 +306,6 @@ function titleToPos(wikiTitle, continent) {
   };
 }
 
-function journeyPos(article, _idx) {
-  const h  = hashTitle((article ?? '') + 'jx');
-  const h2 = hashTitle((article ?? '') + 'jy');
-  return {
-    x: (150 + (h  % 2200)) * mapW.value / 2500,
-    y: (150 + (h2 % 2200)) * mapH.value / 2500,
-  };
-}
-
 // ── Data ─────────────────────────────────────────────────────────────────────
 const allSettlements = ref([]);
 const loading = ref(false);
@@ -323,9 +318,17 @@ const REALM_NAMES = Object.keys(CONTINENT_BOUNDS);
 
 function resolveContinent(wikiTitle, continent) {
   if (continent && CONTINENT_BOUNDS[continent]) return continent;
-  // Old settlement with no continent — hash the title to a deterministic realm
+  // No continent match — hash the title to a deterministic realm
   const h = hashTitle(wikiTitle ?? '');
   return REALM_NAMES[h % REALM_NAMES.length];
+}
+
+// Reactive wrapper so dots re-render as classifications arrive
+const journeyContinents = ref({});
+
+function journeyPos(article) {
+  const continent = resolveContinent(article, journeyContinents.value[article] ?? null);
+  return titleToPos(article, continent);
 }
 
 const mappedSettlements = computed(() =>
@@ -373,9 +376,26 @@ async function fetchSettlements() {
   loading.value = false;
 }
 
+async function classifyJourneyChain() {
+  const articles = props.fullChain ?? [];
+  for (let i = 0; i < articles.length; i++) {
+    const article = articles[i];
+    if (journeyContientCache[article]) {
+      journeyContinents.value[article] = journeyContientCache[article];
+      continue;
+    }
+    // Stagger API calls by 150ms each to avoid hammering Wikipedia
+    await new Promise(r => setTimeout(r, i === 0 ? 0 : 150));
+    const continent = await classifyArticle(article);
+    journeyContientCache[article] = continent;
+    journeyContinents.value = { ...journeyContinents.value, [article]: continent };
+  }
+}
+
 onMounted(async () => {
   await fetchSettlements();
   requestAnimationFrame(() => requestAnimationFrame(resetView));
+  classifyJourneyChain(); // fire-and-forget, dots update as results arrive
 });
 </script>
 

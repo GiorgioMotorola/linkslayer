@@ -220,6 +220,7 @@
         :enemyIntents="enemyIntents"
         :enemyTurnKey="enemyTurnKey"
         :actionsPlaying="actionsPlaying"
+        :actionFlash="actionFlash"
       />
 
       <!-- Settlement side panel -->
@@ -702,6 +703,8 @@ import SettlementModal from "@/components/SettlementModal.vue";
 import ExplorerModal from "@/components/ExplorerModal.vue";
 import { EXPLORER_MAPS, buildExplorerState } from "@/utils/explorerMaps.js";
 import { generateEnemyGroup } from "@/utils/encounterGenerator";
+import { useCombatScene } from "@/composables/useCombatScene";
+const { actionsPlaying } = useCombatScene();
 
 import { shopItems as allShopItems } from "@/utils/shopItems";
 import { isBoss } from "@/utils/bossGenerator";
@@ -990,10 +993,6 @@ watch(encounter, (newEnc, oldEnc) => {
   }
 });
 
-watch(enemyTurnKey, () => {
-  playerSelectedTarget.value = false;
-});
-
 function onSwitchTarget(idx) {
   handleSwitchTarget(idx);
   playerSelectedTarget.value = true;
@@ -1079,7 +1078,7 @@ const {
   handleSwitchTarget,
   victoryLoot,
   enemyIntents,
-  actionsPlaying,
+  actionFlash,
   libraryBook,
   libraryProgress,
   libraryReady,
@@ -1098,6 +1097,10 @@ const {
   enlightenmentFishAccumulatedHP,
   combat,
   statusEffects,
+});
+
+watch(actionsPlaying, (playing) => {
+  if (!playing) playerSelectedTarget.value = false;
 });
 
 // ── Splash screen ─────────────────────────────────────────────────────────────

@@ -66,6 +66,7 @@
     :playerHitKey="props.playerHitKey"
     :playerSelectedTarget="props.playerSelectedTarget"
     :actionsPlaying="props.actionsPlaying"
+    :actionFlash="props.actionFlash"
     @switch-target="$emit('switch-target', $event)"
   />
   <div class="article" :class="{ 'blurred-content': isBlurred || props.isInCombat }">
@@ -122,6 +123,7 @@ const props = defineProps({
   playerHitKey:         { type: Number, default: 0 },
   playerSelectedTarget: { type: Boolean, default: false },
   actionsPlaying:       { type: Boolean, default: false },
+  actionFlash:          { type: Object,  default: null },
 });
 
 function dayWeather(day) {
