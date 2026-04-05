@@ -2296,6 +2296,7 @@ async function saveGame() {
       restModalCount: restModalCount.value,
       longRestDismissCount: longRestDismissCount.value,
       dogName: dogName.value,
+      warriors: warriors.value.map(w => ({ ...w, rollDisplay: null, leaving: false })),
       goldPouchAccumulatedGold: goldPouchAccumulatedGold.value,
       campTier: campTier.value,
       weaponAugment: weaponAugment.value,
@@ -2373,6 +2374,7 @@ function restoreGameState(s) {
   if (s.restModalCount != null) restModalCount.value = s.restModalCount;
   if (s.longRestDismissCount != null) longRestDismissCount.value = s.longRestDismissCount;
   dogName.value = s.dogName ?? "";
+  warriors.value = s.warriors ?? [];
   campTier.value = s.campTier ?? 0;
   weaponAugment.value = s.weaponAugment ?? "";
   defenseAugment.value = s.defenseAugment ?? "";
