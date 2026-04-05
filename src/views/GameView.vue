@@ -1130,6 +1130,8 @@ watch(actionsPlaying, (playing) => {
   if (!playing) playerSelectedTarget.value = false;
 });
 
+watch(warriors, () => { saveGame(); }, { deep: true });
+
 // ── Splash screen ─────────────────────────────────────────────────────────────
 const showSplash = ref(false);
 const pendingClassSelection = ref(null);
