@@ -7,11 +7,18 @@ import { assignSettlementBossKey } from "@/utils/settlementBossGenerator.js";
 // Brewery state is embedded inside the buildings JSONB array as a hidden sentinel
 // so it persists without needing a separate DB column.
 const BREWERY_KEY = "__brewery__";
+const BARRACKS_KEY = "__barracks__";
 
 export function getBreweryStateFromBuildings(buildings) {
   if (!buildings) return null;
   const entry = buildings.find(b => b.type === BREWERY_KEY);
   return entry?.breweryData ?? null;
+}
+
+export function getBarracksStateFromBuildings(buildings) {
+  if (!buildings) return null;
+  const entry = buildings.find(b => b.type === BARRACKS_KEY);
+  return entry?.barrackData ?? null;
 }
 
 export function useSettlement() {
@@ -301,6 +308,16 @@ export function useSettlement() {
     }
   }
 
+  async function saveBarracksState(sId, barrackData) {
+    const current = settlement.value?.buildings ?? [];
+    const filtered = current.filter(b => b.type !== BARRACKS_KEY);
+    const updated = [...filtered, { type: BARRACKS_KEY, cellIndex: -2, barrackData }];
+    await saveBuildings(sId, updated);
+    if (settlement.value) {
+      settlement.value = { ...settlement.value, buildings: updated };
+    }
+  }
+
   async function claimSettlement(settlementId, newOwnerId, playerName, signInEmail, day) {
     const { data } = await supabase
       .from("settlements")
@@ -359,6 +376,7 @@ export function useSettlement() {
     markAbandonedByOwner,
     claimSettlement,
     saveBreweryState,
+    saveBarracksState,
     saveTownMeta,
     getTownMetaFromBuildings,
   };

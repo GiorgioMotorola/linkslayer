@@ -24,6 +24,20 @@
 
             <!-- Settlement dots overlay -->
             <svg class="wm-dots-svg" :viewBox="`0 0 ${mapW} ${mapH}`" xmlns="http://www.w3.org/2000/svg">
+              <!-- Continent borders -->
+              <g class="wm-region-borders">
+                <rect
+                  v-for="(b, name) in CONTINENT_BOUNDS"
+                  :key="'border-' + name"
+                  :x="b.x * mapW / 2500"
+                  :y="b.y * mapH / 2500"
+                  :width="b.w * mapW / 2500"
+                  :height="b.h * mapH / 2500"
+                  class="wm-region-rect"
+                  rx="6"
+                />
+              </g>
+
               <!-- Continent labels -->
               <g v-for="(pos, name) in LABEL_POSITIONS" :key="name" class="wm-label-group">
                 <text
@@ -255,12 +269,12 @@ const CONTINENT_BOUNDS = {
   "Bywyd Forest":   { x: 820,  y: 100,  w: 460, h: 680 },
   "Terra Plains":   { x: 1320, y: 100,  w: 500, h: 700 },
   "Salud Wetlands": { x: 1860, y: 150,  w: 380, h: 620 },
-  "Storia Hills":   { x: 300,  y: 900,  w: 520, h: 700 },
+  "Storia Hills":   { x: 50,  y: 900,  w: 750, h: 700 },
   "Hisab Prairie":  { x: 870,  y: 900,  w: 560, h: 700 },
   "Natura Fens":    { x: 1480, y: 900,  w: 520, h: 700 },
   "Jnana Pines":    { x: 2050, y: 950,  w: 300, h: 600 },
-  "Civitas Steppe": { x: 300,  y: 1700, w: 580, h: 600 },
-  "Igra Shallows":  { x: 950,  y: 1720, w: 620, h: 580 },
+  "Civitas Steppe": { x: 50,  y: 1700, w: 500, h: 650 },
+  "Igra Shallows":  { x: 600,  y: 1720, w: 620, h: 580 },
   "Forge Marsh":    { x: 1620, y: 1720, w: 580, h: 560 },
 };
 
@@ -271,12 +285,12 @@ const LABEL_POSITIONS = {
   "Bywyd Forest":   { x: 1050, y: 520  },
   "Terra Plains":   { x: 1570, y: 320  },
   "Salud Wetlands": { x: 2050, y: 480  },
-  "Storia Hills":   { x: 560,  y: 1050 },
+  "Storia Hills":   { x: 400,  y: 1050 },
   "Hisab Prairie":  { x: 1150, y: 1320 },
   "Natura Fens":    { x: 1740, y: 1080 },
   "Jnana Pines":    { x: 2200, y: 1280 },
-  "Civitas Steppe": { x: 590,  y: 1820 },
-  "Igra Shallows":  { x: 1260, y: 2050 },
+  "Civitas Steppe": { x: 300,  y: 1950 },
+  "Igra Shallows":  { x: 800, y: 2050 },
   "Forge Marsh":    { x: 1910, y: 1880 },
 };
 
@@ -518,6 +532,19 @@ onMounted(async () => {
   width: 100%;
   height: 100%;
   pointer-events: none;
+}
+
+.wm-region-borders {
+  pointer-events: none;
+}
+
+.wm-region-rect {
+  fill: rgba(200, 168, 75, 0.04);
+  stroke: rgba(60, 35, 5, 0.45);
+  stroke-width: 6;
+  stroke-dasharray: 18 10;
+  stroke-linejoin: round;
+  display: none;
 }
 
 .wm-label-group {

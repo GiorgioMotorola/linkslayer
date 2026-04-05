@@ -67,6 +67,7 @@
         <button class="sp-btn" v-if="hasCastle" @click="$emit('open-forge')">Forge</button>
         <button class="sp-btn" v-if="hasCastle" :disabled="!props.canShortRest" @click="$emit('short-rest')">Short Rest</button>
         <button class="sp-btn" v-if="hasBrewerySetup" @click="$emit('open-brewery')">Brewery</button>
+        <button class="sp-btn" v-if="hasBarracks" @click="$emit('open-barracks')">Barracks</button>
         <button class="sp-btn sp-btn-leave" @click="$emit('close')">Leave</button>
         <div v-if="showPalette" class="build-popup">
           <div class="build-popup-title">Buildings</div>
@@ -198,6 +199,7 @@ const BUILDING_STYLES = {
   horse_stable:  { wall: "#f5f5f2", roof: "#ECE4E0", ink: "#020202" },
   farm:          { wall: "#f5f2e0", roof: "#D4822A", ink: "#020202" },
   brewery:       { wall: "#f5f5f2", roof: "#8B6914", ink: "#020202" },
+  barracks:      { wall: "#e8e0d0", roof: "#4a3a2a", ink: "#020202" },
 };
 
 function drawCanvasBuilding(ctx, bx, by, wPx, hPx, type) {
@@ -405,6 +407,37 @@ function drawCanvasBuilding(ctx, bx, by, wPx, hPx, type) {
     return;
   }
 
+  // ── Barracks (1×1) — fortified building with crossed swords ───────────────
+  if (type === "barracks") {
+    const cfgB = BUILDING_STYLES.barracks;
+    const lw = Math.max(0.8, Math.min(wPx, hPx) * 0.025);
+    const pad = Math.max(1, Math.min(wPx, hPx) * 0.06);
+    const ix = bx + pad, iy = by + pad, iw = wPx - pad * 2, ih = hPx - pad * 2;
+    const roofH = ih * 0.30;
+    // Building body
+    ctx.fillStyle = cfgB.wall;
+    ctx.fillRect(ix, iy + roofH, iw, ih - roofH);
+    // Dark roof (battlements look)
+    ctx.fillStyle = cfgB.roof;
+    ctx.fillRect(ix, iy, iw, roofH);
+    // Battlements (3 merlons)
+    const mW = iw * 0.18, mH = roofH * 0.55;
+    for (let m = 0; m < 3; m++) {
+      const mX = ix + iw * (0.1 + m * 0.28);
+      ctx.fillRect(mX, iy - mH, mW, mH);
+    }
+    ctx.strokeStyle = cfgB.ink; ctx.lineWidth = lw;
+    ctx.strokeRect(ix, iy, iw, ih);
+    ctx.beginPath(); ctx.moveTo(ix, iy + roofH); ctx.lineTo(ix + iw, iy + roofH); ctx.stroke();
+    // Crossed swords in the lower half
+    const cx2 = ix + iw / 2, cY = iy + roofH + (ih - roofH) * 0.5;
+    const sLen = Math.min(iw, ih - roofH) * 0.32;
+    ctx.strokeStyle = "#6a5020"; ctx.lineWidth = Math.max(1, lw * 1.5);
+    ctx.beginPath(); ctx.moveTo(cx2 - sLen, cY - sLen); ctx.lineTo(cx2 + sLen, cY + sLen); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx2 + sLen, cY - sLen); ctx.lineTo(cx2 - sLen, cY + sLen); ctx.stroke();
+    return;
+  }
+
   // ── Generic building ──────────────────────────────────────────────────────
   const pad = Math.max(1, Math.min(wPx, hPx) * 0.06);
   const ix = bx + pad, iy = by + pad, iw = wPx - pad * 2, ih = hPx - pad * 2;
@@ -519,7 +552,7 @@ const props = defineProps({
   daysCount:    { type: Number,  default: 1 },
 });
 
-const emit = defineEmits(["close", "collect", "place-building", "remove-building", "change-terrain", "open-forge", "open-brewery", "short-rest", "challenge-boss", "open-tavern", "update-town-meta"]);
+const emit = defineEmits(["close", "collect", "place-building", "remove-building", "change-terrain", "open-forge", "open-brewery", "open-barracks", "short-rest", "challenge-boss", "open-tavern", "update-town-meta"]);
 
 // ── Pulse animation state ───────────────────────────────────────────────────
 let pulseRafId = null;
@@ -580,6 +613,10 @@ const hasCastle = computed(() =>
 const hasBrewerySetup = computed(() =>
   (props.settlement.buildings ?? []).some(b => b.type === "farm") &&
   (props.settlement.buildings ?? []).some(b => b.type === "brewery")
+);
+
+const hasBarracks = computed(() =>
+  (props.settlement.buildings ?? []).some(b => b.type === "barracks")
 );
 
 const hoveredLabel = computed(() => {

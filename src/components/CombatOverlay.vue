@@ -35,6 +35,67 @@
         </div>
       </div>
 
+      <!-- Persistent ally companion (Conscriptor's Chain) -->
+      <div
+        v-if="props.allyCompanion && props.allyCompanion.currentHP > 0"
+        class="co-persistent-ally co-enemy-portrait"
+        :class="{ 'co-ally-leaving': props.allyCompanion.leaving }"
+      >
+        <div class="co-enemy-wrap co-enemy-turned">
+          <img :src="enemyPlaceholder" class="co-enemy" alt="" />
+        </div>
+        <!-- Survival roll float -->
+        <div
+          v-if="props.allyCompanion.rollDisplay"
+          :key="props.allyCompanion.rollDisplay.key"
+          class="co-float-ally-roll"
+          :class="props.allyCompanion.rollDisplay.survived ? 'co-float-ally-roll--stay' : 'co-float-ally-roll--leave'"
+        ><i class="ra ra-perspective-dice-random"></i> {{ props.allyCompanion.rollDisplay.roll }}</div>
+        <div class="co-intent-badge co-turned-badge"><i class="ra ra-chain"></i> {{ props.allyCompanion.name }}</div>
+        <div class="co-hp-bar-wrap co-enemy-hp-bar">
+          <div class="co-hp-bar-fill co-hp-bar-turned" :style="{ width: (props.allyCompanion.currentHP / props.allyCompanion.maxHP * 100) + '%' }"></div>
+        </div>
+      </div>
+
+      <!-- Barracks warriors -->
+      <div class="co-warriors-group">
+        <div
+          v-for="w in (props.warriors ?? [])"
+          :key="w.id"
+          class="co-enemy-portrait co-warrior-portrait"
+          :class="{ 'co-ally-leaving': w.leaving }"
+        >
+          <div class="co-enemy-wrap co-enemy-turned">
+            <img :src="enemyPlaceholder" class="co-enemy" alt="" />
+          </div>
+          <div
+            v-if="w.rollDisplay"
+            :key="w.rollDisplay.key"
+            class="co-float-ally-roll"
+            :class="w.rollDisplay.survived ? 'co-float-ally-roll--stay' : 'co-float-ally-roll--leave'"
+          ><i class="ra ra-perspective-dice-random"></i> {{ w.rollDisplay.roll }}</div>
+          <div class="co-intent-badge co-turned-badge">
+            <i :class="['ra', 'ra-sword']"></i> {{ w.label }}
+          </div>
+          <div class="co-hp-bar-wrap co-enemy-hp-bar">
+            <div class="co-hp-bar-fill co-hp-bar-turned" :style="{ width: (w.currentHP / w.maxHP * 100) + '%' }"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Proc event banner -->
+      <Transition name="proc-banner">
+        <div
+          v-if="props.lastProcEvent"
+          :key="props.lastProcEvent.key"
+          class="co-proc-banner"
+          :style="{ borderColor: props.lastProcEvent.color, color: props.lastProcEvent.color }"
+        >
+          <span v-html="props.lastProcEvent.icon"></span>
+          <span class="co-proc-banner-label">{{ props.lastProcEvent.label }}</span>
+        </div>
+      </Transition>
+
       <!-- Action flash overlays -->
       <div
         v-if="props.actionFlash?.type"
@@ -117,6 +178,18 @@
             </div>
             <!-- Damage dealt float -->
             <div v-if="dmgDealtVal && idx === targetIndex" :key="'dealt-' + dmgDealtKey" class="co-float-dmg co-float-dmg--dealt">-{{ dmgDealtVal }}</div>
+            <!-- Proc status pop on targeted enemy -->
+            <Transition name="status-pop">
+              <div
+                v-if="props.lastProcEvent?.onEnemy && idx === targetIndex"
+                :key="props.lastProcEvent?.key"
+                class="co-status-pop"
+                :style="{ borderColor: props.lastProcEvent.color, color: props.lastProcEvent.color }"
+              >
+                <span v-html="props.lastProcEvent.icon"></span>
+                <span>{{ props.lastProcEvent.label }}</span>
+              </div>
+            </Transition>
             <!-- DEFEATED stamp -->
             <div v-if="defeatedStampIdx === idx" class="co-defeated-stamp">DEFEATED</div>
           </div>
@@ -163,6 +236,9 @@ const props = defineProps({
   playerSelectedTarget: { type: Boolean, default: false },
   actionsPlaying:       { type: Boolean, default: false },
   actionFlash:          { type: Object,  default: null },
+  lastProcEvent:        { type: Object,  default: null },
+  allyCompanion:        { type: Object,  default: null },
+  warriors:             { type: Array,   default: () => [] },
 });
 
 defineEmits(["switch-target"]);
@@ -458,6 +534,72 @@ watch(
 </script>
 
 <style scoped>
+/* ── Proc event banner ───────────────────────────────────────────────────── */
+.co-proc-banner {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(6, 3, 16, 0.96);
+  border-left: 3px solid;
+  border-radius: 4px;
+  padding: 6px 14px 6px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.proc-banner-enter-active { animation: proc-banner-in  0.22s ease-out both; }
+.proc-banner-leave-active  { animation: proc-banner-out 0.35s ease-in  both; }
+
+@keyframes proc-banner-in {
+  from { transform: translateX(-50%) scale(0.82); opacity: 0; }
+  to   { transform: translateX(-50%) scale(1);    opacity: 1; }
+}
+@keyframes proc-banner-out {
+  from { transform: translateX(-50%) scale(1);    opacity: 1; }
+  to   { transform: translateX(-50%) scale(0.9);  opacity: 0; }
+}
+
+/* ── Portrait status pop ─────────────────────────────────────────────────── */
+.co-status-pop {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(6, 3, 16, 0.93);
+  border: 1px solid;
+  border-radius: 20px;
+  padding: 3px 9px 3px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-pop-enter-active { animation: status-pop-in  0.18s ease-out both; }
+.status-pop-leave-active  { animation: status-pop-out 0.5s  ease-in  both; }
+
+@keyframes status-pop-in {
+  from { transform: translateX(-50%) translateY(6px)  scale(0.8); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0)    scale(1);   opacity: 1; }
+}
+@keyframes status-pop-out {
+  from { transform: translateX(-50%) translateY(0)    scale(1);   opacity: 1; }
+  to   { transform: translateX(-50%) translateY(-12px) scale(0.85); opacity: 0; }
+}
+
 /* ── Scanlines backdrop ───────────────────────────────────────────────────── */
 .scanlines {
   position: absolute;
@@ -599,7 +741,8 @@ watch(
 }
 
 /* Turned ally portrait size */
-.co-turned-ally .co-enemy { height: clamp(70px, 12vh, 130px); width: clamp(70px, 12vh, 130px); }
+.co-turned-ally .co-enemy    { height: clamp(70px, 12vh, 130px); width: clamp(70px, 12vh, 130px); }
+.co-persistent-ally .co-enemy { height: clamp(70px, 12vh, 130px); width: clamp(70px, 12vh, 130px); }
 
 /* Portrait sizes by enemy count */
 .co-enemy-group--1 .co-enemy { height: clamp(100px, 18vh, 200px); width: clamp(100px, 18vh, 200px); }
@@ -700,6 +843,66 @@ watch(
 }
 
 
+
+/* ── Barracks warriors group ─────────────────────────────────────────────── */
+.co-warriors-group {
+  position: absolute;
+  left: 44%;
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.co-warrior-portrait { pointer-events: none; }
+
+.co-warrior-portrait .co-enemy { height: clamp(70px, 12vh, 130px); width: clamp(70px, 12vh, 130px); }
+
+/* ── Persistent ally companion ───────────────────────────────────────────── */
+.co-persistent-ally {
+  position: absolute;
+  left: 36%;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+}
+
+/* ── Ally survival roll float ────────────────────────────────────────────── */
+.co-float-ally-roll {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(14px, 2.2vw, 20px);
+  font-weight: 900;
+  pointer-events: none;
+  z-index: 10;
+  animation: float-dmg 2.8s ease-out forwards;
+  white-space: nowrap;
+}
+.co-float-ally-roll--stay {
+  color: #00ff9d;
+  text-shadow: 0 0 8px rgba(0,255,100,0.9), -1px -1px 0 #000, 1px 1px 0 #000;
+}
+.co-float-ally-roll--leave {
+  color: #ff9955;
+  text-shadow: 0 0 8px rgba(255,100,0,0.9), -1px -1px 0 #000, 1px 1px 0 #000;
+}
+
+/* ── Ally departure animation ────────────────────────────────────────────── */
+.co-ally-leaving {
+  animation: ally-depart 1.2s ease-in forwards;
+}
+@keyframes ally-depart {
+  0%   { opacity: 1;   transform: translateY(0);     filter: none; }
+  30%  { opacity: 0.8; transform: translateY(-10px);  filter: grayscale(60%); }
+  100% { opacity: 0;   transform: translateY(-35px);  filter: grayscale(100%) blur(5px); }
+}
 
 /* ── Floating damage numbers ─────────────────────────────────────────────── */
 .co-float-dmg {

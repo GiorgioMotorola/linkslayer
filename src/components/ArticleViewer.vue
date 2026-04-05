@@ -67,6 +67,8 @@
     :playerSelectedTarget="props.playerSelectedTarget"
     :actionsPlaying="props.actionsPlaying"
     :actionFlash="props.actionFlash"
+    :lastProcEvent="props.lastProcEvent"
+    :allyCompanion="props.allyCompanion"
     @switch-target="$emit('switch-target', $event)"
   />
   <div class="article" :class="{ 'blurred-content': isBlurred || props.isInCombat }">
@@ -124,6 +126,8 @@ const props = defineProps({
   playerSelectedTarget: { type: Boolean, default: false },
   actionsPlaying:       { type: Boolean, default: false },
   actionFlash:          { type: Object,  default: null },
+  lastProcEvent:        { type: Object,  default: null },
+  allyCompanion:        { type: Object,  default: null },
 });
 
 function dayWeather(day) {

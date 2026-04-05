@@ -61,6 +61,8 @@
     :lastDamageTaken="lastDamageTaken"
     :counterResult="counterResult"
     :enrageCharges="playerEnrageCharges"
+    :focusPips="focusPips"
+    :guardCharges="guardCharges"
     :specialTier="specialTier"
     :playerGoal="playerGoal"
     :enemyStatusEffects="enemyStatusEffects"
@@ -190,7 +192,7 @@
         :inEncounter="inEncounter"
         :settlementOnThisPage="pageSettlement"
         :settlementClaimedBy="pageSettlementClaimedBy"
-        :panelOpen="showSettlementView || showVisitorSettlement || showBrewery"
+        :panelOpen="showSettlementView || showVisitorSettlement || showBrewery || showBarracks"
         @link-clicked="handleLinkClicked"
         @open-map="hubOpen = true; hubTab = 'journey'"
         @open-settlement="openPageSettlement"
@@ -221,6 +223,9 @@
         :enemyTurnKey="enemyTurnKey"
         :actionsPlaying="actionsPlaying"
         :actionFlash="actionFlash"
+        :lastProcEvent="lastProcEvent"
+        :allyCompanion="allyCompanion"
+        :warriors="warriors"
       />
 
       <!-- Settlement side panel -->
@@ -241,6 +246,7 @@
           :canShortRest="canShortRestAtSettlement"
           @open-forge="showForge = true"
           @open-brewery="showBrewery = true"
+          @open-barracks="showBarracks = true"
           @short-rest="handleSettlementShortRest"
           @update-town-meta="handleTownMetaUpdate"
         />
@@ -672,6 +678,19 @@
     @list-in-tavern="handleBreweryListInTavern"
   />
 
+  <BarracksModal
+    v-if="showBarracks && settlement"
+    :barrackData="getBarracksStateFromBuildings(settlement?.buildings)"
+    :activeWarriors="warriors"
+    :playerGold="playerGold"
+    :currentClickCount="clickCount"
+    @close="showBarracks = false"
+    @update-barracks="handleBarracksUpdate"
+    @deploy-warrior="(w) => warriors.push(w)"
+    @dismiss-warrior="(id) => { warriors = warriors.filter(w => w.id !== id) }"
+    @spend-gold="(amt) => { playerGold -= amt }"
+  />
+
 </template>
 
 <script setup>
@@ -698,6 +717,7 @@ import TavernShopModal from "@/components/TavernShopModal.vue";
 import ForgeModal from "@/components/ForgeModal.vue";
 import LibraryModal from "@/components/LibraryModal.vue";
 import BreweryModal from "@/components/BreweryModal.vue";
+import BarracksModal from "@/components/BarracksModal.vue";
 import TavernBeerModal from "@/components/TavernBeerModal.vue";
 import SettlementModal from "@/components/SettlementModal.vue";
 import ExplorerModal from "@/components/ExplorerModal.vue";
@@ -726,7 +746,7 @@ import { useInventory } from "@/composables/useInventory";
 import { useStatusEffects } from "@/composables/useStatusEffects";
 import { useCombat } from "@/composables/useCombat";
 import { useGameHandlers } from "@/composables/useGameHandlers";
-import { useSettlement, getBreweryStateFromBuildings } from "@/composables/useSettlement";
+import { useSettlement, getBreweryStateFromBuildings, getBarracksStateFromBuildings } from "@/composables/useSettlement";
 
 const gameFlow = useGameFlow();
 const {
@@ -799,7 +819,8 @@ const pageSettlementClaimedBy = computed(() => {
 });
 const showForge   = ref(false);
 const showLibrary = ref(false);
-const showBrewery = ref(false);
+const showBrewery  = ref(false);
+const showBarracks = ref(false);
 
 const showDieSlayer = ref(false);
 const dieSlayerSource = ref("shop");
@@ -1072,9 +1093,14 @@ const {
   lastDamageTaken,
   playerHitKey,
   lastGoldStolen,
+  lastProcEvent,
   counterResult,
   daysCount,
   playerEnrageCharges,
+  focusPips,
+  guardCharges,
+  allyCompanion,
+  warriors,
   handleSwitchTarget,
   victoryLoot,
   enemyIntents,
@@ -1227,6 +1253,7 @@ const {
   saveBuildings,
   saveTerrain,
   saveBreweryState,
+  saveBarracksState,
   saveTownMeta,
   getTownMetaFromBuildings,
   getSettlementByWikiTitle,
@@ -1314,6 +1341,11 @@ const settlementHasTavern = computed(() =>
 async function handleBreweryUpdate(newState) {
   if (!settlementId.value || !settlement.value) return;
   await saveBreweryState(settlementId.value, newState);
+}
+
+async function handleBarracksUpdate(newState) {
+  if (!settlementId.value || !settlement.value) return;
+  await saveBarracksState(settlementId.value, newState);
 }
 
 function handleBreweryIngredientToBackpack({ key, qty }) {

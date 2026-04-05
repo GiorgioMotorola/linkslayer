@@ -168,6 +168,15 @@ export const BUILDING_DEFS = {
     yieldEvery: 1,
     maxPerHouses: 3,
   },
+  barracks: {
+    name: "Barracks",
+    emoji: '<i class="ra ra-sword"></i>',
+    cost: 120,
+    description: "Train warriors to join your journey. Up to 3 active at once. Limit: 1 per settlement.",
+    category: "structure",
+    yieldType: null,
+    maxPerMap: 1,
+  },
 };
 
 // ── Grid constants ─────────────────────────────────────────────────────────

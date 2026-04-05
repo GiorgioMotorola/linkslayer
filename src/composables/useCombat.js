@@ -20,7 +20,13 @@ export function useCombat() {
 
   const ironWillUsed = ref(false);
   const bloodpactActive = ref(false);
-  const playerEnrageCharges = ref(0); // 0–3; reaches 3 → Enraged available
+  const playerEnrageCharges = ref(0); // 0–3; usable at 1+ (scales with charges)
+  const focusPips = ref(0);           // built by Steady hits, consumed on next attack
+  const guardCharges = ref(0);        // built by successful Regular Defend
+  // Persistent ally conscripted via Conscriptor's Chain — survives across battles
+  const allyCompanion = ref(null);    // { name, currentHP, maxHP } | null
+  // Warriors trained at the Barracks — array of warrior objects, persist across battles
+  const warriors = ref([]);           // [{ id, label, tier, spec, currentHP, maxHP, ... }]
 
   const DEFAULT_ENEMY_HP = 25;
 
@@ -70,6 +76,14 @@ export function useCombat() {
       ironWillUsed.value = false;
       bloodpactActive.value = false;
       playerEnrageCharges.value = 0;
+      focusPips.value = 0;
+      guardCharges.value = 0;
+      // Reset per-combat volatile state on each warrior
+      for (const w of warriors.value) {
+        w.windingUp = false;
+        w.hitsPlayerReceivedInCombat = 0;
+        w.roundsInCombat = 0;
+      }
     }
   });
 
@@ -139,6 +153,10 @@ export function useCombat() {
     ironWillUsed,
     bloodpactActive,
     playerEnrageCharges,
+    focusPips,
+    guardCharges,
+    allyCompanion,
+    warriors,
 
     decideEnemyAction,
     handleCloseEncounter,

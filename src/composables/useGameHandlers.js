@@ -124,6 +124,10 @@ export function useGameHandlers(deps) {
     ironWillUsed,
     bloodpactActive,
     playerEnrageCharges,
+    focusPips,
+    guardCharges,
+    allyCompanion,
+    warriors,
     DEFAULT_ENEMY_HP,
     confusedAction,
     confusedTurnsLeft,
@@ -139,6 +143,14 @@ export function useGameHandlers(deps) {
     const enemiesGrew = newEnc?.type === "combat" &&
       newEnc.enemies?.length > 1 &&
       newEnc.enemies?.length !== oldEnc?.enemies?.length;
+
+    // Always reset scene locks when entering a new combat, so a stuck actionsPlaying
+    // or selectionLocked from a previous error never carries over.
+    if (enteringCombat) {
+      actionsPlaying.value = false;
+      selectionLocked.value = false;
+    }
+
     if ((enteringCombat || enemiesGrew) && newEnc.enemies?.length > 1) {
       const intents = buildGroupIntents(newEnc.enemies, enrageBonus.value ?? 0, decideEnemyAction);
       enemyIntents.value = intents;
@@ -175,6 +187,17 @@ export function useGameHandlers(deps) {
   const lastDamageTaken = ref(null);
   const playerHitKey = ref(0);
   const lastGoldStolen = ref(null);
+  const lastProcEvent = ref(null);
+
+  let procTimer = null;
+  function onProcEvent({ label, icon, color, onEnemy = true }) {
+    clearTimeout(procTimer);
+    lastProcEvent.value = {
+      label, icon, color, onEnemy,
+      key: (lastProcEvent.value?.key ?? 0) + 1,
+    };
+    procTimer = setTimeout(() => { lastProcEvent.value = null; }, 2200);
+  }
 
   let diceResolve = null;
   let diceClearResolve = null;
@@ -292,6 +315,53 @@ export function useGameHandlers(deps) {
 
   function onVictory() {
     handleLoot(encounter.value?.enemy);
+
+    // Scavenger warriors: 25% chance to find bonus gold
+    if (warriors.value.length > 0) {
+      for (const warrior of warriors.value) {
+        if (warrior.currentHP > 0 && warrior.spec === "scavenger" && Math.random() < 0.25) {
+          playerGold.value += 3;
+          log(`<i class="ra ra-gold-bar"></i> ${warrior.label} scavenges 3 gold from the battlefield!`);
+        }
+      }
+      // 50% survival roll per warrior
+      const toRemove = [];
+      for (const warrior of warriors.value) {
+        if (warrior.currentHP <= 0) { toRemove.push(warrior.id); continue; }
+        const roll = Math.floor(Math.random() * 20) + 1;
+        const survived = roll > 10;
+        warrior.rollDisplay = { roll, survived, key: Date.now() + Math.random() };
+        if (survived) {
+          log(`<i class="ra ra-sword"></i> ${warrior.label} fights on! (${warrior.currentHP} HP)`);
+          setTimeout(() => { warrior.rollDisplay = null; }, 2800);
+        } else {
+          log(`<i class="ra ra-sword"></i> ${warrior.label} slips away after the battle...`);
+          warrior.leaving = true;
+          setTimeout(() => { toRemove.push(warrior.id); warriors.value = warriors.value.filter(w => !toRemove.includes(w.id)); }, 1800);
+        }
+      }
+      warriors.value = warriors.value.filter(w => !toRemove.includes(w.id));
+    }
+
+    // 50% survival roll — show the result floating above the ally portrait
+    if (allyCompanion.value && allyCompanion.value.currentHP > 0) {
+      const roll = Math.floor(Math.random() * 20) + 1;
+      const survived = roll > 10;
+      allyCompanion.value = { ...allyCompanion.value, rollDisplay: { roll, survived, key: Date.now() } };
+      if (survived) {
+        log(`<i class="ra ra-chain"></i> ${allyCompanion.value.name} fights on at your side! (${allyCompanion.value.currentHP} HP)`);
+        setTimeout(() => {
+          if (allyCompanion.value) allyCompanion.value = { ...allyCompanion.value, rollDisplay: null };
+        }, 2800);
+      } else {
+        log(`<i class="ra ra-chain"></i> ${allyCompanion.value.name} slips away into the dark after the battle...`);
+        setTimeout(() => {
+          if (allyCompanion.value) allyCompanion.value = { ...allyCompanion.value, leaving: true, rollDisplay: null };
+          setTimeout(() => { allyCompanion.value = null; }, 1200);
+        }, 1800);
+      }
+    }
+
     const victoryDelay = isDiceAnimating
       ? DICE_TICKS * DICE_TICK_MS + DISPLAY_MS
       : DISPLAY_MS;
@@ -568,6 +638,7 @@ export function useGameHandlers(deps) {
     actionsPlaying.value = true;
     selectionLocked.value = true;
     const sceneStart = Date.now();
+    try {
     for (let i = 0; i < actions.length; i++) {
       if (encounter.value === null) break; // combat ended mid-queue
 
@@ -679,6 +750,10 @@ export function useGameHandlers(deps) {
             ironWillUsed,
             bloodpactActive,
             playerEnrageCharges,
+            focusPips,
+            guardCharges,
+            allyCompanion,
+            warriors,
           },
           enemy: {
             enemyHP,
@@ -719,6 +794,7 @@ export function useGameHandlers(deps) {
             onEnemyKilled,
             onFleeSuccess,
             onGoldStolen,
+            onProcEvent,
             onHpCapIncrease: () => {
               const bonus = '<i class="ra ra-muscle-up"></i> Max HP +10';
               victoryLoot.value = victoryLoot.value ? `${victoryLoot.value} · ${bonus}` : bonus;
@@ -763,6 +839,10 @@ export function useGameHandlers(deps) {
           ironWillUsed,
           bloodpactActive,
           playerEnrageCharges,
+          focusPips,
+          guardCharges,
+          allyCompanion,
+          warriors,
         },
         enemy: {
           enemyHP,
@@ -803,6 +883,7 @@ export function useGameHandlers(deps) {
           onEnemyKilled,
           onFleeSuccess,
           onGoldStolen,
+          onProcEvent,
           onHpCapIncrease: () => {
             const bonus = '<i class="ra ra-muscle-up"></i> Max HP +10';
             victoryLoot.value = victoryLoot.value ? `${victoryLoot.value} · ${bonus}` : bonus;
@@ -826,10 +907,11 @@ export function useGameHandlers(deps) {
     // Ensure the scene is visible long enough for flash animations to play (~600ms)
     const elapsed = Date.now() - sceneStart;
     if (elapsed < 600) await new Promise(r => setTimeout(r, 600 - elapsed));
-
+    } finally {
     actionsPlaying.value = false;
     selectionLocked.value = false; // always release — covers victory/flee/defeat paths that skip gotoEnemyTurn
     actionFlash.value = { type: null, key: actionFlash.value.key };
+    }
   }
 
   function gotoEnemyTurn() {
@@ -1081,9 +1163,14 @@ export function useGameHandlers(deps) {
     lastDamageTaken,
     playerHitKey,
     lastGoldStolen,
+    lastProcEvent,
     counterResult,
     daysCount,
     playerEnrageCharges,
+    focusPips,
+    guardCharges,
+    allyCompanion,
+    warriors,
     handleSwitchTarget,
     victoryLoot,
     enemyIntents,
