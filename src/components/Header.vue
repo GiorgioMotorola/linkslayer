@@ -432,6 +432,7 @@ const props = defineProps({
   guardCharges: { type: Number, default: 0 },
   victoryLoot: { type: String, default: "" },
   equippedWeaponId: { type: String, default: null },
+  warriors: { type: Array, default: () => [] },
   enemyIntents: { type: Array, default: () => [] },
   maxActionsPerTurn: { type: Number, default: 1 },
   combatInventory: { type: Object, default: () => ({}) },
@@ -582,6 +583,16 @@ const activeStatuses = computed(() => {
   if (props.bountyScrollActive) list.push(s('<i class="ra ra-scroll-unfurled"></i> Bounty Scroll', "Next combat victory drops double loot."));
   if (props.luckyFleeActive)    list.push(s('<i class="ra ra-clover"></i> Lucky Coin',    "Guaranteed successful flee ready."));
   if (props.encounterBeaconActive) list.push(s('<i class="ra ra-lantern-flame"></i> Encounter Beacon', "Next encounter will be a friendly NPC."));
+
+  // Warriors
+  for (const w of (props.warriors ?? [])) {
+    const hpPct = w.currentHP / w.maxHP;
+    const hpLabel = hpPct > 0.6 ? "Healthy" : hpPct > 0.3 ? "Wounded" : "Critical";
+    list.push(s(
+      `<i class="ra ra-sword"></i> ${w.label} <small>(${w.tier})</small>`,
+      `${hpLabel} — ${w.currentHP}/${w.maxHP} HP`
+    ));
+  }
 
   // Enemy conditions
   if (props.isEnemyVenomed)  list.push(s('<i class="ra ra-skull"></i> Venom Vial',     "Enemy is poisoned — taking damage each turn."));
@@ -1305,7 +1316,7 @@ const menuActions = computed(() => {
       action: 'defend',
       icon: '<i class="ra ra-shield"></i>',
       label: isWindUp.value ? 'BRACE!' : defendButtonLabel.value,
-      hint: isWindUp.value ? 'Block · 3-tier roll' : (props.guardCharges > 0 ? `guard ×${props.guardCharges} · riposte` : 'half dmg · riposte'),
+      hint: isWindUp.value ? 'Block · 3-tier roll' : (props.guardCharges > 0 ? `guard ×${props.guardCharges} · release with Power` : 'half dmg · builds guard'),
       confused: ca.includes('defend'),
       disabled: combatLocked.value || ca.includes('defend') || nonBraceQueued.value || braceQueued.value || smokeBombQueued.value,
     },

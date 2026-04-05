@@ -188,11 +188,15 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
   let enemyActionCountered = false;
   let enemyAttemptedAttack = false;
   let enemyStaggeredThisTurn = false;
-  let riposteTriggered = false;
-
   const isExploit = playerAction === "exploit";
   // Snapshot enrage charges before any reset (used for damage scaling below)
   const savedEnrageCharges = playerEnrageCharges?.value ?? 0;
+  // Snapshot guard charges before any reset (consumed by Power Attack)
+  const savedGuardCharges = guardCharges?.value ?? 0;
+  // Non-defend actions break the guard streak — reset charges
+  if (playerAction !== "defend") {
+    if (guardCharges) guardCharges.value = 0;
+  }
 
   if (playerAction === "attack_steady" || playerAction === "attack_power" || playerAction === "attack_enraged" || isExploit) {
     // Consume all focus pips for bonus damage (built by previous Steady hits)
@@ -285,8 +289,12 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
         focusPips.value = Math.min(3, focusPips.value + 1);
       }
 
-      // Power: stagger the enemy (their counterattack this turn is reduced 25%)
+      // Power: consume guard charges as bonus damage, then stagger
       if (playerAction === "attack_power") {
+        if (savedGuardCharges > 0) {
+          damageToEnemy += savedGuardCharges;
+          log(`<i class="ra ra-shield"></i> ${savedGuardCharges} Guard charge${savedGuardCharges > 1 ? "s" : ""} released — +${savedGuardCharges} bonus damage!`);
+        }
         enemyStaggeredThisTurn = true;
         log(`<i class="ra ra-explosion"></i> ${formattedTitle} is staggered!`);
         utils.onProcEvent?.({ label: "Staggered", icon: '<i class="ra ra-explosion"></i>', color: "#ff9900" });
@@ -585,14 +593,11 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
       utils.onCounterResult?.({ succeeded, delay: 0 });
       playerDefendedThisTurn = true;
     } else {
-      // Regular defend — halves damage; riposte window + guard charge
+      // Regular defend — halves damage; builds a guard charge (consecutive blocks stack)
       playerDefendedThisTurn = true;
       if (guardCharges) guardCharges.value = (guardCharges.value ?? 0) + 1;
-      // Riposte: d20 ≥ 14 → counter back half of incoming damage after the hit
-      const riposteRoll = Math.floor(Math.random() * 20) + 1;
-      if (riposteRoll >= 14) {
-        riposteTriggered = true;
-        log(`<i class="ra ra-sword"></i> Counter-window! Riposte ready.`);
+      if (guardCharges && guardCharges.value > 0) {
+        log(`<i class="ra ra-shield"></i> Guard charge built — ×${guardCharges.value} (release with Power Attack).`);
       }
     }
   } else if (playerAction === "flee") {
@@ -948,16 +953,8 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
           damageToPlayer = Math.max(0, Math.floor(damageToPlayer * 0.5));
           log(`<i class="ra ra-shield"></i> <em>Partial Brace!</em> <span class="player-name">${playerName.value}</span> partially blocks the blow — ${damageToPlayer} damage gets through!`);
         } else if (playerDefendedThisTurn) {
-          const preDefendDamage = damageToPlayer;
           damageToPlayer = Math.max(0, Math.floor(damageToPlayer * 0.5));
           log(`<i class="ra ra-shield"></i> <span class="player-name">${playerName.value}</span> defended the attack, taking ${damageToPlayer} damage.`);
-          // Riposte: deal back half of the incoming damage
-          if (riposteTriggered) {
-            const riposteDmg = Math.max(1, Math.floor(preDefendDamage * 0.5));
-            enemyHP.value = Math.max(0, enemyHP.value - riposteDmg);
-            utils.onCombatResult?.({ type: "dealt", amount: riposteDmg });
-            log(`<i class="ra ra-sword"></i> <em>Riposte!</em> <span class="player-name">${playerName.value}</span> strikes back for ${riposteDmg} damage!`);
-          }
         } else {
           log(
             `<i class="ra ra-explosion"></i> ${formattedTitle} attacks back and <span class="player-name">${playerName.value}</span> takes ${damageToPlayer} damage.`
@@ -1092,6 +1089,8 @@ export async function handleCombatAction({ player, enemy, state, utils, itemEffe
           warrior.currentHP = Math.max(0, warrior.currentHP - damageToPlayer);
           if (warrior.currentHP <= 0) {
             log(`<i class="ra ra-skull"></i> ${warrior.label} has fallen!`);
+          } else {
+            log(`<i class="ra ra-sword"></i> ${warrior.label} takes ${damageToPlayer} damage! (${warrior.currentHP}/${warrior.maxHP} HP)`);
           }
         }
       }

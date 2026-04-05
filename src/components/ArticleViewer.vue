@@ -69,6 +69,7 @@
     :actionFlash="props.actionFlash"
     :lastProcEvent="props.lastProcEvent"
     :allyCompanion="props.allyCompanion"
+    :warriors="props.warriors"
     @switch-target="$emit('switch-target', $event)"
   />
   <div class="article" :class="{ 'blurred-content': isBlurred || props.isInCombat }">
@@ -128,6 +129,7 @@ const props = defineProps({
   actionFlash:          { type: Object,  default: null },
   lastProcEvent:        { type: Object,  default: null },
   allyCompanion:        { type: Object,  default: null },
+  warriors:             { type: Array,   default: () => [] },
 });
 
 function dayWeather(day) {

@@ -75,6 +75,7 @@
     :victoryLoot="victoryLoot"
     :playerSelectedTarget="playerSelectedTarget"
     :equippedWeaponId="equippedWeapon"
+    :warriors="warriors"
     :enemyIntents="enemyIntents"
     :maxActionsPerTurn="maxActionsPerTurn"
     :combatInventory="{

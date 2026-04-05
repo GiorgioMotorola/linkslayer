@@ -9,6 +9,24 @@
 
       <!-- Player portrait with HP badge -->
       <div class="co-player-portrait" :class="{ 'co-player-recoil': playerShakeActive }">
+        <!-- Warrior icons above player -->
+        <div v-if="(props.warriors ?? []).length > 0" class="co-warrior-icons">
+          <div
+            v-for="w in (props.warriors ?? [])"
+            :key="w.id"
+            class="co-warrior-icon"
+            :class="{ 'co-ally-leaving': w.leaving }"
+            :title="w.label"
+          >
+            <i :class="['ra', w.icon ?? 'ra-sword']" :style="{ color: warriorHpColor(w) }"></i>
+            <div
+              v-if="w.rollDisplay"
+              :key="w.rollDisplay.key"
+              class="co-float-ally-roll"
+              :class="w.rollDisplay.survived ? 'co-float-ally-roll--stay' : 'co-float-ally-roll--leave'"
+            >{{ w.rollDisplay.roll }}</div>
+          </div>
+        </div>
         <div class="co-player-wrap" :class="{ 'img-flash--taken': flashType === 'taken' }">
           <img :src="playerImage" class="co-player" alt="" />
         </div>
@@ -57,31 +75,6 @@
         </div>
       </div>
 
-      <!-- Barracks warriors -->
-      <div class="co-warriors-group">
-        <div
-          v-for="w in (props.warriors ?? [])"
-          :key="w.id"
-          class="co-enemy-portrait co-warrior-portrait"
-          :class="{ 'co-ally-leaving': w.leaving }"
-        >
-          <div class="co-enemy-wrap co-enemy-turned">
-            <img :src="enemyPlaceholder" class="co-enemy" alt="" />
-          </div>
-          <div
-            v-if="w.rollDisplay"
-            :key="w.rollDisplay.key"
-            class="co-float-ally-roll"
-            :class="w.rollDisplay.survived ? 'co-float-ally-roll--stay' : 'co-float-ally-roll--leave'"
-          ><i class="ra ra-perspective-dice-random"></i> {{ w.rollDisplay.roll }}</div>
-          <div class="co-intent-badge co-turned-badge">
-            <i :class="['ra', 'ra-sword']"></i> {{ w.label }}
-          </div>
-          <div class="co-hp-bar-wrap co-enemy-hp-bar">
-            <div class="co-hp-bar-fill co-hp-bar-turned" :style="{ width: (w.currentHP / w.maxHP * 100) + '%' }"></div>
-          </div>
-        </div>
-      </div>
 
       <!-- Proc event banner -->
       <Transition name="proc-banner">
@@ -364,6 +357,13 @@ const targetIndex = computed(() => props.encounter?.targetIndex ?? 0);
 const playerHpPct = computed(() =>
   Math.max(0, Math.min(100, (props.playerHP / Math.max(1, props.playerMaxHP)) * 100))
 );
+
+function warriorHpColor(w) {
+  const pct = w.currentHP / w.maxHP;
+  if (pct > 0.6) return "#6edf6e";
+  if (pct > 0.3) return "#ffe066";
+  return "#ff6e6e";
+}
 
 function enemyHpPct(idx) {
   const e = enemyList.value[idx];
@@ -844,21 +844,32 @@ watch(
 
 
 
-/* ── Barracks warriors group ─────────────────────────────────────────────── */
-.co-warriors-group {
-  position: absolute;
-  left: 44%;
-  bottom: 0;
+/* ── Barracks warrior icons (above player portrait) ──────────────────────── */
+.co-warrior-icons {
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
-  gap: 8px;
-  pointer-events: none;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 6px;
 }
 
-.co-warrior-portrait { pointer-events: none; }
+.co-warrior-icon {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
 
-.co-warrior-portrait .co-enemy { height: clamp(70px, 12vh, 130px); width: clamp(70px, 12vh, 130px); }
+.co-warrior-icon .co-float-ally-roll {
+  top: -28px;
+  font-size: 0.75rem;
+}
 
 /* ── Persistent ally companion ───────────────────────────────────────────── */
 .co-persistent-ally {

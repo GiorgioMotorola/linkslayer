@@ -324,23 +324,17 @@ export function useGameHandlers(deps) {
           log(`<i class="ra ra-gold-bar"></i> ${warrior.label} scavenges 3 gold from the battlefield!`);
         }
       }
-      // 50% survival roll per warrior
+      // Remove warriors who died in combat; survivors always stay
       const toRemove = [];
       for (const warrior of warriors.value) {
-        if (warrior.currentHP <= 0) { toRemove.push(warrior.id); continue; }
-        const roll = Math.floor(Math.random() * 20) + 1;
-        const survived = roll > 10;
-        warrior.rollDisplay = { roll, survived, key: Date.now() + Math.random() };
-        if (survived) {
-          log(`<i class="ra ra-sword"></i> ${warrior.label} fights on! (${warrior.currentHP} HP)`);
-          setTimeout(() => { warrior.rollDisplay = null; }, 2800);
-        } else {
-          log(`<i class="ra ra-sword"></i> ${warrior.label} slips away after the battle...`);
-          warrior.leaving = true;
-          setTimeout(() => { toRemove.push(warrior.id); warriors.value = warriors.value.filter(w => !toRemove.includes(w.id)); }, 1800);
+        if (warrior.currentHP <= 0) {
+          toRemove.push(warrior.id);
+          log(`<i class="ra ra-skull"></i> ${warrior.label} fell in battle.`);
         }
       }
-      warriors.value = warriors.value.filter(w => !toRemove.includes(w.id));
+      if (toRemove.length > 0) {
+        warriors.value = warriors.value.filter(w => !toRemove.includes(w.id));
+      }
     }
 
     // 50% survival roll — show the result floating above the ally portrait

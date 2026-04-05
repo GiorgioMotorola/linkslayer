@@ -137,6 +137,7 @@ export function buildWarrior(spec, tier) {
   return {
     id: `${spec}_${tier}_${Date.now()}`,
     label: `${specDef.label}`,
+    icon: specDef.icon,
     tier,
     spec,
     currentHP: tierDef.maxHP,
