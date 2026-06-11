@@ -254,6 +254,21 @@ export function handleShopPurchase(
             modalState.showDogNameModal.value = true;
           }
           utilityFunctions.log(`<i class="ra ra-pawprint"></i> A dog trots up to you expectantly...`);
+        } else if (item.details === "fishingRod") {
+          playerState.inventory.value.fishingRod = 1;
+          utilityFunctions.log(
+            `<i class="ra ra-fish"></i> ${gameData.playerName.value} acquired a Fishing Rod. Find water on any article to use it.`
+          );
+        } else if (item.details === "aluminumRod") {
+          playerState.inventory.value.fishingRod = 2;
+          utilityFunctions.log(
+            `<i class="ra ra-fish"></i> ${gameData.playerName.value} upgraded to an Aluminum Fishing Rod.`
+          );
+        } else if (item.details === "carbonRod") {
+          playerState.inventory.value.fishingRod = 3;
+          utilityFunctions.log(
+            `<i class="ra ra-fish"></i> ${gameData.playerName.value} upgraded to a Carbon Fishing Rod.`
+          );
         }
         break;
 

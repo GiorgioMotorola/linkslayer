@@ -1,7 +1,7 @@
 <template>
-  <div class="modal-overlay" @click.self="$emit('close')">
+  <div class="modal-overlay">
     <div class="tips-modal-content">
-      <button class="close-button" @click="$emit('close')">×</button>
+      <button class="close-button" @click="$emit('close')">⎯ Close ⎯</button>
       <h2>How To Play</h2>
       <div class="tips-content">
 

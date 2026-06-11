@@ -692,6 +692,14 @@
     @spend-gold="(amt) => { playerGold -= amt }"
   />
 
+  <FishingModal
+    v-if="showFishing"
+    :lakeName="fishingLakeName"
+    :rodLevel="inventory.fishingRod"
+    @close="showFishing = false"
+    @catch="handleFishCatch"
+  />
+
 </template>
 
 <script setup>
@@ -719,6 +727,7 @@ import ForgeModal from "@/components/ForgeModal.vue";
 import LibraryModal from "@/components/LibraryModal.vue";
 import BreweryModal from "@/components/BreweryModal.vue";
 import BarracksModal from "@/components/BarracksModal.vue";
+import FishingModal from "@/components/FishingModal.vue";
 import TavernBeerModal from "@/components/TavernBeerModal.vue";
 import SettlementModal from "@/components/SettlementModal.vue";
 import ExplorerModal from "@/components/ExplorerModal.vue";
@@ -822,6 +831,8 @@ const showForge   = ref(false);
 const showLibrary = ref(false);
 const showBrewery  = ref(false);
 const showBarracks = ref(false);
+const showFishing  = ref(false);
+const fishingLakeName = ref("");
 
 const showDieSlayer = ref(false);
 const dieSlayerSource = ref("shop");
@@ -947,6 +958,9 @@ const shopItems = computed(() =>
     if (item.id === "even_cooler_stick_item" && inventory.value.coolerStickItem <= 0) return false;
     if (item.id === "even_cooler_stick_item" && inventory.value.evenCoolerStickItem > 0) return false;
     if (item.id === "dog_companion" && dogName.value) return false;
+    if (item.id === "fishing_rod" && inventory.value.fishingRod > 0) return false;
+    if (item.id === "aluminum_rod" && inventory.value.fishingRod !== 1) return false;
+    if (item.id === "carbon_rod" && inventory.value.fishingRod !== 2) return false;
     return true;
   })
 );
@@ -2162,6 +2176,47 @@ function handleUseInventoryItem(itemType, mapId) {
     inventory.value.treasureMaps = [...maps];
     log(`<i class="ra ra-compass"></i> You break the wax seal and unroll the map. Your destination: <strong>${map.article.replace(/_/g, " ")}</strong>. Navigate there to claim your treasure.`);
     closeInventoryModal();
+  } else if (itemType === "fishingRod") {
+    const links = Array.from(document.querySelectorAll(".article a[href^='/wiki/']"))
+      .filter((a) => !a.href.includes(":"))
+      .filter((a) => {
+        const title = decodeURIComponent(a.getAttribute("href").replace("/wiki/", ""));
+        return title && !title.includes(":");
+      });
+    const picked = links.length > 0
+      ? links[Math.floor(Math.random() * links.length)]
+      : null;
+    const title = picked
+      ? decodeURIComponent(picked.getAttribute("href").replace("/wiki/", "")).replace(/_/g, " ")
+      : (current.value ?? "Mystery");
+    fishingLakeName.value = `${title} Lake`;
+    closeInventoryModal();
+    hubOpen.value = false;
+    showFishing.value = true;
+  } else if (itemType === "caughtFish") {
+    const fishName = mapId;
+    const arr = Array.isArray(inventory.value.caughtFish) ? inventory.value.caughtFish : [];
+    const idx = arr.findIndex(f => f.name === fishName);
+    if (idx === -1) return;
+    const fish = arr[idx];
+    const hp = fish.hp ?? 15;
+    const healed = Math.min(hp, effectiveMaxHP.value - playerHP.value);
+    playerHP.value = Math.min(playerHP.value + hp, effectiveMaxHP.value);
+    inventory.value.caughtFish = [...arr.slice(0, idx), ...arr.slice(idx + 1)];
+    log(`<i class="ra ra-fish"></i> You eat the ${fish.name}. +${healed} HP. (${playerHP.value}/${effectiveMaxHP.value})`);
+  }
+}
+
+function handleFishCatch(catchData) {
+  if (catchData.type === "junk") {
+    log(`<i class="ra ra-fish"></i> You reeled in ${catchData.junkName}.`);
+  } else if (catchData.isEnlightenment) {
+    inventory.value.enlightenmentFish = (inventory.value.enlightenmentFish ?? 0) + 1;
+    log(`<i class="ra ra-fish"></i> You caught The Fish of Eternal Enlightenment! A legendary catch.`);
+  } else {
+    const existing = Array.isArray(inventory.value.caughtFish) ? inventory.value.caughtFish : [];
+    inventory.value.caughtFish = [...existing, { name: catchData.name, hp: catchData.hp }];
+    log(`<i class="ra ra-fish"></i> You caught a ${catchData.name}! Restores +${catchData.hp} HP when eaten.`);
   }
 }
 
@@ -2340,6 +2395,7 @@ function restoreGameState(s) {
   combatWinsSinceLastCapIncrease.value = s.combatWinsSinceLastCapIncrease ?? 0;
   enlightenmentFishAccumulatedHP.value = s.enlightenmentFishAccumulatedHP ?? 0;
   if (s.inventory) Object.assign(inventory.value, s.inventory);
+  if (typeof inventory.value.caughtFish === "number") inventory.value.caughtFish = [];
   questComplete.value = s.questComplete ?? false;
   completedQuestIds.value = s.completedQuestIds ?? (s.questTurnedIn ? ["cave_bear"] : []);
   activeQuestId.value = s.activeQuestId ?? (s.questTaken && !s.questTurnedIn ? "cave_bear" : null);
@@ -2442,12 +2498,18 @@ watch(user, async (newUser, oldUser) => {
   width: 680px;
   height: 100dvh;
   z-index: 150;
-  background: #111111;
-  border-left: 1px solid #2a2a2a;
-  box-shadow: -6px 0 32px rgba(0, 0, 0, 0.7);
+  background: rgba(6, 6, 10, 0.98);
+  border-left: 1px solid rgba(60, 62, 75, 0.4);
+  box-shadow: -10px 0 50px rgba(0, 0, 0, 0.75);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  animation: settlementSlideIn 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes settlementSlideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
 }
 
 @media (max-width: 700px) {

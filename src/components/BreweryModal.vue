@@ -646,15 +646,21 @@ const markerPct = computed(() => Math.min((clickDelta.value / QUALITY_BAR_MAX) *
   right: 0;
   width: 680px;
   height: 100dvh;
-  background: #131820;
-  border-left: 1px solid #2d3f55;
-  box-shadow: -6px 0 32px rgba(0, 0, 0, 0.7);
+  background: rgba(6, 6, 10, 0.98);
+  border-left: 1px solid rgba(60, 62, 75, 0.4);
+  box-shadow: -10px 0 50px rgba(0, 0, 0, 0.75);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   font-family: "IBM Plex Sans", Arial, sans-serif;
   color: #c8d8e8;
   pointer-events: all;
+  animation: brewerySlideIn 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes brewerySlideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
 }
 
 .brewery-header {

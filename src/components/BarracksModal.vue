@@ -1,5 +1,5 @@
 <template>
-  <div class="barracks-overlay" @click.self="$emit('close')">
+  <div class="barracks-overlay">
     <div class="barracks-modal">
 
       <div class="barracks-header">
@@ -254,25 +254,31 @@ function hpColor(w) {
 <style scoped>
 .barracks-overlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 560px;
+  background: rgba(6, 6, 10, 0.98);
+  border-left: 1px solid rgba(60, 62, 75, 0.4);
+  box-shadow: -10px 0 50px rgba(0, 0, 0, 0.75);
   z-index: 300;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  font-family: "IBM Plex Sans", sans-serif;
+  animation: barracksSlideIn 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes barracksSlideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
 }
 
 .barracks-modal {
-  background: #1a1008;
-  border: 2px solid #8b6914;
-  border-radius: 10px;
-  width: min(760px, 96vw);
-  max-height: 88vh;
+  flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  color: #e8d5a0;
-  font-family: inherit;
+  color: #b8b8c4;
 }
 
 .barracks-header {
@@ -280,17 +286,18 @@ function hpColor(w) {
   justify-content: space-between;
   align-items: center;
   padding: 14px 18px;
-  background: #2a1a08;
-  border-bottom: 1px solid #8b6914;
-  font-size: 1.2rem;
-  font-weight: bold;
-  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(60, 62, 75, 0.4);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #787888;
 }
 
 .barracks-close {
   background: none;
   border: none;
-  color: #e8d5a0;
+  color: #b8b8c4;
   font-size: 1.1rem;
   cursor: pointer;
   opacity: 0.7;
@@ -299,7 +306,7 @@ function hpColor(w) {
 
 .barracks-tabs {
   display: flex;
-  border-bottom: 1px solid #5a3d10;
+  border-bottom: 1px solid rgba(45, 47, 62, 0.6);
 }
 
 .barracks-tab {
@@ -307,18 +314,18 @@ function hpColor(w) {
   padding: 10px;
   background: none;
   border: none;
-  color: #a08050;
+  color: #787888;
   font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
   position: relative;
 }
-.barracks-tab:hover { background: #2a1a08; color: #e8d5a0; }
-.barracks-tab.active { background: #2a1a08; color: #ffe080; border-bottom: 2px solid #ffe080; }
+.barracks-tab:hover { background: rgba(20, 20, 32, 0.8); color: #b8b8c4; }
+.barracks-tab.active { background: rgba(20, 20, 32, 0.8); color: #c0c0d4; border-bottom: 2px solid #c0c0d4; }
 
 .roster-count {
   display: inline-block;
-  background: #8b6914;
+  background: rgba(60, 62, 75, 0.55);
   color: #fff;
   border-radius: 10px;
   padding: 1px 7px;
@@ -333,7 +340,7 @@ function hpColor(w) {
 }
 
 .barracks-subtitle {
-  color: #a08050;
+  color: #787888;
   font-size: 0.85rem;
   margin: 0 0 14px;
 }
@@ -346,8 +353,8 @@ function hpColor(w) {
 }
 
 .training-slot {
-  background: #231508;
-  border: 1px solid #5a3d10;
+  background: rgba(16, 16, 28, 0.7);
+  border: 1px solid rgba(45, 47, 62, 0.6);
   border-radius: 8px;
   padding: 14px;
 }
@@ -356,11 +363,11 @@ function hpColor(w) {
   font-weight: bold;
   font-size: 0.95rem;
   margin-bottom: 10px;
-  color: #e8d5a0;
+  color: #b8b8c4;
 }
 
 .slot-empty-label { color: #666; font-weight: normal; }
-.slot-training-label { color: #ffe080; margin-left: 6px; }
+.slot-training-label { color: #c0c0d4; margin-left: 6px; }
 .ready-label { color: #6edf6e; }
 
 .config-row {
@@ -369,7 +376,7 @@ function hpColor(w) {
 .config-row > label {
   display: block;
   font-size: 0.8rem;
-  color: #a08050;
+  color: #787888;
   margin-bottom: 6px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -382,9 +389,9 @@ function hpColor(w) {
 }
 
 .tier-btn, .spec-btn {
-  background: #2e1e0a;
-  border: 1px solid #5a3d10;
-  color: #c8a860;
+  background: rgba(20, 20, 36, 0.7);
+  border: 1px solid rgba(45, 47, 62, 0.6);
+  color: #9090a4;
   border-radius: 5px;
   padding: 6px 10px;
   font-size: 0.82rem;
@@ -394,31 +401,31 @@ function hpColor(w) {
   flex-direction: column;
   align-items: center;
 }
-.tier-btn:hover, .spec-btn:hover { border-color: #ffe080; color: #ffe080; }
-.tier-btn.selected, .spec-btn.selected { border-color: #ffe080; background: #3a2808; color: #ffe080; }
+.tier-btn:hover, .spec-btn:hover { border-color: #c0c0d4; color: #c0c0d4; }
+.tier-btn.selected, .spec-btn.selected { border-color: #c0c0d4; background: rgba(28, 28, 44, 0.85); color: #c0c0d4; }
 
 .tier-cost {
   font-size: 0.72rem;
-  color: #a08050;
+  color: #787888;
   margin-top: 2px;
 }
 
 .spec-category { margin-bottom: 8px; }
 .spec-cat-label {
   font-size: 0.75rem;
-  color: #7a6030;
+  color: #585868;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 4px;
 }
 
 .selected-preview {
-  background: #2e1e0a;
-  border: 1px solid #8b6914;
+  background: rgba(20, 20, 36, 0.7);
+  border: 1px solid rgba(60, 62, 75, 0.55);
   border-radius: 6px;
   padding: 8px 12px;
   font-size: 0.84rem;
-  color: #c8a860;
+  color: #9090a4;
   line-height: 1.5;
 }
 
@@ -426,20 +433,20 @@ function hpColor(w) {
   margin-top: 6px;
   width: 100%;
   padding: 9px;
-  background: #5a3d10;
-  border: 1px solid #8b6914;
+  background: rgba(45, 47, 62, 0.6);
+  border: 1px solid rgba(60, 62, 75, 0.55);
   border-radius: 6px;
-  color: #ffe080;
+  color: #c0c0d4;
   font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.15s;
 }
-.begin-training-btn:hover:not(:disabled) { background: #7a5510; }
+.begin-training-btn:hover:not(:disabled) { background: rgba(34, 36, 52, 0.85); }
 .begin-training-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
 /* Training progress */
 .training-progress-wrap {
-  background: #2a1a08;
+  background: rgba(20, 20, 32, 0.8);
   border-radius: 4px;
   height: 22px;
   position: relative;
@@ -448,7 +455,7 @@ function hpColor(w) {
 }
 .training-progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #8b6914, #ffe080);
+  background: linear-gradient(90deg, #3a3a6e, #8080b8);
   transition: width 0.3s;
 }
 .training-progress-label {
@@ -465,14 +472,14 @@ function hpColor(w) {
 
 .slot-stats {
   font-size: 0.8rem;
-  color: #a08050;
+  color: #787888;
   margin-bottom: 6px;
 }
 
 .cancel-btn {
   background: none;
-  border: 1px solid #5a3d10;
-  color: #a08050;
+  border: 1px solid rgba(45, 47, 62, 0.6);
+  color: #787888;
   border-radius: 4px;
   padding: 4px 12px;
   font-size: 0.8rem;
@@ -495,7 +502,7 @@ function hpColor(w) {
 .ready-info { flex: 1; }
 .spec-desc {
   font-size: 0.8rem;
-  color: #a08050;
+  color: #787888;
   margin-top: 3px;
 }
 
@@ -517,7 +524,7 @@ function hpColor(w) {
 .no-warriors {
   text-align: center;
   padding: 40px 20px;
-  color: #5a3d10;
+  color: rgba(45, 47, 62, 0.6);
 }
 .no-warriors i { font-size: 2.5rem; display: block; margin-bottom: 10px; }
 .no-warriors p { font-size: 0.9rem; }
@@ -532,15 +539,15 @@ function hpColor(w) {
   display: flex;
   gap: 12px;
   align-items: center;
-  background: #231508;
-  border: 1px solid #5a3d10;
+  background: rgba(16, 16, 28, 0.7);
+  border: 1px solid rgba(45, 47, 62, 0.6);
   border-radius: 8px;
   padding: 12px;
 }
 
 .roster-warrior-icon {
   font-size: 2rem;
-  color: #ffe080;
+  color: #c0c0d4;
   width: 40px;
   text-align: center;
   flex-shrink: 0;
@@ -561,14 +568,14 @@ function hpColor(w) {
   font-size: 0.72rem;
   padding: 1px 6px;
   border-radius: 10px;
-  background: #5a3d10;
-  color: #c8a860;
+  background: rgba(45, 47, 62, 0.6);
+  color: #9090a4;
   text-transform: capitalize;
 }
 
 .roster-hp-bar-wrap {
   height: 8px;
-  background: #2a1a08;
+  background: rgba(20, 20, 32, 0.8);
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 3px;
@@ -580,18 +587,18 @@ function hpColor(w) {
 }
 .roster-hp-label {
   font-size: 0.78rem;
-  color: #a08050;
+  color: #787888;
   margin-bottom: 3px;
 }
 .roster-spec-desc {
   font-size: 0.78rem;
-  color: #7a6030;
+  color: #585868;
 }
 
 .dismiss-btn {
   background: none;
-  border: 1px solid #5a3d10;
-  color: #a08050;
+  border: 1px solid rgba(45, 47, 62, 0.6);
+  color: #787888;
   border-radius: 4px;
   padding: 5px 12px;
   font-size: 0.8rem;

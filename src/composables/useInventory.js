@@ -59,6 +59,8 @@ export function useInventory() {
     beers: [],
     roadIngredients: {},
     treasureMaps: [],
+    fishingRod: 0,
+    caughtFish: [],
   });
 
   const goldPouchAccumulatedGold = ref(0);

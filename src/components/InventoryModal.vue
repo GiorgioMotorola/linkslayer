@@ -640,6 +640,48 @@
           </div>
         </template>
 
+        <!-- Fishing Rod (permanent) -->
+        <div v-if="inventory.fishingRod > 0" class="item-slot-wrapper">
+          <div class="item-details-box">
+            <div class="item-name-quantity">
+              <span class="item-name"><i class="ra ra-fish"></i>
+                {{ inventory.fishingRod === 3 ? "Carbon Fishing Rod" : inventory.fishingRod === 2 ? "Aluminum Fishing Rod" : "Fishing Rod" }}
+              </span>
+            </div>
+            <div class="item-description">Find a lake on any article and cast your line.</div>
+          </div>
+          <div class="item-button-box">
+            <button
+              class="buy-button-details"
+              :disabled="!props.isIdle"
+              @click.stop="useItem('fishingRod')"
+            >
+              Fish
+            </button>
+          </div>
+        </div>
+
+        <!-- Caught Fish (one slot per fish type) -->
+        <template v-for="group in caughtFishGroups" :key="'fish-' + group.name">
+          <div class="item-slot-wrapper">
+            <div class="item-details-box">
+              <div class="item-name-quantity">
+                <span class="item-name">{{ group.name }}</span>
+                <span class="item-count">x{{ group.count }}</span>
+              </div>
+              <div class="item-description">
+                Fresh from the lake. Eat to restore +{{ group.hp }} HP.
+                <span class="hp-status"> — HP: {{ playerHP }}/{{ effectiveMaxHP }}</span>
+              </div>
+            </div>
+            <div class="item-button-box">
+              <button class="buy-button-details" @click.stop="$emit('use-item', 'caughtFish', group.name)">
+                Eat
+              </button>
+            </div>
+          </div>
+        </template>
+
         <div
           v-if="isInventoryEmpty"
           class="item-slot-wrapper no-items-message-wrapper"
@@ -792,13 +834,24 @@ const uniquePendingWeapon   = computed(() => [...new Set(props.pendingWeaponAugm
 const uniquePendingDefense  = computed(() => [...new Set(props.pendingDefenseAugments)]);
 const uniquePendingWeapons  = computed(() => [...new Set(props.pendingWeapons)]);
 
+const caughtFishGroups = computed(() => {
+  const arr = Array.isArray(props.inventory.caughtFish) ? props.inventory.caughtFish : [];
+  const map = {};
+  for (const fish of arr) {
+    if (!map[fish.name]) map[fish.name] = { name: fish.name, hp: fish.hp, count: 0 };
+    map[fish.name].count++;
+  }
+  return Object.values(map);
+});
+
 const isInventoryEmpty = computed(() => {
   if (props.weaponAugment || props.defenseAugment) return false;
   if (props.pendingWeaponAugments.length || props.pendingDefenseAugments.length) return false;
   if (props.equippedWeapon || props.pendingWeapons.length) return false;
   if (props.inventory.beers?.length > 0) return false;
   if ((props.inventory.treasureMaps ?? []).some((m) => !m.collected)) return false;
-  const skip = new Set(["questScrolls", "settlementFlag", "beers", "roadIngredients", "treasureMaps"]);
+  if ((props.inventory.caughtFish ?? []).length > 0) return false;
+  const skip = new Set(["questScrolls", "settlementFlag", "beers", "roadIngredients", "treasureMaps", "caughtFish"]);
   for (const key in props.inventory) {
     if (skip.has(key)) continue;
     if (
