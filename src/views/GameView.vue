@@ -2189,7 +2189,7 @@ function handleUseInventoryItem(itemType, mapId) {
     const title = picked
       ? decodeURIComponent(picked.getAttribute("href").replace("/wiki/", "")).replace(/_/g, " ")
       : (current.value ?? "Mystery");
-    fishingLakeName.value = `${title} Lake`;
+    fishingLakeName.value = `${title.replace(/_/g, " ")} Lake`;
     closeInventoryModal();
     hubOpen.value = false;
     showFishing.value = true;

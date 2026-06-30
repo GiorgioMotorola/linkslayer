@@ -491,7 +491,6 @@ function onZoneHit() {
     cancelAnimationFrame(reelRaf);
     showResult();
   } else {
-    handlePx.value = 0;
     moveZone();
     reelStart = performance.now();
     message.value = "";
@@ -772,10 +771,10 @@ function castAgain() {
 }
 .fm-track {
   position: relative;
-  height: 44px;
+  height: 22px;
   background: #1a1a24;
   border: 1px solid #3a3a50;
-  border-radius: 22px;
+  border-radius: 11px;
   overflow: visible;
   user-select: none;
 }
@@ -783,19 +782,19 @@ function castAgain() {
   position: absolute;
   top: 0;
   height: 100%;
-  background: rgba(80, 160, 80, 0.35);
-  border: 2px solid rgba(80, 200, 80, 0.7);
-  border-radius: 22px;
+  background: rgba(220, 75, 20, 0.35);
+  border: 2px solid rgba(255, 95, 35, 0.85);
+  border-radius: 11px;
   pointer-events: none;
 }
 .fm-handle {
   position: absolute;
-  top: 4px;
+  top: 2px;
   width: 28px;
-  height: 36px;
+  height: 18px;
   background: linear-gradient(to bottom, #8B6030, #5a3a18);
   border: 2px solid #3a2008;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: grab;
   touch-action: none;
   box-shadow: 0 2px 6px rgba(0,0,0,0.5);
